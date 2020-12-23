@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.esotericsoftware.spine:spine-libgdx:3.8.55.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/esotericsoftware/spine/spine-libgdx/3.8.55.1/spine-libgdx-3.8.55.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/esotericsoftware/spine/spine-libgdx/3.8.55.1/spine-libgdx-3.8.55.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/esotericsoftware/spine/spine-libgdx/3.8.55.1/spine-libgdx-3.8.55.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
