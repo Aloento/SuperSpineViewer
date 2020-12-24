@@ -125,7 +125,7 @@
     </AnchorPane>
       <AnchorPane SplitPane.resizableWithParent="false">
           <Pane minHeight="-Infinity" prefHeight="50.0" prefWidth="404.0">
-              <Label alignment="CENTER" layoutY="13.0" prefHeight="25.0" prefWidth="404.0" text="Spine SkeletonViewer" textAlignment="CENTER">
+              <Label alignment="CENTER" layoutY="13.0" prefHeight="25.0" prefWidth="404.0" text="Spine Skeleton Viewer" textAlignment="CENTER">
                   <font>
                       <Font name="System Bold" size="18.0" />
                   </font>
