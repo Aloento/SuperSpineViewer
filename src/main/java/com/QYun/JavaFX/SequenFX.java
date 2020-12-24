@@ -9,26 +9,25 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
 
-import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-public class GiFX {
+public class SequenFX {
 
     public static void Capture (Parent target,
                                 int durationMS,
                                 int timeBetweenFramesMS,
-                                boolean loopContinuously,
                                 SnapshotParameters parameters,
-                                AtomicBoolean GifFXLock,
+                                AtomicBoolean SequenFXLock,
                                 String savePath) throws IOException {
 
-        GifFXLock.set(true);
-        ImageOutputStream outputStream = new FileImageOutputStream(new File(savePath));
-        GiFXWriter writer = new GiFXWriter(outputStream, 3, timeBetweenFramesMS, loopContinuously);
+        SequenFXLock.set(true);
+        AtomicInteger index = new AtomicInteger();
 
         Consumer<Event> run = event -> {
             int width = (int) target.getBoundsInParent().getWidth();
@@ -36,27 +35,22 @@ public class GiFX {
 
             WritableImage image = new WritableImage(width, height);
             target.snapshot(parameters, image);
+            BufferedImage buffer = SwingFXUtils.fromFXImage(image, null);
             try {
-                writer.writeToSequence(SwingFXUtils.fromFXImage(image, null));
+                ImageIO.write(buffer, "png", new File(savePath + "SequenFX-" + index.getAndIncrement() + ".png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         };
 
-        System.out.println("GiFX运行在线程：" + Thread.currentThread().getName());
+        System.out.println("SequenFX运行在线程：" + Thread.currentThread().getName());
         final KeyFrame oneFrame = new KeyFrame(Duration.millis(durationMS/(durationMS/timeBetweenFramesMS)), run::accept);
         Timeline timeline = new Timeline(durationMS, oneFrame);
         timeline.setCycleCount(durationMS / timeBetweenFramesMS);
 
         timeline.setOnFinished(event -> {
-            try {
-                writer.close();
-                outputStream.close();
-                GifFXLock.set(false);
-                System.out.println("GIF导出成功，位于：" + savePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            SequenFXLock.set(false);
+            System.out.println("序列导出成功，位于：" + savePath);
         });
         timeline.play();
 
