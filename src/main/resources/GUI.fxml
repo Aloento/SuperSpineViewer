@@ -70,69 +70,64 @@
   <SplitPane id="SplitPane" dividerPositions="0.15, 0.4718" focusTraversable="true" VBox.vgrow="ALWAYS">
     <AnchorPane id="AnchorPane_L" SplitPane.resizableWithParent="false">
         <SplitPane dividerPositions="0.5" orientation="VERTICAL">
-            <AnchorPane minHeight="-Infinity" prefHeight="332.0" SplitPane.resizableWithParent="false"/>
+            <AnchorPane minHeight="-Infinity" prefHeight="332.0" SplitPane.resizableWithParent="false" />
             <AnchorPane minHeight="-Infinity" prefHeight="332.0" SplitPane.resizableWithParent="false">
-                <Label alignment="CENTER" layoutY="2.0" prefHeight="25.0" prefWidth="188.0" text="Render Controller"
-                       textAlignment="CENTER">
+                <Label alignment="CENTER" layoutY="2.0" prefHeight="25.0" prefWidth="188.0" text="Render Controller" textAlignment="CENTER">
                     <font>
-                        <Font name="System Bold" size="18.0"/>
+                        <Font name="System Bold" size="18.0" />
                     </font>
                 </Label>
                 <!--             <DraggableNode  layoutX="639.0" layoutY="359.0" prefHeight="200.0" prefWidth="200.0" /> -->
-                <VBox id="fpsVbox" fx:id="vBox" alignment="CENTER_RIGHT" layoutX="6.0" layoutY="37.0"
-                      snapToPixel="false" spacing="8.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="6.0">
+                <VBox id="fpsVbox" fx:id="vBox" alignment="CENTER_RIGHT" layoutX="6.0" layoutY="37.0" snapToPixel="false" spacing="8.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="6.0">
                     <padding>
-                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                     </padding>
                     <CheckBox fx:id="vsync" mnemonicParsing="false" selected="true" text="Display Sync (60)">
                         <font>
-                            <Font size="14.0" fx:id="x11"/>
+                            <Font size="14.0" fx:id="x11" />
                         </font>
                     </CheckBox>
-                    <Label font="$x11" text="Render Stream Type"/>
+                    <Label font="$x11" text="Render Stream Type" />
                     <ChoiceBox fx:id="renderChoice" prefWidth="160.0">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Item 1"/>
-                                <String fx:value="Item 2"/>
-                                <String fx:value="Item 3"/>
+                                <String fx:value="Item 1" />
+                                <String fx:value="Item 2" />
+                                <String fx:value="Item 3" />
                             </FXCollections>
                         </items>
                     </ChoiceBox>
-                    <Label font="$x11" text="Texture Stream Type"/>
+                    <Label font="$x11" text="Texture Stream Type" />
                     <ChoiceBox fx:id="textureChoice" prefWidth="160.0">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Item 1"/>
-                                <String fx:value="Item 2"/>
-                                <String fx:value="Item 3"/>
+                                <String fx:value="Item 1" />
+                                <String fx:value="Item 2" />
+                                <String fx:value="Item 3" />
                             </FXCollections>
                         </items>
                     </ChoiceBox>
-                    <Label font="$x11" text="Stream Buffering"/>
+                    <Label font="$x11" text="Stream Buffering" />
                     <ChoiceBox fx:id="bufferingChoice" prefWidth="160.0">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Item 1"/>
-                                <String fx:value="Item 2"/>
-                                <String fx:value="Item 3"/>
+                                <String fx:value="Item 1" />
+                                <String fx:value="Item 2" />
+                                <String fx:value="Item 3" />
                             </FXCollections>
                         </items>
                     </ChoiceBox>
-                    <Label font="$x11" text="MSAA Samples"/>
-                    <Slider fx:id="msaaSamples" blockIncrement="1.0" majorTickUnit="1.0" max="8.0" min="1.0"
-                            minorTickCount="0" prefWidth="160.0" showTickLabels="true" showTickMarks="true"
-                            snapToTicks="true" value="1.0"/>
+                    <Label font="$x11" text="MSAA Samples" />
+                    <Slider fx:id="msaaSamples" blockIncrement="1.0" majorTickUnit="1.0" max="8.0" min="1.0" minorTickCount="0" prefWidth="160.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
                 </VBox>
             </AnchorPane>
         </SplitPane>
     </AnchorPane>
       <AnchorPane SplitPane.resizableWithParent="false">
           <Pane minHeight="-Infinity" prefHeight="50.0" prefWidth="404.0">
-              <Label alignment="CENTER" layoutY="13.0" prefHeight="25.0" prefWidth="404.0"
-                     text="Spine SkeletonViewer" textAlignment="CENTER">
+              <Label alignment="CENTER" layoutY="13.0" prefHeight="25.0" prefWidth="404.0" text="Spine SkeletonViewer" textAlignment="CENTER">
                   <font>
-                      <Font name="System Bold" size="18.0"/>
+                      <Font name="System Bold" size="18.0" />
                   </font>
               </Label>
           </Pane>
@@ -151,7 +146,7 @@
          </Label>
     <Label id="" fx:id="systemInfoLabel" font="$x41" layoutX="14.0" layoutY="30.0" text="System Info" AnchorPane.bottomAnchor="623.0" AnchorPane.leftAnchor="14.0" />
       <!--             <ImageView id="" fx:id="imgView2" fitHeight="399.0" fitWidth="418.0" layoutX="56.0" layoutY="14.0" pickOnBounds="true" preserveRatio="false" scaleY="-1.0" smooth="false" /> -->
-      <Label fx:id="fpsLabel" layoutX="548.0" layoutY="12.0" styleClass="fps-label" text="FPS: Wating" AnchorPane.leftAnchor="548.0" AnchorPane.topAnchor="12.0">
+      <Label fx:id="fpsLabel" layoutX="562.0" layoutY="12.0" styleClass="fps-label" text="FPS: Wating" AnchorPane.leftAnchor="562.0" AnchorPane.topAnchor="12.0">
         <font>
           <Font name="System Bold" size="18.0" fx:id="x5" />
         </font>

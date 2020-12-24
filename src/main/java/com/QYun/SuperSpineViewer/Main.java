@@ -49,7 +49,8 @@ public class Main extends Application {
             @Override
             public void run()
             {
-                node = new LwjglFXNode(new SimpleTest(), imgView1);
+                // node = new LwjglFXNode(new SimpleTest(), imgView1);
+                node = new LwjglFXNode(new FrostlTest(), imgView1);
                 controller.graphics1 = (LwjglFXGraphics) node.getGraphics();
                 updateFPS();
                 node.runSingleThread(runningLatch);
