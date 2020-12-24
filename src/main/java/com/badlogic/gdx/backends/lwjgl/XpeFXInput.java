@@ -26,7 +26,7 @@ import java.util.Set;
 
 class XpeFXInput implements Input
 {
-	class KeyEvent
+	static class KeyEvent
 	{
 		static final int KEY_DOWN = 0;
 		static final int KEY_UP = 1;
@@ -38,7 +38,7 @@ class XpeFXInput implements Input
 		char keyChar;
 	}
 
-	class TouchEvent
+	static class TouchEvent
 	{
 		static final int TOUCH_DOWN = 0;
 		static final int TOUCH_UP = 1;
@@ -90,11 +90,8 @@ class XpeFXInput implements Input
 		{
 			robot = new Robot(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice());
 		}
-		catch (HeadlessException e)
-		{
-		}
-		catch (AWTException e)
-		{
+		catch (HeadlessException | AWTException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -397,7 +394,7 @@ class XpeFXInput implements Input
 
 				Object selectedValue = pane.getValue();
 
-				if (selectedValue != null && (selectedValue instanceof Integer) && ((Integer) selectedValue).intValue() == JOptionPane.OK_OPTION)
+				if ((selectedValue instanceof Integer) && (Integer) selectedValue == JOptionPane.OK_OPTION)
 				{
 					listener.input(textField.getText());
 				}

@@ -35,14 +35,13 @@ public class LwjglFXNode implements Application
 	final LwjglNet net;
 
 	final ApplicationListener listener;
-	final List<Runnable> runnables = new ArrayList();
-	final List<Runnable> executedRunnables = new ArrayList();
+	final List<Runnable> runnables = new ArrayList<>();
+	final List<Runnable> executedRunnables = new ArrayList<>();
 	final Array<LifecycleListener> lifecycleListeners = new Array<>();
 	boolean running = true;
 	int lastWidth;
 	int lastHeight;
 	int logLevel = LOG_INFO;
-	private Cursor cursor;
 
 	LwjglFXNode parent;
 	Array<LwjglFXNode> childContexts;
@@ -261,14 +260,10 @@ public class LwjglFXNode implements Application
 			executedRunnables.addAll(runnables);
 			runnables.clear();
 
-			for (int i = 0; i < executedRunnables.size(); i++)
-			{
-				try
-				{
-					executedRunnables.get(i).run();
-				}
-				catch (Throwable t)
-				{
+			for (Runnable executedRunnable : executedRunnables) {
+				try {
+					executedRunnable.run();
+				} catch (Throwable t) {
 					t.printStackTrace();
 				}
 			}
@@ -481,7 +476,6 @@ public class LwjglFXNode implements Application
 	 */
 	public void setCursor(Cursor cursor)
 	{
-		this.cursor = cursor;
 	}
 
 	@Override

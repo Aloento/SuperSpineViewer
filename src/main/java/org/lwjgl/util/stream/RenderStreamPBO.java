@@ -43,7 +43,7 @@ import static org.lwjgl.opengl.GL30.*;
 /** Implements streaming PBO updates from a framebuffer object. */
 abstract class RenderStreamPBO extends StreamBufferedPBO implements RenderStream {
 
-	public static enum ReadbackType {
+	public enum ReadbackType {
 		/** RenderBuffers on FBO, ReadPixels to readback. */
 		READ_PIXELS,
 		/** Textures on FBO, GetTexImage to readback. */
@@ -55,7 +55,7 @@ abstract class RenderStreamPBO extends StreamBufferedPBO implements RenderStream
 	protected final StreamUtil.FBOUtil fboUtil;
 	private final   int                renderFBO;
 
-	private int samples;
+	private final int samples;
 
 	private int rgbaBuffer;
 	private int depthBuffer;

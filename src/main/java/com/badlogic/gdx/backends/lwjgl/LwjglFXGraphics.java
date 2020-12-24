@@ -16,6 +16,7 @@ import org.lwjgl.util.stream.StreamUtil.RenderStreamFactory;
 import org.lwjgl.util.stream.StreamUtil.TextureStreamFactory;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 
@@ -365,8 +366,7 @@ public class LwjglFXGraphics implements Graphics, StreamHandler
 		pendingRunnables.offer(() -> {
 			if ( renderStream != null )
 				renderStream.destroy();
-			LwjglFXGraphics.this.textureStreamFactory = textureStreamFactory;
-			renderStream = renderStreamFactory.create(renderStream.getHandler(), samples, transfersToBuffer);
+			renderStream = renderStreamFactory.create(Objects.requireNonNull(renderStream).getHandler(), samples, transfersToBuffer);
 		});
 	}
 	
@@ -384,9 +384,9 @@ public class LwjglFXGraphics implements Graphics, StreamHandler
 		fpsListener = listener;
 	}
 	
-	public static interface FPSListener
+	public interface FPSListener
 	{
-		public void fpsChanged(int fps);
+		void fpsChanged(int fps);
 	}
 
 	@Override

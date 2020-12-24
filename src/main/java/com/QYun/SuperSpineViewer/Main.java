@@ -5,11 +5,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglFXNode;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.Objects;
@@ -23,17 +21,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("SuperSpineViewer - QYun_SoarTeam");
-
-        final Rectangle2D screenRange = Screen.getPrimary().getVisualBounds();
-        if (screenRange.getWidth() < primaryStage.getWidth() ||
-                screenRange.getHeight() < primaryStage.getHeight())
-        {
-            primaryStage.setX(screenRange.getMinX());
-            primaryStage.setY(screenRange.getMinY());
-
-            primaryStage.setWidth(screenRange.getWidth());
-            primaryStage.setHeight(screenRange.getHeight());
-        }
+        primaryStage.setResizable(false);
 
         VBox vBox = null;
         try {
@@ -56,7 +44,6 @@ public class Main extends Application {
         });
 
         ImageView imgView1 = Objects.requireNonNull(controller).imgView1;
-
         new Thread("libGDX Render")
         {
             @Override
@@ -70,6 +57,7 @@ public class Main extends Application {
                 Platform.runLater(primaryStage::close);
             }
         }.start();
+
     }
 
     void updateFPS()

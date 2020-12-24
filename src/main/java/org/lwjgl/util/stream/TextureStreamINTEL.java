@@ -74,7 +74,7 @@ final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
 	private final int bufferFBO;
 
 	private int   texID;
-	private int[] buffers;
+	private final int[] buffers;
 
 	private long currentIndex;
 

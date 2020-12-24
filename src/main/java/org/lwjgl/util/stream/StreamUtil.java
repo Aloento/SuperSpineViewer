@@ -247,10 +247,7 @@ public final class StreamUtil {
 		static final int PAGE_SIZE;
 
 		static {
-			int pageSize = 4096; // Assume 4kb if Unsafe is not available
-
-
-			PAGE_SIZE = pageSize;
+			PAGE_SIZE = 4096;
 		}
 
 	}
