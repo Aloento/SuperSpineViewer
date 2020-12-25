@@ -22,11 +22,11 @@ public class SetAnime {
 
         FadeTransition ft = new FadeTransition(Duration.millis(300), target);
         ft.setFromValue(1);
-        ft.setToValue(0.1);
+        ft.setToValue(0.5);
         ft.setCycleCount(2);
         ft.setAutoReverse(true);
 
         ParallelTransition pt = new ParallelTransition(st, rt);
-        return new SequentialTransition(pt, ft);
+        return new SequentialTransition(pt);
     }
 }

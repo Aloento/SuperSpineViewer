@@ -34,17 +34,16 @@ public class GiFXWriter {
 
         IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
 
-        graphicsControlExtensionNode.setAttribute("disposalMethod", "none");
         graphicsControlExtensionNode.setAttribute("userInputFlag", "FALSE");
-        graphicsControlExtensionNode.setAttribute("transparentColorFlag", "FALSE");
+        graphicsControlExtensionNode.setAttribute("transparentColorFlag", "TRUE");
         graphicsControlExtensionNode.setAttribute("delayTime", Integer.toString(timeBetweenFramesMS / 10));
-        graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
+        // graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
+        graphicsControlExtensionNode.setAttribute("disposalMethod", "restoreToBackgroundColor");
 
         IIOMetadataNode commentsNode = getNode(root, "CommentExtensions");
-        commentsNode.setAttribute("CommentExtension", "Created by MAH");
+        commentsNode.setAttribute("CommentExtension", "Created by Aloento");
 
         IIOMetadataNode appExtensionsNode = getNode(root, "ApplicationExtensions");
-
         IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
 
         child.setAttribute("applicationID", "NETSCAPE");

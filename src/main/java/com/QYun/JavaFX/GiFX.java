@@ -28,7 +28,7 @@ public class GiFX {
 
         GifFXLock.set(true);
         ImageOutputStream outputStream = new FileImageOutputStream(new File(savePath));
-        GiFXWriter writer = new GiFXWriter(outputStream, 3, timeBetweenFramesMS, loopContinuously);
+        GiFXWriter writer = new GiFXWriter(outputStream, 2, timeBetweenFramesMS, loopContinuously);
 
         Consumer<Event> run = event -> {
             int width = (int) target.getBoundsInParent().getWidth();

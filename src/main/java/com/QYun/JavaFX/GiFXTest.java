@@ -32,9 +32,9 @@ public class GiFXTest extends Application {
         Button snap = new Button("PNG截图");
         CheckBox export = new CheckBox("isGiFX");
 
-        test.setStyle("-fx-font-size: 30; -fx-text-fill: #ff0000");
-        test.setLayoutX(140.0);
-        test.setLayoutY(80.0);
+        test.setStyle("-fx-font-size: 40; -fx-text-fill: #ff0000; -fx-font-weight: BOLD");
+        test.setLayoutX(120.0);
+        test.setLayoutY(60.0);
         SetAnime setAnime = new SetAnime();
         Transition anime = setAnime.EGAnime(test);
         pane.setStyle("-fx-pref-width: 400px; -fx-pref-height: 200px");
@@ -61,7 +61,7 @@ public class GiFXTest extends Application {
                     @Override
                     public void run() {
                         try {
-                            GiFX.Capture(pane, (int) anime.getTotalDuration().toMillis(), 30,
+                            GiFX.Capture(pane, (int) anime.getTotalDuration().toMillis() + 100, 30,
                                     true, parameters, GifFXLock, "C:/CaChe/GiFX.gif");
                             anime.playFromStart();
                         } catch (IOException e) {

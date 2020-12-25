@@ -26,9 +26,9 @@ public class SequenFXTest extends Application {
         Button stop = new Button("Stop");
         CheckBox export = new CheckBox("isSequenFX");
 
-        test.setStyle("-fx-font-size: 30; -fx-text-fill: #ff0000");
-        test.setLayoutX(140.0);
-        test.setLayoutY(80.0);
+        test.setStyle("-fx-font-size: 40; -fx-text-fill: #ff0000; -fx-font-weight: BOLD");
+        test.setLayoutX(120.0);
+        test.setLayoutY(60.0);
         SetAnime setAnime = new SetAnime();
         Transition anime = setAnime.EGAnime(test);
         pane.setStyle("-fx-pref-width: 400px; -fx-pref-height: 200px");
@@ -55,7 +55,7 @@ public class SequenFXTest extends Application {
                     @Override
                     public void run() {
                         try {
-                            SequenFX.Capture(pane, (int) anime.getTotalDuration().toMillis(),
+                            SequenFX.Capture(pane, (int) anime.getTotalDuration().toMillis() + 100,
                                     30, parameters, SequenFXLock, "C:/CaChe/CaChe/");
                             anime.playFromStart();
                         } catch (IOException e) {
