@@ -41,5 +41,9 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:win:15.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.esotericsoftware.spine:spine-libgdx:3.8.55.1" level="project" />
     <orderEntry type="library" name="Maven: org.sejda.imageio:webp-imageio:0.1.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.jcodec:jcodec:0.2.5" level="project" />
+    <orderEntry type="library" name="Maven: org.jcodec:jcodec-javase:0.2.5" level="project" />
   </component>
 </module>
