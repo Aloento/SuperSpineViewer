@@ -1,5 +1,5 @@
 # SuperSpineViewer
-一个拿来加载与导出Spine骨骼的工具  
+一个拿来加载与导出Spine动画的工具  
 
 ## 关于这个工具
 它本质上是我学习Java和OpenJFX的练习作品  
@@ -7,7 +7,7 @@
 但是不能保证它好用，也不能保证拥有大多数功能  
 
 ### 为什么用Java
-其实已经有一个很好的SpineViewer了，叫SpineViewerWPF  
+其实已经有一个很好的Viewer了，叫SpineViewerWPF  
 它是用C#写的，能实现的功能应该也会比我的多吧  
 但是要安装.NET Framework，这玩意不能跨平台  
 所以我纠结以后决定拿Java来写一个全平台的  
@@ -20,7 +20,7 @@
 
 ### 功能
 #### 目前实现的
-查看Spine导出的Skle和JSON  
+查看Spine导出的Skel和JSON  
 
 #### 支持的版本
 Spine 3.8  
