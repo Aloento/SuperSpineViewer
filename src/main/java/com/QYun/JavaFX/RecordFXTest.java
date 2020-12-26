@@ -32,25 +32,25 @@ public class RecordFXTest extends Application {
         Button snap = new Button("PNG截图");
         CheckBox export = new CheckBox("isRecordFX");
 
-        test.setStyle("-fx-font-size: 40; -fx-text-fill: #ff0000; -fx-font-weight: BOLD");
-        test.setLayoutX(120.0);
-        test.setLayoutY(60.0);
+        test.setStyle("-fx-font-size: 80; -fx-text-fill: #ff0000; -fx-font-weight: BOLD");
+        test.setLayoutX(150.0);
+        test.setLayoutY(120.0);
         SetAnime setAnime = new SetAnime();
         Transition anime = setAnime.EGAnime(test);
-        pane.setStyle("-fx-pref-width: 400px; -fx-pref-height: 200px");
+        pane.setStyle("-fx-pref-width: 800px; -fx-pref-height: 400px");
         VBox vBox = new VBox(10, pane, new HBox(30, start, stop, snap, export));
 
         primaryStage.setScene(new Scene(vBox));
         primaryStage.setTitle("RecordFX Test");
-        primaryStage.setHeight(400);
-        primaryStage.setWidth(400);
+        primaryStage.setHeight(600);
+        primaryStage.setWidth(600);
         primaryStage.show();
 
         SnapshotParameters parameters = new SnapshotParameters();
         parameters.setFill(Color.TRANSPARENT);
 
         AtomicBoolean RecordFXLock = new AtomicBoolean(false);
-        RecordFX recordFX = new RecordFX(pane, 3);
+        RecordFX recordFX = new RecordFX(pane);
 
         start.setOnAction(actionEvent -> {
             if (RecordFXLock.get()) {
@@ -59,7 +59,7 @@ public class RecordFXTest extends Application {
             }
 
             if(export.isSelected()) {
-                recordFX.startRecording();
+                recordFX.startRecording("C:/CaChe/CaChe/", "Record",3, 30f, true, false);
                 anime.playFromStart();
             }
             else anime.playFromStart();
