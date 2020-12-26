@@ -13,10 +13,7 @@ import org.jcodec.api.awt.AWTSequenceEncoder;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -134,7 +131,8 @@ public class RecordFX {
         imageFrames.add(bufferedImage);
 
         if (saveSequence.get()) {
-            File video = new File((rootPath + fileName) + "_" + counter + ".png");
+            new File(rootPath + "Sequence/").mkdirs();
+            File video = new File((rootPath + "Sequence/" + fileName) + "_" + counter + ".png");
             try {
                 ImageIO.write(bufferedImage, "png", video);
                 System.out.println("保存序列：" + counter);
@@ -179,18 +177,31 @@ public class RecordFX {
     }
 
     private void ffmpegFX () {
-        new File((rootPath + fileName) + ".webm").delete();
 
         try {
+            // new File((rootPath + fileName) + ".webm").delete();
+            // Process ffmpeg = Runtime.getRuntime().exec(
+            //         "ffmpeg -r " + FPS.get() +
+            //                 " -i " + rootPath + fileName + "_%d.png" +
+            //                 " -c:v libvpx-vp9 -lossless 1" +
+            //                 " -pix_fmt yuva420p -row-mt 1" +
+            //                 " " + rootPath + fileName + ".webm");
+
+            new File((rootPath + fileName) + ".mov").delete();
             Process ffmpeg = Runtime.getRuntime().exec(
                     "ffmpeg -r " + FPS.get() +
-                            " -i " + rootPath + fileName + "_%d.png" +
-                            " -c:v libvpx-vp9 -lossless 1" +
-                            " -pix_fmt yuva420p -row-mt 1" +
-                            " " + rootPath + fileName + ".webm");
+                            " -i " + rootPath + "Sequence/" + fileName + "_%d.png" +
+                            " -c:v png" +
+                            " -pix_fmt rgba" +
+                            " " + rootPath + fileName + ".mov");
 
             try {
                 int status = ffmpeg.waitFor();
+                File sequence = new File(rootPath + "Sequence/");
+                String[] files = sequence.list();
+                for (String file : Objects.requireNonNull(files))
+                    new File(sequence, file).delete();
+                sequence.delete();
                 System.out.println("ffmpeg：" + status);
             } catch (InterruptedException e) {
                 e.printStackTrace();
