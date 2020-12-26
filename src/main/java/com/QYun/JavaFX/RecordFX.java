@@ -24,7 +24,6 @@ public class RecordFX {
     public RecordFX (Node node) {
         this.node = node;
         this.initStorages();
-
         System.out.println("录制实例已创建");
     }
 
@@ -115,7 +114,6 @@ public class RecordFX {
 
         if (transparent)
             parameters.setFill(Color.TRANSPARENT);
-
         if (!allowRecording.get()) {
             System.out.println("请求：开始录制");
             allowRecording.set(true);
@@ -177,7 +175,6 @@ public class RecordFX {
     }
 
     private void ffmpegFX () {
-
         try {
             // new File((rootPath + fileName) + ".webm").delete();
             // Process ffmpeg = Runtime.getRuntime().exec(

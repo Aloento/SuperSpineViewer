@@ -133,7 +133,7 @@
           </Pane>
       </AnchorPane>
     <AnchorPane id="AnchorPane_R" minHeight="-Infinity" minWidth="-Infinity" prefHeight="672.0" prefWidth="672.0" SplitPane.resizableWithParent="false">
-    <ImageView id="" fx:id="imgView1" fitHeight="672.0" fitWidth="672.0" pickOnBounds="true" preserveRatio="true" scaleY="-1.0" />
+    <ImageView id="" fx:id="imgView1" fitHeight="1344.0" fitWidth="1344.0" layoutX="-336.0" layoutY="-336.0" pickOnBounds="true" preserveRatio="true" scaleX="0.5" scaleY="-0.5" />
     <Label id="" fx:id="glInfoLabel" layoutX="14.0" layoutY="46.0" text="OpenGL Info" AnchorPane.bottomAnchor="607.0" AnchorPane.leftAnchor="14.0">
       <font>
         <Font name="System Bold" size="14.0" fx:id="x41" />
