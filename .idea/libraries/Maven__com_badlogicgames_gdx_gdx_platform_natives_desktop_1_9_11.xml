@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.badlogicgames.gdx:gdx-platform:natives-desktop:1.9.11">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/badlogicgames/gdx/gdx-platform/1.9.11/gdx-platform-1.9.11-natives-desktop.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/badlogicgames/gdx/gdx-platform/1.9.11/gdx-platform-1.9.11-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/badlogicgames/gdx/gdx-platform/1.9.11/gdx-platform-1.9.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
