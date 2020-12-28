@@ -44,5 +44,6 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:win:15.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.jcodec:jcodec:0.2.5" level="project" />
     <orderEntry type="library" name="Maven: org.jcodec:jcodec-javase:0.2.5" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq:charm-glisten:6.0.6" level="project" />
   </component>
 </module>

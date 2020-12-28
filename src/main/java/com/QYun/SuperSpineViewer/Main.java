@@ -2,6 +2,8 @@ package com.QYun.SuperSpineViewer;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
+import com.gluonhq.charm.glisten.visual.Swatch;
+import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -35,6 +37,7 @@ public class Main extends Application {
         }
 
         Scene scene = new Scene(Objects.requireNonNull(vBox));
+        Swatch.LIGHT_BLUE.assignTo(scene);
         primaryStage.setScene(scene);
         primaryStage.show();
 
