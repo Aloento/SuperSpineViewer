@@ -23,4 +23,11 @@
 查看Spine导出的Skel和JSON  
 
 ### 支持的版本
-Spine 3.8  
+Spine 2.1  
+Spine 3.1  
+Spine 3.4  
+Spine 3.5  
+Spine 3.6  
+Spine 3.7  
+Spine 3.8    
+Spine 4.0  
