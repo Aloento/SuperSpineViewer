@@ -1,8 +1,7 @@
 package com.QYun.SuperSpineViewer;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglFXGraphics;
-import com.badlogic.gdx.backends.lwjgl.LwjglFXNode;
-
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class Main extends Application {
     private final CountDownLatch runningLatch = new CountDownLatch(1);
-    LwjglFXNode node;
+    LwjglFXApplication gdxApp;
     GUI controller = null;
 
     @Override
@@ -26,7 +25,7 @@ public class Main extends Application {
 
         VBox vBox = null;
         try {
-            FXMLLoader fxml = new FXMLLoader(getClass().getClassLoader().getResource("GUI.fxml"));
+            FXMLLoader fxml = new FXMLLoader(getClass().getClassLoader().getResource("SSVGUI.fxml"));
             vBox = fxml.load();
             controller = fxml.getController();
         } catch (Exception e) {
@@ -44,28 +43,19 @@ public class Main extends Application {
             runningLatch.countDown();
         });
 
-        ImageView imgView1 = Objects.requireNonNull(controller).imgView1;
-        new Thread("libGDX Render")
+        ImageView LibGDX = Objects.requireNonNull(controller).LibGDX;
+        new Thread("LibGDX Render")
         {
             @Override
             public void run()
             {
-                node = new LwjglFXNode(new FrostlTest(), imgView1);
-                controller.graphics1 = (LwjglFXGraphics) node.getGraphics();
-                updateFPS();
-                node.runSingleThread(runningLatch);
-
-                Platform.runLater(primaryStage::close);
+                System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
+                LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+                // config.samples = 4;
+                gdxApp = new LwjglFXApplication(new Frostl38Test(), LibGDX, config, controller);
             }
         }.start();
 
-    }
-
-    void updateFPS()
-    {
-        final Runnable runnable1 = () -> controller.fpsLabel.setText("FPS: " + controller.graphics1.getFramesPerSecond());
-        controller.graphics1.setFPSListener(fps -> Platform.runLater(runnable1));
-        node.postRunnable(() -> controller.runGears());
     }
 
     public static void main(String[] args) {

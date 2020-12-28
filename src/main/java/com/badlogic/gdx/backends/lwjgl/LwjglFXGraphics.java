@@ -1,398 +1,191 @@
 package com.badlogic.gdx.backends.lwjgl;
 
+import com.QYun.SuperSpineViewer.GUI;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.glutils.GLVersion;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import org.lwjgl.opengl.*;
-import org.lwjgl.util.stream.RenderStream;
-import org.lwjgl.util.stream.StreamHandler;
-import org.lwjgl.util.stream.StreamUtil;
-import org.lwjgl.util.stream.StreamUtil.RenderStreamFactory;
-import org.lwjgl.util.stream.StreamUtil.TextureStreamFactory;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Semaphore;
 
-import static org.lwjgl.opengl.AMDDebugOutput.glDebugMessageCallbackAMD;
-import static org.lwjgl.opengl.ARBDebugOutput.glDebugMessageCallbackARB;
-import static org.lwjgl.opengl.GL11.glGetInteger;
-import static org.lwjgl.opengl.GL30.GL_MAX_SAMPLES;
+public class LwjglFXGraphics extends LwjglGraphics {
+	ImageView target;
+	LwjglToJavaFX toFX;
+	GUI UITag;
 
-
-/** An implementation of the {@link Graphics}  based on LwjglGraphics.
- * @author Natan Guilherme */
-public class LwjglFXGraphics implements Graphics, StreamHandler
-{
-	static int major, minor;
-	
-	ImageView imageView;
-	WritableImage renderImage;
-	RenderStream renderStream;
-	RenderStreamFactory renderStreamFactory;
-	FPSListener fpsListener;
-	
-	int transfersToBuffer = 3;
-	int samples           = 0;
-	int     maxSamples;
-	
-	TextureStreamFactory textureStreamFactory;
-	
-	
-	float deltaTime = 0;
-	long frameStart = 0;
-	int frames = 0;
-	int fps;
-	long lastTime = System.nanoTime();
-	
-	GL20 gl20;
-	GL30 gl30;
-	
-	boolean vsync = true;
-	
-	private final ConcurrentLinkedQueue<Runnable> pendingRunnables;
-	
-	public LwjglFXGraphics(ImageView imageView)
-	{
-		this.imageView = imageView;
-		this.pendingRunnables = new ConcurrentLinkedQueue<>();
-		
-		final ContextCapabilities caps = GLContext.getCapabilities();
-
-		if ( caps.OpenGL30 || (caps.GL_EXT_framebuffer_multisample && caps.GL_EXT_framebuffer_blit) )
-			maxSamples = glGetInteger(GL_MAX_SAMPLES);
-		else
-			maxSamples = 1;
-
-		if ( caps.GL_ARB_debug_output )
-			glDebugMessageCallbackARB(new ARBDebugOutputCallback());
-		else if ( caps.GL_AMD_debug_output )
-			glDebugMessageCallbackAMD(new AMDDebugOutputCallback());
-
-		this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
-		this.renderStream = renderStreamFactory.create(this, 0, transfersToBuffer);
-
-		this.textureStreamFactory = StreamUtil.getTextureStreamImplementation();
-
-		
-		initiateGLInstances();
-		
+	LwjglFXGraphics (LwjglApplicationConfiguration config, ImageView target, GUI UITag) {
+		super(config);
+		this.target = target;
+		this.UITag = UITag;
 	}
 	
-	public void initiateGLInstances () {
-		String version = org.lwjgl.opengl.GL11.glGetString(GL11.GL_VERSION);
-		major = Integer.parseInt("" + version.charAt(0));
-		minor = Integer.parseInt("" + version.charAt(2));
+	@Override
+	public int getHeight () {
+		return (int) target.getLayoutBounds().getHeight();
+	}
+	
+	@Override
+	public int getWidth () {
+		return (int) target.getLayoutBounds().getWidth();
+	}
 
-		gl20 = new LwjglGL20();
+	@Override
+	void setupDisplay () throws LWJGLException {
+		if (canvas != null) {
+			Display.setParent(canvas);
+		} else {
+			if (!displayMode(config.width, config.height, config.fullscreen))
+				throw new GdxRuntimeException("Couldn't set display mode " + config.width + "x" + config.height + ", fullscreen: "
+					+ config.fullscreen);
 
-		if (major <= 1)
-			throw new GdxRuntimeException("OpenGL 2.0 or higher with the FBO extension is required. OpenGL version: " + version);
-		if (major == 2 || version.contains("2.1")) {
-			if (!supportsExtension("GL_EXT_framebuffer_object") && !supportsExtension("GL_ARB_framebuffer_object")) {
-				throw new GdxRuntimeException("OpenGL 2.0 or higher with the FBO extension is required. OpenGL version: " + version
-					+ ", FBO extension: false");
+			if (config.iconPaths.size > 0) {
+				ByteBuffer[] icons = new ByteBuffer[config.iconPaths.size];
+				for (int i = 0, n = config.iconPaths.size; i < n; i++) {
+					Pixmap pixmap = new Pixmap(Gdx.files.getFileHandle(config.iconPaths.get(i), config.iconFileTypes.get(i)));
+					if (pixmap.getFormat() != Format.RGBA8888) {
+						Pixmap rgba = new Pixmap(pixmap.getWidth(), pixmap.getHeight(), Format.RGBA8888);
+						rgba.drawPixmap(pixmap, 0, 0);
+						pixmap = rgba;
+					}
+					icons[i] = ByteBuffer.allocateDirect(pixmap.getPixels().limit());
+					icons[i].put(pixmap.getPixels()).flip();
+					pixmap.dispose();
+				}
 			}
 		}
+		Display.setInitialBackground(config.initialBackgroundColor.r, config.initialBackgroundColor.g,
+			config.initialBackgroundColor.b);
 
-		Gdx.gl = gl20;
-		Gdx.gl20 = gl20;
-	}
-	
-	@Override
-	public boolean isGL30Available()
-	{
-		return false;
-	}
-
-	public GL20 getGL20 () {
-		return gl20;
+		if (config.x != -1 && config.y != -1) Display.setLocation(config.x, config.y);
+		createDisplayPixelFormat();
+		config.x = Display.getX();
+		config.y = Display.getY();
+		this.initiateGL();
 	}
 
 	@Override
-	public GL30 getGL30()
-	{
-		return gl30;
-	}
-
-
-	@Override
-	public float getDeltaTime()
-	{
-		return deltaTime;
+	void initiateGL() {
+		extractVersion();
+		extractExtensions();
+		this.initiateGLInstances();
 	}
 
 	@Override
-	public float getRawDeltaTime()
-	{
-		return deltaTime;
-	}
-
-	@Override
-	public int getFramesPerSecond()
-	{
-		return fps;
-	}
-
-	@Override
-	public GraphicsType getType()
-	{
-		return null;
-	}
-
-	@Override
-	public float getPpiX()
-	{
-		return 0;
-	}
-
-	@Override
-	public float getPpiY()
-	{
-		return 0;
-	}
-
-	@Override
-	public float getPpcX()
-	{
-		return 0;
-	}
-
-	@Override
-	public float getPpcY()
-	{
-		return 0;
-	}
-
-	@Override
-	public float getDensity()
-	{
-		return 0;
-	}
-
-	@Override
-	public boolean supportsDisplayModeChange()
-	{
-		return false;
-	}
-
-	@Override
-	public DisplayMode[] getDisplayModes()
-	{
-		return null;
-	}
-
-	@Override
-	public DisplayMode getDesktopDisplayMode()
-	{
-		return null;
-	}
-
-	@Override
-	public boolean setDisplayMode(DisplayMode displayMode)
-	{
-		return false;
-	}
-
-	@Override
-	public boolean setDisplayMode(int width, int height, boolean fullscreen)
-	{
-		return false;
-	}
-
-	@Override
-	public void setTitle(String title)
-	{
-	}
-
-	@Override
-	public void setVSync(boolean vsync)
-	{
-		this.vsync = vsync;
-	}
-
-	public boolean isVsync()
-	{
-		return vsync;
-	}
-
-	@Override
-	public BufferFormat getBufferFormat()
-	{
-		return null;
-	}
-
-	@Override
-	public boolean supportsExtension(String extension)
-	{
-		return false;
-	}
-
-	@Override
-	public void setContinuousRendering(boolean isContinuous)
-	{
-		
-	}
-
-	@Override
-	public boolean isContinuousRendering()
-	{
-		return false;
-	}
-
-	@Override
-	public void requestRendering()
-	{
-		
-	}
-
-	@Override
-	public boolean isFullscreen()
-	{
-		return false;
-	}
-
-	
-	void updateTime () {
-		long time = System.nanoTime();
-		deltaTime = (time - lastTime) / 1000000000.0f;
-		lastTime = time;
-
-		if (time - frameStart >= 1000000000) {
-			fps = frames;
-			if(fpsListener != null)
-				fpsListener.fpsChanged(fps);
-			frames = 0;
-			frameStart = time;
+	public void initiateGLInstances() {
+		if (this.usingGL30) {
+			this.gl30 = new LwjglGL30();
+			this.gl20 = this.gl30;
+		} else {
+			this.gl20 = new LwjglGL20();
 		}
-		frames++;
-	}
-	
-	public int getWidth() {
-		return (int)imageView.getFitWidth();
-	}
 
-	public int getHeight() {
-		return (int)imageView.getFitHeight();
+		Gdx.gl = this.gl20;
+		Gdx.gl20 = this.gl20;
+		Gdx.gl30 = this.gl30;
 	}
 
-
-	@Override
-	public void process(final int width, final int height, final ByteBuffer data, final int stride, final Semaphore signal) {
-		// This method runs in the background rendering thread
-		// TODO: Run setPixels on the PlatformImage in this thread, run pixelsDirty on JFX application thread with runLater.
-		Platform.runLater(() -> {
+	private boolean displayMode(int width, int height, boolean fullscreen) {
+		if (this.getWidth() == width && this.getHeight() == height && Display.isFullscreen() == fullscreen) {
+			return true;
+		} else {
 			try {
-				// If we're quitting, discard update
-				if ( !imageView.isVisible() )
-					return;
+				org.lwjgl.opengl.DisplayMode targetDisplayMode = null;
+				if (fullscreen) {
+					org.lwjgl.opengl.DisplayMode[] modes = Display.getAvailableDisplayModes();
+					int freq = 0;
 
-				// Detect resize and recreate the image
-				if ( renderImage == null || (int)renderImage.getWidth() != width || (int)renderImage.getHeight() != height ) {
-					renderImage = new WritableImage(width, height);
-					imageView.setImage(renderImage);
+					for (org.lwjgl.opengl.DisplayMode current : modes) {
+						if (current.getWidth() == width && current.getHeight() == height) {
+							if ((targetDisplayMode == null || current.getFrequency() >= freq) && (targetDisplayMode == null || current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
+								targetDisplayMode = current;
+								freq = current.getFrequency();
+							}
 
+							if (current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel() && current.getFrequency() == Display.getDesktopDisplayMode().getFrequency()) {
+								targetDisplayMode = current;
+								break;
+							}
+						}
+					}
+				} else {
+					targetDisplayMode = new org.lwjgl.opengl.DisplayMode(width, height);
 				}
 
+				if (targetDisplayMode == null) {
+					return false;
+				} else {
+					boolean resizable = !fullscreen && this.config.resizable;
+					Display.setDisplayMode(targetDisplayMode);
+					Display.setFullscreen(fullscreen);
+					if (resizable == Display.isResizable()) {
+						Display.setResizable(!resizable);
+					}
 
-				// Upload the image to JavaFX
-				renderImage.getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
-			} finally {
-				// Notify the render thread that we're done processing
-				signal.release();
+					Display.setResizable(resizable);
+					float scaleFactor = Display.getPixelScaleFactor();
+					this.config.width = (int) ((float) targetDisplayMode.getWidth() * scaleFactor);
+					this.config.height = (int) ((float) targetDisplayMode.getHeight() * scaleFactor);
+					if (Gdx.gl != null) {
+						Gdx.gl.glViewport(0, 0, this.config.width, this.config.height);
+					}
+
+					this.resize = true;
+					return true;
+				}
+			} catch (LWJGLException var9) {
+				return false;
 			}
-		});
-	}
-	
-	public void dispose()
-	{
-		renderStream.destroy();
-	}
-	
-	
-	public void setTransfersToBuffer(final int transfersToBuffer) {
-		if ( this.transfersToBuffer == transfersToBuffer )
-			return;
-
-		this.transfersToBuffer = transfersToBuffer;
-		resetStreams();
+		}
 	}
 
-	public void setSamples(final int samples) {
-		if ( this.samples == samples )
-			return;
-
-		this.samples = samples;
-		resetStreams();
+	static Array<String> extensions;
+	private static void extractVersion() {
+		String versionString = GL11.glGetString(7938);
+		String vendorString = GL11.glGetString(7936);
+		String rendererString = GL11.glGetString(7937);
+		glVersion = new GLVersion(Application.ApplicationType.Desktop, versionString, vendorString, rendererString);
 	}
 
-	private void resetStreams() {
-		pendingRunnables.offer(() -> {
-			renderStream.destroy();
+	private static void extractExtensions() {
+		extensions = new Array();
+		if (glVersion.isVersionEqualToOrHigher(3, 2)) {
+			int numExtensions = GL11.glGetInteger(33309);
 
-			renderStream = renderStreamFactory.create(renderStream.getHandler(), samples, transfersToBuffer);
+			for(int i = 0; i < numExtensions; ++i) {
+				extensions.add(org.lwjgl.opengl.GL30.glGetStringi(7939, i));
+			}
+		} else {
+			extensions.addAll(GL11.glGetString(7939).split(" "));
+		}
 
-			//updateSnapshot();
-		});
-	}
-	
-	void drainPendingActionsQueue() {
-		Runnable runnable;
-
-		while ( (runnable = pendingRunnables.poll()) != null )
-			runnable.run();
-	}
-
-
-	public int getTransfersToBuffer() {
-		return transfersToBuffer;
-	}
-	
-	public int getMaxSamples() {
-		return maxSamples;
-	}
-
-	public RenderStreamFactory getRenderStreamFactory() {
-		return renderStreamFactory;
-	}
-	
-	public void setRenderStreamFactory(final RenderStreamFactory renderStreamFactory) {
-		pendingRunnables.offer(() -> {
-			if ( renderStream != null )
-				renderStream.destroy();
-			renderStream = renderStreamFactory.create(Objects.requireNonNull(renderStream).getHandler(), samples, transfersToBuffer);
-		});
-	}
-	
-	public TextureStreamFactory getTextureStreamFactory() {
-		return textureStreamFactory;
-	}
-
-	public void setTextureStreamFactory(final TextureStreamFactory textureStreamFactory) {
-		pendingRunnables.offer(() -> LwjglFXGraphics.this.textureStreamFactory = textureStreamFactory);
-
-	}
-	
-	public void setFPSListener(FPSListener listener)
-	{
-		fpsListener = listener;
-	}
-	
-	public interface FPSListener
-	{
-		void fpsChanged(int fps);
 	}
 
 	@Override
-	public long getFrameId()
-	{
-		return 0;
+	public boolean supportsExtension(String extensions) {
+		if (LwjglFXGraphics.extensions == null) {
+			LwjglFXGraphics.extensions.add(this.gl20.glGetString(7939));
+		}
+
+		return LwjglFXGraphics.extensions.contains(extensions, false);
 	}
-	
+
+	private void createDisplayPixelFormat () {
+		bufferFormat = new BufferFormat(config.r, config.g, config.b, config.a, config.depth, config.stencil, config.samples, false);
+		this.toFX = new LwjglToJavaFX(target);
+	}
+
+	@Override
+	public void setTitle(String FPS){
+		Platform.runLater(() -> {
+			UITag.RightInf.setText(FPS + "\t渲染正常");
+		});
+	}
 }

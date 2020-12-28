@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Spine-LibGDX">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/spine-libgdx_2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spine-libgdx_3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spine-libgdx_3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spine-libgdx_3.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spine-libgdx_3.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spine-libgdx_3.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spine-libgdx_3.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/spine-libgdx_4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

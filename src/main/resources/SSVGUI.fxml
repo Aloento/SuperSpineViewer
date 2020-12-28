@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox id="VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.QYun.SuperSpineViewer.GUI">
+  <MenuBar id="MenuBar" VBox.vgrow="NEVER">
+    <Menu mnemonicParsing="false" text="File">
+      <MenuItem mnemonicParsing="false" text="Open" />
+      <SeparatorMenuItem mnemonicParsing="false" />
+      <MenuItem mnemonicParsing="false" text="Export" />
+      <SeparatorMenuItem mnemonicParsing="false" />
+      <MenuItem mnemonicParsing="false" text="Preferences" />
+      <SeparatorMenuItem mnemonicParsing="false" />
+      <MenuItem mnemonicParsing="false" text="ForceQuit" />
+    </Menu>
+    <Menu mnemonicParsing="false" text="Help">
+      <MenuItem mnemonicParsing="false" text="About" />
+    </Menu>
+  </MenuBar>
+  <SplitPane id="SplitPane" dividerPositions="0.19327073552425664, 0.47183098591549294" focusTraversable="true" VBox.vgrow="ALWAYS">
+    <AnchorPane id="AnchorPane_L" SplitPane.resizableWithParent="false">
+         <children>
+            <Pane minHeight="-Infinity" prefHeight="50.0" prefWidth="244.0">
+               <children>
+                  <Label alignment="CENTER" layoutY="13.0" prefHeight="24.0" prefWidth="244.0" text="Setting" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <AnchorPane fx:id="SpinePane1" layoutY="50.0" minHeight="622.0" minWidth="244.0" />
+         </children>
+    </AnchorPane>
+      <AnchorPane SplitPane.resizableWithParent="false">
+          <Pane minHeight="-Infinity" prefHeight="50.0" prefWidth="350.0">
+              <Label alignment="CENTER" layoutY="13.0" prefHeight="25.0" prefWidth="350.0" text="Spine Skeleton Viewer" textAlignment="CENTER">
+                  <font>
+                      <Font name="System Bold" size="18.0" />
+                  </font>
+              </Label>
+          </Pane>
+         <AnchorPane fx:id="SpinePane" layoutY="50.0" minHeight="622.0" minWidth="350.0" />
+      </AnchorPane>
+    <AnchorPane id="AnchorPane_R" minHeight="-Infinity" minWidth="-Infinity" prefHeight="672.0" prefWidth="672.0" SplitPane.resizableWithParent="false">
+    <ImageView id="" fx:id="LibGDX" fitHeight="1344.0" fitWidth="1344.0" layoutX="-336.0" layoutY="-336.0" pickOnBounds="true" preserveRatio="true" scaleX="0.5" scaleY="-0.5" />
+    <Label id="" fx:id="JavaInf" layoutX="14.0" layoutY="14.0" text="Java Info" AnchorPane.bottomAnchor="639.0" AnchorPane.leftAnchor="14.0">
+            <font>
+               <Font name="System Bold" size="14.0" />
+            </font>
+         </Label>
+    <Label id="" fx:id="SystemInf" layoutX="14.0" layoutY="30.0" text="System Info" AnchorPane.bottomAnchor="623.0" AnchorPane.leftAnchor="14.0">
+            <font>
+        <Font name="System Bold" size="14.0" fx:id="x41" />
+            </font></Label>
+    </AnchorPane>
+  </SplitPane>
+  <HBox id="HBox" alignment="CENTER_LEFT" minHeight="21.0" minWidth="1280.0" spacing="5.0" VBox.vgrow="NEVER">
+    <padding>
+      <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+    </padding>
+    <Label fx:id="LeftInf" maxHeight="1.7976931348623157E308" text="Left status" HBox.hgrow="ALWAYS">
+      <font>
+        <Font size="11.0" fx:id="x3" />
+      </font>
+    </Label>
+    <Pane HBox.hgrow="ALWAYS" />
+    <Label fx:id="RightInf" font="$x3" text="Right status" HBox.hgrow="NEVER" />
+  </HBox>
+</VBox>
