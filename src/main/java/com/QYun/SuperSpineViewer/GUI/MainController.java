@@ -12,7 +12,6 @@ import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -49,18 +48,14 @@ public final class MainController {
 
     @PostConstruct
     public void init() throws Exception {
-        // init the title hamburger icon
-        final JFXTooltip burgerTooltip = new JFXTooltip("Open Drawer");
 
         drawer.setOnDrawerOpening(e -> {
             final Transition animation = titleBurger.getAnimation();
-            burgerTooltip.setText("Close Drawer");
             animation.setRate(1);
             animation.play();
         });
         drawer.setOnDrawerClosing(e -> {
             final Transition animation = titleBurger.getAnimation();
-            burgerTooltip.setText("Open Drawer");
             animation.setRate(-1);
             animation.play();
         });
@@ -72,7 +67,7 @@ public final class MainController {
             }
         });
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI/MainPopup.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/MainPopup.fxml"));
         loader.setController(new InputController());
         toolbarPopup = new JFXPopup(loader.load());
 
@@ -82,8 +77,6 @@ public final class MainController {
                         PopupHPosition.RIGHT,
                         -12,
                         15));
-        JFXTooltip.setVisibleDuration(Duration.millis(3000));
-        JFXTooltip.install(titleBurgerContainer, burgerTooltip, Pos.BOTTOM_CENTER);
 
         // create the inner flow and content
         context = new ViewFlowContext();
