@@ -1,4 +1,4 @@
-package com.QYun.SuperSpineViewer;
+package com.QYun.SuperSpineViewer.GUI;
 
 import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
 import javafx.fxml.FXML;

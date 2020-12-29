@@ -1,68 +1,70 @@
 package com.QYun.SuperSpineViewer;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
-import com.gluonhq.charm.glisten.visual.Swatch;
-import com.gluonhq.charm.glisten.visual.GlistenStyleClasses;
+import com.QYun.SuperSpineViewer.GUI.MainController;
+import com.jfoenix.assets.JFoenixResources;
+import com.jfoenix.controls.JFXDecorator;
+import com.jfoenix.svg.SVGGlyph;
+import com.jfoenix.svg.SVGGlyphLoader;
+import io.datafx.controller.flow.Flow;
+import io.datafx.controller.flow.FlowException;
+import io.datafx.controller.flow.container.DefaultFlowContainer;
+import io.datafx.controller.flow.context.ViewFlowContext;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
+import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
+import java.io.IOException;
 
 public class Main extends Application {
-    private final CountDownLatch runningLatch = new CountDownLatch(1);
-    LwjglFXApplication gdxApp;
-    GUI controller = null;
-
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("SuperSpineViewer - QYun_SoarTeam");
-        primaryStage.setResizable(false);
-
-        VBox vBox = null;
-        try {
-            FXMLLoader fxml = new FXMLLoader(getClass().getClassLoader().getResource("SSVGUI.fxml"));
-            vBox = fxml.load();
-            controller = fxml.getController();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("错误：加载布局失败");
-            Platform.exit();
-        }
-
-        Scene scene = new Scene(Objects.requireNonNull(vBox));
-        Swatch.LIGHT_BLUE.assignTo(scene);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        primaryStage.setOnCloseRequest(windowEvent -> {
-            windowEvent.consume();
-            runningLatch.countDown();
-        });
-
-        ImageView LibGDX = Objects.requireNonNull(controller).LibGDX;
-        new Thread("LibGDX Render")
-        {
-            @Override
-            public void run()
-            {
-                System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
-                LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-                // config.samples = 4;
-                gdxApp = new LwjglFXApplication(new Frostl38Test(), LibGDX, config, controller);
-            }
-        }.start();
-
-    }
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+
+        new Thread(() -> {
+            try {
+                SVGGlyphLoader.loadGlyphsFont(Main.class.getResourceAsStream("/UI/icomoon.svg"),
+                        "icomoon.svg");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        Flow flow = new Flow(MainController.class);
+        DefaultFlowContainer flowContainer = new DefaultFlowContainer();
+        ViewFlowContext flowContext = new ViewFlowContext();
+        flowContext.register("Stage", primaryStage);
+        try {
+            flow.createHandler(flowContext).start(flowContainer);
+        } catch (FlowException e) {
+            e.printStackTrace();
+        }
+
+        JFXDecorator decorator = new JFXDecorator(primaryStage, flowContainer.getView());
+        decorator.setCustomMaximize(true);
+        decorator.setGraphic(new SVGGlyph(""));
+
+        double width = 1280;
+        double height = 720;
+        Rectangle2D screenBounds = Screen.getScreens().get(0).getBounds();
+        width = screenBounds.getWidth() / 2.5;
+        height = screenBounds.getHeight() / 1.35;
+
+        Scene scene = new Scene(decorator, width, height);
+        ObservableList<String> styleSheets = scene.getStylesheets();
+        styleSheets.addAll(JFoenixResources.load("css/jfoenix-fonts.css").toExternalForm(),
+                JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
+                Main.class.getResource("/UI/Main.css").toExternalForm());
+
+        primaryStage.setTitle("SuperSpineViewer");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
 }

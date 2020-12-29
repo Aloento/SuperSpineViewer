@@ -45,5 +45,11 @@
     <orderEntry type="library" name="Maven: org.jcodec:jcodec:0.2.5" level="project" />
     <orderEntry type="library" name="Maven: org.jcodec:jcodec-javase:0.2.5" level="project" />
     <orderEntry type="library" name="Maven: com.gluonhq:charm-glisten:6.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.jfoenix:jfoenix:9.0.10" level="project" />
+    <orderEntry type="library" name="Maven: io.datafx:flow:8.0.7" level="project" />
+    <orderEntry type="library" name="Maven: io.datafx:core:8.0.7" level="project" />
+    <orderEntry type="library" name="Maven: javax.annotation:javax.annotation-api:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-javafx:12.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-core:12.1.0" level="project" />
   </component>
 </module>

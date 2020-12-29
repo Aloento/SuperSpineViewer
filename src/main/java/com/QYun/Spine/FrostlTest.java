@@ -1,4 +1,4 @@
-package com.QYun.SuperSpineViewer;
+package com.QYun.Spine;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -7,14 +7,14 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.esotericsoftware.spine38.*;
 import com.esotericsoftware.spine38.utils.TwoColorPolygonBatch;
 
-public class Frostl38Test extends ApplicationAdapter {
+public class FrostlTest extends ApplicationAdapter {
     OrthographicCamera camera;
     TwoColorPolygonBatch batch;
     SkeletonRenderer renderer;
     Skeleton Frostl_Build;
     AnimationState Frostl_BuildState;
 
-    public Frostl38Test() {
+    public FrostlTest() {
     }
 
     public void create() {

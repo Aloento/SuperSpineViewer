@@ -1,6 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import com.QYun.SuperSpineViewer.GUI;
+import com.QYun.SuperSpineViewer.GUI.GUI;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
