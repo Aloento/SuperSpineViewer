@@ -17,8 +17,8 @@ import javafx.scene.control.Label;
 import javax.annotation.PostConstruct;
 import java.util.Objects;
 
-@FXMLController(value = "/UI/SideMenu.fxml", title = "SuperSpineViewer")
-public class SideMenuController {
+@FXMLController(value = "/UI/Exporter.fxml", title = "SuperSpineViewer")
+public class ExporterController {
 
     @FXMLViewFlowContext
     private ViewFlowContext context;
@@ -102,9 +102,7 @@ public class SideMenuController {
                     if (newVal != null) {
                         try {
                             contentFlowHandler.handle(newVal.getId());
-                        } catch (VetoException exc) {
-                            exc.printStackTrace();
-                        } catch (FlowException exc) {
+                        } catch (VetoException | FlowException exc) {
                             exc.printStackTrace();
                         }
                     }
@@ -112,7 +110,7 @@ public class SideMenuController {
             }).start();
         });
         Flow contentFlow = (Flow) context.getRegisteredObject("ContentFlow");
-        bindNodeToController(button, ButtonController.class, contentFlow, contentFlowHandler);
+        bindNodeToController(button, ViewerController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(checkbox, CheckboxController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(combobox, ComboBoxController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(dialogs, DialogController.class, contentFlow, contentFlowHandler);

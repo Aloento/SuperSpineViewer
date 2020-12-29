@@ -3,7 +3,6 @@ package com.QYun.SuperSpineViewer;
 import com.QYun.SuperSpineViewer.GUI.MainController;
 import com.jfoenix.assets.JFoenixResources;
 import com.jfoenix.controls.JFXDecorator;
-import com.jfoenix.svg.SVGGlyph;
 import com.jfoenix.svg.SVGGlyphLoader;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowException;
@@ -13,8 +12,11 @@ import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 
@@ -48,10 +50,16 @@ public class Main extends Application {
 
         JFXDecorator decorator = new JFXDecorator(primaryStage, flowContainer.getView());
         decorator.setCustomMaximize(true);
-        decorator.setGraphic(new SVGGlyph(""));
+        Label icon = new Label();
+        FontIcon fontIcon = new FontIcon();
+        fontIcon.setIconLiteral("fas-cube");
+        fontIcon.setIconSize(15);
+        fontIcon.setIconColor(Paint.valueOf("WHITE"));
+        icon.setGraphic(fontIcon);
+        decorator.setGraphic(icon);
 
-        double width = 1280;
-        double height = 720;
+        double width;
+        double height;
         Rectangle2D screenBounds = Screen.getScreens().get(0).getBounds();
         width = screenBounds.getWidth() / 2.5;
         height = screenBounds.getHeight() / 1.35;
@@ -65,6 +73,7 @@ public class Main extends Application {
         primaryStage.setTitle("SuperSpineViewer");
         primaryStage.setScene(scene);
         primaryStage.show();
+        icon.requestFocus();
     }
 
 }
