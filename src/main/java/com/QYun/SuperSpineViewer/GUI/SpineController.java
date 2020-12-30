@@ -93,6 +93,7 @@ public class SpineController {
         }
         spineLogo.setFitHeight(138);
         spineLogo.setPreserveRatio(true);
+        spineLogo.setSmooth(true);
 
         StackPane header = new StackPane();
         String headerColor = getDefaultColor((int) ((Math.random() * 12) % 22));
@@ -169,7 +170,6 @@ public class SpineController {
 
         ScrollPane scrollPane = new ScrollPane(controller);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setFitToWidth(true);
         body.getChildren().add(scrollPane);
         VBox content = new VBox();
         content.getChildren().addAll(header, body);
