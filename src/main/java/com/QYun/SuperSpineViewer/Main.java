@@ -58,6 +58,7 @@ public class Main extends Application {
                 JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
                 Main.class.getResource("/UI/Main.css").toExternalForm());
 
+        primaryStage.setWidth(1280);
         primaryStage.setTitle("SuperSpineViewer");
         primaryStage.setScene(scene);
         primaryStage.show();
