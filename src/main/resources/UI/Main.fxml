@@ -34,7 +34,7 @@
         </top>
 
         <center>
-            <JFXDrawer fx:id="mainDrawer" defaultDrawerSize="250" direction="LEFT">
+            <JFXDrawer fx:id="mainDrawer" defaultDrawerSize="302" direction="LEFT">
                 <styleClass>
                     <String fx:value="body"/>
                 </styleClass>

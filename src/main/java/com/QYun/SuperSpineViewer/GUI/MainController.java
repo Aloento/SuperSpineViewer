@@ -90,8 +90,7 @@ public final class MainController {
         context.register("ContentPane", mainDrawer.getContent().get(0));
 
         Flow exporterFlow = new Flow(ExporterController.class);
-        FlowHandler sideMenuFlowHandler = exporterFlow.createHandler(context);
-        mainDrawer.setSidePane(sideMenuFlowHandler.start(animatedFlowContainer));
+        mainDrawer.setSidePane(exporterFlow.start());
 
     }
 

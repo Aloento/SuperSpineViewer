@@ -60,7 +60,7 @@ public class Main extends Application {
                 Main.class.getResource("/UI/Main.css").toExternalForm());
 
         primaryStage.setWidth(1280);
-        primaryStage.setTitle("SuperSpineViewer");
+        primaryStage.setTitle("QYun SoarTeam");
         primaryStage.setScene(scene);
         primaryStage.show();
         icon.requestFocus();
