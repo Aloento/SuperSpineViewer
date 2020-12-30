@@ -1,43 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="Spine" xmlns="http://javafx.com/javafx/15.0.1">
-    <BorderPane fx:id="spineBorder">
+<?import com.jfoenix.controls.JFXSpinner?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="Spine" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <BorderPane>
+
         <left>
-            <VBox maxHeight="400" maxWidth="400" spacing="10" BorderPane.alignment="CENTER">
-                <Label styleClass="title-label">Flat Buttons</Label>
-                <HBox spacing="20" style="-fx-padding: 0 0 0 50;">
-                    <JFXButton buttonType="FLAT" prefHeight="40" prefWidth="100" style="-fx-font-size:14px;"
-                               text="BUTTON"/>
-                    <JFXButton buttonType="FLAT" prefHeight="40" prefWidth="100"
-                               style="-fx-text-fill:#5264AE;-fx-font-size:14px;" text="COLORED"/>
-                    <JFXButton buttonType="FLAT" disable="true" prefHeight="40" prefWidth="100"
-                               style="-fx-font-size:14px;" text="DISABLED"/>
-                </HBox>
-
-                <Label styleClass="title-label">Raised Buttons</Label>
-                <HBox spacing="40" style="-fx-padding: 0 0 0 50;">
-                    <JFXButton buttonType="RAISED" prefHeight="40" prefWidth="100"
-                               style="-fx-font-size:14px;-fx-background-color:WHITE;" text="BUTTON"/>
-                    <JFXButton buttonType="RAISED" prefHeight="40" prefWidth="100"
-                               style="-fx-text-fill:WHITE;-fx-background-color:#5264AE;-fx-font-size:14px;"
-                               text="COLORED"/>
-                    <JFXButton buttonType="RAISED" disable="true" prefHeight="40" prefWidth="100"
-                               style="-fx-background-color:WHITE;-fx-font-size:14px;" text="DISABLED"/>
-                </HBox>
-
-                <Label styleClass="title-label">Styling Options</Label>
-                <HBox spacing="20" style="-fx-padding: 0 0 0 50;">
-                    <JFXButton buttonType="RAISED" prefHeight="40" prefWidth="100" styleClass="custom-jfx-button-raised"
-                               text="CUSTOM RIPPLER"/>
-                </HBox>
-            </VBox>
+            <StackPane fx:id="spinePane" maxHeight="-Infinity" prefHeight="697.0" prefWidth="488.96">
+            </StackPane>
         </left>
 
         <center>
-            <fx:include fx:id="Viewer" source="/UI/Viewer.fxml"/>
+            <StackPane fx:id="Viewer">
+                <ImageView fx:id="SpineRender" fitHeight="360.0" fitWidth="360.0" pickOnBounds="true" preserveRatio="true" />
+
+                <StackPane fx:id="loadPane">
+                    <JFXSpinner fx:id="purpleSpinner" startingAngle="-40" styleClass="materialDesign-purple, first-spinner" />
+                    <JFXSpinner fx:id="blueSpinner" startingAngle="-90" styleClass="materialDesign-blue, second-spinner" />
+                    <JFXSpinner fx:id="cyanSpinner" startingAngle="-120" styleClass="materialDesign-cyan, third-spinner" />
+                    <JFXSpinner fx:id="greenSpinner" startingAngle="-150" styleClass="materialDesign-green, fourth-spinner" />
+                    <JFXSpinner fx:id="yellowSpinner" startingAngle="-180" styleClass="materialDesign-yellow, fifth-spinner" />
+                    <JFXSpinner fx:id="orangeSpinner" startingAngle="-210" styleClass="materialDesign-orange, sixth-spinner" />
+                    <JFXSpinner fx:id="redSpinner" startingAngle="-240" styleClass="materialDesign-red, seventh-spinner" />
+                </StackPane>
+
+            </StackPane>
         </center>
 
     </BorderPane>
