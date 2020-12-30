@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root"
-           xmlns="http://javafx.com/javafx/2.2">
-    <VBox maxWidth="400" maxHeight="400" spacing="10">
-        <Label styleClass="title-label">Flat Buttons</Label>
-        <HBox spacing="20" style="-fx-padding: 0 0 0 50;">
-            <JFXButton prefWidth="100" prefHeight="40" buttonType="FLAT" text="BUTTON"
-                       style="-fx-font-size:14px;"/>
-            <JFXButton prefWidth="100" prefHeight="40" buttonType="FLAT" text="COLORED"
-                       style="-fx-text-fill:#5264AE;-fx-font-size:14px;"/>
-            <JFXButton prefWidth="100" prefHeight="40" buttonType="FLAT" text="DISABLED"
-                       style="-fx-font-size:14px;" disable="true"/>
-        </HBox>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-        <Label styleClass="title-label">Raised Buttons</Label>
-        <HBox spacing="40" style="-fx-padding: 0 0 0 50;">
-            <JFXButton prefWidth="100" prefHeight="40" buttonType="RAISED" text="BUTTON"
-                       style="-fx-font-size:14px;-fx-background-color:WHITE;"/>
-            <JFXButton prefWidth="100" prefHeight="40" buttonType="RAISED" text="COLORED"
-                       style="-fx-text-fill:WHITE;-fx-background-color:#5264AE;-fx-font-size:14px;"/>
-            <JFXButton prefWidth="100" prefHeight="40" buttonType="RAISED" text="DISABLED"
-                       style="-fx-background-color:WHITE;-fx-font-size:14px;" disable="true"/>
-        </HBox>
+<StackPane fx:id="Spine" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <BorderPane fx:id="spineBorder">
+        <center>
+            <VBox maxHeight="400" maxWidth="400" spacing="10" BorderPane.alignment="CENTER">
+                <Label styleClass="title-label">Flat Buttons</Label>
+                <HBox spacing="20" style="-fx-padding: 0 0 0 50;">
+                    <JFXButton buttonType="FLAT" prefHeight="40" prefWidth="100" style="-fx-font-size:14px;" text="BUTTON" />
+                    <JFXButton buttonType="FLAT" prefHeight="40" prefWidth="100" style="-fx-text-fill:#5264AE;-fx-font-size:14px;" text="COLORED" />
+                    <JFXButton buttonType="FLAT" disable="true" prefHeight="40" prefWidth="100" style="-fx-font-size:14px;" text="DISABLED" />
+                </HBox>
 
-        <Label styleClass="title-label">Styling Options</Label>
-        <HBox spacing="20" style="-fx-padding: 0 0 0 50;">
-            <JFXButton prefWidth="100" prefHeight="40" buttonType="RAISED" text="CUSTOM RIPPLER"
-                       styleClass="custom-jfx-button-raised"/>
-        </HBox>
-    </VBox>
+                <Label styleClass="title-label">Raised Buttons</Label>
+                <HBox spacing="40" style="-fx-padding: 0 0 0 50;">
+                    <JFXButton buttonType="RAISED" prefHeight="40" prefWidth="100" style="-fx-font-size:14px;-fx-background-color:WHITE;" text="BUTTON" />
+                    <JFXButton buttonType="RAISED" prefHeight="40" prefWidth="100" style="-fx-text-fill:WHITE;-fx-background-color:#5264AE;-fx-font-size:14px;" text="COLORED" />
+                    <JFXButton buttonType="RAISED" disable="true" prefHeight="40" prefWidth="100" style="-fx-background-color:WHITE;-fx-font-size:14px;" text="DISABLED" />
+                </HBox>
+
+                <Label styleClass="title-label">Styling Options</Label>
+                <HBox spacing="20" style="-fx-padding: 0 0 0 50;">
+                    <JFXButton buttonType="RAISED" prefHeight="40" prefWidth="100" styleClass="custom-jfx-button-raised" text="CUSTOM RIPPLER" />
+                </HBox>
+            </VBox>
+        </center>
+      <right>
+          <fx:include fx:id="Viewer" source="/UI/Viewer.fxml"/>
+      </right>
+
+    </BorderPane>
 </StackPane>
-

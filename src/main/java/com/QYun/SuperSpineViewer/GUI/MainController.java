@@ -78,7 +78,7 @@ public final class MainController {
                         15));
 
         context = new ViewFlowContext();
-        Flow innerFlow = new Flow(ViewerController.class);
+        Flow innerFlow = new Flow(SpineController.class);
 
         final FlowHandler flowHandler = innerFlow.createHandler(context);
         context.register("ContentFlowHandler", flowHandler);

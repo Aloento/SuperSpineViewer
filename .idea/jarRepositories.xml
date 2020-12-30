@@ -26,15 +26,5 @@
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
-    <remote-repository>
-      <option name="id" value="com.gluonhq" />
-      <option name="name" value="Gluonhq" />
-      <option name="url" value="https://nexus.gluonhq.com/nexus/content/repositories/releases/com/gluonhq/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="gluon" />
-      <option name="name" value="Gluon" />
-      <option name="url" value="http://nexus.gluonhq.com/nexus/content/repositories/releases/" />
-    </remote-repository>
   </component>
 </project>

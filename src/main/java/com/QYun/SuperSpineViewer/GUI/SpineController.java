@@ -2,25 +2,20 @@ package com.QYun.SuperSpineViewer.GUI;
 
 import io.datafx.controller.FXMLController;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 @FXMLController(value = "/UI/Spine.fxml", title = "SpineController")
-public class SpineController implements Initializable {
+public class SpineController {
 
     @FXML
-    private ResourceBundle resources;
+    private StackPane Spine;
 
     @FXML
-    private URL location;
+    private BorderPane spineBorder;
 
     @FXML
-    private StackPane root;
+    void initialize() {
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
     }
 }

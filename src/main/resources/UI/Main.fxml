@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
-<StackPane fx:id="root" xmlns:fx="http://javafx.com/fxml/1"
+<StackPane fx:id="Main" xmlns:fx="http://javafx.com/fxml/1"
            xmlns="http://javafx.com/javafx/2.2">
     <BorderPane>
         <top>
@@ -41,5 +41,6 @@
                 </styleClass>
             </JFXDrawer>
         </center>
+        
     </BorderPane>
 </StackPane>

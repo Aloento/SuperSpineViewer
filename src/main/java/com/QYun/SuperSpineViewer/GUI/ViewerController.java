@@ -6,12 +6,16 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import javax.annotation.PostConstruct;
 
 @FXMLController(value = "/UI/Viewer.fxml", title = "SpineViewer")
 public class ViewerController {
+
+    @FXML
+    private StackPane Viewer;
 
     @FXML
     private JFXSpinner blueSpinner;
