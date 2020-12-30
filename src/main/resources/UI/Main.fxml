@@ -5,8 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
-<StackPane fx:id="Main" xmlns:fx="http://javafx.com/fxml/1"
-           xmlns="http://javafx.com/javafx/2.2">
+<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="Main" xmlns="http://javafx.com/javafx/15.0.1">
     <BorderPane>
         <top>
             <VBox spacing="20">
@@ -35,12 +34,12 @@
         </top>
 
         <center>
-            <JFXDrawer fx:id="drawer" defaultDrawerSize="250" direction="LEFT">
+            <JFXDrawer fx:id="mainDrawer" defaultDrawerSize="250" direction="LEFT">
                 <styleClass>
                     <String fx:value="body"/>
                 </styleClass>
             </JFXDrawer>
         </center>
-        
+
     </BorderPane>
 </StackPane>

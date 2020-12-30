@@ -33,17 +33,18 @@ public class Main extends Application {
         try {
             flow.createHandler(flowContext).start(flowContainer);
         } catch (FlowException e) {
+            System.out.println("加载Main_Flow_createHandler失败");
             e.printStackTrace();
         }
 
         JFXDecorator decorator = new JFXDecorator(primaryStage, flowContainer.getView());
         decorator.setCustomMaximize(true);
         Label icon = new Label();
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconLiteral("fas-draw-polygon");
-        fontIcon.setIconSize(18);
-        fontIcon.setIconColor(Paint.valueOf("WHITE"));
-        icon.setGraphic(fontIcon);
+        FontIcon titleIcon = new FontIcon();
+        titleIcon.setIconLiteral("fas-draw-polygon");
+        titleIcon.setIconSize(18);
+        titleIcon.setIconColor(Paint.valueOf("WHITE"));
+        icon.setGraphic(titleIcon);
         decorator.setGraphic(icon);
 
         double width;

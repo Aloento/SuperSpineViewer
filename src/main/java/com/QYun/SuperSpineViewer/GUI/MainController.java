@@ -10,7 +10,6 @@ import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -41,28 +40,28 @@ public final class MainController {
     private StackPane optionsBurger;
 
     @FXML
-    private JFXDrawer drawer;
+    private JFXDrawer mainDrawer;
 
     private JFXPopup toolbarPopup;
 
     @PostConstruct
     public void init() throws Exception {
 
-        drawer.setOnDrawerOpening(e -> {
+        mainDrawer.setOnDrawerOpening(e -> {
             final Transition animation = titleBurger.getAnimation();
             animation.setRate(1);
             animation.play();
         });
-        drawer.setOnDrawerClosing(e -> {
+        mainDrawer.setOnDrawerClosing(e -> {
             final Transition animation = titleBurger.getAnimation();
             animation.setRate(-1);
             animation.play();
         });
         titleBurgerContainer.setOnMouseClicked(e -> {
-            if (drawer.isClosed() || drawer.isClosing()) {
-                drawer.open();
+            if (mainDrawer.isClosed() || mainDrawer.isClosing()) {
+                mainDrawer.open();
             } else {
-                drawer.close();
+                mainDrawer.close();
             }
         });
 
@@ -79,14 +78,20 @@ public final class MainController {
 
         context = new ViewFlowContext();
         Flow innerFlow = new Flow(SpineController.class);
-
         final FlowHandler flowHandler = innerFlow.createHandler(context);
+
         context.register("ContentFlowHandler", flowHandler);
         context.register("ContentFlow", innerFlow);
+
         final Duration containerAnimationDuration = Duration.millis(320);
-        drawer.setContent(flowHandler.start(new ExtendedAnimatedFlowContainer(containerAnimationDuration, SWIPE_LEFT)));
-        context.register("ContentPane", drawer.getContent().get(0));
-        drawer.setSidePane(new Button("Exporter"));
+        ExtendedAnimatedFlowContainer animatedFlowContainer = new ExtendedAnimatedFlowContainer(containerAnimationDuration, SWIPE_LEFT);
+
+        mainDrawer.setContent(flowHandler.start(animatedFlowContainer));
+        context.register("ContentPane", mainDrawer.getContent().get(0));
+
+        Flow exporterFlow = new Flow(ExporterController.class);
+        FlowHandler sideMenuFlowHandler = exporterFlow.createHandler(context);
+        mainDrawer.setSidePane(sideMenuFlowHandler.start(animatedFlowContainer));
 
     }
 
