@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -105,7 +106,7 @@ public class SpineController {
         hBox.getChildren().addAll(spineLogo, controlText);
         Label project = new Label("Waiting Loading...");
         project.setStyle("-fx-text-fill: #f1f1f2;");
-        project.getStyleClass().add("title-label");
+        project.getStyleClass().add("normal-label");
         header.setAlignment(Pos.BOTTOM_LEFT);
         header.getChildren().addAll(hBox, project);
 
@@ -113,55 +114,61 @@ public class SpineController {
         StackPane body = new StackPane();
         body.setStyle("-fx-background-radius: 0 0 5 5; -fx-background-color: rgb(255,255,255,0.87);");
 
-        VBox controller = new VBox(40);
+        Label L_Scale = new Label("Load Scale");
+        L_Scale.getStyleClass().add("normal-label");
+        Label L_Width = new Label("Camera Width");
+        L_Width.getStyleClass().add("normal-label");
+        Label L_Height = new Label("Camera Height");
+        L_Height.getStyleClass().add("normal-label");
+        Label L_X = new Label("Position X");
+        L_X.getStyleClass().add("normal-label");
+        Label L_Y = new Label("Position Y");
+        L_Y.getStyleClass().add("normal-label");
+        Label L_Speed = new Label("Play Speed");
+        L_Speed.getStyleClass().add("normal-label");
+        Label L_Set = new Label("Set");
+        L_Set.getStyleClass().add("normal-label");
+        Label L_Skins = new Label("Skins");
+        L_Skins.getStyleClass().add("normal-label");
+        Label L_Animate = new Label("Animations");
+        L_Animate.getStyleClass().add("normal-label");
 
-        {
-            Label L_Scale = new Label("Load Scale");
-            L_Scale.getStyleClass().add("title-label");
-            Label L_Width = new Label("Camera Width");
-            L_Width.getStyleClass().add("title-label");
-            Label L_Height = new Label("Camera Height");
-            L_Height.getStyleClass().add("title-label");
-            Label L_X = new Label("Position X");
-            L_X.getStyleClass().add("title-label");
-            Label L_Y = new Label("Position Y");
-            L_Y.getStyleClass().add("title-label");
-            Label L_Speed = new Label("Play Speed");
-            L_Speed.getStyleClass().add("title-label");
-            Label L_Set = new Label("Set");
-            L_Set.getStyleClass().add("title-label");
-            Label L_Skins = new Label("Skins");
-            L_Skins.getStyleClass().add("title-label");
-            Label L_Animate = new Label("Animations");
-            L_Animate.getStyleClass().add("title-label");
-        }
-        {
-            JFXTextField T_Scale = new JFXTextField("骨骼缩放");
-            JFXTextField T_Width = new JFXTextField("渲染时的宽");
-            JFXTextField T_Height = new JFXTextField("渲染时的高");
-            JFXTextField T_X = new JFXTextField("骨骼X轴位置");
-            JFXTextField T_Y = new JFXTextField("骨骼Y轴位置");
-        }
-        {
-            JFXSlider S_Speed = new JFXSlider();
-            S_Speed.getStyleClass().add("jfx-slider-style");
-            JFXToggleButton T_Loop = new JFXToggleButton();
-            JFXButton B_Reload = new JFXButton("Reload");
-            B_Reload.setButtonType(ButtonType.FLAT);
-            B_Reload.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
-            JFXButton B_Reset = new JFXButton("Reset");
-            B_Reset.setButtonType(ButtonType.FLAT);
-            B_Reset.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
-            HBox set = new HBox(20);
-            set.setStyle("-fx-padding: 0 0 0 50;");
-            set.getChildren().addAll(T_Loop, B_Reload, B_Reset);
-            JFXComboBox<String> C_Skins = new JFXComboBox<>();
-            JFXComboBox<String> C_Animate = new JFXComboBox<>();
-        }
-        {
+        JFXTextField T_Scale = new JFXTextField("骨骼缩放");
+        JFXTextField T_Width = new JFXTextField("渲染时的宽");
+        JFXTextField T_Height = new JFXTextField("渲染时的高");
+        JFXTextField T_X = new JFXTextField("骨骼X轴位置");
+        JFXTextField T_Y = new JFXTextField("骨骼Y轴位置");
 
-        }
+        JFXSlider S_Speed = new JFXSlider();
+        S_Speed.getStyleClass().add("jfx-slider-style");
+        JFXToggleButton T_Loop = new JFXToggleButton();
+        JFXButton B_Reload = new JFXButton("Reload");
+        B_Reload.setButtonType(ButtonType.FLAT);
+        B_Reload.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+        JFXButton B_Reset = new JFXButton("Reset");
+        B_Reset.setButtonType(ButtonType.FLAT);
+        B_Reset.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+        HBox set = new HBox(20);
+        set.setStyle("-fx-padding: 0 0 0 50;");
+        set.getChildren().addAll(T_Loop, B_Reload, B_Reset);
+        JFXComboBox<String> C_Skins = new JFXComboBox<>();
+        JFXComboBox<String> C_Animate = new JFXComboBox<>();
 
+        VBox controller = new VBox(20);
+        controller.getChildren().addAll(L_Scale, T_Scale,
+                L_Width, T_Width,
+                L_Height, T_Height,
+                L_X, T_X,
+                L_Y, T_Y,
+                L_Speed, S_Speed,
+                L_Set, set,
+                L_Skins, C_Skins,
+                L_Animate, C_Animate);
+
+        ScrollPane scrollPane = new ScrollPane(controller);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setFitToWidth(true);
+        body.getChildren().add(scrollPane);
         VBox content = new VBox();
         content.getChildren().addAll(header, body);
 
