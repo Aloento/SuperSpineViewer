@@ -16,7 +16,6 @@
     <orderEntry type="library" name="Maven: io.datafx:flow:8.0.1" level="project" />
     <orderEntry type="library" name="Maven: io.datafx:core:8.0.1" level="project" />
     <orderEntry type="library" name="LibGDFX" level="project" />
-    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-fontawesome5-pack:12.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx:1.9.11" level="project" />

@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -59,6 +60,7 @@ public class Main extends Application {
                 JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
                 Main.class.getResource("/UI/Main.css").toExternalForm());
 
+        primaryStage.getIcons().add(new Image("SuperSpineViewer.png"));
         primaryStage.setWidth(1280);
         primaryStage.setTitle("QYun SoarTeam");
         primaryStage.setScene(scene);
