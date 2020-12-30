@@ -9,7 +9,7 @@
     <BorderPane>
 
         <left>
-            <StackPane fx:id="spinePane" maxHeight="-Infinity" prefHeight="697.0" prefWidth="488.96">
+            <StackPane fx:id="spinePane" maxHeight="-Infinity" prefHeight="697.0" prefWidth="360">
             </StackPane>
         </left>
 

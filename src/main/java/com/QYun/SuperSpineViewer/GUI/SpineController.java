@@ -97,13 +97,10 @@ public class SpineController {
         StackPane header = new StackPane();
         String headerColor = getDefaultColor((int) ((Math.random() * 12) % 22));
         header.setStyle("-fx-background-radius: 0 5 0 0; -fx-background-color: " + headerColor);
-        Label controlText = new Label("Controller");
-        controlText.getStyleClass().add("title-label");
-        controlText.setStyle("-fx-pref-height: 135; -fx-text-fill: #f1f1f2; -fx-font-size: 28;");
 
         HBox hBox = new HBox(8);
-        hBox.setPadding(new Insets(0, 0, 0, 70));
-        hBox.getChildren().addAll(spineLogo, controlText);
+        hBox.setPadding(new Insets(0, 0, 0, 105));
+        hBox.getChildren().addAll(spineLogo);
         Label project = new Label("Waiting Loading...");
         project.setStyle("-fx-text-fill: #f1f1f2;");
         project.getStyleClass().add("normal-label");
@@ -133,11 +130,16 @@ public class SpineController {
         Label L_Animate = new Label("Animations");
         L_Animate.getStyleClass().add("normal-label");
 
-        JFXTextField T_Scale = new JFXTextField("骨骼缩放");
-        JFXTextField T_Width = new JFXTextField("渲染时的宽");
-        JFXTextField T_Height = new JFXTextField("渲染时的高");
-        JFXTextField T_X = new JFXTextField("骨骼X轴位置");
-        JFXTextField T_Y = new JFXTextField("骨骼Y轴位置");
+        JFXTextField T_Scale = new JFXTextField();
+        T_Scale.setPromptText("骨骼缩放");
+        JFXTextField T_Width = new JFXTextField();
+        T_Width.setPromptText("渲染时的宽");
+        JFXTextField T_Height = new JFXTextField();
+        T_Height.setPromptText("渲染时的高");
+        JFXTextField T_X = new JFXTextField();
+        T_X.setPromptText("骨骼X轴位置");
+        JFXTextField T_Y = new JFXTextField();
+        T_Y.setPromptText("骨骼Y轴位置");
 
         JFXSlider S_Speed = new JFXSlider();
         S_Speed.getStyleClass().add("jfx-slider-style");
