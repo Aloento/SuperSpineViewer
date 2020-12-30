@@ -3,7 +3,6 @@ package com.QYun.SuperSpineViewer;
 import com.QYun.SuperSpineViewer.GUI.MainController;
 import com.jfoenix.assets.JFoenixResources;
 import com.jfoenix.controls.JFXDecorator;
-import com.jfoenix.svg.SVGGlyphLoader;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.container.DefaultFlowContainer;
@@ -18,8 +17,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.io.IOException;
-
 public class Main extends Application {
 
     public static void main(String[] args) {
@@ -28,15 +25,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
-        new Thread(() -> {
-            try {
-                SVGGlyphLoader.loadGlyphsFont(Main.class.getResourceAsStream("/UI/icomoon.svg"),
-                        "icomoon.svg");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
 
         Flow flow = new Flow(MainController.class);
         DefaultFlowContainer flowContainer = new DefaultFlowContainer();
@@ -52,8 +40,8 @@ public class Main extends Application {
         decorator.setCustomMaximize(true);
         Label icon = new Label();
         FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconLiteral("fas-cube");
-        fontIcon.setIconSize(15);
+        fontIcon.setIconLiteral("fas-draw-polygon");
+        fontIcon.setIconSize(18);
         fontIcon.setIconColor(Paint.valueOf("WHITE"));
         icon.setGraphic(fontIcon);
         decorator.setGraphic(icon);

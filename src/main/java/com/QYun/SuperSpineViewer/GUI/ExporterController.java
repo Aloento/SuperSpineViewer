@@ -17,7 +17,7 @@ import javafx.scene.control.Label;
 import javax.annotation.PostConstruct;
 import java.util.Objects;
 
-@FXMLController(value = "/UI/Exporter.fxml", title = "SuperSpineViewer")
+@FXMLController(value = "/UI/Exporter.fxml", title = "SpineExporter")
 public class ExporterController {
 
     @FXMLViewFlowContext
@@ -110,7 +110,7 @@ public class ExporterController {
             }).start();
         });
         Flow contentFlow = (Flow) context.getRegisteredObject("ContentFlow");
-        bindNodeToController(button, ViewerController.class, contentFlow, contentFlowHandler);
+        bindNodeToController(button, SpineController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(checkbox, CheckboxController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(combobox, ComboBoxController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(dialogs, DialogController.class, contentFlow, contentFlowHandler);
@@ -120,7 +120,7 @@ public class ExporterController {
         // bindNodeToController(progressbar, ProgressBarController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(radiobutton, RadioButtonController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(slider, SliderController.class, contentFlow, contentFlowHandler);
-        // bindNodeToController(spinner, SpinnerController.class, contentFlow, contentFlowHandler);
+        // bindNodeToController(spinner, ViewerController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(textfield, TextFieldController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(highlighter, HighlighterController.class, contentFlow, contentFlowHandler);
         // bindNodeToController(chipview, ChipViewController.class, contentFlow, contentFlowHandler);

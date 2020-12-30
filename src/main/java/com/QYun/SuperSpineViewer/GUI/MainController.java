@@ -96,7 +96,11 @@ public final class MainController {
         private JFXListView<?> toolbarPopupList;
 
         @FXML
-        private void submit() {
+        private void mainSubmit() {
+            if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 0) {
+                System.out.println("About");
+            }
+
             if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 1)
                 Platform.exit();
         }

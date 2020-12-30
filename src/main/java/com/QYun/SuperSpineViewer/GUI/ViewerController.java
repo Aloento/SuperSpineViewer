@@ -1,26 +1,44 @@
 package com.QYun.SuperSpineViewer.GUI;
 
+import com.jfoenix.controls.JFXSpinner;
 import io.datafx.controller.FXMLController;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 
-@FXMLController(value = "/UI/Viewer.fxml", title = "SuperSpineViewer")
-public class ViewerController implements Initializable {
+@FXMLController(value = "/UI/Viewer.fxml", title = "SpineViewer")
+public class ViewerController {
 
     @FXML
-    private ResourceBundle resources;
-
+    private JFXSpinner blueSpinner;
     @FXML
-    private URL location;
+    private JFXSpinner greenSpinner;
 
-    @FXML
-    private StackPane root;
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @PostConstruct
+    public void init() {
+        Timeline timeline = new Timeline(
+            new KeyFrame(
+                Duration.ZERO,
+                new KeyValue(blueSpinner.progressProperty(), 0),
+                new KeyValue(greenSpinner.progressProperty(), 0)
+            ),
+            new KeyFrame(
+                Duration.seconds(0.5),
+                new KeyValue(greenSpinner.progressProperty(), 0.5)
+            ),
+            new KeyFrame(
+                Duration.seconds(2),
+                new KeyValue(blueSpinner.progressProperty(), 1),
+                new KeyValue(greenSpinner.progressProperty(), 1)
+            )
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
+
+
 }
