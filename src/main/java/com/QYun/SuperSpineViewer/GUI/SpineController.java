@@ -1,8 +1,7 @@
 package com.QYun.SuperSpineViewer.GUI;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.*;
 import com.jfoenix.controls.JFXButton.ButtonType;
-import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.effects.JFXDepthManager;
 import io.datafx.controller.FXMLController;
 import javafx.animation.KeyFrame;
@@ -96,19 +95,75 @@ public class SpineController {
 
         StackPane header = new StackPane();
         String headerColor = getDefaultColor((int) ((Math.random() * 12) % 22));
-        header.setStyle("-fx-background-radius: 0 5 0 0; -fx-max-height: 138; -fx-background-color: " + headerColor);
+        header.setStyle("-fx-background-radius: 0 5 0 0; -fx-background-color: " + headerColor);
         Label controlText = new Label("Controller");
+        controlText.getStyleClass().add("title-label");
         controlText.setStyle("-fx-pref-height: 135; -fx-text-fill: #f1f1f2; -fx-font-size: 28;");
-        HBox hBox = new HBox(18);
+
+        HBox hBox = new HBox(8);
         hBox.setPadding(new Insets(0, 0, 0, 70));
         hBox.getChildren().addAll(spineLogo, controlText);
-        header.getChildren().add(hBox);
+        Label project = new Label("Waiting Loading...");
+        project.setStyle("-fx-text-fill: #f1f1f2;");
+        project.getStyleClass().add("title-label");
+        header.setAlignment(Pos.BOTTOM_LEFT);
+        header.getChildren().addAll(hBox, project);
 
-        VBox.setVgrow(header, Priority.ALWAYS);
+        VBox.setVgrow(header, Priority.NEVER);
         StackPane body = new StackPane();
+        body.setStyle("-fx-background-radius: 0 0 5 5; -fx-background-color: rgb(255,255,255,0.87);");
+
+        VBox controller = new VBox(40);
+
+        {
+            Label L_Scale = new Label("Load Scale");
+            L_Scale.getStyleClass().add("title-label");
+            Label L_Width = new Label("Camera Width");
+            L_Width.getStyleClass().add("title-label");
+            Label L_Height = new Label("Camera Height");
+            L_Height.getStyleClass().add("title-label");
+            Label L_X = new Label("Position X");
+            L_X.getStyleClass().add("title-label");
+            Label L_Y = new Label("Position Y");
+            L_Y.getStyleClass().add("title-label");
+            Label L_Speed = new Label("Play Speed");
+            L_Speed.getStyleClass().add("title-label");
+            Label L_Set = new Label("Set");
+            L_Set.getStyleClass().add("title-label");
+            Label L_Skins = new Label("Skins");
+            L_Skins.getStyleClass().add("title-label");
+            Label L_Animate = new Label("Animations");
+            L_Animate.getStyleClass().add("title-label");
+        }
+        {
+            JFXTextField T_Scale = new JFXTextField("骨骼缩放");
+            JFXTextField T_Width = new JFXTextField("渲染时的宽");
+            JFXTextField T_Height = new JFXTextField("渲染时的高");
+            JFXTextField T_X = new JFXTextField("骨骼X轴位置");
+            JFXTextField T_Y = new JFXTextField("骨骼Y轴位置");
+        }
+        {
+            JFXSlider S_Speed = new JFXSlider();
+            S_Speed.getStyleClass().add("jfx-slider-style");
+            JFXToggleButton T_Loop = new JFXToggleButton();
+            JFXButton B_Reload = new JFXButton("Reload");
+            B_Reload.setButtonType(ButtonType.FLAT);
+            B_Reload.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+            JFXButton B_Reset = new JFXButton("Reset");
+            B_Reset.setButtonType(ButtonType.FLAT);
+            B_Reset.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+            HBox set = new HBox(20);
+            set.setStyle("-fx-padding: 0 0 0 50;");
+            set.getChildren().addAll(T_Loop, B_Reload, B_Reset);
+            JFXComboBox<String> C_Skins = new JFXComboBox<>();
+            JFXComboBox<String> C_Animate = new JFXComboBox<>();
+        }
+        {
+
+        }
+
         VBox content = new VBox();
         content.getChildren().addAll(header, body);
-        body.setStyle("-fx-background-radius: 0 0 5 5; -fx-background-color: rgb(255,255,255,0.87);");
 
         JFXButton playButton = new JFXButton("");
         playButton.setButtonType(ButtonType.RAISED);
@@ -117,11 +172,13 @@ public class SpineController {
         playButton.setRipplerFill(Color.valueOf(headerColor));
         playButton.setScaleX(0);
         playButton.setScaleY(0);
+
         FontIcon playIcon = new FontIcon();
         playIcon.setIconLiteral("fas-play");
         playIcon.setIconSize(20);
         playIcon.setIconColor(Paint.valueOf("WHITE"));
         playButton.setGraphic(playIcon);
+
         playButton.translateYProperty().bind(Bindings.createDoubleBinding(() ->
                 header.getBoundsInParent().getHeight() - playButton.getHeight() / 2, header.boundsInParentProperty(), playButton.heightProperty()));
         StackPane.setMargin(playButton, new Insets(0, 26, 0, 0));
@@ -134,7 +191,7 @@ public class SpineController {
                 new KeyValue(playButton.scaleYProperty(),
                         1,
                         EASE_BOTH)));
-        animation.setDelay(Duration.millis((1000 * Math.random()) + 1000));
+        animation.setDelay(Duration.millis((2000 * Math.random()) + 1000));
         animation.play();
 
         JFXDepthManager.setDepth(spinePane, 1);
