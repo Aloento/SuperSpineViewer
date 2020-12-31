@@ -1011,11 +1011,11 @@
 }
 
 .jfx-scroll-pane .main-header {
-    -fx-background-image: url("");
+    /*-fx-background-image: url(" ");*/
 }
 
 .jfx-scroll-pane .condensed-header {
-    -fx-background-image: url("");
+    /*-fx-background-image: url(" ");*/
 }
 
 /*******************************************************************************

@@ -10,6 +10,7 @@ import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -102,7 +103,38 @@ public final class MainController {
         @FXML
         private void mainSubmit() {
             if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 0) {
-                System.out.println("About");
+
+                StackPane aboutPane = new StackPane();
+                aboutPane.setStyle("-fx-pref-height: 240; -fx-pref-width: 420; -fx-background-color: transparent; -fx-padding: 10px");
+
+                Scene aboutScene = new Scene(aboutPane);
+
+
+                System.out.println(
+                        "                                  ...                                     `\n" +
+                        "                        .;$#################@|`                           `\n" +
+                        "                    .%###########################&:                       `\n" +
+                        "                 .%#################################@:                    `\n" +
+                        "               '&######################################!                  `\n" +
+                        "             `$#############@|'         .;&##############;                `\n" +
+                        "            ;############%.                  ;@###########%.              `\n" +
+                        "           !###########;                       `$##########$`             `\n" +
+                        "          ;##########%. `%%`               `|:   ;##########%.            `\n" +
+                        "         `$#########%. '&##&'            .|###!   ;##########;            `\n" +
+                        "         :@########@:                   |######!  .%#########|            `\n" +
+                        "         ;#########&`                  ;########%. |#########%.           `\n" +
+                        "         :#########@:            '`   `$##########%$#########%.           `\n" +
+                        "         `$#########%           :$|`  !######################%.           `\n" +
+                        "          ;##########|       `::;`'%%&#######################%.           `\n" +
+                        "           |##########@:   |#################################%.           `\n" +
+                        "            !############|$##################################%.           `\n" +
+                        "             '&##############################################%.           `\n" +
+                        "               ;#######################&''&##@!%########@!%##%.           `\n" +
+                        "                 '&###################|:&&:|#@!|@@@@@###@!%##%.           `\n" +
+                        "                    '&##############@;;####;;@######&!$#@!%##%.           `\n" +
+                        "                        '%#########$:%######%:$#####&!$#@!%##%.           `\n" +
+                        "                                `'::::::::::::::::::::::'.`::`            `");
+
             }
 
             if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 1)
