@@ -6,7 +6,8 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="aboutPane" prefHeight="460" prefWidth="620" styleClass="shadow-pane"
+<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="aboutPane" prefHeight="460" prefWidth="620"
+           styleClass="shadow-pane"
            stylesheets="/UI/About.css" xmlns="http://javafx.com/javafx/15.0.1"
            fx:controller="com.QYun.SuperSpineViewer.GUI.AboutController">
     <VBox spacing="10" styleClass="background-pane">

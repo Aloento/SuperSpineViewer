@@ -4,7 +4,6 @@ import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
-
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.Iterator;
@@ -51,7 +50,7 @@ public class GiFXWriter {
 
         int loop = loopContinuously ? 0 : 1;
 
-        child.setUserObject(new byte[]{ 0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF)});
+        child.setUserObject(new byte[]{0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF)});
         appExtensionsNode.appendChild(child);
 
         imageMetaData.setFromTree(metaFormatName, root);
@@ -63,17 +62,9 @@ public class GiFXWriter {
         System.out.println("GiFXWriter运行在线程：" + Thread.currentThread().getName());
     }
 
-    public void writeToSequence(RenderedImage img) throws IOException {
-        gifWriter.writeToSequence(new IIOImage(img, null, imageMetaData), imageWriteParam);
-    }
-
-    public void close() throws IOException {
-        gifWriter.endWriteSequence();
-    }
-
     private static ImageWriter getWriter() throws IIOException {
         Iterator<ImageWriter> iter = ImageIO.getImageWritersBySuffix("gif");
-        if(!iter.hasNext()) {
+        if (!iter.hasNext()) {
             throw new IIOException("No GIF Image Writers Exist");
         } else {
             return iter.next();
@@ -87,13 +78,21 @@ public class GiFXWriter {
         int nNodes = rootNode.getLength();
         for (int i = 0; i < nNodes; i++) {
             if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName) == 0) {
-                return((IIOMetadataNode) rootNode.item(i));
+                return ((IIOMetadataNode) rootNode.item(i));
             }
         }
 
         IIOMetadataNode node = new IIOMetadataNode(nodeName);
         rootNode.appendChild(node);
-        return(node);
+        return (node);
+    }
+
+    public void writeToSequence(RenderedImage img) throws IOException {
+        gifWriter.writeToSequence(new IIOImage(img, null, imageMetaData), imageWriteParam);
+    }
+
+    public void close() throws IOException {
+        gifWriter.endWriteSequence();
     }
 
 }

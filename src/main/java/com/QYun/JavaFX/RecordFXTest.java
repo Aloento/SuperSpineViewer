@@ -23,6 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RecordFXTest extends Application {
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage primaryStage) {
         Label test = new Label("Aloento");
@@ -58,16 +62,15 @@ public class RecordFXTest extends Application {
                 return;
             }
 
-            if(export.isSelected()) {
-                recordFX.startRecording("C:/CaChe/CaChe/", "Record",3, 30f, true, false);
+            if (export.isSelected()) {
+                recordFX.startRecording("C:/CaChe/CaChe/", "Record", 3, 30f, true, false);
                 anime.playFromStart();
-            }
-            else anime.playFromStart();
+            } else anime.playFromStart();
         });
 
         stop.setOnAction(actionEvent -> {
             anime.stop();
-            if(export.isSelected())
+            if (export.isSelected())
                 recordFX.stopRecording();
         });
 
@@ -81,9 +84,5 @@ public class RecordFXTest extends Application {
             }
         });
 
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

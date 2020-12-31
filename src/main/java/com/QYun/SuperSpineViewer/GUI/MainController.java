@@ -21,7 +21,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import javax.annotation.PostConstruct;
-
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,9 +29,6 @@ import static io.datafx.controller.flow.container.ContainerAnimations.SWIPE_LEFT
 
 @FXMLController(value = "/UI/Main.fxml", title = "SuperSpineViewer")
 public final class MainController {
-
-    @FXMLViewFlowContext
-    private ViewFlowContext context;
 
     @FXML
     private AnchorPane AnchorPane;
@@ -86,7 +82,7 @@ public final class MainController {
                         -12,
                         15));
 
-        context = new ViewFlowContext();
+        ViewFlowContext context = new ViewFlowContext();
         Flow innerFlow = new Flow(SpineController.class);
         final FlowHandler flowHandler = innerFlow.createHandler(context);
 

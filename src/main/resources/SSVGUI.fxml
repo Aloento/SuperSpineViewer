@@ -2,276 +2,269 @@
 
 <?import com.gluonhq.charm.glisten.control.ProgressBar?>
 <?import com.gluonhq.charm.glisten.control.ProgressIndicator?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
-<VBox id="VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.QYun.SuperSpineViewer.GUI.GUI">
-  <MenuBar id="MenuBar" VBox.vgrow="NEVER">
-    <Menu mnemonicParsing="false" text="File">
-      <MenuItem mnemonicParsing="false" text="Open" />
-      <SeparatorMenuItem mnemonicParsing="false" />
-      <MenuItem mnemonicParsing="false" text="Export" />
-      <SeparatorMenuItem mnemonicParsing="false" />
-      <MenuItem mnemonicParsing="false" text="Preferences" />
-      <SeparatorMenuItem mnemonicParsing="false" />
-      <MenuItem mnemonicParsing="false" text="ForceQuit" />
-    </Menu>
-    <Menu mnemonicParsing="false" text="Help">
-      <MenuItem mnemonicParsing="false" text="About" />
-    </Menu>
-  </MenuBar>
-  <SplitPane id="SplitPane" dividerPositions="0.19327073552425664, 0.47183098591549294" focusTraversable="true" VBox.vgrow="ALWAYS">
-    <AnchorPane id="AnchorPane_L" SplitPane.resizableWithParent="false">
-         <children>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" id="VBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/15.0.1"
+      fx:controller="com.QYun.SuperSpineViewer.GUI.GUI">
+    <MenuBar id="MenuBar" VBox.vgrow="NEVER">
+        <Menu mnemonicParsing="false" text="File">
+            <MenuItem mnemonicParsing="false" text="Open"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem mnemonicParsing="false" text="Export"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem mnemonicParsing="false" text="Preferences"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem mnemonicParsing="false" text="ForceQuit"/>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+            <MenuItem mnemonicParsing="false" text="About"/>
+        </Menu>
+    </MenuBar>
+    <SplitPane id="SplitPane" dividerPositions="0.19327073552425664, 0.47183098591549294" focusTraversable="true"
+               VBox.vgrow="ALWAYS">
+        <AnchorPane id="AnchorPane_L" SplitPane.resizableWithParent="false">
             <Pane minHeight="-Infinity" prefHeight="50.0" prefWidth="244.0">
-               <children>
-                  <Label alignment="CENTER" layoutY="13.0" prefHeight="24.0" prefWidth="244.0" text="Tools" textAlignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-               </children>
+                <Label alignment="CENTER" layoutY="13.0" prefHeight="24.0" prefWidth="244.0" text="Tools"
+                       textAlignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="18.0"/>
+                    </font>
+                </Label>
             </Pane>
-            <AnchorPane fx:id="SpinePane1" layoutY="50.0" minHeight="622.0" minWidth="244.0" />
-         </children>
-    </AnchorPane>
-      <AnchorPane SplitPane.resizableWithParent="false">
-          <Pane minHeight="-Infinity" prefHeight="50.0" prefWidth="350.0">
-              <Label alignment="CENTER" layoutY="13.0" prefHeight="25.0" prefWidth="350.0" text="Spine Skeleton Viewer" textAlignment="CENTER">
-                  <font>
-                      <Font name="System Bold" size="18.0" />
-                  </font>
-              </Label>
-          </Pane>
-         <HBox layoutY="50.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="622.0" minWidth="350.0">
-            <children>
-               <VBox fx:id="SpineVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="622.0" prefWidth="133.7" spacing="15.0">
-                  <children>
-                     <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="130.0" text="Project :" textAlignment="CENTER">
+            <AnchorPane fx:id="SpinePane1" layoutY="50.0" minHeight="622.0" minWidth="244.0"/>
+        </AnchorPane>
+        <AnchorPane SplitPane.resizableWithParent="false">
+            <Pane minHeight="-Infinity" prefHeight="50.0" prefWidth="350.0">
+                <Label alignment="CENTER" layoutY="13.0" prefHeight="25.0" prefWidth="350.0"
+                       text="Spine Skeleton Viewer" textAlignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="18.0"/>
+                    </font>
+                </Label>
+            </Pane>
+            <HBox layoutY="50.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="622.0" minWidth="350.0">
+                <VBox fx:id="SpineVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                      minWidth="-Infinity" prefHeight="622.0" prefWidth="133.7" spacing="15.0">
+                    <padding>
+                        <Insets bottom="5.0" top="15.0"/>
+                    </padding>
+                    <Label alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="130.0" text="Project :"
+                           textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="20.0" prefHeight="35.0" prefWidth="130.0" text="Load Scale :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="20.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Load Scale :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="60.0" prefHeight="35.0" prefWidth="130.0" text="Camera Width :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="60.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Camera Width :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="100.0" prefHeight="35.0" prefWidth="130.0" text="Camera Height :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="100.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Camera Height :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="140.0" prefHeight="35.0" prefWidth="130.0" text="Position X :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="140.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Position X :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="180.0" prefHeight="35.0" prefWidth="130.0" text="Position Y :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="180.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Position Y :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="20.0" prefHeight="35.0" prefWidth="130.0" text="Play Speed :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="20.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Play Speed :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="290.0" prefHeight="35.0" prefWidth="130.0" text="Set :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="290.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Set :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="425.0" prefHeight="35.0" prefWidth="130.0" text="Act :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="425.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Act :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="290.0" prefHeight="35.0" prefWidth="130.0" text="Skins :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="290.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Skins :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="335.0" prefHeight="35.0" prefWidth="130.0" text="Animations :" textAlignment="CENTER">
+                    </Label>
+                    <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="335.0" prefHeight="35.0"
+                           prefWidth="130.0" text="Animations :" textAlignment="CENTER">
                         <font>
-                           <Font name="System Bold" size="15.0" />
+                            <Font name="System Bold" size="15.0"/>
                         </font>
-                     </Label>
-                     <ProgressIndicator>
+                    </Label>
+                    <ProgressIndicator>
                         <VBox.margin>
-                           <Insets left="95.0" />
+                            <Insets left="95.0"/>
                         </VBox.margin>
-                     </ProgressIndicator>
-                  </children>
-                  <padding>
-                     <Insets bottom="5.0" top="15.0" />
-                  </padding>
-               </VBox>
-               <VBox fx:id="SpineVBox1" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="622.0" prefWidth="216.3" spacing="15.0">
-                  <padding>
-                     <Insets bottom="5.0" left="8.0" top="15.0" />
-                  </padding>
-                  <children>
-                     <HBox prefHeight="30.0" spacing="15.0">
-                        <children>
-                           <Label fx:id="T_Project" prefHeight="25.0" prefWidth="207.0" text="Loaded Project" textAlignment="CENTER">
-                              <font>
-                                 <Font size="15.0" />
-                              </font>
-                           </Label>
-                        </children>
+                    </ProgressIndicator>
+                </VBox>
+                <VBox fx:id="SpineVBox1" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="622.0" prefWidth="216.3"
+                      spacing="15.0">
+                    <padding>
+                        <Insets bottom="5.0" left="8.0" top="15.0"/>
+                    </padding>
+                    <HBox prefHeight="30.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="15.0" layoutY="20.0" prefHeight="35.0" spacing="15.0">
-                        <children>
-                           <TextField fx:id="T_Scale" prefHeight="25.0" prefWidth="90.0" promptText="FloatNum" />
-                           <Button fx:id="B_Scale" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0" text="Set Scale" />
-                        </children>
+                        <Label fx:id="T_Project" prefHeight="25.0" prefWidth="207.0" text="Loaded Project"
+                               textAlignment="CENTER">
+                            <font>
+                                <Font size="15.0"/>
+                            </font>
+                        </Label>
+                    </HBox>
+                    <HBox layoutX="15.0" layoutY="20.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="15.0" layoutY="60.0" prefHeight="35.0" spacing="15.0">
-                        <children>
-                           <TextField fx:id="T_Width" prefHeight="25.0" prefWidth="90.0" promptText="FloatNum" />
-                           <Button fx:id="B_Width" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0" text="Set Width" />
-                        </children>
+                        <TextField fx:id="T_Scale" prefHeight="25.0" prefWidth="90.0"
+                                   promptText="FloatNum"/>
+                        <Button fx:id="B_Scale" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0"
+                                text="Set Scale"/>
+                    </HBox>
+                    <HBox layoutX="15.0" layoutY="60.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="15.0" layoutY="100.0" prefHeight="35.0" spacing="15.0">
-                        <children>
-                           <TextField fx:id="T_Height" prefHeight="25.0" prefWidth="90.0" promptText="FloatNum" />
-                           <Button fx:id="B_Height" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0" text="Set Height" />
-                        </children>
+                        <TextField fx:id="T_Width" prefHeight="25.0" prefWidth="90.0"
+                                   promptText="FloatNum"/>
+                        <Button fx:id="B_Width" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0"
+                                text="Set Width"/>
+                    </HBox>
+                    <HBox layoutX="15.0" layoutY="100.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="15.0" layoutY="140.0" prefHeight="35.0" spacing="15.0">
-                        <children>
-                           <TextField fx:id="T_X" prefHeight="25.0" prefWidth="90.0" promptText="FloatNum" />
-                           <Button fx:id="B_X" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0" text="Set Pos X" />
-                        </children>
+                        <TextField fx:id="T_Height" prefHeight="25.0" prefWidth="90.0"
+                                   promptText="FloatNum"/>
+                        <Button fx:id="B_Height" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0"
+                                text="Set Height"/>
+                    </HBox>
+                    <HBox layoutX="15.0" layoutY="140.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="15.0" layoutY="180.0" prefHeight="35.0" spacing="15.0">
-                        <children>
-                           <TextField fx:id="T_Y" prefHeight="25.0" prefWidth="90.0" promptText="FloatNum" />
-                           <Button fx:id="B_Y" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0" text="Set Pos Y" />
-                        </children>
+                        <TextField fx:id="T_X" prefHeight="25.0" prefWidth="90.0" promptText="FloatNum"/>
+                        <Button fx:id="B_X" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0"
+                                text="Set Pos X"/>
+                    </HBox>
+                    <HBox layoutX="15.0" layoutY="180.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="15.0" layoutY="20.0" prefHeight="35.0" spacing="15.0">
-                        <children>
-                           <TextField fx:id="T_Speed" prefHeight="25.0" prefWidth="90.0" promptText="FloatNum" />
-                           <Button fx:id="B_Speed" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0" text="Set Speed" />
-                        </children>
+                        <TextField fx:id="T_Y" prefHeight="25.0" prefWidth="90.0" promptText="FloatNum"/>
+                        <Button fx:id="B_Y" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0"
+                                text="Set Pos Y"/>
+                    </HBox>
+                    <HBox layoutX="15.0" layoutY="20.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="18.0" layoutY="290.0" prefHeight="35.0" spacing="10.0">
-                        <children>
-                           <CheckBox fx:id="Check_Loop" mnemonicParsing="false" prefHeight="25.0" text="Loop">
-                              <padding>
-                                 <Insets top="5.0" />
-                              </padding></CheckBox>
-                           <Button fx:id="B_Reload" mnemonicParsing="false" prefHeight="30.0" prefWidth="60.0" text="Reload" />
-                           <Button fx:id="B_Reset" layoutX="120.0" layoutY="13.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="50.0" text="Reset" />
-                        </children>
+                        <TextField fx:id="T_Speed" prefHeight="25.0" prefWidth="90.0"
+                                   promptText="FloatNum"/>
+                        <Button fx:id="B_Speed" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0"
+                                text="Set Speed"/>
+                    </HBox>
+                    <HBox layoutX="18.0" layoutY="290.0" prefHeight="35.0" spacing="10.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="18.0" layoutY="335.0" prefHeight="35.0" spacing="15.0">
-                        <children>
-                           <Button fx:id="B_Start" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0" text="Start" />
-                           <Button fx:id="B_Stop" layoutX="120.0" layoutY="13.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0" text="Stop" />
-                        </children>
+                        <CheckBox fx:id="Check_Loop" mnemonicParsing="false" prefHeight="25.0" text="Loop">
+                            <padding>
+                                <Insets top="5.0"/>
+                            </padding>
+                        </CheckBox>
+                        <Button fx:id="B_Reload" mnemonicParsing="false" prefHeight="30.0" prefWidth="60.0"
+                                text="Reload"/>
+                        <Button fx:id="B_Reset" layoutX="120.0" layoutY="13.0" mnemonicParsing="false"
+                                prefHeight="30.0" prefWidth="50.0" text="Reset"/>
+                    </HBox>
+                    <HBox layoutX="18.0" layoutY="335.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="10.0" top="3.0" />
+                            <Insets left="10.0" top="3.0"/>
                         </padding>
-                     </HBox>
-                     <HBox layoutX="18.0" layoutY="290.0" prefHeight="35.0" spacing="15.0">
+                        <Button fx:id="B_Start" mnemonicParsing="false" prefHeight="30.0" prefWidth="77.0"
+                                text="Start"/>
+                        <Button fx:id="B_Stop" layoutX="120.0" layoutY="13.0" mnemonicParsing="false"
+                                prefHeight="30.0" prefWidth="77.0" text="Stop"/>
+                    </HBox>
+                    <HBox layoutX="18.0" layoutY="290.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                        <children>
-                           <ChoiceBox fx:id="C_Skins" prefWidth="182.0" />
-                        </children>
-                     </HBox>
-                     <HBox layoutX="18.0" layoutY="335.0" prefHeight="35.0" spacing="15.0">
+                        <ChoiceBox fx:id="C_Skins" prefWidth="182.0"/>
+                    </HBox>
+                    <HBox layoutX="18.0" layoutY="335.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="5.0" top="3.0" />
+                            <Insets left="5.0" top="3.0"/>
                         </padding>
-                        <children>
-                           <ChoiceBox fx:id="C_Animations" layoutX="15.0" layoutY="13.0" prefWidth="182.0" />
-                        </children>
-                     </HBox>
-                     <HBox layoutX="18.0" layoutY="520.0" prefHeight="35.0" spacing="15.0">
+                        <ChoiceBox fx:id="C_Animations" layoutX="15.0" layoutY="13.0" prefWidth="182.0"/>
+                    </HBox>
+                    <HBox layoutX="18.0" layoutY="520.0" prefHeight="35.0" spacing="15.0">
                         <padding>
-                           <Insets left="2.0" top="11.0" />
+                            <Insets left="2.0" top="11.0"/>
                         </padding>
-                        <children>
-                           <ProgressBar prefHeight="10.0" prefWidth="200.0" />
-                        </children>
-                     </HBox>
-                  </children>
-               </VBox>
-            </children>
-         </HBox>
-      </AnchorPane>
-    <AnchorPane id="AnchorPane_R" fx:id="BackImg" minHeight="-Infinity" minWidth="-Infinity" prefHeight="672.0" prefWidth="672.0" SplitPane.resizableWithParent="false">
-    <ImageView id="" fx:id="LibGDX" fitHeight="1344.0" fitWidth="1344.0" layoutX="-336.0" layoutY="-336.0" pickOnBounds="true" preserveRatio="true" scaleX="0.5" scaleY="-0.5" />
-    <Label id="" fx:id="JavaInf" layoutX="14.0" layoutY="14.0" text="Java Info" AnchorPane.bottomAnchor="639.0" AnchorPane.leftAnchor="14.0">
+                        <ProgressBar prefHeight="10.0" prefWidth="200.0"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+        </AnchorPane>
+        <AnchorPane id="AnchorPane_R" fx:id="BackImg" minHeight="-Infinity" minWidth="-Infinity" prefHeight="672.0"
+                    prefWidth="672.0" SplitPane.resizableWithParent="false">
+            <ImageView id="" fx:id="LibGDX" fitHeight="1344.0" fitWidth="1344.0" layoutX="-336.0" layoutY="-336.0"
+                       pickOnBounds="true" preserveRatio="true" scaleX="0.5" scaleY="-0.5"/>
+            <Label id="" fx:id="JavaInf" layoutX="14.0" layoutY="14.0" text="Java Info" AnchorPane.bottomAnchor="639.0"
+                   AnchorPane.leftAnchor="14.0">
+                <font>
+                    <Font name="System Bold" size="14.0"/>
+                </font>
+            </Label>
+            <Label id="" fx:id="SystemInf" layoutX="14.0" layoutY="30.0" text="System Info"
+                   AnchorPane.bottomAnchor="623.0" AnchorPane.leftAnchor="14.0">
+                <font>
+                    <Font name="System Bold" size="14.0" fx:id="x41"/>
+                </font>
+            </Label>
+        </AnchorPane>
+    </SplitPane>
+    <HBox id="HBox" alignment="CENTER_LEFT" minHeight="24.0" minWidth="1280.0" spacing="5.0" VBox.vgrow="NEVER">
+        <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+        </padding>
+        <Label fx:id="LeftInf" maxHeight="1.7976931348623157E308" text="Left status" HBox.hgrow="ALWAYS">
             <font>
-               <Font name="System Bold" size="14.0" />
+                <Font size="11.0" fx:id="x3"/>
             </font>
-         </Label>
-    <Label id="" fx:id="SystemInf" layoutX="14.0" layoutY="30.0" text="System Info" AnchorPane.bottomAnchor="623.0" AnchorPane.leftAnchor="14.0">
-            <font>
-        <Font name="System Bold" size="14.0" fx:id="x41" />
-            </font></Label>
-    </AnchorPane>
-  </SplitPane>
-  <HBox id="HBox" alignment="CENTER_LEFT" minHeight="24.0" minWidth="1280.0" spacing="5.0" VBox.vgrow="NEVER">
-    <padding>
-      <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-    </padding>
-    <Label fx:id="LeftInf" maxHeight="1.7976931348623157E308" text="Left status" HBox.hgrow="ALWAYS">
-      <font>
-        <Font size="11.0" fx:id="x3" />
-      </font>
-    </Label>
-    <Pane HBox.hgrow="ALWAYS" />
-    <Label fx:id="RightInf" font="$x3" text="Right status" HBox.hgrow="NEVER" />
-  </HBox>
+        </Label>
+        <Pane HBox.hgrow="ALWAYS"/>
+        <Label fx:id="RightInf" font="$x3" text="Right status" HBox.hgrow="NEVER"/>
+    </HBox>
 </VBox>

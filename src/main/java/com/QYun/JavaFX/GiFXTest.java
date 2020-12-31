@@ -23,6 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GiFXTest extends Application {
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage primaryStage) {
         Label test = new Label("Aloento");
@@ -56,7 +60,7 @@ public class GiFXTest extends Application {
                 return;
             }
 
-            if(export.isSelected()) {
+            if (export.isSelected()) {
                 new Thread("GiFX_Capturing") {
                     @Override
                     public void run() {
@@ -69,8 +73,7 @@ public class GiFXTest extends Application {
                         }
                     }
                 }.start();
-            }
-            else anime.playFromStart();
+            } else anime.playFromStart();
         });
         stop.setOnAction(actionEvent -> anime.stop());
         snap.setOnAction(actionEvent -> {
@@ -83,9 +86,5 @@ public class GiFXTest extends Application {
             }
         });
 
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

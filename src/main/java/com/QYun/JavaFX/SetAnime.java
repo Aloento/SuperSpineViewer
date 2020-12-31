@@ -6,7 +6,7 @@ import javafx.util.Duration;
 
 public class SetAnime {
 
-    public Transition EGAnime (Node target) {
+    public Transition EGAnime(Node target) {
         Duration firstDuration = Duration.millis(2000);
         ScaleTransition st = new ScaleTransition(firstDuration, target);
         st.setFromX(0.1);

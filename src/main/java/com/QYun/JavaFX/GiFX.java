@@ -18,13 +18,13 @@ import java.util.function.Consumer;
 
 public class GiFX {
 
-    public static void Capture (Parent target,
-                                int durationMS,
-                                int timeBetweenFramesMS,
-                                boolean loopContinuously,
-                                SnapshotParameters parameters,
-                                AtomicBoolean GifFXLock,
-                                String savePath) throws IOException {
+    public static void Capture(Parent target,
+                               int durationMS,
+                               int timeBetweenFramesMS,
+                               boolean loopContinuously,
+                               SnapshotParameters parameters,
+                               AtomicBoolean GifFXLock,
+                               String savePath) throws IOException {
 
         GifFXLock.set(true);
         ImageOutputStream outputStream = new FileImageOutputStream(new File(savePath));
@@ -44,7 +44,7 @@ public class GiFX {
         };
 
         System.out.println("GiFX运行在线程：" + Thread.currentThread().getName());
-        final KeyFrame oneFrame = new KeyFrame(Duration.millis(durationMS/(durationMS/timeBetweenFramesMS)), run::accept);
+        final KeyFrame oneFrame = new KeyFrame(Duration.millis(durationMS / (durationMS / timeBetweenFramesMS)), run::accept);
         Timeline timeline = new Timeline(durationMS, oneFrame);
         timeline.setCycleCount(durationMS / timeBetweenFramesMS);
 

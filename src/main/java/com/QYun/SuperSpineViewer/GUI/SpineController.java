@@ -161,7 +161,7 @@ public class SpineController {
         JFXComboBox<String> C_Animate = new JFXComboBox<>();
 
         VBox controller = new VBox(20);
-        controller.setPadding(new Insets(14,16,20,16));
+        controller.setPadding(new Insets(14, 16, 20, 16));
         controller.getChildren().addAll(L_Scale, T_Scale,
                 L_Width, T_Width,
                 L_Height, T_Height,

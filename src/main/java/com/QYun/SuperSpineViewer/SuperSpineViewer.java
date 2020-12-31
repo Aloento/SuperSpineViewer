@@ -1,7 +1,7 @@
 package com.QYun.SuperSpineViewer;
 
-import com.QYun.SuperSpineViewer.GUI.GUI;
 import com.QYun.Spine.FrostlTest;
+import com.QYun.SuperSpineViewer.GUI.GUI;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.gluonhq.charm.glisten.visual.Swatch;
@@ -20,6 +20,10 @@ public class SuperSpineViewer extends Application {
     private final CountDownLatch runningLatch = new CountDownLatch(1);
     LwjglFXApplication gdxApp;
     GUI controller = null;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -48,11 +52,9 @@ public class SuperSpineViewer extends Application {
         });
 
         ImageView LibGDX = Objects.requireNonNull(controller).LibGDX;
-        new Thread("LibGDX Render")
-        {
+        new Thread("LibGDX Render") {
             @Override
-            public void run()
-            {
+            public void run() {
                 System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
                 LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
                 // config.samples = 4;
@@ -60,10 +62,6 @@ public class SuperSpineViewer extends Application {
             }
         }.start();
 
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
 }

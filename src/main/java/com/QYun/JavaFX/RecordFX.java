@@ -12,7 +12,8 @@ import org.jcodec.api.awt.AWTSequenceEncoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,48 +22,54 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RecordFX {
 
     private final Node node;
-    public RecordFX (Node node) {
+    private final SnapshotParameters parameters = new SnapshotParameters();
+    private final AtomicBoolean allowRecording = new AtomicBoolean(false);
+    private final AtomicInteger timer = new AtomicInteger(0);
+    private final AtomicReference<Float> FPS = new AtomicReference<>(30f);
+    private final AtomicInteger durationS = new AtomicInteger(0);
+    private final AtomicBoolean transparent = new AtomicBoolean(true);
+    private final AtomicBoolean saveSequence = new AtomicBoolean(true);
+    private final AtomicInteger counter = new AtomicInteger(0);
+    private List<Image> recordFrames;
+    private ArrayList<BufferedImage> imageFrames;
+    private String rootPath = null;
+    private String fileName = null;
+
+    public RecordFX(Node node) {
         this.node = node;
         this.initStorages();
         System.out.println("录制实例已创建");
     }
 
-    private List<Image> recordFrames;
-    private ArrayList<BufferedImage> imageFrames;
-    private void initStorages () {
+    private void initStorages() {
         recordFrames = new LinkedList<>();
         imageFrames = new ArrayList<>();
     }
 
-    private void resetStorages () {
+    private void resetStorages() {
         if (recordFrames != null)
             recordFrames.clear();
         if (imageFrames != null)
             imageFrames.clear();
     }
 
-    private void addFrame (Image... frames) {
+    private void addFrame(Image... frames) {
         if (frames.length > 1) {
             recordFrames.addAll(Arrays.asList(frames));
             System.out.println("添加帧：" + frames.length);
-        }
-        else {
+        } else {
             recordFrames.add(frames[0]);
             System.out.println("捕获帧");
         }
     }
 
-    private final SnapshotParameters parameters = new SnapshotParameters();
-    private synchronized Image createFrame () {
-        WritableImage imgShot = new WritableImage((int)node.getBoundsInParent().getWidth(), (int)node.getBoundsInParent().getHeight());
+    private synchronized Image createFrame() {
+        WritableImage imgShot = new WritableImage((int) node.getBoundsInParent().getWidth(), (int) node.getBoundsInParent().getHeight());
         node.snapshot(parameters, imgShot);
         return imgShot;
     }
 
-    private final AtomicBoolean allowRecording = new AtomicBoolean(false);
-    private final AtomicInteger timer = new AtomicInteger(0);
-    private final AtomicReference<Float> FPS = new AtomicReference<>(30f);
-    private void recordingTimer () {
+    private void recordingTimer() {
         timer.getAndIncrement();
         if (allowRecording.get() && timer.get() >= FPS.get()) {
             durationS.getAndDecrement();
@@ -76,7 +83,7 @@ public class RecordFX {
         System.out.println("计时器：" + timer + "\t" + durationS);
     }
 
-    private void recorderFX () {
+    private void recorderFX() {
         Task<Void> recorderTask = new Task<>() {
             @Override
             protected Void call() throws InterruptedException {
@@ -99,12 +106,7 @@ public class RecordFX {
         recodeThread.start();
     }
 
-    private String rootPath = null;
-    private String fileName = null;
-    private final AtomicInteger durationS = new AtomicInteger(0);
-    private final AtomicBoolean transparent = new AtomicBoolean(true);
-    private final AtomicBoolean saveSequence = new AtomicBoolean(true);
-    public void startRecording (String rootPath, String fileName, int durationS, Float FPS, boolean transparent, boolean saveSequence) {
+    public void startRecording(String rootPath, String fileName, int durationS, Float FPS, boolean transparent, boolean saveSequence) {
         this.rootPath = rootPath;
         this.fileName = fileName;
         this.durationS.set(durationS);
@@ -117,13 +119,12 @@ public class RecordFX {
         if (!allowRecording.get()) {
             System.out.println("请求：开始录制");
             allowRecording.set(true);
-            resetStorages ();
-            recorderFX ();
+            resetStorages();
+            recorderFX();
         }
     }
 
-    private final AtomicInteger counter = new AtomicInteger(0);
-    private void saveToArray (Image image) {
+    private void saveToArray(Image image) {
         counter.getAndIncrement();
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         imageFrames.add(bufferedImage);
@@ -137,11 +138,10 @@ public class RecordFX {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else System.out.println("缓存：" + counter);
+        } else System.out.println("缓存：" + counter);
     }
 
-    private void saveRecordFX () {
+    private void saveRecordFX() {
         Task<Void> saveRecordTask = new Task<>() {
             @Override
             protected Void call() {
@@ -174,7 +174,7 @@ public class RecordFX {
         saveRecordThread.start();
     }
 
-    private void ffmpegFX () {
+    private void ffmpegFX() {
         try {
             // new File((rootPath + fileName) + ".webm").delete();
             // Process ffmpeg = Runtime.getRuntime().exec(
@@ -209,7 +209,7 @@ public class RecordFX {
         }
     }
 
-    private void encodeFX () {
+    private void encodeFX() {
         Task<Void> saveVideoTask = new Task<>() {
             @Override
             protected Void call() {
@@ -220,14 +220,12 @@ public class RecordFX {
                     for (Image recordFrame : recordFrames)
                         saveToArray(recordFrame);
                     ffmpegFX();
-                }
-                else if (!saveSequence.get() && !transparent.get()) {
+                } else if (!saveSequence.get() && !transparent.get()) {
                     System.out.println("用jcodec编码");
                     for (Image recordFrame : recordFrames)
                         saveToArray(recordFrame);
                     saveRecordFX();
-                }
-                else if (saveSequence.get()) {
+                } else if (saveSequence.get()) {
                     System.out.println("导出序列");
                     for (Image recordFrame : recordFrames)
                         saveToArray(recordFrame);
@@ -242,11 +240,11 @@ public class RecordFX {
         saveVideoThread.start();
     }
 
-    public void stopRecording () {
+    public void stopRecording() {
         if (allowRecording.get()) {
             System.out.println("请求：停止录制");
             allowRecording.set(false);
-            encodeFX ();
+            encodeFX();
         }
     }
 
