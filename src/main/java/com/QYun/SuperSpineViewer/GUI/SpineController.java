@@ -130,6 +130,8 @@ public class SpineController {
         L_Skins.getStyleClass().add("normal-label");
         Label L_Animate = new Label("Animations");
         L_Animate.getStyleClass().add("normal-label");
+        Label L_Loop = new Label("Loop");
+        L_Loop.getStyleClass().add("normal-label");
 
         JFXTextField T_Scale = new JFXTextField();
         T_Scale.setPromptText("骨骼缩放");
@@ -151,13 +153,15 @@ public class SpineController {
         JFXButton B_Reset = new JFXButton("Reset");
         B_Reset.setButtonType(ButtonType.FLAT);
         B_Reset.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
-        HBox set = new HBox(20);
-        set.setStyle("-fx-padding: 0 0 0 50;");
-        set.getChildren().addAll(T_Loop, B_Reload, B_Reset);
+
+        FlowPane set = new FlowPane(L_Loop, T_Loop, B_Reload, B_Reset);
+        set.setMaxWidth(300);
+        set.setStyle("-fx-padding: 0 0 0 18;");
         JFXComboBox<String> C_Skins = new JFXComboBox<>();
         JFXComboBox<String> C_Animate = new JFXComboBox<>();
 
         VBox controller = new VBox(20);
+        controller.setPadding(new Insets(14,16,20,16));
         controller.getChildren().addAll(L_Scale, T_Scale,
                 L_Width, T_Width,
                 L_Height, T_Height,
@@ -176,7 +180,7 @@ public class SpineController {
 
         JFXButton playButton = new JFXButton("");
         playButton.setButtonType(ButtonType.RAISED);
-        playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 12) % 22)));
+        playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 20) % 22)));
         playButton.setPrefSize(56, 56);
         playButton.setRipplerFill(Color.valueOf(headerColor));
         playButton.setScaleX(0);
@@ -212,22 +216,22 @@ public class SpineController {
         String color = "#FFFFFF";
         switch (i) {
             case 0:
-                color = "#F44336";
+                color = "#455A64";
                 break;
             case 1:
-                color = "#FF5252";
+                color = "#616161";
                 break;
             case 2:
-                color = "#E91E63";
+                color = "#512DA8";
                 break;
             case 3:
-                color = "#FF4081";
+                color = "#5D4037";
                 break;
             case 4:
                 color = "#9C27B0";
                 break;
             case 5:
-                color = "#E040FB";
+                color = "#7B1FA2";
                 break;
             case 6:
                 color = "#673AB7";
@@ -248,7 +252,7 @@ public class SpineController {
                 color = "#448AFF";
                 break;
             case 12:
-                color = "#03A9F4";
+                color = "#0288D1";
                 break;
             case 13:
                 color = "#00BCD4";
@@ -260,7 +264,7 @@ public class SpineController {
                 color = "#4CAF50";
                 break;
             case 16:
-                color = "#8BC34A";
+                color = "#689F38";
                 break;
             case 17:
                 color = "#607D8B";

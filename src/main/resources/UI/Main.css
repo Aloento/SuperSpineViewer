@@ -22,7 +22,7 @@
 
 .normal-label {
     -fx-font-size: 12.0px;
-    -fx-padding: 14.0px;
+    -fx-padding: 2.0px;
     -fx-text-fill: rgba(0.0, 0.0, 0.0, 0.87);
 }
 
@@ -1011,11 +1011,11 @@
 }
 
 .jfx-scroll-pane .main-header {
-    -fx-background-image: url("../bg1.jpg");
+    -fx-background-image: url("");
 }
 
 .jfx-scroll-pane .condensed-header {
-    -fx-background-image: url("../bg4.jpg");
+    -fx-background-image: url("");
 }
 
 /*******************************************************************************
