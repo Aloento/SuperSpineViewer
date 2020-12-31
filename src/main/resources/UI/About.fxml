@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="460" prefWidth="620" styleClass="shadow-pane"
+            stylesheets="/UI/About.css" xmlns="http://javafx.com/javafx/15.0.1"
+            fx:controller="com.QYun.SuperSpineViewer.GUI.AboutController" fx:id="aboutPane">
+    <center>
+        <VBox spacing="10" styleClass="background-pane">
+            <HBox alignment="CENTER">
+                <padding>
+                    <Insets top="2" right="5"/>
+                </padding>
+                <HBox>
+                    <Label styleClass="title-text">
+                        Aloento
+                    </Label>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" spacing="10" HBox.hgrow="ALWAYS">
+                    <Button onAction="#handleGitButtonClicked" styleClass="git-button"/>
+                    <Button onAction="#handleExitButtonClicked" styleClass="exit-button"/>
+                </HBox>
+            </HBox>
+            <ScrollPane styleClass="transparent-background" fitToWidth="true"
+                        fitToHeight="true" VBox.vgrow="ALWAYS">
+                <StackPane>
+
+                </StackPane>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>

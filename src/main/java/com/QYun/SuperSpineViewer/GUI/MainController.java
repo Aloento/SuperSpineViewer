@@ -10,18 +10,21 @@ import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import javax.annotation.PostConstruct;
+
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static io.datafx.controller.flow.container.ContainerAnimations.SWIPE_LEFT;
 
@@ -110,21 +113,35 @@ public final class MainController {
         private void mainSubmit() {
             if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 0) {
 
-                BorderPane aboutPane = new BorderPane();
-                aboutPane.setStyle("-fx-pref-height: 460; -fx-pref-width: 620;");
-                aboutPane.getStyleClass().add("shadow-pane");
-                VBox about = new VBox(10);
-                about.getStyleClass().add("background-pane");
+                AtomicReference<Double> xOffset = new AtomicReference<>((double) 0);
+                AtomicReference<Double> yOffset = new AtomicReference<>((double) 0);
+                Stage aboutStage = new Stage(StageStyle.TRANSPARENT);
+                Parent about = null;
+                try {
+                    about = FXMLLoader.load(getClass().getResource("/UI/About.fxml"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                aboutPane.setCenter(about);
-                Scene aboutScene = new Scene(aboutPane);
-                aboutScene.setUserAgentStylesheet("/UI/about.css");
+                Scene aboutScene = new Scene(Objects.requireNonNull(about));
                 aboutScene.getRoot().setEffect(new DropShadow(10, Color.rgb(100, 100, 100)));
                 aboutScene.setFill(Color.TRANSPARENT);
 
-                Stage aboutStage = new Stage(StageStyle.TRANSPARENT);
+                aboutStage.setResizable(false);
+                aboutStage.setAlwaysOnTop(true);
                 aboutStage.setScene(aboutScene);
                 aboutStage.show();
+
+                about.setOnMousePressed(event -> {
+                    xOffset.set(event.getSceneX());
+                    yOffset.set(event.getSceneY());
+                    event.consume();
+                });
+                about.setOnMouseDragged(event -> {
+                    aboutStage.setX(event.getScreenX() - xOffset.get());
+                    aboutStage.setY(event.getScreenY() - yOffset.get());
+                    event.consume();
+                });
 
                 System.out.println(
                         """
