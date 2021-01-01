@@ -4,7 +4,6 @@ import com.jfoenix.controls.*;
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowHandler;
-import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import javafx.animation.Transition;
 import javafx.application.Platform;
@@ -38,9 +37,6 @@ public final class MainController {
 
     @FXML
     private JFXHamburger titleBurger;
-
-    @FXML
-    private JFXRippler optionsRippler;
 
     @FXML
     private StackPane optionsBurger;

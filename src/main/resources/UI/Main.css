@@ -14,6 +14,16 @@
     -fx-text-fill: #444;
 }
 
+.side-label {
+    -fx-font-size: 14.0px;
+    -fx-padding: 2.0px;
+    -fx-text-fill: rgba(0.0, 0.0, 0.0, 0.87);
+}
+
+.BOLD {
+    -fx-font-weight: BOLD;
+}
+
 .title-label {
     -fx-font-size: 16.0px;
     -fx-padding: 14.0px;
@@ -234,7 +244,7 @@
 }
 
 .custom-jfx-radio-button {
-    -fx-font-size: 16.0px;
+    -fx-font-size: 14.0px;
 }
 
 .custom-jfx-radio-button .radio {

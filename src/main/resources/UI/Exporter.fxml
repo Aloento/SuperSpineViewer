@@ -1,34 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXListView?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.StackPane?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import java.lang.String?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="Exporter" xmlns="http://javafx.com/javafx/15.0.1">
-    <styleClass>
-        <String fx:value="side-menu"/>
-    </styleClass>
-    <JFXListView fx:id="sideList">
-        <Label fx:id="button">Buttons</Label>
-        <Label fx:id="checkbox">Check Box</Label>
-        <Label fx:id="combobox">Combo Box</Label>
-        <Label fx:id="dialogs">Dialogs &amp; Alert</Label>
-        <Label fx:id="icons">Icons</Label>
-        <Label fx:id="scrollpane">Header Scroll Pane</Label>
-        <Label fx:id="listview">List View</Label>
-        <Label fx:id="treetableview">Tree Table View</Label>
-        <Label fx:id="progressbar">Progress Bar</Label>
-        <Label fx:id="radiobutton">Radio Button</Label>
-        <Label fx:id="slider">Slider</Label>
-        <Label fx:id="spinner">Spinner</Label>
-        <Label fx:id="textfield">Text Field</Label>
-        <Label fx:id="highlighter">Highlighter</Label>
-        <Label fx:id="chipview">Chip View</Label>
-        <Label fx:id="togglebutton">Toggle Button</Label>
-        <Label fx:id="popup">Popup</Label>
-        <Label fx:id="pickers">Pickers</Label>
-        <Label fx:id="svgLoader">SVG Loader</Label>
-        <Label fx:id="masonry">Masonry Layout</Label>
-        <Label fx:id="nodesList">Nodes List</Label>
-    </JFXListView>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<!--        fx:controller="com.QYun.SuperSpineViewer.GUI.ExporterController"-->
+
+<StackPane fx:id="Exporter" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+    <ScrollPane hbarPolicy="NEVER" styleClass="side-menu">
+        <VBox spacing="20.0">
+            <padding>
+                <Insets bottom="20.0" left="16.0" right="10.0" top="20.0" />
+            </padding>
+            <JFXButton onAction="#B_Open" text="Open Skeleton" textFill="#5264ae">
+                <font>
+                    <Font name="System Bold" size="14.0" />
+                </font>
+            </JFXButton>
+            <VBox spacing="12.0">
+                <padding>
+                    <Insets left="8.0" />
+                </padding>
+                <Label text="Project Information">
+                    <styleClass>
+                        <String fx:value="side-label" />
+                        <String fx:value="BOLD" />
+                    </styleClass>
+                </Label>
+            <Label fx:id="L_Version" layoutX="18.0" layoutY="37.0" styleClass="side-label" text="Version : " />
+                <Label fx:id="L_Skel" styleClass="side-label" text="Skel : " />
+                <Label fx:id="L_Atlas" styleClass="side-label" text="Atlas : " />
+                <Label fx:id="L_FPS" layoutX="18.0" layoutY="60.0" styleClass="side-label" text="FPS : " />
+            </VBox>
+            <VBox layoutX="26.0" layoutY="79.0" spacing="16.0">
+                <padding>
+                    <Insets left="8.0" />
+                </padding>
+                <Label text="Graphic Setting">
+                    <styleClass>
+                        <String fx:value="side-label" />
+                        <String fx:value="BOLD" />
+                    </styleClass>
+                </Label>
+                <Label layoutX="18.0" layoutY="10.0" styleClass="side-label" text="Render : " />
+                <HBox spacing="16.0">
+                    <JFXRadioButton onAction="#RB_OpenJFX" selected="true" text="OpenJFX">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="Render" />
+                        </toggleGroup>
+                        <styleClass>
+                            <String fx:value="custom-jfx-radio-button" />
+                            <String fx:value="custom-jfx-radio-button-blue" />
+                        </styleClass>
+                    </JFXRadioButton>
+                    <JFXRadioButton onAction="#RB_LibGDX" text="LibGDX" toggleGroup="$Render">
+                        <styleClass>
+                            <String fx:value="custom-jfx-radio-button" />
+                            <String fx:value="custom-jfx-radio-button-green" />
+                        </styleClass>
+                    </JFXRadioButton>
+                </HBox>
+            </VBox>
+            <VBox spacing="16.0">
+                <padding>
+                    <Insets left="8.0" />
+                </padding>
+                <Label text="Format : ">
+                    <styleClass>
+                        <String fx:value="side-label" />
+                        <String fx:value="BOLD" />
+                    </styleClass>
+                </Label>
+                <JFXRadioButton onAction="#RB_MOV" selected="true" text="MOV">
+                    <styleClass>
+                        <String fx:value="custom-jfx-radio-button" />
+                        <String fx:value="custom-jfx-radio-button-blue" />
+                    </styleClass>
+                    <toggleGroup>
+                        <ToggleGroup fx:id="Format" />
+                    </toggleGroup>
+                </JFXRadioButton>
+                <JFXRadioButton layoutX="10.0" layoutY="33.0" onAction="#RB_GIF" text="GIF" toggleGroup="$Format">
+                    <styleClass>
+                        <String fx:value="custom-jfx-radio-button" />
+                        <String fx:value="custom-jfx-radio-button-red" />
+                    </styleClass>
+                </JFXRadioButton>
+                <JFXRadioButton layoutX="10.0" layoutY="10.0" onAction="#RB_Sequence" text="Sequence" toggleGroup="$Format">
+                    <styleClass>
+                        <String fx:value="custom-jfx-radio-button" />
+                        <String fx:value="custom-jfx-radio-button-green" />
+                    </styleClass>
+                </JFXRadioButton>
+            </VBox>
+            <VBox layoutX="26.0" layoutY="195.0" spacing="16.0">
+                <padding>
+                    <Insets left="8.0" />
+                </padding>
+                <Label text="Exporter Setting">
+                    <styleClass>
+                        <String fx:value="side-label" />
+                        <String fx:value="BOLD" />
+                    </styleClass>
+                </Label>
+                <HBox maxWidth="250.0">
+                    <padding>
+                        <Insets right="10.0" />
+                    </padding>
+                    <JFXButton minWidth="53.0" onAction="#B_Path" text="Path" textFill="#5264ae">
+                        <font>
+                            <Font name="System Bold" size="14.0" />
+                        </font>
+                    </JFXButton>
+                    <JFXTextField fx:id="T_Path" />
+                </HBox>
+                <JFXButton onAction="#B_Export" text="Export" textFill="#5264ae">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </JFXButton>
+                <JFXProgressBar fx:id="P_Export" maxWidth="250.0" />
+            </VBox>
+        </VBox>
+    </ScrollPane>
 </StackPane>

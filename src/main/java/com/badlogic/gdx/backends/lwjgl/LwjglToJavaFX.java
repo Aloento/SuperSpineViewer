@@ -11,6 +11,7 @@ import org.lwjgl.util.stream.StreamUtil;
 import org.lwjgl.util.stream.StreamUtil.RenderStreamFactory;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
@@ -84,7 +85,7 @@ public class LwjglToJavaFX {
 
             LwjglToJavaFX.this.renderStreamFactory = renderStreamFactory;
 
-            renderStream = renderStreamFactory.create(renderStream.getHandler(), samples, transfersToBuffer);
+            renderStream = renderStreamFactory.create(Objects.requireNonNull(renderStream).getHandler(), samples, transfersToBuffer);
         });
     }
 

@@ -124,8 +124,6 @@ public class SpineController {
         L_Y.getStyleClass().add("normal-label");
         Label L_Speed = new Label("Play Speed");
         L_Speed.getStyleClass().add("normal-label");
-        Label L_Set = new Label("Set");
-        L_Set.getStyleClass().add("normal-label");
         Label L_Skins = new Label("Skins");
         L_Skins.getStyleClass().add("normal-label");
         Label L_Animate = new Label("Animations");
@@ -167,8 +165,7 @@ public class SpineController {
                 L_Height, T_Height,
                 L_X, T_X,
                 L_Y, T_Y,
-                L_Speed, S_Speed,
-                L_Set, set,
+                L_Speed, S_Speed, set,
                 L_Skins, C_Skins,
                 L_Animate, C_Animate);
 

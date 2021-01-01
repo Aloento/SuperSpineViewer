@@ -180,8 +180,6 @@ public class LwjglFXGraphics extends LwjglGraphics {
 
     @Override
     public void setTitle(String FPS) {
-        Platform.runLater(() -> {
-            UITag.RightInf.setText(FPS + "\t渲染正常");
-        });
+        Platform.runLater(() -> UITag.RightInf.setText(FPS + "\t渲染正常"));
     }
 }

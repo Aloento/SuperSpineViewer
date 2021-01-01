@@ -1,82 +1,82 @@
 package com.QYun.SuperSpineViewer.GUI;
 
-import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXProgressBar;
+import com.jfoenix.controls.JFXTextField;
 import io.datafx.controller.FXMLController;
-import io.datafx.controller.flow.action.ActionTrigger;
-import io.datafx.controller.flow.context.FXMLViewFlowContext;
-import io.datafx.controller.flow.context.ViewFlowContext;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.StackPane;
 
 @FXMLController(value = "/UI/Exporter.fxml", title = "SpineExporter")
 public class ExporterController {
 
-    @FXMLViewFlowContext
-    private ViewFlowContext context;
     @FXML
-    @ActionTrigger("buttons")
-    private Label button;
+    private StackPane Exporter;
+
     @FXML
-    @ActionTrigger("checkbox")
-    private Label checkbox;
+    private Label L_Version;
+
     @FXML
-    @ActionTrigger("combobox")
-    private Label combobox;
+    private Label L_Skel;
+
     @FXML
-    @ActionTrigger("dialogs")
-    private Label dialogs;
+    private Label L_Atlas;
+
     @FXML
-    @ActionTrigger("icons")
-    private Label icons;
+    private Label L_FPS;
+
     @FXML
-    @ActionTrigger("listview")
-    private Label listview;
+    private ToggleGroup Render;
+
     @FXML
-    @ActionTrigger("treetableview")
-    private Label treetableview;
+    private ToggleGroup Format;
+
     @FXML
-    @ActionTrigger("progressbar")
-    private Label progressbar;
+    private JFXTextField T_Path;
+
     @FXML
-    @ActionTrigger("radiobutton")
-    private Label radiobutton;
+    private JFXProgressBar P_Export;
+
     @FXML
-    @ActionTrigger("slider")
-    private Label slider;
+    void B_Export(ActionEvent event) {
+
+    }
+
     @FXML
-    @ActionTrigger("spinner")
-    private Label spinner;
+    void B_Open(ActionEvent event) {
+
+    }
+
     @FXML
-    @ActionTrigger("textfield")
-    private Label textfield;
+    void B_Path(ActionEvent event) {
+
+    }
+
     @FXML
-    @ActionTrigger("togglebutton")
-    private Label togglebutton;
+    void RB_GIF(ActionEvent event) {
+
+    }
+
     @FXML
-    @ActionTrigger("popup")
-    private Label popup;
+    void RB_LibGDX(ActionEvent event) {
+
+    }
+
     @FXML
-    @ActionTrigger("svgLoader")
-    private Label svgLoader;
+    void RB_MOV(ActionEvent event) {
+
+    }
+
     @FXML
-    @ActionTrigger("pickers")
-    private Label pickers;
+    void RB_OpenJFX(ActionEvent event) {
+
+    }
+
     @FXML
-    @ActionTrigger("masonry")
-    private Label masonry;
-    @FXML
-    @ActionTrigger("scrollpane")
-    private Label scrollpane;
-    @FXML
-    @ActionTrigger("chipview")
-    private Label chipview;
-    @FXML
-    @ActionTrigger("nodeslist")
-    private Label nodesList;
-    @FXML
-    @ActionTrigger("highlighter")
-    private Label highlighter;
-    @FXML
-    private JFXListView<Label> sideList;
+    void RB_Sequence(ActionEvent event) {
+
+    }
 
 }
