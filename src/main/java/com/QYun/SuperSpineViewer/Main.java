@@ -28,6 +28,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
         ViewFlowContext flowContext = new ViewFlowContext();
         flowContext.register("Stage", primaryStage);
 
