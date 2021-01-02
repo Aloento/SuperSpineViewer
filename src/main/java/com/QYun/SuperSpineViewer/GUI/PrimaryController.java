@@ -49,6 +49,9 @@ public final class PrimaryController implements Initializable {
 
     private JFXPopup toolbarPopup;
 
+    SpineController spineController = null;
+    ExporterController exporterController = null;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -94,7 +97,9 @@ public final class PrimaryController implements Initializable {
 
         Parent Spine = null;
         try {
-            Spine = FXMLLoader.load(getClass().getResource("/UI/Spine.fxml"));
+            FXMLLoader spineLoader = new FXMLLoader(getClass().getResource("/UI/Spine.fxml"));
+            Spine = spineLoader.load();
+            spineController = spineLoader.getController();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,7 +108,9 @@ public final class PrimaryController implements Initializable {
 
         Parent Exporter = null;
         try {
-            Exporter = FXMLLoader.load(getClass().getResource("/UI/Exporter.fxml"));
+            FXMLLoader exporterLoader = new FXMLLoader(getClass().getResource("/UI/Exporter.fxml"));
+            Exporter = exporterLoader.load();
+            exporterController = exporterLoader.getController();
         } catch (IOException e) {
             e.printStackTrace();
         }
