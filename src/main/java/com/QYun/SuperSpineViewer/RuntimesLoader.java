@@ -6,6 +6,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
 import javafx.application.Platform;
+import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -88,8 +89,33 @@ public class RuntimesLoader extends Controller {
     }
 
     private void jsonVersion(File skelFile) {
+        try {
+            String json = FileUtils.readFileToString(skelFile, "UTF-8");
 
-        isBinary.set(false);
+            if (json.contains("\"spine\": \"4.0"))
+                spineVersion.set(40);
+            else if (json.contains("\"spine\": \"3.8"))
+                spineVersion.set(38);
+            else if (json.contains("\"spine\": \"3.7"))
+                spineVersion.set(37);
+            else if (json.contains("\"spine\": \"3.6"))
+                spineVersion.set(36);
+            else if (json.contains("\"spine\": \"3.5"))
+                spineVersion.set(35);
+            else if (json.contains("\"spine\": \"3.4"))
+                spineVersion.set(34);
+            else if (json.contains("\"spine\": \"3.1"))
+                spineVersion.set(31);
+            else if (json.contains("\"spine\": \"2.1"))
+                spineVersion.set(21);
+            else System.out.println("SpineJson版本判断失败");
+
+            System.out.println("SpineJson版本：" + spineVersion.get());
+            isBinary.set(false);
+        } catch (IOException e) {
+            System.out.println("SpineJson读取失败");
+            e.printStackTrace();
+        }
     }
 
     public void init(File skelFile) {
