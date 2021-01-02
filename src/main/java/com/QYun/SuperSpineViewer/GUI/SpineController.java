@@ -37,7 +37,7 @@ import static javafx.animation.Interpolator.EASE_BOTH;
 public class SpineController extends Controller implements Initializable {
 
     @FXML
-    public StackPane spinePane;
+    private StackPane spinePane;
 
     @FXML
     private StackPane Spine;
@@ -73,10 +73,6 @@ public class SpineController extends Controller implements Initializable {
     private JFXSpinner redSpinner;
 
     public SpineController() {
-    }
-
-    public ImageView getSpineRender() {
-        return SpineRender;
     }
 
     @Override
@@ -211,6 +207,7 @@ public class SpineController extends Controller implements Initializable {
 
         JFXDepthManager.setDepth(spinePane, 1);
         spinePane.getChildren().addAll(content, playButton);
+        spineRender = SpineRender;
 
     }
 

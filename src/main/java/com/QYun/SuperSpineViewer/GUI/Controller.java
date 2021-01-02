@@ -1,24 +1,11 @@
 package com.QYun.SuperSpineViewer.GUI;
 
+import javafx.scene.image.ImageView;
+
 public class Controller {
 
-    public SpineController spineController;
-    public ExporterController exporterController;
-
-    public SpineController getSpineController() {
-        return spineController;
-    }
-
-    public void setSpineController(SpineController spineController) {
-        this.spineController = spineController;
-    }
-
-    public ExporterController getExporterController() {
-        return exporterController;
-    }
-
-    public void setExporterController(ExporterController exporterController) {
-        this.exporterController = exporterController;
-    }
+    public static SpineController spineController;
+    public static ExporterController exporterController;
+    public static ImageView spineRender;
 
 }

@@ -6,6 +6,7 @@ import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.StackPane;
@@ -13,8 +14,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class ExporterController {
+public class ExporterController extends Controller implements Initializable {
 
     @FXML
     private StackPane Exporter;
@@ -96,4 +99,9 @@ public class ExporterController {
 
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+    }
+    
 }

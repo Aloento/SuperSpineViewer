@@ -1,14 +1,16 @@
 package com.QYun.SuperSpineViewer;
 
-import com.QYun.SuperSpineViewer.GUI.SpineController;
+import com.QYun.Spine.FrostlTest;
+import com.QYun.SuperSpineViewer.GUI.Controller;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
-import javafx.scene.image.ImageView;
+import javafx.application.Platform;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class RuntimesLoader {
+public class RuntimesLoader extends Controller {
 
     static String[] extraSuffixes = {"", ".txt", ".bytes"};
     static String[] dataSuffixes = {".json", ".skel"};
@@ -17,6 +19,7 @@ public class RuntimesLoader {
     public FileHandle skelFile;
     public AtomicBoolean isBinary = new AtomicBoolean(true);
     public AtomicBoolean loaded = new AtomicBoolean(false);
+    LwjglFXApplication gdxApp;
 
     private FileHandle atlasFile(FileHandle skelFile, String baseName) {
         for (String extraSuffix : extraSuffixes) {
@@ -42,22 +45,16 @@ public class RuntimesLoader {
         return atlasFile(skelFile, baseName);
     }
 
-    LwjglFXApplication gdxApp;
-    ImageView render = new SpineController().getSpineRender();
-    private void LibGDX () {
-        // new Thread("LibGDX Render") {
-        //     @Override
-        //     public void run() {
-        //         System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
-        //         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        //         gdxApp = new LwjglFXApplication(new FrostlTest(), Objects.requireNonNull(render), config, controller);
-        //     }
-        // }.start();
+    private void LibGDX() {
+        Platform.runLater(() -> {
+            System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
+            LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+            gdxApp = new LwjglFXApplication(new FrostlTest(), spineRender, config, spineController);
+        });
     }
 
     public void init(FileHandle skelFile) {
         LibGDX();
-        System.out.println(skelFile.toString());
         // this.skelFile = skelFile;
         // FileHandle atlasFile = atlasFile(skelFile);
         // TextureAtlas atlas = new TextureAtlas(atlasFile);
