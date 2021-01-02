@@ -1,7 +1,6 @@
 package com.QYun.SuperSpineViewer.GUI;
 
 import com.QYun.SuperSpineViewer.RuntimesLoader;
-import com.badlogic.gdx.files.FileHandle;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
@@ -63,7 +62,7 @@ public class ExporterController extends Controller implements Initializable {
 
         File file = fileChooser.showOpenDialog(new Stage());
         if (file != null) {
-            runtimesLoader.init(new FileHandle(new File(file.getAbsolutePath())));
+            runtimesLoader.init(file);
         }
 
         event.consume();
@@ -103,5 +102,5 @@ public class ExporterController extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
     }
-    
+
 }
