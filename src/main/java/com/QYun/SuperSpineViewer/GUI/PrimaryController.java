@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class PrimaryController implements Initializable {
+public final class PrimaryController extends Controller implements Initializable{
 
     @FXML
     private JFXRippler optionsRippler;
@@ -48,9 +48,6 @@ public final class PrimaryController implements Initializable {
     private JFXDrawer mainDrawer;
 
     private JFXPopup toolbarPopup;
-
-    SpineController spineController = null;
-    ExporterController exporterController = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
