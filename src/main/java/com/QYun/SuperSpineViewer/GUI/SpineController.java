@@ -3,13 +3,13 @@ package com.QYun.SuperSpineViewer.GUI;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.JFXButton.ButtonType;
 import com.jfoenix.effects.JFXDepthManager;
-import io.datafx.controller.FXMLController;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -26,30 +26,27 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import javax.annotation.PostConstruct;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import static javafx.animation.Interpolator.EASE_BOTH;
 
-@FXMLController(value = "/UI/Spine.fxml", title = "SpineController")
-public class SpineController {
+public class SpineController extends Controller implements Initializable {
+
+    @FXML
+    public StackPane spinePane;
 
     @FXML
     private StackPane Spine;
 
     @FXML
-    private BorderPane spineBorder;
-
-    @FXML
-    private StackPane spinePane;
-
-    @FXML
     private StackPane Viewer;
 
     @FXML
-    private ImageView SpineRender;
+    public ImageView SpineRender;
 
     @FXML
     private StackPane loadPane;
@@ -75,8 +72,12 @@ public class SpineController {
     @FXML
     private JFXSpinner redSpinner;
 
-    @PostConstruct
-    public void init() {
+    public SpineController() {
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
         ImageView spineLogo = new ImageView();
         BufferedImageTranscoder transcoder = new BufferedImageTranscoder();
         try (InputStream file = getClass().getResourceAsStream("/UI/SpineLogo.svg")) {

@@ -1,15 +1,13 @@
 package com.QYun.SuperSpineViewer;
 
-import com.QYun.SuperSpineViewer.GUI.MainController;
 import com.jfoenix.assets.JFoenixResources;
 import com.jfoenix.controls.JFXDecorator;
-import io.datafx.controller.flow.Flow;
-import io.datafx.controller.flow.FlowException;
-import io.datafx.controller.flow.container.DefaultFlowContainer;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -17,6 +15,9 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class Main extends Application {
 
@@ -27,18 +28,16 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        Flow flow = new Flow(MainController.class);
-        DefaultFlowContainer flowContainer = new DefaultFlowContainer();
         ViewFlowContext flowContext = new ViewFlowContext();
         flowContext.register("Stage", primaryStage);
+
+        Parent Main = null;
         try {
-            flow.createHandler(flowContext).start(flowContainer);
-        } catch (FlowException e) {
-            System.out.println("加载Main_Flow_createHandler失败");
+            Main = FXMLLoader.load(getClass().getResource("/UI/Main.fxml"));
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
-        JFXDecorator decorator = new JFXDecorator(primaryStage, flowContainer.getView());
+        JFXDecorator decorator = new JFXDecorator(primaryStage, Objects.requireNonNull(Main));
         decorator.setCustomMaximize(true);
         Label icon = new Label();
         FontIcon titleIcon = new FontIcon();

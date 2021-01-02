@@ -1,15 +1,19 @@
 package com.QYun.SuperSpineViewer.GUI;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.badlogic.gdx.files.FileHandle;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
-import io.datafx.controller.FXMLController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
-@FXMLController(value = "/UI/Exporter.fxml", title = "SpineExporter")
+import java.io.File;
+
 public class ExporterController {
 
     @FXML
@@ -46,7 +50,20 @@ public class ExporterController {
 
     @FXML
     void B_Open(ActionEvent event) {
+        RuntimesLoader runtimesLoader = new RuntimesLoader();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Skeleton");
 
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Skeleton File", "*.json", "*.skel")
+        );
+
+        File file = fileChooser.showOpenDialog(new Stage());
+        if (file != null) {
+            runtimesLoader.init(new FileHandle(new File(file.getAbsolutePath())));
+        }
+
+        event.consume();
     }
 
     @FXML

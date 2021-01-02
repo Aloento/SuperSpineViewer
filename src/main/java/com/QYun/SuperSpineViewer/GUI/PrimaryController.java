@@ -1,7 +1,6 @@
 package com.QYun.SuperSpineViewer.GUI;
 
 import com.jfoenix.controls.*;
-import io.datafx.controller.FXMLController;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowHandler;
 import io.datafx.controller.flow.context.ViewFlowContext;
@@ -9,6 +8,7 @@ import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
@@ -17,17 +17,20 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.datafx.controller.flow.container.ContainerAnimations.SWIPE_LEFT;
+public final class PrimaryController implements Initializable {
 
-@FXMLController(value = "/UI/Main.fxml", title = "SuperSpineViewer")
-public final class MainController {
+    @FXML
+    private JFXRippler optionsRippler;
+
+    @FXML
+    private StackPane Main;
 
     @FXML
     private AnchorPane AnchorPane;
@@ -46,8 +49,8 @@ public final class MainController {
 
     private JFXPopup toolbarPopup;
 
-    @PostConstruct
-    public void init() throws Exception {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 
         mainDrawer.setOnDrawerOpening(e -> {
             final Transition animation = titleBurger.getAnimation();
@@ -69,7 +72,11 @@ public final class MainController {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/MainPopup.fxml"));
         loader.setController(new InputController());
-        toolbarPopup = new JFXPopup(loader.load());
+        try {
+            toolbarPopup = new JFXPopup(loader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         optionsBurger.setOnMouseClicked(e ->
                 toolbarPopup.show(optionsBurger,
@@ -85,14 +92,22 @@ public final class MainController {
         context.register("ContentFlowHandler", flowHandler);
         context.register("ContentFlow", innerFlow);
 
-        final Duration containerAnimationDuration = Duration.millis(320);
-        ExtendedAnimatedFlowContainer animatedFlowContainer = new ExtendedAnimatedFlowContainer(containerAnimationDuration, SWIPE_LEFT);
-
-        mainDrawer.setContent(flowHandler.start(animatedFlowContainer));
+        Parent Spine = null;
+        try {
+            Spine = FXMLLoader.load(getClass().getResource("/UI/Spine.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mainDrawer.setContent(Spine);
         context.register("ContentPane", mainDrawer.getContent().get(0));
 
-        Flow exporterFlow = new Flow(ExporterController.class);
-        mainDrawer.setSidePane(exporterFlow.start());
+        Parent Exporter = null;
+        try {
+            Exporter = FXMLLoader.load(getClass().getResource("/UI/Exporter.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mainDrawer.setSidePane(Exporter);
 
     }
 
@@ -122,6 +137,7 @@ public final class MainController {
                 aboutStage.setResizable(false);
                 aboutStage.setAlwaysOnTop(true);
                 aboutStage.setScene(aboutScene);
+                aboutStage.setTitle("SuperSpineViewer - Aloento_QYun_SoarTeam");
                 aboutStage.show();
 
                 about.setOnMousePressed(event -> {

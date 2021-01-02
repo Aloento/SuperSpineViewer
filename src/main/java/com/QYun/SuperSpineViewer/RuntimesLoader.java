@@ -1,17 +1,9 @@
 package com.QYun.SuperSpineViewer;
 
+import com.QYun.SuperSpineViewer.GUI.SpineController;
+import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
-import com.esotericsoftware.spine40.SkeletonBinary;
-import com.esotericsoftware.spine40.SkeletonData;
-import com.esotericsoftware.spine40.SkeletonJson;
+import javafx.scene.image.ImageView;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,8 +14,9 @@ public class RuntimesLoader {
     static String[] dataSuffixes = {".json", ".skel"};
     static String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas"};
     public AtomicReference<String> spineVersion = new AtomicReference<>("null");
-    public TextureAtlas atlas;
+    public FileHandle skelFile;
     public AtomicBoolean isBinary = new AtomicBoolean(true);
+    public AtomicBoolean loaded = new AtomicBoolean(false);
 
     private FileHandle atlasFile(FileHandle skelFile, String baseName) {
         for (String extraSuffix : extraSuffixes) {
@@ -49,52 +42,49 @@ public class RuntimesLoader {
         return atlasFile(skelFile, baseName);
     }
 
-    public boolean init(FileHandle skelFile) {
-        try {
-            FileHandle atlasFile = atlasFile(skelFile);
-            TextureAtlasData atlasData = new TextureAtlasData(atlasFile, atlasFile.parent(), false);
+    LwjglFXApplication gdxApp;
+    ImageView render = new SpineController().SpineRender;
+    private void LibGDX () {
+        System.out.println(render.getScene());
+        // new Thread("LibGDX Render") {
+        //     @Override
+        //     public void run() {
+        //         System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
+        //         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        //         gdxApp = new LwjglFXApplication(new FrostlTest(), Objects.requireNonNull(render), config, controller);
+        //     }
+        // }.start();
+    }
 
-            Pixmap pixmap = new Pixmap(32, 32, Format.RGBA8888);
-            pixmap.setColor(new Color(1, 1, 1, 0.33f));
-            pixmap.fill();
-            final AtlasRegion fake = new AtlasRegion(new Texture(pixmap), 0, 0, 32, 32);
-            pixmap.dispose();
-
-            atlas = new TextureAtlas(atlasData) {
-                public AtlasRegion findRegion(String name) {
-                    AtlasRegion region = super.findRegion(name);
-                    if (region == null) {
-                        FileHandle file = skelFile.sibling(name + ".png");
-                        if (file.exists()) {
-                            Texture texture = new Texture(file);
-                            texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-                            region = new AtlasRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
-                            region.name = name;
-                        }
-                    }
-                    return region != null ? region : fake;
-                }
-            };
-
-            String extension = skelFile.extension();
-            SkeletonData skeletonData;
-
-            if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt")) {
-                SkeletonJson json = new SkeletonJson(atlas);
-                skeletonData = json.readSkeletonData(skelFile);
-                isBinary.set(false);
-            } else {
-                SkeletonBinary binary = new SkeletonBinary(atlas);
-                skeletonData = binary.readSkeletonData(skelFile);
-            }
-
-            spineVersion.set(skeletonData.getVersion());
-            return true;
-
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return false;
-        }
+    public void init(FileHandle skelFile) {
+        LibGDX();
+        System.out.println(skelFile.toString());
+        // this.skelFile = skelFile;
+        // FileHandle atlasFile = atlasFile(skelFile);
+        // TextureAtlas atlas = new TextureAtlas(atlasFile);
+        //
+        // try {
+        //     String extension = skelFile.extension();
+        //     SkeletonData skeletonData;
+        //
+        //     if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt")) {
+        //         SkeletonJson json = new SkeletonJson(atlas);
+        //         skeletonData = json.readSkeletonData(skelFile);
+        //         isBinary.set(false);
+        //     } else {
+        //         SkeletonBinary binary = new SkeletonBinary(atlas);
+        //         skeletonData = binary.readSkeletonData(skelFile);
+        //     }
+        //
+        //     spineVersion.set(skeletonData.getVersion());
+        //     System.out.println("Spine Version : " + spineVersion.get() + "\n"
+        //             + "isBinary : " + isBinary.get());
+        //     loaded.set(true);
+        //
+        // } catch (Throwable e) {
+        //     System.out.println("Spine文件加载失败");
+        //     e.printStackTrace();
+        // }
 
     }
 

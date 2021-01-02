@@ -1,6 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import com.QYun.SuperSpineViewer.GUI.GUI;
+import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
@@ -18,7 +18,7 @@ public class LwjglFXApplication extends LwjglApplication {
     final LwjglFXInput input;
     private boolean shouldRender;
 
-    public LwjglFXApplication(ApplicationListener listener, ImageView target, LwjglApplicationConfiguration config, GUI UITag) {
+    public LwjglFXApplication(ApplicationListener listener, ImageView target, LwjglApplicationConfiguration config, Controller UITag) {
         this(listener, config, new LwjglFXGraphics(config, target, UITag));
     }
 
