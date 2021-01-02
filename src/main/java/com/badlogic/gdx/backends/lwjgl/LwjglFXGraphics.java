@@ -1,6 +1,5 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -19,12 +18,10 @@ public class LwjglFXGraphics extends LwjglGraphics {
     static Array<String> extensions;
     final ImageView target;
     LwjglToJavaFX toFX;
-    final Controller UITag;
 
-    LwjglFXGraphics(LwjglApplicationConfiguration config, ImageView target, Controller UITag) {
+    LwjglFXGraphics(LwjglApplicationConfiguration config, ImageView target) {
         super(config);
         this.target = target;
-        this.UITag = UITag;
     }
 
     private static void extractVersion() {

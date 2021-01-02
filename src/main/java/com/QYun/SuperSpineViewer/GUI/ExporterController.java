@@ -62,7 +62,8 @@ public class ExporterController extends Controller implements Initializable {
 
         File file = fileChooser.showOpenDialog(new Stage());
         if (file != null) {
-            runtimesLoader.init(file);
+            if (runtimesLoader.init(file))
+                System.out.println("初始化成功");
         }
 
         event.consume();
