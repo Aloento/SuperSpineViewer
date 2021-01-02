@@ -26,10 +26,10 @@ public class FrostlTest extends ApplicationAdapter {
         this.renderer.setPremultipliedAlpha(true);
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Frostl_Build/Frostl_Build.atlas"));
         SkeletonBinary binary = new SkeletonBinary(atlas);
-        binary.setScale(4.0F);
+        binary.setScale(2.0F);
         SkeletonData skeletonData = binary.readSkeletonData(Gdx.files.internal("Frostl_Build/Frostl_Build.skel"));
         this.Frostl_Build = new Skeleton(skeletonData);
-        this.Frostl_Build.setPosition(0.0F, -400F);
+        this.Frostl_Build.setPosition(0.0F, -200F);
         AnimationStateData stateData = new AnimationStateData(skeletonData);
         this.Frostl_BuildState = new AnimationState(stateData);
         this.Frostl_BuildState.addAnimation(0, "run", true, 0.0F);

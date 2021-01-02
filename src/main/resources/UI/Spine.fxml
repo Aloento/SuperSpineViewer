@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+<?import com.jfoenix.controls.JFXSpinner?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="Spine" xmlns="http://javafx.com/javafx/15.0.1"
-           fx:controller="com.QYun.SuperSpineViewer.GUI.SpineController">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="Spine" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.QYun.SuperSpineViewer.GUI.SpineController">
     <BorderPane>
 
         <left>
-            <StackPane fx:id="spinePane" prefHeight="697.0" prefWidth="360">
+            <StackPane fx:id="spinePane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="697.0" prefWidth="360">
             </StackPane>
         </left>
 
         <center>
-            <StackPane fx:id="Viewer">
-                <ImageView fx:id="SpineRender" fitHeight="697.0" fitWidth="912.0" pickOnBounds="true"
-                           preserveRatio="true"/>
+            <StackPane fx:id="Viewer" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="697.0" prefWidth="912.0">
+                <ImageView fx:id="SpineRender" fitHeight="697.0" fitWidth="912.0" pickOnBounds="true" preserveRatio="true" scaleY="-1.0" />
 
                 <StackPane fx:id="loadPane">
-                    <JFXSpinner fx:id="purpleSpinner" startingAngle="-40"
-                                styleClass="materialDesign-purple, first-spinner"/>
-                    <JFXSpinner fx:id="blueSpinner" startingAngle="-90"
-                                styleClass="materialDesign-blue, second-spinner"/>
-                    <JFXSpinner fx:id="cyanSpinner" startingAngle="-120"
-                                styleClass="materialDesign-cyan, third-spinner"/>
-                    <JFXSpinner fx:id="greenSpinner" startingAngle="-150"
-                                styleClass="materialDesign-green, fourth-spinner"/>
-                    <JFXSpinner fx:id="yellowSpinner" startingAngle="-180"
-                                styleClass="materialDesign-yellow, fifth-spinner"/>
-                    <JFXSpinner fx:id="orangeSpinner" startingAngle="-210"
-                                styleClass="materialDesign-orange, sixth-spinner"/>
-                    <JFXSpinner fx:id="redSpinner" startingAngle="-240"
-                                styleClass="materialDesign-red, seventh-spinner"/>
+                    <JFXSpinner fx:id="purpleSpinner" startingAngle="-40" styleClass="materialDesign-purple, first-spinner" />
+                    <JFXSpinner fx:id="blueSpinner" startingAngle="-90" styleClass="materialDesign-blue, second-spinner" />
+                    <JFXSpinner fx:id="cyanSpinner" startingAngle="-120" styleClass="materialDesign-cyan, third-spinner" />
+                    <JFXSpinner fx:id="greenSpinner" startingAngle="-150" styleClass="materialDesign-green, fourth-spinner" />
+                    <JFXSpinner fx:id="yellowSpinner" startingAngle="-180" styleClass="materialDesign-yellow, fifth-spinner" />
+                    <JFXSpinner fx:id="orangeSpinner" startingAngle="-210" styleClass="materialDesign-orange, sixth-spinner" />
+                    <JFXSpinner fx:id="redSpinner" startingAngle="-240" styleClass="materialDesign-red, seventh-spinner" />
                 </StackPane>
 
             </StackPane>
