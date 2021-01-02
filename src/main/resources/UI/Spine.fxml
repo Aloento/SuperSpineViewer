@@ -14,7 +14,7 @@
 
         <center>
             <StackPane fx:id="Viewer">
-                <ImageView fx:id="SpineRender" fitHeight="360.0" fitWidth="360.0" pickOnBounds="true"
+                <ImageView fx:id="SpineRender" fitHeight="697.0" fitWidth="912.0" pickOnBounds="true"
                            preserveRatio="true"/>
 
                 <StackPane fx:id="loadPane">

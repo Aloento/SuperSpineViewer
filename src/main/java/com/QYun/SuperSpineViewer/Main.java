@@ -33,7 +33,7 @@ public class Main extends Application {
 
         Parent Main = null;
         try {
-            Main = FXMLLoader.load(getClass().getResource("/UI/Main.fxml"));
+            Main = FXMLLoader.load(getClass().getResource("/UI/Primary.fxml"));
         } catch (IOException e) {
             e.printStackTrace();
         }

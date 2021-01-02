@@ -30,7 +30,7 @@ public final class PrimaryController implements Initializable {
     private JFXRippler optionsRippler;
 
     @FXML
-    private StackPane Main;
+    private StackPane Primary;
 
     @FXML
     private AnchorPane AnchorPane;
@@ -108,7 +108,6 @@ public final class PrimaryController implements Initializable {
             e.printStackTrace();
         }
         mainDrawer.setSidePane(Exporter);
-
     }
 
     public static final class InputController {

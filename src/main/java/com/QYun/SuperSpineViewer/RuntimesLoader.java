@@ -43,9 +43,8 @@ public class RuntimesLoader {
     }
 
     LwjglFXApplication gdxApp;
-    ImageView render = new SpineController().SpineRender;
+    ImageView render = new SpineController().getSpineRender();
     private void LibGDX () {
-        System.out.println(render.getScene());
         // new Thread("LibGDX Render") {
         //     @Override
         //     public void run() {

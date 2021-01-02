@@ -46,7 +46,7 @@ public class SpineController extends Controller implements Initializable {
     private StackPane Viewer;
 
     @FXML
-    public ImageView SpineRender;
+    private ImageView SpineRender;
 
     @FXML
     private StackPane loadPane;
@@ -73,6 +73,10 @@ public class SpineController extends Controller implements Initializable {
     private JFXSpinner redSpinner;
 
     public SpineController() {
+    }
+
+    public ImageView getSpineRender() {
+        return SpineRender;
     }
 
     @Override
