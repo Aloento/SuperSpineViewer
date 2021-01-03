@@ -11,14 +11,27 @@ public class SuperSpine extends ApplicationAdapter {
 
     static ObservableList<String> skinsList = FXCollections.observableArrayList();
     static ObservableList<String> animatesList = FXCollections.observableArrayList();
-    static SimpleFloatProperty scale;
-    static SimpleFloatProperty X;
-    static SimpleFloatProperty Y;
-    static SimpleBooleanProperty isLoop;
     static SimpleStringProperty spineVersion;
     static SimpleStringProperty skin;
     static SimpleStringProperty animate;
+    static SimpleBooleanProperty isLoop = new SimpleBooleanProperty(false);
+    static SimpleBooleanProperty isPlay = new SimpleBooleanProperty(false);
+    static SimpleFloatProperty scale;
+    static SimpleFloatProperty X;
+    static SimpleFloatProperty Y;
     static float speed;
+
+    public SimpleBooleanProperty isPlayProperty() {
+        return isPlay;
+    }
+
+    public boolean isIsPlay() {
+        return isPlay.get();
+    }
+
+    public void setIsPlay(boolean isPlay) {
+        SuperSpine.isPlay.set(isPlay);
+    }
 
     public void setSkin(String skin) {
         SuperSpine.skin.set(skin);

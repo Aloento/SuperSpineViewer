@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static javafx.animation.Interpolator.EASE_BOTH;
 
@@ -100,7 +101,7 @@ public class SpineController extends Controller implements Initializable {
         spineLogo.setSmooth(true);
 
         StackPane header = new StackPane();
-        String headerColor = getDefaultColor((int) ((Math.random() * 12) % 22));
+        AtomicReference<String> headerColor = new AtomicReference<>(getDefaultColor((int) ((Math.random() * 12) % 22)));
         header.setStyle("-fx-background-radius: 0 5 0 0; -fx-background-color: " + headerColor);
 
         HBox hBox = new HBox(8);
@@ -190,7 +191,7 @@ public class SpineController extends Controller implements Initializable {
         playButton.setButtonType(ButtonType.RAISED);
         playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 20) % 22)));
         playButton.setPrefSize(56, 56);
-        playButton.setRipplerFill(Color.valueOf(headerColor));
+        playButton.setRipplerFill(Color.valueOf(headerColor.get()));
         playButton.setScaleX(0);
         playButton.setScaleY(0);
 
@@ -198,6 +199,10 @@ public class SpineController extends Controller implements Initializable {
         playIcon.setIconLiteral("fas-play");
         playIcon.setIconSize(20);
         playIcon.setIconColor(Paint.valueOf("WHITE"));
+        FontIcon pauseIcon = new FontIcon();
+        pauseIcon.setIconLiteral("fas-pause");
+        pauseIcon.setIconSize(20);
+        pauseIcon.setIconColor(Paint.valueOf("WHITE"));
         playButton.setGraphic(playIcon);
 
         playButton.translateYProperty().bind(Bindings.createDoubleBinding(() ->
@@ -222,6 +227,20 @@ public class SpineController extends Controller implements Initializable {
         SuperSpine spine = new SuperSpine();
         C_Skins.setItems(spine.getSkinsList());
         C_Animate.setItems(spine.getAnimatesList());
+
+        playButton.setOnAction(event -> {
+            if (spine.isIsPlay()) {
+                spine.setIsPlay(false);
+                playButton.setGraphic(playIcon);
+            } else {
+                spine.setIsPlay(true);
+                playButton.setGraphic(pauseIcon);
+                headerColor.set(getDefaultColor((int) ((Math.random() * 12) % 22)));
+                header.setStyle("-fx-background-radius: 0 5 0 0; -fx-background-color: " + headerColor);
+                playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 20) % 22)));
+                playButton.setRipplerFill(Color.valueOf(headerColor.get()));
+            }
+        });
 
         T_Scale.setTextFormatter(new TextFormatter<String>(change -> {
             if (change.getText().matches("[0-9]*|\\."))
