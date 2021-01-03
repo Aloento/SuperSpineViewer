@@ -219,16 +219,36 @@ public class SpineController extends Controller implements Initializable {
             C_Animate.setItems(spine.getAnimatesList());
 
             T_Scale.setTextFormatter(new TextFormatter<String>(change -> {
-                if (change.getText().matches("[0-9]*|\\.")) {
+                if (change.getText().matches("[0-9]*|\\."))
                     return change;
-                }
                 return null;
             }));
             T_Scale.setOnKeyPressed(keyEvent -> {
-                if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+                if (keyEvent.getCode().equals(KeyCode.ENTER))
                     if (T_Scale.getText().matches("^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
                         spine.setScale(Float.parseFloat(T_Scale.getText()));
-                }
+            });
+
+            T_Width.setTextFormatter(new TextFormatter<String>(change -> {
+                if (change.getText().matches("[0-9]*"))
+                    return change;
+                return null;
+            }));
+            T_Width.setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode().equals(KeyCode.ENTER))
+                    if (T_Width.getText().matches("^[1-9]\\d*$"))
+                        width = Integer.parseInt(T_Width.getText());
+            });
+
+            T_Height.setTextFormatter(new TextFormatter<String>(change -> {
+                if (change.getText().matches("[0-9]*"))
+                    return change;
+                return null;
+            }));
+            T_Height.setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode().equals(KeyCode.ENTER))
+                    if (T_Height.getText().matches("^[1-9]\\d*$"))
+                        height = Integer.parseInt(T_Height.getText());
             });
 
 

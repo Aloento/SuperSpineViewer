@@ -8,4 +8,7 @@ public class Controller {
     public static ExporterController exporterController;
     public static ImageView spineRender;
 
+    static int width;
+    static int height;
+
 }
