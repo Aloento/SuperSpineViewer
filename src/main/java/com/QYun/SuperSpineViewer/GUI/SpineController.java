@@ -16,8 +16,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -215,6 +217,21 @@ public class SpineController extends Controller implements Initializable {
             SuperSpine spine = new SuperSpine();
             C_Skins.setItems(spine.getSkinsList());
             C_Animate.setItems(spine.getAnimatesList());
+
+            T_Scale.setTextFormatter(new TextFormatter<String>(change -> {
+                if (change.getText().matches("[0-9]*|\\.")) {
+                    return change;
+                }
+                return null;
+            }));
+            T_Scale.setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+                    if (T_Scale.getText().matches("^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
+                        spine.setScale(Float.parseFloat(T_Scale.getText()));
+                }
+            });
+
+
         });
 
     }

@@ -36,11 +36,11 @@ public class Spine38 extends SuperSpine {
 
         if (isBinary) {
             SkeletonBinary binary = new SkeletonBinary(atlas);
-            binary.setScale(scale);
+            binary.setScale(scale.get());
             skeletonData = binary.readSkeletonData(skelFile);
         } else {
             SkeletonJson json = new SkeletonJson(atlas);
-            json.setScale(scale);
+            json.setScale(scale.get());
             skeletonData = json.readSkeletonData(skelFile);
         }
         if (skeletonData.getBones().size == 0) {
@@ -53,7 +53,7 @@ public class Spine38 extends SuperSpine {
         skeleton.setToSetupPose();
         skeleton.updateWorldTransform();
 
-        spineVersion = skeletonData.getVersion();
+        spineVersion.set(skeletonData.getVersion());
         skins(skeletonData.getSkins());
         animates(skeletonData.getAnimations());
 
