@@ -53,6 +53,7 @@ public class RuntimesLoader extends Controller {
         } catch (IOException e) {
             System.out.println("Spine二进制读取失败");
             e.printStackTrace();
+            return false;
         }
         return true;
     }
@@ -87,6 +88,7 @@ public class RuntimesLoader extends Controller {
         } catch (IOException e) {
             System.out.println("SpineJson读取失败");
             e.printStackTrace();
+            return false;
         }
         return true;
     }

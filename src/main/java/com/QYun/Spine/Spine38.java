@@ -1,9 +1,8 @@
 package com.QYun.Spine;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.files.FileHandle;
 
-public class Spine38 extends ApplicationAdapter {
+public class Spine38 extends SuperSpine {
 
     FileHandle skelFile;
     FileHandle atlasFile;
@@ -13,6 +12,10 @@ public class Spine38 extends ApplicationAdapter {
         this.skelFile = skelFile;
         this.atlasFile = atlasFile;
         this.isBinary = isBinary;
+    }
+
+    private void loadSkel() {
+
     }
 
     @Override
