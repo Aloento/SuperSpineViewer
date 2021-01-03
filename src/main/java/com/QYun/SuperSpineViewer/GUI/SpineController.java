@@ -7,7 +7,6 @@ import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -148,7 +147,14 @@ public class SpineController extends Controller implements Initializable {
         T_Y.setPromptText("骨骼Y轴位置");
 
         JFXSlider S_Speed = new JFXSlider();
-        S_Speed.getStyleClass().add("jfx-slider-style");
+        S_Speed.setSnapToTicks(true);
+        S_Speed.setShowTickLabels(true);
+        S_Speed.setMin(0.5);
+        S_Speed.setMax(2.5);
+        S_Speed.setMajorTickUnit(0.25);
+        S_Speed.setBlockIncrement(0.25);
+        S_Speed.setValue(1);
+
         JFXToggleButton T_Loop = new JFXToggleButton();
         JFXButton B_Reload = new JFXButton("Reload");
         B_Reload.setButtonType(ButtonType.FLAT);
@@ -213,46 +219,86 @@ public class SpineController extends Controller implements Initializable {
         spinePane.getChildren().addAll(content, playButton);
         spineRender = SpineRender;
 
-        Platform.runLater(() -> {
-            SuperSpine spine = new SuperSpine();
-            C_Skins.setItems(spine.getSkinsList());
-            C_Animate.setItems(spine.getAnimatesList());
+        SuperSpine spine = new SuperSpine();
+        C_Skins.setItems(spine.getSkinsList());
+        C_Animate.setItems(spine.getAnimatesList());
 
-            T_Scale.setTextFormatter(new TextFormatter<String>(change -> {
-                if (change.getText().matches("[0-9]*|\\."))
-                    return change;
-                return null;
-            }));
-            T_Scale.setOnKeyPressed(keyEvent -> {
-                if (keyEvent.getCode().equals(KeyCode.ENTER))
-                    if (T_Scale.getText().matches("^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
-                        spine.setScale(Float.parseFloat(T_Scale.getText()));
-            });
+        T_Scale.setTextFormatter(new TextFormatter<String>(change -> {
+            if (change.getText().matches("[0-9]*|\\."))
+                return change;
+            return null;
+        }));
+        T_Scale.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER))
+                if (T_Scale.getText().matches("^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
+                    spine.setScale(Float.parseFloat(T_Scale.getText()));
+        });
 
-            T_Width.setTextFormatter(new TextFormatter<String>(change -> {
-                if (change.getText().matches("[0-9]*"))
-                    return change;
-                return null;
-            }));
-            T_Width.setOnKeyPressed(keyEvent -> {
-                if (keyEvent.getCode().equals(KeyCode.ENTER))
-                    if (T_Width.getText().matches("^[1-9]\\d*$"))
-                        width = Integer.parseInt(T_Width.getText());
-            });
+        T_Width.setTextFormatter(new TextFormatter<String>(change -> {
+            if (change.getText().matches("[0-9]*"))
+                return change;
+            return null;
+        }));
+        T_Width.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER))
+                if (T_Width.getText().matches("^[1-9]\\d*$"))
+                    width = Integer.parseInt(T_Width.getText());
+        });
 
-            T_Height.setTextFormatter(new TextFormatter<String>(change -> {
-                if (change.getText().matches("[0-9]*"))
-                    return change;
-                return null;
-            }));
-            T_Height.setOnKeyPressed(keyEvent -> {
-                if (keyEvent.getCode().equals(KeyCode.ENTER))
-                    if (T_Height.getText().matches("^[1-9]\\d*$"))
-                        height = Integer.parseInt(T_Height.getText());
-            });
+        T_Height.setTextFormatter(new TextFormatter<String>(change -> {
+            if (change.getText().matches("[0-9]*"))
+                return change;
+            return null;
+        }));
+        T_Height.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER))
+                if (T_Height.getText().matches("^[1-9]\\d*$"))
+                    height = Integer.parseInt(T_Height.getText());
+        });
 
+        T_X.setTextFormatter(new TextFormatter<String>(change -> {
+            if (change.getText().matches("[0-9]*|\\."))
+                return change;
+            return null;
+        }));
+        T_X.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER))
+                if (T_X.getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
+                    spine.setX(Float.parseFloat(T_X.getText()));
+        });
+
+        T_Y.setTextFormatter(new TextFormatter<String>(change -> {
+            if (change.getText().matches("[0-9]*|\\."))
+                return change;
+            return null;
+        }));
+        T_Y.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER))
+                if (T_Y.getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
+                    spine.setY(Float.parseFloat(T_Y.getText()));
+        });
+
+        S_Speed.setValueFactory(slider ->
+                Bindings.createStringBinding(
+                        () -> ((int) (S_Speed.getValue() * 100) / 100f) + "x",
+                        slider.valueProperty()
+                )
+        );
+        S_Speed.valueProperty().addListener((observable, oldValue, newValue) -> spine.setSpeed((Float.parseFloat(String.valueOf(newValue)))));
+
+        T_Loop.setOnAction(event -> spine.setIsLoop(T_Loop.isSelected()));
+
+        B_Reload.setOnAction(event -> {
 
         });
+
+        B_Reset.setOnAction(event -> {
+
+        });
+
+        C_Skins.setOnAction(event -> spine.setSkin(C_Skins.getValue()));
+
+        C_Animate.setOnAction(event -> spine.setAnimate(C_Animate.getValue()));
 
     }
 

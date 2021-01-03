@@ -1,6 +1,7 @@
 package com.QYun.Spine;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -8,33 +9,63 @@ import javafx.collections.ObservableList;
 
 public class SuperSpine extends ApplicationAdapter {
 
-    static SimpleFloatProperty scale;
-    static SimpleStringProperty spineVersion;
     static ObservableList<String> skinsList = FXCollections.observableArrayList();
     static ObservableList<String> animatesList = FXCollections.observableArrayList();
+    static SimpleFloatProperty scale;
+    static SimpleFloatProperty X;
+    static SimpleFloatProperty Y;
+    static SimpleBooleanProperty isLoop;
+    static SimpleStringProperty spineVersion;
+    static SimpleStringProperty skin;
+    static SimpleStringProperty animate;
+    static float speed;
+
+    public void setSkin(String skin) {
+        SuperSpine.skin.set(skin);
+    }
+
+    public void setAnimate(String animate) {
+        SuperSpine.animate.set(animate);
+    }
+
+    public void setIsLoop(boolean isLoop) {
+        SuperSpine.isLoop.set(isLoop);
+    }
+
+    public void setX(float x) {
+        X.set(x);
+    }
+
+    public void setY(float y) {
+        Y.set(y);
+    }
+
+    public void setSpeed(float speed) {
+        SuperSpine.speed = speed;
+    }
 
     public float getScale() {
         return scale.get();
-    }
-
-    public SimpleFloatProperty scaleProperty() {
-        return scale;
     }
 
     public void setScale(float scale) {
         SuperSpine.scale.set(scale);
     }
 
+    public SimpleFloatProperty scaleProperty() {
+        return scale;
+    }
+
     public String getSpineVersion() {
         return spineVersion.get();
     }
 
-    public SimpleStringProperty spineVersionProperty() {
-        return spineVersion;
-    }
-
     public void setSpineVersion(String spineVersion) {
         SuperSpine.spineVersion.set(spineVersion);
+    }
+
+    public SimpleStringProperty spineVersionProperty() {
+        return spineVersion;
     }
 
     public ObservableList<String> getSkinsList() {
