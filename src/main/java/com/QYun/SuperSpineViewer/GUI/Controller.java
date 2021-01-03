@@ -10,5 +10,8 @@ public class Controller {
 
     static int width;
     static int height;
+    static int format = 1;
+    static boolean isFX = true;
+    static String path;
 
 }

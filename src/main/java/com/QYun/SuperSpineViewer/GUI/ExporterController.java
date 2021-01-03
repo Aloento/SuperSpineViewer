@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.StackPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -51,6 +52,11 @@ public class ExporterController extends Controller implements Initializable {
     }
 
     @FXML
+    public void B_Preview(ActionEvent actionEvent) {
+
+    }
+
+    @FXML
     void B_Open(ActionEvent event) {
         RuntimesLoader runtimesLoader = new RuntimesLoader();
         FileChooser fileChooser = new FileChooser();
@@ -71,32 +77,42 @@ public class ExporterController extends Controller implements Initializable {
 
     @FXML
     void B_Path(ActionEvent event) {
-
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Sava Location");
+        File direc = chooser.showDialog(new Stage());
+        path = direc.getAbsolutePath() + File.separator;
+        T_Path.setText(path);
+        event.consume();
     }
 
     @FXML
     void RB_GIF(ActionEvent event) {
-
+        format = 2;
+        event.consume();
     }
 
     @FXML
     void RB_LibGDX(ActionEvent event) {
-
+        isFX = false;
+        event.consume();
     }
 
     @FXML
     void RB_MOV(ActionEvent event) {
-
+        format = 1;
+        event.consume();
     }
 
     @FXML
     void RB_OpenJFX(ActionEvent event) {
-
+        isFX = true;
+        event.consume();
     }
 
     @FXML
     void RB_Sequence(ActionEvent event) {
-
+        format = 3;
+        event.consume();
     }
 
     @Override
