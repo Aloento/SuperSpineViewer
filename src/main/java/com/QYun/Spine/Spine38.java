@@ -2,10 +2,8 @@ package com.QYun.Spine;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.esotericsoftware.spine38.Skeleton;
-import com.esotericsoftware.spine38.SkeletonBinary;
-import com.esotericsoftware.spine38.SkeletonData;
-import com.esotericsoftware.spine38.SkeletonJson;
+import com.badlogic.gdx.utils.Array;
+import com.esotericsoftware.spine38.*;
 
 import java.util.Objects;
 
@@ -45,8 +43,21 @@ public class Spine38 extends SuperSpine {
         skeleton.setToSetupPose();
         skeleton.updateWorldTransform();
 
+        version = skeletonData.getVersion();
+        skins(skeletonData.getSkins());
+        animates(skeletonData.getAnimations());
 
         return true;
+    }
+
+    private void skins (Array<Skin> skins) {
+        for (Skin skin : skins)
+            upSkins.add(skin.getName());
+    }
+
+    private void animates (Array<Animation> animations) {
+        for (Animation animation : animations)
+            upAnimates.add(animation.getName());
     }
 
     @Override
