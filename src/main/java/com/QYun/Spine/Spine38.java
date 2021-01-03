@@ -21,6 +21,16 @@ public class Spine38 extends SuperSpine {
         this.isBinary = isBinary;
     }
 
+    private void skins (Array<Skin> skins) {
+        for (Skin skin : skins)
+            skinsList.add(skin.getName());
+    }
+
+    private void animates (Array<Animation> animations) {
+        for (Animation animation : animations)
+            animatesList.add(animation.getName());
+    }
+
     private boolean loadSkel() {
         TextureAtlas atlas = new TextureAtlas(atlasFile);
 
@@ -48,16 +58,6 @@ public class Spine38 extends SuperSpine {
         animates(skeletonData.getAnimations());
 
         return true;
-    }
-
-    private void skins (Array<Skin> skins) {
-        for (Skin skin : skins)
-            upSkins.add(skin.getName());
-    }
-
-    private void animates (Array<Animation> animations) {
-        for (Animation animation : animations)
-            upAnimates.add(animation.getName());
     }
 
     @Override
