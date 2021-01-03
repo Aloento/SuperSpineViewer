@@ -6,9 +6,25 @@ import javafx.collections.ObservableList;
 
 public class SuperSpine extends ApplicationAdapter {
 
-    public static float scale;
-    public static String version;
-    public static ObservableList<String> skinsList = FXCollections.observableArrayList();
-    public static ObservableList<String> animatesList = FXCollections.observableArrayList();
+    static float scale;
+    static String spineVersion;
+    static ObservableList<String> skinsList = FXCollections.observableArrayList();
+    static ObservableList<String> animatesList = FXCollections.observableArrayList();
+
+    public float getScale() {
+        return scale;
+    }
+
+    public String getSpineVersion() {
+        return spineVersion;
+    }
+
+    public ObservableList<String> getSkinsList() {
+        return skinsList;
+    }
+
+    public ObservableList<String> getAnimatesList() {
+        return animatesList;
+    }
 
 }

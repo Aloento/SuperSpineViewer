@@ -53,7 +53,7 @@ public class Spine38 extends SuperSpine {
         skeleton.setToSetupPose();
         skeleton.updateWorldTransform();
 
-        version = skeletonData.getVersion();
+        spineVersion = skeletonData.getVersion();
         skins(skeletonData.getSkins());
         animates(skeletonData.getAnimations());
 

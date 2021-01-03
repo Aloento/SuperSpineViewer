@@ -1,11 +1,13 @@
 package com.QYun.SuperSpineViewer.GUI;
 
+import com.QYun.Spine.SuperSpine;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.JFXButton.ButtonType;
 import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -208,6 +210,12 @@ public class SpineController extends Controller implements Initializable {
         JFXDepthManager.setDepth(spinePane, 1);
         spinePane.getChildren().addAll(content, playButton);
         spineRender = SpineRender;
+
+        Platform.runLater(() -> {
+            SuperSpine spine = new SuperSpine();
+            C_Skins.setItems(spine.getSkinsList());
+            C_Animate.setItems(spine.getAnimatesList());
+        });
 
     }
 
