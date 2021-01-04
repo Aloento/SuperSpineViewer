@@ -16,10 +16,14 @@ public class SuperSpine extends ApplicationAdapter {
     static SimpleStringProperty animate;
     static SimpleBooleanProperty isLoop = new SimpleBooleanProperty(false);
     static SimpleBooleanProperty isPlay = new SimpleBooleanProperty(false);
-    static SimpleFloatProperty scale;
-    static SimpleFloatProperty X;
-    static SimpleFloatProperty Y;
-    static float speed;
+    static SimpleFloatProperty scale = new SimpleFloatProperty(2.0f);
+    static SimpleFloatProperty X = new SimpleFloatProperty(0.0f);
+    static SimpleFloatProperty Y = new SimpleFloatProperty(-200f);
+    static SimpleFloatProperty speed = new SimpleFloatProperty(1);
+
+    public void setSpeed(float speed) {
+        SuperSpine.speed.set(speed);
+    }
 
     public SimpleBooleanProperty isPlayProperty() {
         return isPlay;
@@ -51,10 +55,6 @@ public class SuperSpine extends ApplicationAdapter {
 
     public void setY(float y) {
         Y.set(y);
-    }
-
-    public void setSpeed(float speed) {
-        SuperSpine.speed = speed;
     }
 
     public float getScale() {

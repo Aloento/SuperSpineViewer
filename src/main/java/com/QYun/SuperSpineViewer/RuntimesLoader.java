@@ -21,7 +21,6 @@ public class RuntimesLoader extends Controller {
     LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
     private int spineVersion;
     private boolean isBinary = true;
-    private boolean isLoad = false;
 
     private boolean binaryVersion(File skelFile) {
         try {

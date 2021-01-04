@@ -63,7 +63,7 @@ public class ExporterController extends Controller implements Initializable {
         fileChooser.setTitle("Open Skeleton");
 
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Skeleton File", "*.json", "*.skel")
+                new FileChooser.ExtensionFilter("Skeleton File", "*.json", "*.skel", "*.txt", "*.bytes")
         );
 
         File file = fileChooser.showOpenDialog(new Stage());

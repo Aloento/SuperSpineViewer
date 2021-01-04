@@ -229,16 +229,18 @@ public class SpineController extends Controller implements Initializable {
         C_Animate.setItems(spine.getAnimatesList());
 
         playButton.setOnAction(event -> {
-            if (spine.isIsPlay()) {
-                spine.setIsPlay(false);
-                playButton.setGraphic(playIcon);
-            } else {
-                spine.setIsPlay(true);
-                playButton.setGraphic(pauseIcon);
-                headerColor.set(getDefaultColor((int) ((Math.random() * 12) % 22)));
-                header.setStyle("-fx-background-radius: 0 5 0 0; -fx-background-color: " + headerColor);
-                playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 20) % 22)));
-                playButton.setRipplerFill(Color.valueOf(headerColor.get()));
+            if (isLoad) {
+                if (spine.isIsPlay()) {
+                    spine.setIsPlay(false);
+                    playButton.setGraphic(playIcon);
+                } else {
+                    spine.setIsPlay(true);
+                    playButton.setGraphic(pauseIcon);
+                    headerColor.set(getDefaultColor((int) ((Math.random() * 12) % 22)));
+                    header.setStyle("-fx-background-radius: 0 5 0 0; -fx-background-color: " + headerColor);
+                    playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 20) % 22)));
+                    playButton.setRipplerFill(Color.valueOf(headerColor.get()));
+                }
             }
         });
 
