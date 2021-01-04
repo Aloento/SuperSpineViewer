@@ -69,19 +69,27 @@ public class Spine38 extends SuperSpine {
 
         animate.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
-                state.setAnimation(0, newValue, isLoop.get());
+                if (newValue != null)
+                    state.setAnimation(0, newValue, isLoop.get());
+                else state.setEmptyAnimation(0, 0);
             }
         });
 
         isLoop.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
-                state.setAnimation(0, animate.get(), newValue);
+                if (animate.get() == null)
+                    state.setEmptyAnimation(0, 0);
+                else state.setAnimation(0, animate.get(), newValue);
             }
         });
 
         isPlay.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
                 if (newValue) {
+                    if (animate.get() == null)
+                        state.setAnimation(0, animatesList.get(0), isLoop.get());
+                    else if (!isLoop.get())
+                        state.setAnimation(0, animate.get(), isLoop.get());
                     state.setTimeScale(speed.get());
                 } else {
                     state.setTimeScale(0);
@@ -117,6 +125,8 @@ public class Spine38 extends SuperSpine {
                 skin.set(null);
                 animate.set(null);
                 loadSkel();
+                skins(skeletonData.getSkins());
+                animates(skeletonData.getAnimations());
                 isReload.set(false);
             }
         });
