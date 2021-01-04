@@ -7,6 +7,7 @@ import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -81,7 +82,6 @@ public class SpineController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         ImageView spineLogo = new ImageView();
         BufferedImageTranscoder transcoder = new BufferedImageTranscoder();
         try (InputStream file = getClass().getResourceAsStream("/UI/SpineLogo.svg")) {
@@ -137,15 +137,13 @@ public class SpineController extends Controller implements Initializable {
         L_Loop.getStyleClass().add("normal-label");
 
         JFXTextField T_Scale = new JFXTextField();
-        T_Scale.setPromptText("骨骼缩放");
+        T_Scale.setPromptText("2.0");
         JFXTextField T_Width = new JFXTextField();
-        T_Width.setPromptText("渲染时的宽");
         JFXTextField T_Height = new JFXTextField();
-        T_Height.setPromptText("渲染时的高");
         JFXTextField T_X = new JFXTextField();
-        T_X.setPromptText("骨骼X轴位置");
+        T_X.setPromptText("0.0");
         JFXTextField T_Y = new JFXTextField();
-        T_Y.setPromptText("骨骼Y轴位置");
+        T_Y.setPromptText("-200");
 
         JFXSlider S_Speed = new JFXSlider();
         S_Speed.setSnapToTicks(true);
@@ -222,7 +220,14 @@ public class SpineController extends Controller implements Initializable {
 
         JFXDepthManager.setDepth(spinePane, 1);
         spinePane.getChildren().addAll(content, playButton);
+
         spineRender = SpineRender;
+        Platform.runLater(() -> {
+            SpineRender.fitHeightProperty().bind(SpineRender.getScene().heightProperty().add(-103));
+            SpineRender.fitWidthProperty().bind(SpineRender.getScene().widthProperty().add(-368));
+        });
+        SpineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> T_Width.setPromptText(newValue.toString()));
+        SpineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> T_Height.setPromptText(newValue.toString()));
 
         SuperSpine spine = new SuperSpine();
         C_Skins.setItems(spine.getSkinsList());

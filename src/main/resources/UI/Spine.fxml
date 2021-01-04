@@ -14,8 +14,8 @@
         </left>
 
         <center>
-            <StackPane fx:id="Viewer" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="697.0" prefWidth="912.0">
-                <ImageView fx:id="SpineRender" fitHeight="697.0" fitWidth="912.0" opacity="0.0" pickOnBounds="true" preserveRatio="true" scaleY="-1.0" />
+            <StackPane fx:id="Viewer">
+                <ImageView fx:id="SpineRender" opacity="0.0" pickOnBounds="true" preserveRatio="true" scaleY="-1.0" />
 
                 <StackPane fx:id="loadPane">
                     <JFXSpinner fx:id="purpleSpinner" startingAngle="-40" styleClass="materialDesign-purple, first-spinner" />

@@ -48,7 +48,7 @@ public class RuntimesLoader extends Controller {
                 System.out.println("Spine二进制版本判断失败");
                 return false;
             }
-
+            SuperSpine.isBinary = true;
             System.out.println("Spine二进制版本：" + spineVersion.get());
         } catch (IOException e) {
             System.out.println("Spine二进制读取失败");
@@ -82,9 +82,8 @@ public class RuntimesLoader extends Controller {
                 System.out.println("SpineJson版本判断失败");
                 return false;
             }
-
-            System.out.println("SpineJson版本：" + spineVersion.get());
             SuperSpine.isBinary = false;
+            System.out.println("SpineJson版本：" + spineVersion.get());
         } catch (IOException e) {
             System.out.println("SpineJson读取失败");
             e.printStackTrace();
