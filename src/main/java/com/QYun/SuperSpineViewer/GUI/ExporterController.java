@@ -68,7 +68,11 @@ public class ExporterController extends Controller implements Initializable {
 
         File file = fileChooser.showOpenDialog(new Stage());
         if (file != null) {
-            if (runtimesLoader.init(file))
+            if (isLoad.get()) {
+                requestReload = true;
+                if (runtimesLoader.init(file))
+                    System.out.println("请求重载成功");
+            } else if (runtimesLoader.init(file))
                 System.out.println("初始化成功");
         }
     }

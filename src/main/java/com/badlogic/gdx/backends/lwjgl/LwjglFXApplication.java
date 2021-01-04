@@ -120,7 +120,7 @@ public class LwjglFXApplication extends LwjglApplication {
         listener.dispose();
         toFX.dispose();
         if (audio != null) audio.dispose();
-        if (graphics.config.forceExit) System.exit(-1);
+        // if (graphics.config.forceExit) System.exit(-1);
     }
 
 }

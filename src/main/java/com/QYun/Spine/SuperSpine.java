@@ -1,6 +1,7 @@
 package com.QYun.Spine;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.files.FileHandle;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -8,6 +9,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class SuperSpine extends ApplicationAdapter {
+
+    public static FileHandle skelFile;
+    public static FileHandle atlasFile;
+    public static SimpleBooleanProperty isReload = new SimpleBooleanProperty(false);
+    public static boolean isBinary = true;
 
     static ObservableList<String> skinsList = FXCollections.observableArrayList();
     static ObservableList<String> animatesList = FXCollections.observableArrayList();

@@ -1,7 +1,6 @@
 package com.QYun.Spine;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,13 +8,8 @@ import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine38.*;
 import com.esotericsoftware.spine38.utils.TwoColorPolygonBatch;
 
-import java.util.Objects;
-
 public class Spine38 extends SuperSpine {
 
-    private final FileHandle skelFile;
-    private final FileHandle atlasFile;
-    private final boolean isBinary;
     TwoColorPolygonBatch batch;
     OrthographicCamera camera;
     SkeletonRenderer renderer;
@@ -23,12 +17,6 @@ public class Spine38 extends SuperSpine {
     SkeletonData skeletonData;
     private Skeleton skeleton;
     private AnimationState state;
-
-    public Spine38(FileHandle skelFile, FileHandle atlasFile, boolean isBinary) {
-        this.skelFile = Objects.requireNonNull(skelFile);
-        this.atlasFile = Objects.requireNonNull(atlasFile);
-        this.isBinary = isBinary;
-    }
 
     private void skins(Array<Skin> skins) {
         for (Skin skin : skins)
@@ -119,6 +107,17 @@ public class Spine38 extends SuperSpine {
         speed.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
                 state.setTimeScale(speed.get());
+            }
+        });
+
+        isReload.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                skinsList.clear();
+                animatesList.clear();
+                skin.set(null);
+                animate.set(null);
+                loadSkel();
+                isReload.set(false);
             }
         });
 

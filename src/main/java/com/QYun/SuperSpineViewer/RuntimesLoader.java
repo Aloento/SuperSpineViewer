@@ -5,6 +5,7 @@ import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
+import javafx.beans.property.SimpleIntegerProperty;
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
@@ -14,13 +15,13 @@ import java.io.IOException;
 
 public class RuntimesLoader extends Controller {
 
+    private static LwjglFXApplication gdxApp;
     private final String[] extraSuffixes = {"", ".txt", ".bytes"};
     private final String[] dataSuffixes = {"", ".json", ".skel"};
     private final String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas", "-pma.atlas"};
-    LwjglFXApplication gdxApp;
+    private final SimpleIntegerProperty spineVersion = new SimpleIntegerProperty(0);
     LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-    private int spineVersion;
-    private boolean isBinary = true;
+    private boolean shouldReload = false;
 
     private boolean binaryVersion(File skelFile) {
         try {
@@ -28,21 +29,21 @@ public class RuntimesLoader extends Controller {
             System.out.println(fistLine);
 
             if (fistLine.contains("4.0"))
-                spineVersion = 40;
+                spineVersion.set(40);
             else if (fistLine.contains("3.8"))
-                spineVersion = 38;
+                spineVersion.set(38);
             else if (fistLine.contains("3.7"))
-                spineVersion = 37;
+                spineVersion.set(37);
             else if (fistLine.contains("3.6"))
-                spineVersion = 36;
+                spineVersion.set(36);
             else if (fistLine.contains("3.5"))
-                spineVersion = 35;
+                spineVersion.set(35);
             else if (fistLine.contains("3.4"))
-                spineVersion = 34;
+                spineVersion.set(34);
             else if (fistLine.contains("3.1"))
-                spineVersion = 31;
+                spineVersion.set(31);
             else if (fistLine.contains("2.1"))
-                spineVersion = 21;
+                spineVersion.set(21);
             else {
                 System.out.println("Spine二进制版本判断失败");
                 return false;
@@ -62,28 +63,28 @@ public class RuntimesLoader extends Controller {
             String json = FileUtils.readFileToString(skelFile, "UTF-8");
 
             if (json.contains("\"spine\": \"4.0"))
-                spineVersion = 40;
+                spineVersion.set(40);
             else if (json.contains("\"spine\": \"3.8"))
-                spineVersion = 38;
+                spineVersion.set(38);
             else if (json.contains("\"spine\": \"3.7"))
-                spineVersion = 37;
+                spineVersion.set(37);
             else if (json.contains("\"spine\": \"3.6"))
-                spineVersion = 36;
+                spineVersion.set(36);
             else if (json.contains("\"spine\": \"3.5"))
-                spineVersion = 35;
+                spineVersion.set(35);
             else if (json.contains("\"spine\": \"3.4"))
-                spineVersion = 34;
+                spineVersion.set(34);
             else if (json.contains("\"spine\": \"3.1"))
-                spineVersion = 31;
+                spineVersion.set(31);
             else if (json.contains("\"spine\": \"2.1"))
-                spineVersion = 21;
+                spineVersion.set(21);
             else {
                 System.out.println("SpineJson版本判断失败");
                 return false;
             }
 
             System.out.println("SpineJson版本：" + spineVersion);
-            isBinary = false;
+            SuperSpine.isBinary = false;
         } catch (IOException e) {
             System.out.println("SpineJson读取失败");
             e.printStackTrace();
@@ -92,11 +93,11 @@ public class RuntimesLoader extends Controller {
         return true;
     }
 
-    private boolean initLibDGX(FileHandle skelFile, FileHandle atlasFile) {
+    private boolean initLibDGX() {
         try {
-            switch (spineVersion) {
+            switch (spineVersion.get()) {
                 case 40 -> gdxApp = new LwjglFXApplication(new Spine40(), spineRender, config);
-                case 38 -> gdxApp = new LwjglFXApplication(new Spine38(skelFile, atlasFile, isBinary), spineRender, config);
+                case 38 -> gdxApp = new LwjglFXApplication(new Spine38(), spineRender, config);
                 case 37 -> gdxApp = new LwjglFXApplication(new Spine37(), spineRender, config);
                 case 36 -> gdxApp = new LwjglFXApplication(new Spine36(), spineRender, config);
                 case 35 -> gdxApp = new LwjglFXApplication(new Spine35(), spineRender, config);
@@ -140,22 +141,39 @@ public class RuntimesLoader extends Controller {
     }
 
     public boolean init(File file) {
-        if (isLoad.get())
-            gdxApp.exit();
-
-        FileHandle skelFile = new FileHandle(new File(file.getAbsolutePath()));
-        FileHandle atlasFile = atlasFile(skelFile);
-        String extension = skelFile.extension();
-
-        if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt")) {
-            if (jsonVersion(file))
-                return initLibDGX(skelFile, atlasFile);
-        } else {
-            if (binaryVersion(file))
-                return initLibDGX(skelFile, atlasFile);
+        if (!isLoad.get()) {
+            spineVersion.addListener((observable, oldValue, newValue) -> {
+                if (!newValue.equals(oldValue)) {
+                    shouldReload = true;
+                    if (gdxApp != null)
+                        gdxApp.exit();
+                }
+            });
         }
 
+        FileHandle skelFile = new FileHandle(new File(file.getAbsolutePath()));
+        SuperSpine.atlasFile = atlasFile(skelFile);
+        SuperSpine.skelFile = skelFile;
+        String extension = skelFile.extension();
+
+        if (!requestReload || shouldReload) {
+            if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt")) {
+                if (jsonVersion(file))
+                    return initLibDGX();
+            } else {
+                if (binaryVersion(file))
+                    return initLibDGX();
+            }
+            shouldReload = false;
+        } else {
+            if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt"))
+                jsonVersion(file);
+            else binaryVersion(file);
+
+            SuperSpine.isReload.set(true);
+            requestReload = false;
+            return true;
+        }
         return false;
     }
-
 }

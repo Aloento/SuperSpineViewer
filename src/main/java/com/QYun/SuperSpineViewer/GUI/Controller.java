@@ -12,6 +12,7 @@ public class Controller {
     public static int height = 697;
     public static int format = 1;
     public static boolean isFX = true;
+    public static boolean requestReload = false;
     public static String path;
     public static SimpleBooleanProperty isLoad = new SimpleBooleanProperty(false);
 
