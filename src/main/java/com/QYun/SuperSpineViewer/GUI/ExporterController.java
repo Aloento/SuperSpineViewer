@@ -3,7 +3,7 @@ package com.QYun.SuperSpineViewer.GUI;
 import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
-import javafx.event.ActionEvent;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -47,17 +47,17 @@ public class ExporterController extends Controller implements Initializable {
     private JFXProgressBar P_Export;
 
     @FXML
-    void B_Export(ActionEvent event) {
+    void B_Export() {
 
     }
 
     @FXML
-    public void B_Preview(ActionEvent actionEvent) {
+    public void B_Preview() {
 
     }
 
     @FXML
-    void B_Open(ActionEvent event) {
+    void B_Open() {
         RuntimesLoader runtimesLoader = new RuntimesLoader();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Skeleton");
@@ -78,36 +78,38 @@ public class ExporterController extends Controller implements Initializable {
     }
 
     @FXML
-    void B_Path(ActionEvent event) {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Sava Location");
-        File direc = chooser.showDialog(new Stage());
-        path = direc.getAbsolutePath() + File.separator;
-        T_Path.setText(path);
+    void B_Path() {
+        Platform.runLater(() -> {
+            DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setTitle("Sava Location");
+            File direc = chooser.showDialog(new Stage());
+            path = direc.getAbsolutePath() + File.separator;
+            T_Path.setText(path);
+        });
     }
 
     @FXML
-    void RB_GIF(ActionEvent event) {
+    void RB_GIF() {
         format = 2;
     }
 
     @FXML
-    void RB_LibGDX(ActionEvent event) {
+    void RB_LibGDX() {
         isFX = false;
     }
 
     @FXML
-    void RB_MOV(ActionEvent event) {
+    void RB_MOV() {
         format = 1;
     }
 
     @FXML
-    void RB_OpenJFX(ActionEvent event) {
+    void RB_OpenJFX() {
         isFX = true;
     }
 
     @FXML
-    void RB_Sequence(ActionEvent event) {
+    void RB_Sequence() {
         format = 3;
     }
 

@@ -183,7 +183,7 @@ public final class PrimaryController extends Controller implements Initializable
             }
 
             if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 1)
-                Platform.exit();
+                Platform.runLater(() -> System.exit(0));
         }
     }
 
