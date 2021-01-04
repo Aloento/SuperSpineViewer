@@ -2,6 +2,7 @@ package com.QYun.Spine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
@@ -18,9 +19,9 @@ public class Spine38 extends SuperSpine {
     TwoColorPolygonBatch batch;
     OrthographicCamera camera;
     SkeletonRenderer renderer;
+    TextureAtlas atlas;
     private Skeleton skeleton;
     private AnimationState state;
-    private float time = 0;
 
     public Spine38(FileHandle skelFile, FileHandle atlasFile, boolean isBinary) {
         this.skelFile = Objects.requireNonNull(skelFile);
@@ -39,7 +40,7 @@ public class Spine38 extends SuperSpine {
     }
 
     private boolean loadSkel() {
-        TextureAtlas atlas = new TextureAtlas(atlasFile);
+
         SkeletonData skeletonData;
 
         if (isBinary) {
@@ -91,17 +92,15 @@ public class Spine38 extends SuperSpine {
 
         isLoop.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
-                state.setAnimation(0, animate.getName(), newValue);
+                state.setAnimation(0, animate.get(), newValue);
             }
         });
 
         isPlay.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
                 if (newValue) {
-                    state.getTracks().items[0].setTrackTime(time);
                     state.setTimeScale(speed.get());
                 } else {
-                    time = state.getTracks().items[0].getTrackTime();
                     state.setTimeScale(0);
                 }
             }
@@ -140,17 +139,33 @@ public class Spine38 extends SuperSpine {
         renderer = new SkeletonRenderer();
         renderer.setPremultipliedAlpha(true);
 
+        atlas = new TextureAtlas(atlasFile);
         if (loadSkel())
             listeners();
     }
 
     @Override
     public void render() {
+        state.update(Gdx.graphics.getDeltaTime());
+        state.apply(skeleton);
+        skeleton.updateWorldTransform();
 
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.graphics.setTitle("FPS : " + Gdx.graphics.getFramesPerSecond());
+
+        camera.update();
+        batch.getProjectionMatrix().set(camera.combined);
+        batch.begin();
+        renderer.draw(batch, skeleton);
+        batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
+        float x = camera.position.x;
+        float y = camera.position.y;
+        camera.setToOrtho(false);
+        camera.position.set(x, y, 0);
     }
 
 }
