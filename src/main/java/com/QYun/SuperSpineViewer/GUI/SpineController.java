@@ -1,6 +1,7 @@
 package com.QYun.SuperSpineViewer.GUI;
 
 import com.QYun.Spine.SuperSpine;
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.JFXButton.ButtonType;
 import com.jfoenix.effects.JFXDepthManager;
@@ -226,8 +227,8 @@ public class SpineController extends Controller implements Initializable {
             SpineRender.fitHeightProperty().bind(SpineRender.getScene().heightProperty().add(-103));
             SpineRender.fitWidthProperty().bind(SpineRender.getScene().widthProperty().add(-368));
         });
-        SpineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> T_Width.setPromptText(newValue.toString()));
-        SpineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> T_Height.setPromptText(newValue.toString()));
+        SpineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> T_Width.setPromptText(String.valueOf(newValue.intValue())));
+        SpineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> T_Height.setPromptText(String.valueOf(newValue.intValue())));
 
         SuperSpine spine = new SuperSpine();
         C_Skins.setItems(spine.getSkinsList());
@@ -314,9 +315,7 @@ public class SpineController extends Controller implements Initializable {
 
         T_Loop.setOnAction(event -> spine.setIsLoop(T_Loop.isSelected()));
 
-        B_Reload.setOnAction(event -> {
-
-        });
+        B_Reload.setOnAction(event -> RuntimesLoader.spineVersion.set(-1));
 
         B_Reset.setOnAction(event -> {
 

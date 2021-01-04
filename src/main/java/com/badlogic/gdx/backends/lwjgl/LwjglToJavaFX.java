@@ -145,11 +145,15 @@ public class LwjglToJavaFX {
         return new StreamHandler() {
 
             public int getWidth() {
-                return (int) targetView.getFitWidth();
+                if (targetView.getFitWidth() > 0)
+                    return (int) targetView.getFitWidth();
+                else return 0;
             }
 
             public int getHeight() {
-                return (int) targetView.getFitHeight();
+                if (targetView.getFitHeight() > 0)
+                    return (int) targetView.getFitHeight();
+                else return 0;
             }
 
             public void process(final int width, final int height, final ByteBuffer data, final int stride, final Semaphore signal) {
