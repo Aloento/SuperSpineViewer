@@ -71,8 +71,6 @@ public class ExporterController extends Controller implements Initializable {
             if (runtimesLoader.init(file))
                 System.out.println("初始化成功");
         }
-
-        event.consume();
     }
 
     @FXML
@@ -82,37 +80,31 @@ public class ExporterController extends Controller implements Initializable {
         File direc = chooser.showDialog(new Stage());
         path = direc.getAbsolutePath() + File.separator;
         T_Path.setText(path);
-        event.consume();
     }
 
     @FXML
     void RB_GIF(ActionEvent event) {
         format = 2;
-        event.consume();
     }
 
     @FXML
     void RB_LibGDX(ActionEvent event) {
         isFX = false;
-        event.consume();
     }
 
     @FXML
     void RB_MOV(ActionEvent event) {
         format = 1;
-        event.consume();
     }
 
     @FXML
     void RB_OpenJFX(ActionEvent event) {
         isFX = true;
-        event.consume();
     }
 
     @FXML
     void RB_Sequence(ActionEvent event) {
         format = 3;
-        event.consume();
     }
 
     @Override
