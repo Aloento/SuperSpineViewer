@@ -11,9 +11,9 @@ public class SuperSpine extends ApplicationAdapter {
 
     static ObservableList<String> skinsList = FXCollections.observableArrayList();
     static ObservableList<String> animatesList = FXCollections.observableArrayList();
-    static SimpleStringProperty spineVersion;
-    static SimpleStringProperty skin;
-    static SimpleStringProperty animate;
+    static SimpleStringProperty spineVersion = new SimpleStringProperty(null);
+    static SimpleStringProperty skin = new SimpleStringProperty(null);
+    static SimpleStringProperty animate = new SimpleStringProperty(null);
     static SimpleBooleanProperty isLoop = new SimpleBooleanProperty(false);
     static SimpleBooleanProperty isPlay = new SimpleBooleanProperty(false);
     static SimpleFloatProperty scale = new SimpleFloatProperty(2.0f);

@@ -1,40 +1,46 @@
 package com.QYun.Spine;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine38.*;
+import com.esotericsoftware.spine38.utils.TwoColorPolygonBatch;
 
 import java.util.Objects;
 
 public class Spine38 extends SuperSpine {
 
-    private static FileHandle skelFile;
-    private static FileHandle atlasFile;
+    private final FileHandle skelFile;
+    private final FileHandle atlasFile;
     private final boolean isBinary;
-    private SkeletonData skeletonData;
+    TwoColorPolygonBatch batch;
+    OrthographicCamera camera;
+    SkeletonRenderer renderer;
     private Skeleton skeleton;
     private AnimationState state;
     private float time = 0;
 
     public Spine38(FileHandle skelFile, FileHandle atlasFile, boolean isBinary) {
-        Spine38.skelFile = Objects.requireNonNull(skelFile);
-        Spine38.atlasFile = Objects.requireNonNull(atlasFile);
+        this.skelFile = Objects.requireNonNull(skelFile);
+        this.atlasFile = Objects.requireNonNull(atlasFile);
         this.isBinary = isBinary;
     }
 
-    private void skins (Array<Skin> skins) {
+    private void skins(Array<Skin> skins) {
         for (Skin skin : skins)
             skinsList.add(skin.getName());
     }
 
-    private void animates (Array<Animation> animations) {
+    private void animates(Array<Animation> animations) {
         for (Animation animation : animations)
             animatesList.add(animation.getName());
     }
 
     private boolean loadSkel() {
         TextureAtlas atlas = new TextureAtlas(atlasFile);
+        SkeletonData skeletonData;
 
         if (isBinary) {
             SkeletonBinary binary = new SkeletonBinary(atlas);
@@ -53,7 +59,11 @@ public class Spine38 extends SuperSpine {
         skeleton = new Skeleton(skeletonData);
         skeleton.updateWorldTransform();
         skeleton.setToSetupPose();
-        skeleton.updateWorldTransform();
+        skeleton.setPosition(X.get(), Y.get());
+
+        state = new AnimationState(new AnimationStateData(skeletonData));
+        if (animate.get() == null)
+            state.setEmptyAnimation(0, 0);
 
         spineVersion.set(skeletonData.getVersion());
         skins(skeletonData.getSkins());
@@ -90,8 +100,7 @@ public class Spine38 extends SuperSpine {
                 if (newValue) {
                     state.getTracks().items[0].setTrackTime(time);
                     state.setTimeScale(speed.get());
-                }
-                else {
+                } else {
                     time = state.getTracks().items[0].getTrackTime();
                     state.setTimeScale(0);
                 }
@@ -123,13 +132,21 @@ public class Spine38 extends SuperSpine {
 
     @Override
     public void create() {
-        listeners();
-        super.create();
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
+        batch = new TwoColorPolygonBatch(3100);
+        camera = new OrthographicCamera(w, h);
+        renderer = new SkeletonRenderer();
+        renderer.setPremultipliedAlpha(true);
+
+        if (loadSkel())
+            listeners();
     }
 
     @Override
     public void render() {
-        super.render();
+
     }
 
     @Override
