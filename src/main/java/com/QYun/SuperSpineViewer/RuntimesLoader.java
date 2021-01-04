@@ -107,7 +107,7 @@ public class RuntimesLoader extends Controller {
                     return false;
                 }
             }
-            isLoad = true;
+            isLoad.set(true);
             return true;
         } catch (Throwable e) {
             e.printStackTrace();
@@ -140,7 +140,7 @@ public class RuntimesLoader extends Controller {
     }
 
     public boolean init(File file) {
-        if (isLoad)
+        if (isLoad.get())
             gdxApp.exit();
 
         FileHandle skelFile = new FileHandle(new File(file.getAbsolutePath()));

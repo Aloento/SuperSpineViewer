@@ -20,6 +20,7 @@ public class Spine38 extends SuperSpine {
     OrthographicCamera camera;
     SkeletonRenderer renderer;
     TextureAtlas atlas;
+    SkeletonData skeletonData;
     private Skeleton skeleton;
     private AnimationState state;
 
@@ -40,8 +41,6 @@ public class Spine38 extends SuperSpine {
     }
 
     private boolean loadSkel() {
-
-        SkeletonData skeletonData;
 
         if (isBinary) {
             SkeletonBinary binary = new SkeletonBinary(atlas);
@@ -65,10 +64,6 @@ public class Spine38 extends SuperSpine {
         state = new AnimationState(new AnimationStateData(skeletonData));
         if (animate.get() == null)
             state.setEmptyAnimation(0, 0);
-
-        spineVersion.set(skeletonData.getVersion());
-        skins(skeletonData.getSkins());
-        animates(skeletonData.getAnimations());
 
         return true;
     }
@@ -140,8 +135,12 @@ public class Spine38 extends SuperSpine {
         renderer.setPremultipliedAlpha(true);
 
         atlas = new TextureAtlas(atlasFile);
-        if (loadSkel())
+        if (loadSkel()) {
+            spineVersion.set(skeletonData.getVersion());
+            skins(skeletonData.getSkins());
+            animates(skeletonData.getAnimations());
             listeners();
+        }
     }
 
     @Override

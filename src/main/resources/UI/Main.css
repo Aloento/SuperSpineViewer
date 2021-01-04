@@ -721,6 +721,10 @@
     -fx-stroke: #ab47bc;
 }
 
+.materialDesign-purple .text {
+    visibility: false;
+}
+
 .materialDesign-blue .arc {
     -fx-stroke: #2962ff;
 }
@@ -729,8 +733,16 @@
     -fx-fill: #ab47bc;
 }
 
+.materialDesign-blue .text {
+    visibility: false;
+}
+
 .materialDesign-cyan .arc {
     -fx-stroke: #00b8d4;
+}
+
+.materialDesign-cyan .text {
+    visibility: false;
 }
 
 .materialDesign-green .arc {
@@ -745,12 +757,24 @@
     -fx-stroke: #ffd600;
 }
 
+.materialDesign-yellow .text {
+    visibility: false;
+}
+
 .materialDesign-orange .arc {
     -fx-stroke: #ff6d00;
 }
 
+.materialDesign-orange .text {
+    visibility: false;
+}
+
 .materialDesign-red .arc {
     -fx-stroke: #d50000;
+}
+
+.materialDesign-red .text {
+    visibility: false;
 }
 
 /*******************************************************************************

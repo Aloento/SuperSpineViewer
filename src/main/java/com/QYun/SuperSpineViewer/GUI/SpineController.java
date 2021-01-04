@@ -229,7 +229,7 @@ public class SpineController extends Controller implements Initializable {
         C_Animate.setItems(spine.getAnimatesList());
 
         playButton.setOnAction(event -> {
-            if (isLoad) {
+            if (isLoad.get()) {
                 if (spine.isIsPlay()) {
                     spine.setIsPlay(false);
                     playButton.setGraphic(playIcon);
@@ -278,24 +278,24 @@ public class SpineController extends Controller implements Initializable {
         });
 
         T_X.setTextFormatter(new TextFormatter<String>(change -> {
-            if (change.getText().matches("[0-9]*|\\."))
+            if (change.getText().matches("[0-9]*|\\.|-"))
                 return change;
             return null;
         }));
         T_X.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER))
-                if (T_X.getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
+                if (T_X.getText().matches("-?[0-9]\\d*|-?([1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*)"))
                     spine.setX(Float.parseFloat(T_X.getText()));
         });
 
         T_Y.setTextFormatter(new TextFormatter<String>(change -> {
-            if (change.getText().matches("[0-9]*|\\."))
+            if (change.getText().matches("[0-9]*|\\.|-"))
                 return change;
             return null;
         }));
         T_Y.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER))
-                if (T_Y.getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
+                if (T_Y.getText().matches("-?[0-9]\\d*|-?([1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*)"))
                     spine.setY(Float.parseFloat(T_Y.getText()));
         });
 
@@ -321,6 +321,54 @@ public class SpineController extends Controller implements Initializable {
 
         C_Animate.setOnAction(event -> spine.setAnimate(C_Animate.getValue()));
 
+        isLoad.addListener((observable, oldValue, newValue) -> new Thread(() -> {
+            if (newValue) {
+                try {
+                    setProgressAnimate(purpleSpinner);
+                    Thread.sleep(100);
+                    setProgressAnimate(blueSpinner);
+                    Thread.sleep(100);
+                    setProgressAnimate(cyanSpinner);
+                    Thread.sleep(100);
+                    setProgressAnimate(greenSpinner);
+                    Thread.sleep(100);
+                    setProgressAnimate(yellowSpinner);
+                    Thread.sleep(100);
+                    setProgressAnimate(orangeSpinner);
+                    Thread.sleep(100);
+                    setProgressAnimate(redSpinner);
+                    Thread.sleep(1000);
+                    Timeline paneLine = new Timeline(
+                            new KeyFrame(
+                                    Duration.seconds(1),
+                                    new KeyValue(loadPane.opacityProperty(), 0)
+                            )
+                    );
+                    paneLine.play();
+                    Thread.sleep(500);
+                    Timeline viewerLine = new Timeline(
+                            new KeyFrame(
+                                    Duration.seconds(1),
+                                    new KeyValue(SpineRender.opacityProperty(), 1)
+                            )
+                    );
+                    viewerLine.play();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start());
+
+    }
+
+    private void setProgressAnimate(JFXSpinner spinner) {
+        Timeline timeline = new Timeline(
+                new KeyFrame(
+                        Duration.seconds(1),
+                        new KeyValue(spinner.progressProperty(), 1)
+                )
+        );
+        timeline.play();
     }
 
     private String getDefaultColor(int i) {
