@@ -29,9 +29,9 @@ public class LwjglToJavaFX {
     private final Pbuffer pbuffer;
     private final int maxSamples;
     private final AtomicLong snapshotRequest;
+    private final ImageView targetView;
     private RenderStreamFactory renderStreamFactory;
     private RenderStream renderStream;
-    private final ImageView targetView;
     private WritableImage renderImage;
     private int transfersToBuffer = 3;
     private int samples = 1;
