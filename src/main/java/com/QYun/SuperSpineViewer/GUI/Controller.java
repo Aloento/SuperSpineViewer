@@ -14,6 +14,6 @@ public class Controller {
     public static boolean isFX = true;
     public static boolean requestReload = false;
     public static String path;
-    public static SimpleBooleanProperty isLoad = new SimpleBooleanProperty(false);
+    public static final SimpleBooleanProperty isLoad = new SimpleBooleanProperty(false);
 
 }

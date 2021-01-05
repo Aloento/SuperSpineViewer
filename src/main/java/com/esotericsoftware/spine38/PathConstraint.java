@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
- *
- * Copyright (c) 2013-2020, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
- * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine38;
 
 import com.badlogic.gdx.utils.Array;
@@ -227,7 +198,7 @@ public class PathConstraint implements Updatable {
 						prevCurve = BEFORE;
 						path.computeWorldVertices(target, 2, 4, world, 0, 2);
 					}
-					addBeforePosition(p, world, 0, out, o);
+					addBeforePosition(p, world, out, o);
 					continue;
 				} else if (p > pathLength) {
 					if (prevCurve != AFTER) {
@@ -336,7 +307,7 @@ public class PathConstraint implements Updatable {
 				if (p < 0) p += pathLength;
 				curve = 0;
 			} else if (p < 0) {
-				addBeforePosition(p, world, 0, out, o);
+				addBeforePosition(p, world, out, o);
 				continue;
 			} else if (p > pathLength) {
 				addAfterPosition(p - pathLength, world, verticesLength - 4, out, o);
@@ -415,8 +386,8 @@ public class PathConstraint implements Updatable {
 		return out;
 	}
 
-	private void addBeforePosition (float p, float[] temp, int i, float[] out, int o) {
-		float x1 = temp[i], y1 = temp[i + 1], dx = temp[i + 2] - x1, dy = temp[i + 3] - y1, r = (float)Math.atan2(dy, dx);
+	private void addBeforePosition(float p, float[] temp, float[] out, int o) {
+		float x1 = temp[0], y1 = temp[0 + 1], dx = temp[0 + 2] - x1, dy = temp[0 + 3] - y1, r = (float)Math.atan2(dy, dx);
 		out[o] = x1 + p * (float)Math.cos(r);
 		out[o + 1] = y1 + p * (float)Math.sin(r);
 		out[o + 2] = r;

@@ -1,33 +1,3 @@
-/******************************************************************************
- * Spine Runtimes Software License v2.5
- *
- * Copyright (c) 2013-2016, Esoteric Software
- * All rights reserved.
- *
- * You are granted a perpetual, non-exclusive, non-sublicensable, and
- * non-transferable license to use, install, execute, and perform the Spine
- * Runtimes software and derivative works solely for personal or internal
- * use. Without the written permission of Esoteric Software (see Section 2 of
- * the Spine Software License Agreement), you may not (a) modify, translate,
- * adapt, or develop new applications using the Spine Runtimes or otherwise
- * create derivative works or improvements of the Spine Runtimes or (b) remove,
- * delete, alter, or obscure any trademarks or any copyright, trademark, patent,
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS INTERRUPTION, OR LOSS OF
- * USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine35;
 
 
@@ -213,7 +183,7 @@ public class PathConstraint implements Constraint {
 						prevCurve = BEFORE;
 						path.computeWorldVertices(target, 2, 4, world, 0, 2);
 					}
-					addBeforePosition(p, world, 0, out, o);
+					addBeforePosition(p, world, out, o);
 					continue;
 				} else if (p > pathLength) {
 					if (prevCurve != AFTER) {
@@ -319,7 +289,7 @@ public class PathConstraint implements Constraint {
 				if (p < 0) p += pathLength;
 				curve = 0;
 			} else if (p < 0) {
-				addBeforePosition(p, world, 0, out, o);
+				addBeforePosition(p, world, out, o);
 				continue;
 			} else if (p > pathLength) {
 				addAfterPosition(p - pathLength, world, verticesLength - 4, out, o);
@@ -398,8 +368,8 @@ public class PathConstraint implements Constraint {
 		return out;
 	}
 
-	private void addBeforePosition (float p, float[] temp, int i, float[] out, int o) {
-		float x1 = temp[i], y1 = temp[i + 1], dx = temp[i + 2] - x1, dy = temp[i + 3] - y1, r = (float)Math.atan2(dy, dx);
+	private void addBeforePosition(float p, float[] temp, float[] out, int o) {
+		float x1 = temp[0], y1 = temp[0 + 1], dx = temp[0 + 2] - x1, dy = temp[0 + 3] - y1, r = (float)Math.atan2(dy, dx);
 		out[o] = x1 + p * (float)Math.cos(r);
 		out[o + 1] = y1 + p * (float)Math.sin(r);
 		out[o + 2] = r;

@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
- *
- * Copyright (c) 2013-2020, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
- * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine40;
 
 import java.io.EOFException;
@@ -134,8 +105,7 @@ public class SkeletonBinary extends SkeletonLoader {
 		SkeletonData skeletonData = new SkeletonData();
 		skeletonData.name = file.nameWithoutExtension();
 
-		SkeletonInput input = new SkeletonInput(file);
-		try {
+		try (SkeletonInput input = new SkeletonInput(file)) {
 			long hash = input.readLong();
 			skeletonData.hash = hash == 0 ? null : Long.toString(hash);
 			skeletonData.version = input.readString();
@@ -168,7 +138,7 @@ public class SkeletonBinary extends SkeletonLoader {
 			Object[] bones = skeletonData.bones.setSize(n = input.readInt(true));
 			for (int i = 0; i < n; i++) {
 				String name = input.readString();
-				BoneData parent = i == 0 ? null : (BoneData)bones[input.readInt(true)];
+				BoneData parent = i == 0 ? null : (BoneData) bones[input.readInt(true)];
 				BoneData data = new BoneData(i, name, parent);
 				data.rotation = input.readFloat();
 				data.x = input.readFloat() * scale;
@@ -188,7 +158,7 @@ public class SkeletonBinary extends SkeletonLoader {
 			Object[] slots = skeletonData.slots.setSize(n = input.readInt(true));
 			for (int i = 0; i < n; i++) {
 				String slotName = input.readString();
-				BoneData boneData = (BoneData)bones[input.readInt(true)];
+				BoneData boneData = (BoneData) bones[input.readInt(true)];
 				SlotData data = new SlotData(i, slotName, boneData);
 				Color.rgba8888ToColor(data.color, input.readInt());
 
@@ -209,7 +179,7 @@ public class SkeletonBinary extends SkeletonLoader {
 				Object[] constraintBones = data.bones.setSize(nn = input.readInt(true));
 				for (int ii = 0; ii < nn; ii++)
 					constraintBones[ii] = bones[input.readInt(true)];
-				data.target = (BoneData)bones[input.readInt(true)];
+				data.target = (BoneData) bones[input.readInt(true)];
 				data.mix = input.readFloat();
 				data.softness = input.readFloat() * scale;
 				data.bendDirection = input.readByte();
@@ -228,7 +198,7 @@ public class SkeletonBinary extends SkeletonLoader {
 				Object[] constraintBones = data.bones.setSize(nn = input.readInt(true));
 				for (int ii = 0; ii < nn; ii++)
 					constraintBones[ii] = bones[input.readInt(true)];
-				data.target = (BoneData)bones[input.readInt(true)];
+				data.target = (BoneData) bones[input.readInt(true)];
 				data.local = input.readBoolean();
 				data.relative = input.readBoolean();
 				data.offsetRotation = input.readFloat();
@@ -255,7 +225,7 @@ public class SkeletonBinary extends SkeletonLoader {
 				Object[] constraintBones = data.bones.setSize(nn = input.readInt(true));
 				for (int ii = 0; ii < nn; ii++)
 					constraintBones[ii] = bones[input.readInt(true)];
-				data.target = (SlotData)slots[input.readInt(true)];
+				data.target = (SlotData) slots[input.readInt(true)];
 				data.positionMode = PositionMode.values[input.readInt(true)];
 				data.spacingMode = SpacingMode.values[input.readInt(true)];
 				data.rotateMode = RotateMode.values[input.readInt(true)];
@@ -263,7 +233,8 @@ public class SkeletonBinary extends SkeletonLoader {
 				data.position = input.readFloat();
 				if (data.positionMode == PositionMode.fixed) data.position *= scale;
 				data.spacing = input.readFloat();
-				if (data.spacingMode == SpacingMode.length || data.spacingMode == SpacingMode.fixed) data.spacing *= scale;
+				if (data.spacingMode == SpacingMode.length || data.spacingMode == SpacingMode.fixed)
+					data.spacing *= scale;
 				data.mixRotate = input.readFloat();
 				data.mixX = input.readFloat();
 				data.mixY = input.readFloat();
@@ -289,13 +260,13 @@ public class SkeletonBinary extends SkeletonLoader {
 			n = linkedMeshes.size;
 			Object[] items = linkedMeshes.items;
 			for (int i = 0; i < n; i++) {
-				LinkedMesh linkedMesh = (LinkedMesh)items[i];
+				LinkedMesh linkedMesh = (LinkedMesh) items[i];
 				Skin skin = linkedMesh.skin == null ? skeletonData.getDefaultSkin() : skeletonData.findSkin(linkedMesh.skin);
 				if (skin == null) throw new SerializationException("Skin not found: " + linkedMesh.skin);
 				Attachment parent = skin.getAttachment(linkedMesh.slotIndex, linkedMesh.parent);
 				if (parent == null) throw new SerializationException("Parent mesh not found: " + linkedMesh.parent);
-				linkedMesh.mesh.setDeformAttachment(linkedMesh.inheritDeform ? (VertexAttachment)parent : linkedMesh.mesh);
-				linkedMesh.mesh.setParentMesh((MeshAttachment)parent);
+				linkedMesh.mesh.setDeformAttachment(linkedMesh.inheritDeform ? (VertexAttachment) parent : linkedMesh.mesh);
+				linkedMesh.mesh.setParentMesh((MeshAttachment) parent);
 				linkedMesh.mesh.updateUVs();
 			}
 			linkedMeshes.clear();
@@ -322,11 +293,6 @@ public class SkeletonBinary extends SkeletonLoader {
 
 		} catch (IOException ex) {
 			throw new SerializationException("Error reading skeleton file.", ex);
-		} finally {
-			try {
-				input.close();
-			} catch (IOException ignored) {
-			}
 		}
 		return skeletonData;
 	}
@@ -378,155 +344,155 @@ public class SkeletonBinary extends SkeletonLoader {
 		String name = input.readStringRef();
 		if (name == null) name = attachmentName;
 
-		switch (AttachmentType.values[input.readByte()]) {
-		case region: {
-			String path = input.readStringRef();
-			float rotation = input.readFloat();
-			float x = input.readFloat();
-			float y = input.readFloat();
-			float scaleX = input.readFloat();
-			float scaleY = input.readFloat();
-			float width = input.readFloat();
-			float height = input.readFloat();
-			int color = input.readInt();
+        switch (AttachmentType.values[input.readByte()]) {
+            case region -> {
+                String path = input.readStringRef();
+                float rotation = input.readFloat();
+                float x = input.readFloat();
+                float y = input.readFloat();
+                float scaleX = input.readFloat();
+                float scaleY = input.readFloat();
+                float width = input.readFloat();
+                float height = input.readFloat();
+                int color = input.readInt();
 
-			if (path == null) path = name;
-			RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
-			if (region == null) return null;
-			region.setPath(path);
-			region.setX(x * scale);
-			region.setY(y * scale);
-			region.setScaleX(scaleX);
-			region.setScaleY(scaleY);
-			region.setRotation(rotation);
-			region.setWidth(width * scale);
-			region.setHeight(height * scale);
-			Color.rgba8888ToColor(region.getColor(), color);
-			region.updateOffset();
-			return region;
-		}
-		case boundingbox: {
-			int vertexCount = input.readInt(true);
-			Vertices vertices = readVertices(input, vertexCount);
-			int color = nonessential ? input.readInt() : 0;
+                if (path == null) path = name;
+                RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
+                if (region == null) return null;
+                region.setPath(path);
+                region.setX(x * scale);
+                region.setY(y * scale);
+                region.setScaleX(scaleX);
+                region.setScaleY(scaleY);
+                region.setRotation(rotation);
+                region.setWidth(width * scale);
+                region.setHeight(height * scale);
+                Color.rgba8888ToColor(region.getColor(), color);
+                region.updateOffset();
+                return region;
+            }
+            case boundingbox -> {
+                int vertexCount = input.readInt(true);
+                Vertices vertices = readVertices(input, vertexCount);
+                int color = nonessential ? input.readInt() : 0;
 
-			BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
-			if (box == null) return null;
-			box.setWorldVerticesLength(vertexCount << 1);
-			box.setVertices(vertices.vertices);
-			box.setBones(vertices.bones);
-			if (nonessential) Color.rgba8888ToColor(box.getColor(), color);
-			return box;
-		}
-		case mesh: {
-			String path = input.readStringRef();
-			int color = input.readInt();
-			int vertexCount = input.readInt(true);
-			float[] uvs = readFloatArray(input, vertexCount << 1, 1);
-			short[] triangles = readShortArray(input);
-			Vertices vertices = readVertices(input, vertexCount);
-			int hullLength = input.readInt(true);
-			short[] edges = null;
-			float width = 0, height = 0;
-			if (nonessential) {
-				edges = readShortArray(input);
-				width = input.readFloat();
-				height = input.readFloat();
-			}
+                BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
+                if (box == null) return null;
+                box.setWorldVerticesLength(vertexCount << 1);
+                box.setVertices(vertices.vertices);
+                box.setBones(vertices.bones);
+                if (nonessential) Color.rgba8888ToColor(box.getColor(), color);
+                return box;
+            }
+            case mesh -> {
+                String path = input.readStringRef();
+                int color = input.readInt();
+                int vertexCount = input.readInt(true);
+                float[] uvs = readFloatArray(input, vertexCount << 1, 1);
+                short[] triangles = readShortArray(input);
+                Vertices vertices = readVertices(input, vertexCount);
+                int hullLength = input.readInt(true);
+                short[] edges = null;
+                float width = 0, height = 0;
+                if (nonessential) {
+                    edges = readShortArray(input);
+                    width = input.readFloat();
+                    height = input.readFloat();
+                }
 
-			if (path == null) path = name;
-			MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
-			if (mesh == null) return null;
-			mesh.setPath(path);
-			Color.rgba8888ToColor(mesh.getColor(), color);
-			mesh.setBones(vertices.bones);
-			mesh.setVertices(vertices.vertices);
-			mesh.setWorldVerticesLength(vertexCount << 1);
-			mesh.setTriangles(triangles);
-			mesh.setRegionUVs(uvs);
-			mesh.updateUVs();
-			mesh.setHullLength(hullLength << 1);
-			if (nonessential) {
-				mesh.setEdges(edges);
-				mesh.setWidth(width * scale);
-				mesh.setHeight(height * scale);
-			}
-			return mesh;
-		}
-		case linkedmesh: {
-			String path = input.readStringRef();
-			int color = input.readInt();
-			String skinName = input.readStringRef();
-			String parent = input.readStringRef();
-			boolean inheritDeform = input.readBoolean();
-			float width = 0, height = 0;
-			if (nonessential) {
-				width = input.readFloat();
-				height = input.readFloat();
-			}
+                if (path == null) path = name;
+                MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
+                if (mesh == null) return null;
+                mesh.setPath(path);
+                Color.rgba8888ToColor(mesh.getColor(), color);
+                mesh.setBones(vertices.bones);
+                mesh.setVertices(vertices.vertices);
+                mesh.setWorldVerticesLength(vertexCount << 1);
+                mesh.setTriangles(triangles);
+                mesh.setRegionUVs(uvs);
+                mesh.updateUVs();
+                mesh.setHullLength(hullLength << 1);
+                if (nonessential) {
+                    mesh.setEdges(edges);
+                    mesh.setWidth(width * scale);
+                    mesh.setHeight(height * scale);
+                }
+                return mesh;
+            }
+            case linkedmesh -> {
+                String path = input.readStringRef();
+                int color = input.readInt();
+                String skinName = input.readStringRef();
+                String parent = input.readStringRef();
+                boolean inheritDeform = input.readBoolean();
+                float width = 0, height = 0;
+                if (nonessential) {
+                    width = input.readFloat();
+                    height = input.readFloat();
+                }
 
-			if (path == null) path = name;
-			MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
-			if (mesh == null) return null;
-			mesh.setPath(path);
-			Color.rgba8888ToColor(mesh.getColor(), color);
-			if (nonessential) {
-				mesh.setWidth(width * scale);
-				mesh.setHeight(height * scale);
-			}
-			linkedMeshes.add(new LinkedMesh(mesh, skinName, slotIndex, parent, inheritDeform));
-			return mesh;
-		}
-		case path: {
-			boolean closed = input.readBoolean();
-			boolean constantSpeed = input.readBoolean();
-			int vertexCount = input.readInt(true);
-			Vertices vertices = readVertices(input, vertexCount);
-			float[] lengths = new float[vertexCount / 3];
-			for (int i = 0, n = lengths.length; i < n; i++)
-				lengths[i] = input.readFloat() * scale;
-			int color = nonessential ? input.readInt() : 0;
+                if (path == null) path = name;
+                MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
+                if (mesh == null) return null;
+                mesh.setPath(path);
+                Color.rgba8888ToColor(mesh.getColor(), color);
+                if (nonessential) {
+                    mesh.setWidth(width * scale);
+                    mesh.setHeight(height * scale);
+                }
+                linkedMeshes.add(new LinkedMesh(mesh, skinName, slotIndex, parent, inheritDeform));
+                return mesh;
+            }
+            case path -> {
+                boolean closed = input.readBoolean();
+                boolean constantSpeed = input.readBoolean();
+                int vertexCount = input.readInt(true);
+                Vertices vertices = readVertices(input, vertexCount);
+                float[] lengths = new float[vertexCount / 3];
+                for (int i = 0, n = lengths.length; i < n; i++)
+                    lengths[i] = input.readFloat() * scale;
+                int color = nonessential ? input.readInt() : 0;
 
-			PathAttachment path = attachmentLoader.newPathAttachment(skin, name);
-			if (path == null) return null;
-			path.setClosed(closed);
-			path.setConstantSpeed(constantSpeed);
-			path.setWorldVerticesLength(vertexCount << 1);
-			path.setVertices(vertices.vertices);
-			path.setBones(vertices.bones);
-			path.setLengths(lengths);
-			if (nonessential) Color.rgba8888ToColor(path.getColor(), color);
-			return path;
-		}
-		case point: {
-			float rotation = input.readFloat();
-			float x = input.readFloat();
-			float y = input.readFloat();
-			int color = nonessential ? input.readInt() : 0;
+                PathAttachment path = attachmentLoader.newPathAttachment(skin, name);
+                if (path == null) return null;
+                path.setClosed(closed);
+                path.setConstantSpeed(constantSpeed);
+                path.setWorldVerticesLength(vertexCount << 1);
+                path.setVertices(vertices.vertices);
+                path.setBones(vertices.bones);
+                path.setLengths(lengths);
+                if (nonessential) Color.rgba8888ToColor(path.getColor(), color);
+                return path;
+            }
+            case point -> {
+                float rotation = input.readFloat();
+                float x = input.readFloat();
+                float y = input.readFloat();
+                int color = nonessential ? input.readInt() : 0;
 
-			PointAttachment point = attachmentLoader.newPointAttachment(skin, name);
-			if (point == null) return null;
-			point.setX(x * scale);
-			point.setY(y * scale);
-			point.setRotation(rotation);
-			if (nonessential) Color.rgba8888ToColor(point.getColor(), color);
-			return point;
-		}
-		case clipping:
-			int endSlotIndex = input.readInt(true);
-			int vertexCount = input.readInt(true);
-			Vertices vertices = readVertices(input, vertexCount);
-			int color = nonessential ? input.readInt() : 0;
-
-			ClippingAttachment clip = attachmentLoader.newClippingAttachment(skin, name);
-			if (clip == null) return null;
-			clip.setEndSlot(skeletonData.slots.get(endSlotIndex));
-			clip.setWorldVerticesLength(vertexCount << 1);
-			clip.setVertices(vertices.vertices);
-			clip.setBones(vertices.bones);
-			if (nonessential) Color.rgba8888ToColor(clip.getColor(), color);
-			return clip;
-		}
+                PointAttachment point = attachmentLoader.newPointAttachment(skin, name);
+                if (point == null) return null;
+                point.setX(x * scale);
+                point.setY(y * scale);
+                point.setRotation(rotation);
+                if (nonessential) Color.rgba8888ToColor(point.getColor(), color);
+                return point;
+            }
+            case clipping -> {
+                int endSlotIndex = input.readInt(true);
+                int vertexCount = input.readInt(true);
+                Vertices vertices = readVertices(input, vertexCount);
+                int color = nonessential ? input.readInt() : 0;
+                ClippingAttachment clip = attachmentLoader.newClippingAttachment(skin, name);
+                if (clip == null) return null;
+                clip.setEndSlot(skeletonData.slots.get(endSlotIndex));
+                clip.setWorldVerticesLength(vertexCount << 1);
+                clip.setVertices(vertices.vertices);
+                clip.setBones(vertices.bones);
+                if (nonessential) Color.rgba8888ToColor(clip.getColor(), color);
+                return clip;
+            }
+        }
 		return null;
 	}
 
@@ -584,163 +550,151 @@ public class SkeletonBinary extends SkeletonLoader {
 			int slotIndex = input.readInt(true);
 			for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
 				int timelineType = input.readByte(), frameCount = input.readInt(true), frameLast = frameCount - 1;
-				switch (timelineType) {
-				case SLOT_ATTACHMENT: {
-					AttachmentTimeline timeline = new AttachmentTimeline(frameCount, slotIndex);
-					for (int frame = 0; frame < frameCount; frame++)
-						timeline.setFrame(frame, input.readFloat(), input.readStringRef());
-					timelines.add(timeline);
-					break;
-				}
-				case SLOT_RGBA: {
-					RGBATimeline timeline = new RGBATimeline(frameCount, input.readInt(true), slotIndex);
-					float time = input.readFloat();
-					float r = input.read() / 255f, g = input.read() / 255f;
-					float b = input.read() / 255f, a = input.read() / 255f;
-					for (int frame = 0, bezier = 0;; frame++) {
-						timeline.setFrame(frame, time, r, g, b, a);
-						if (frame == frameLast) break;
-						float time2 = input.readFloat();
-						float r2 = input.read() / 255f, g2 = input.read() / 255f;
-						float b2 = input.read() / 255f, a2 = input.read() / 255f;
-						switch (input.readByte()) {
-						case CURVE_STEPPED:
-							timeline.setStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							setBezier(input, timeline, bezier++, frame, 0, time, time2, r, r2, 1);
-							setBezier(input, timeline, bezier++, frame, 1, time, time2, g, g2, 1);
-							setBezier(input, timeline, bezier++, frame, 2, time, time2, b, b2, 1);
-							setBezier(input, timeline, bezier++, frame, 3, time, time2, a, a2, 1);
-						}
-						time = time2;
-						r = r2;
-						g = g2;
-						b = b2;
-						a = a2;
+                switch (timelineType) {
+                    case SLOT_ATTACHMENT -> {
+                        AttachmentTimeline timeline = new AttachmentTimeline(frameCount, slotIndex);
+                        for (int frame = 0; frame < frameCount; frame++)
+                            timeline.setFrame(frame, input.readFloat(), input.readStringRef());
+                        timelines.add(timeline);
 					}
-					timelines.add(timeline);
-					break;
-				}
-				case SLOT_RGB: {
-					RGBTimeline timeline = new RGBTimeline(frameCount, input.readInt(true), slotIndex);
-					float time = input.readFloat();
-					float r = input.read() / 255f, g = input.read() / 255f, b = input.read() / 255f;
-					for (int frame = 0, bezier = 0;; frame++) {
-						timeline.setFrame(frame, time, r, g, b);
-						if (frame == frameLast) break;
-						float time2 = input.readFloat();
-						float r2 = input.read() / 255f, g2 = input.read() / 255f, b2 = input.read() / 255f;
-						switch (input.readByte()) {
-						case CURVE_STEPPED:
-							timeline.setStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							setBezier(input, timeline, bezier++, frame, 0, time, time2, r, r2, 1);
-							setBezier(input, timeline, bezier++, frame, 1, time, time2, g, g2, 1);
-							setBezier(input, timeline, bezier++, frame, 2, time, time2, b, b2, 1);
-						}
-						time = time2;
-						r = r2;
-						g = g2;
-						b = b2;
+                    case SLOT_RGBA -> {
+                        RGBATimeline timeline = new RGBATimeline(frameCount, input.readInt(true), slotIndex);
+                        float time = input.readFloat();
+                        float r = input.read() / 255f, g = input.read() / 255f;
+                        float b = input.read() / 255f, a = input.read() / 255f;
+                        for (int frame = 0, bezier = 0; ; frame++) {
+                            timeline.setFrame(frame, time, r, g, b, a);
+                            if (frame == frameLast) break;
+                            float time2 = input.readFloat();
+                            float r2 = input.read() / 255f, g2 = input.read() / 255f;
+                            float b2 = input.read() / 255f, a2 = input.read() / 255f;
+                            switch (input.readByte()) {
+                                case CURVE_STEPPED -> timeline.setStepped(frame);
+                                case CURVE_BEZIER -> {
+                                    setBezier(input, timeline, bezier++, frame, 0, time, time2, r, r2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 1, time, time2, g, g2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 2, time, time2, b, b2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 3, time, time2, a, a2, 1);
+                                }
+                            }
+                            time = time2;
+                            r = r2;
+                            g = g2;
+                            b = b2;
+                            a = a2;
+                        }
+                        timelines.add(timeline);
 					}
-					timelines.add(timeline);
-					break;
-				}
-				case SLOT_RGBA2: {
-					RGBA2Timeline timeline = new RGBA2Timeline(frameCount, input.readInt(true), slotIndex);
-					float time = input.readFloat();
-					float r = input.read() / 255f, g = input.read() / 255f;
-					float b = input.read() / 255f, a = input.read() / 255f;
-					float r2 = input.read() / 255f, g2 = input.read() / 255f, b2 = input.read() / 255f;
-					for (int frame = 0, bezier = 0;; frame++) {
-						timeline.setFrame(frame, time, r, g, b, a, r2, g2, b2);
-						if (frame == frameLast) break;
-						float time2 = input.readFloat();
-						float nr = input.read() / 255f, ng = input.read() / 255f;
-						float nb = input.read() / 255f, na = input.read() / 255f;
-						float nr2 = input.read() / 255f, ng2 = input.read() / 255f, nb2 = input.read() / 255f;
-						switch (input.readByte()) {
-						case CURVE_STEPPED:
-							timeline.setStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							setBezier(input, timeline, bezier++, frame, 0, time, time2, r, nr, 1);
-							setBezier(input, timeline, bezier++, frame, 1, time, time2, g, ng, 1);
-							setBezier(input, timeline, bezier++, frame, 2, time, time2, b, nb, 1);
-							setBezier(input, timeline, bezier++, frame, 3, time, time2, a, na, 1);
-							setBezier(input, timeline, bezier++, frame, 4, time, time2, r2, nr2, 1);
-							setBezier(input, timeline, bezier++, frame, 5, time, time2, g2, ng2, 1);
-							setBezier(input, timeline, bezier++, frame, 6, time, time2, b2, nb2, 1);
-						}
-						time = time2;
-						r = nr;
-						g = ng;
-						b = nb;
-						a = na;
-						r2 = nr2;
-						g2 = ng2;
-						b2 = nb2;
+                    case SLOT_RGB -> {
+                        RGBTimeline timeline = new RGBTimeline(frameCount, input.readInt(true), slotIndex);
+                        float time = input.readFloat();
+                        float r = input.read() / 255f, g = input.read() / 255f, b = input.read() / 255f;
+                        for (int frame = 0, bezier = 0; ; frame++) {
+                            timeline.setFrame(frame, time, r, g, b);
+                            if (frame == frameLast) break;
+                            float time2 = input.readFloat();
+                            float r2 = input.read() / 255f, g2 = input.read() / 255f, b2 = input.read() / 255f;
+                            switch (input.readByte()) {
+                                case CURVE_STEPPED -> timeline.setStepped(frame);
+                                case CURVE_BEZIER -> {
+                                    setBezier(input, timeline, bezier++, frame, 0, time, time2, r, r2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 1, time, time2, g, g2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 2, time, time2, b, b2, 1);
+                                }
+                            }
+                            time = time2;
+                            r = r2;
+                            g = g2;
+                            b = b2;
+                        }
+                        timelines.add(timeline);
 					}
-					timelines.add(timeline);
-					break;
-				}
-				case SLOT_RGB2: {
-					RGB2Timeline timeline = new RGB2Timeline(frameCount, input.readInt(true), slotIndex);
-					float time = input.readFloat();
-					float r = input.read() / 255f, g = input.read() / 255f, b = input.read() / 255f;
-					float r2 = input.read() / 255f, g2 = input.read() / 255f, b2 = input.read() / 255f;
-					for (int frame = 0, bezier = 0;; frame++) {
-						timeline.setFrame(frame, time, r, g, b, r2, g2, b2);
-						if (frame == frameLast) break;
-						float time2 = input.readFloat();
-						float nr = input.read() / 255f, ng = input.read() / 255f, nb = input.read() / 255f;
-						float nr2 = input.read() / 255f, ng2 = input.read() / 255f, nb2 = input.read() / 255f;
-						switch (input.readByte()) {
-						case CURVE_STEPPED:
-							timeline.setStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							setBezier(input, timeline, bezier++, frame, 0, time, time2, r, nr, 1);
-							setBezier(input, timeline, bezier++, frame, 1, time, time2, g, ng, 1);
-							setBezier(input, timeline, bezier++, frame, 2, time, time2, b, nb, 1);
-							setBezier(input, timeline, bezier++, frame, 3, time, time2, r2, nr2, 1);
-							setBezier(input, timeline, bezier++, frame, 4, time, time2, g2, ng2, 1);
-							setBezier(input, timeline, bezier++, frame, 5, time, time2, b2, nb2, 1);
-						}
-						time = time2;
-						r = nr;
-						g = ng;
-						b = nb;
-						r2 = nr2;
-						g2 = ng2;
-						b2 = nb2;
+                    case SLOT_RGBA2 -> {
+                        RGBA2Timeline timeline = new RGBA2Timeline(frameCount, input.readInt(true), slotIndex);
+                        float time = input.readFloat();
+                        float r = input.read() / 255f, g = input.read() / 255f;
+                        float b = input.read() / 255f, a = input.read() / 255f;
+                        float r2 = input.read() / 255f, g2 = input.read() / 255f, b2 = input.read() / 255f;
+                        for (int frame = 0, bezier = 0; ; frame++) {
+                            timeline.setFrame(frame, time, r, g, b, a, r2, g2, b2);
+                            if (frame == frameLast) break;
+                            float time2 = input.readFloat();
+                            float nr = input.read() / 255f, ng = input.read() / 255f;
+                            float nb = input.read() / 255f, na = input.read() / 255f;
+                            float nr2 = input.read() / 255f, ng2 = input.read() / 255f, nb2 = input.read() / 255f;
+                            switch (input.readByte()) {
+                                case CURVE_STEPPED -> timeline.setStepped(frame);
+                                case CURVE_BEZIER -> {
+                                    setBezier(input, timeline, bezier++, frame, 0, time, time2, r, nr, 1);
+                                    setBezier(input, timeline, bezier++, frame, 1, time, time2, g, ng, 1);
+                                    setBezier(input, timeline, bezier++, frame, 2, time, time2, b, nb, 1);
+                                    setBezier(input, timeline, bezier++, frame, 3, time, time2, a, na, 1);
+                                    setBezier(input, timeline, bezier++, frame, 4, time, time2, r2, nr2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 5, time, time2, g2, ng2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 6, time, time2, b2, nb2, 1);
+                                }
+                            }
+                            time = time2;
+                            r = nr;
+                            g = ng;
+                            b = nb;
+                            a = na;
+                            r2 = nr2;
+                            g2 = ng2;
+                            b2 = nb2;
+                        }
+                        timelines.add(timeline);
 					}
-					timelines.add(timeline);
-					break;
-				}
-				case SLOT_ALPHA:
-					AlphaTimeline timeline = new AlphaTimeline(frameCount, input.readInt(true), slotIndex);
-					float time = input.readFloat(), a = input.read() / 255f;
-					for (int frame = 0, bezier = 0;; frame++) {
-						timeline.setFrame(frame, time, a);
-						if (frame == frameLast) break;
-						float time2 = input.readFloat();
-						float a2 = input.read() / 255f;
-						switch (input.readByte()) {
-						case CURVE_STEPPED:
-							timeline.setStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							setBezier(input, timeline, bezier++, frame, 0, time, time2, a, a2, 1);
-						}
-						time = time2;
-						a = a2;
+                    case SLOT_RGB2 -> {
+                        RGB2Timeline timeline = new RGB2Timeline(frameCount, input.readInt(true), slotIndex);
+                        float time = input.readFloat();
+                        float r = input.read() / 255f, g = input.read() / 255f, b = input.read() / 255f;
+                        float r2 = input.read() / 255f, g2 = input.read() / 255f, b2 = input.read() / 255f;
+                        for (int frame = 0, bezier = 0; ; frame++) {
+                            timeline.setFrame(frame, time, r, g, b, r2, g2, b2);
+                            if (frame == frameLast) break;
+                            float time2 = input.readFloat();
+                            float nr = input.read() / 255f, ng = input.read() / 255f, nb = input.read() / 255f;
+                            float nr2 = input.read() / 255f, ng2 = input.read() / 255f, nb2 = input.read() / 255f;
+                            switch (input.readByte()) {
+                                case CURVE_STEPPED -> timeline.setStepped(frame);
+                                case CURVE_BEZIER -> {
+                                    setBezier(input, timeline, bezier++, frame, 0, time, time2, r, nr, 1);
+                                    setBezier(input, timeline, bezier++, frame, 1, time, time2, g, ng, 1);
+                                    setBezier(input, timeline, bezier++, frame, 2, time, time2, b, nb, 1);
+                                    setBezier(input, timeline, bezier++, frame, 3, time, time2, r2, nr2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 4, time, time2, g2, ng2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 5, time, time2, b2, nb2, 1);
+                                }
+                            }
+                            time = time2;
+                            r = nr;
+                            g = ng;
+                            b = nb;
+                            r2 = nr2;
+                            g2 = ng2;
+                            b2 = nb2;
+                        }
+                        timelines.add(timeline);
 					}
-					timelines.add(timeline);
-					break;
-				}
+                    case SLOT_ALPHA -> {
+                        AlphaTimeline timeline = new AlphaTimeline(frameCount, input.readInt(true), slotIndex);
+                        float time = input.readFloat(), a = input.read() / 255f;
+                        for (int frame = 0, bezier = 0; ; frame++) {
+                            timeline.setFrame(frame, time, a);
+                            if (frame == frameLast) break;
+                            float time2 = input.readFloat();
+                            float a2 = input.read() / 255f;
+                            switch (input.readByte()) {
+                                case CURVE_STEPPED -> timeline.setStepped(frame);
+                                case CURVE_BEZIER -> setBezier(input, timeline, bezier++, frame, 0, time, time2, a, a2, 1);
+                            }
+                            time = time2;
+                            a = a2;
+                        }
+                        timelines.add(timeline);
+                    }
+                }
 			}
 		}
 
@@ -749,37 +703,18 @@ public class SkeletonBinary extends SkeletonLoader {
 			int boneIndex = input.readInt(true);
 			for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
 				int type = input.readByte(), frameCount = input.readInt(true), bezierCount = input.readInt(true);
-				switch (type) {
-				case BONE_ROTATE:
-					timelines.add(readTimeline(input, new RotateTimeline(frameCount, bezierCount, boneIndex), 1));
-					break;
-				case BONE_TRANSLATE:
-					timelines.add(readTimeline(input, new TranslateTimeline(frameCount, bezierCount, boneIndex), scale));
-					break;
-				case BONE_TRANSLATEX:
-					timelines.add(readTimeline(input, new TranslateXTimeline(frameCount, bezierCount, boneIndex), scale));
-					break;
-				case BONE_TRANSLATEY:
-					timelines.add(readTimeline(input, new TranslateYTimeline(frameCount, bezierCount, boneIndex), scale));
-					break;
-				case BONE_SCALE:
-					timelines.add(readTimeline(input, new ScaleTimeline(frameCount, bezierCount, boneIndex), 1));
-					break;
-				case BONE_SCALEX:
-					timelines.add(readTimeline(input, new ScaleXTimeline(frameCount, bezierCount, boneIndex), 1));
-					break;
-				case BONE_SCALEY:
-					timelines.add(readTimeline(input, new ScaleYTimeline(frameCount, bezierCount, boneIndex), 1));
-					break;
-				case BONE_SHEAR:
-					timelines.add(readTimeline(input, new ShearTimeline(frameCount, bezierCount, boneIndex), 1));
-					break;
-				case BONE_SHEARX:
-					timelines.add(readTimeline(input, new ShearXTimeline(frameCount, bezierCount, boneIndex), 1));
-					break;
-				case BONE_SHEARY:
-					timelines.add(readTimeline(input, new ShearYTimeline(frameCount, bezierCount, boneIndex), 1));
-				}
+                switch (type) {
+                    case BONE_ROTATE -> timelines.add(readTimeline(input, new RotateTimeline(frameCount, bezierCount, boneIndex), 1));
+                    case BONE_TRANSLATE -> timelines.add(readTimeline(input, new TranslateTimeline(frameCount, bezierCount, boneIndex), scale));
+                    case BONE_TRANSLATEX -> timelines.add(readTimeline(input, new TranslateXTimeline(frameCount, bezierCount, boneIndex), scale));
+                    case BONE_TRANSLATEY -> timelines.add(readTimeline(input, new TranslateYTimeline(frameCount, bezierCount, boneIndex), scale));
+                    case BONE_SCALE -> timelines.add(readTimeline(input, new ScaleTimeline(frameCount, bezierCount, boneIndex), 1));
+                    case BONE_SCALEX -> timelines.add(readTimeline(input, new ScaleXTimeline(frameCount, bezierCount, boneIndex), 1));
+                    case BONE_SCALEY -> timelines.add(readTimeline(input, new ScaleYTimeline(frameCount, bezierCount, boneIndex), 1));
+                    case BONE_SHEAR -> timelines.add(readTimeline(input, new ShearTimeline(frameCount, bezierCount, boneIndex), 1));
+                    case BONE_SHEARX -> timelines.add(readTimeline(input, new ShearXTimeline(frameCount, bezierCount, boneIndex), 1));
+                    case BONE_SHEARY -> timelines.add(readTimeline(input, new ShearYTimeline(frameCount, bezierCount, boneIndex), 1));
+                }
 			}
 		}
 
@@ -792,14 +727,13 @@ public class SkeletonBinary extends SkeletonLoader {
 				timeline.setFrame(frame, time, mix, softness, input.readByte(), input.readBoolean(), input.readBoolean());
 				if (frame == frameLast) break;
 				float time2 = input.readFloat(), mix2 = input.readFloat(), softness2 = input.readFloat() * scale;
-				switch (input.readByte()) {
-				case CURVE_STEPPED:
-					timeline.setStepped(frame);
-					break;
-				case CURVE_BEZIER:
-					setBezier(input, timeline, bezier++, frame, 0, time, time2, mix, mix2, 1);
-					setBezier(input, timeline, bezier++, frame, 1, time, time2, softness, softness2, scale);
-				}
+                switch (input.readByte()) {
+                    case CURVE_STEPPED -> timeline.setStepped(frame);
+                    case CURVE_BEZIER -> {
+                        setBezier(input, timeline, bezier++, frame, 0, time, time2, mix, mix2, 1);
+                        setBezier(input, timeline, bezier++, frame, 1, time, time2, softness, softness2, scale);
+                    }
+                }
 				time = time2;
 				mix = mix2;
 				softness = softness2;
@@ -818,18 +752,17 @@ public class SkeletonBinary extends SkeletonLoader {
 				if (frame == frameLast) break;
 				float time2 = input.readFloat(), mixRotate2 = input.readFloat(), mixX2 = input.readFloat(), mixY2 = input.readFloat(),
 					mixScaleX2 = input.readFloat(), mixScaleY2 = input.readFloat(), mixShearY2 = input.readFloat();
-				switch (input.readByte()) {
-				case CURVE_STEPPED:
-					timeline.setStepped(frame);
-					break;
-				case CURVE_BEZIER:
-					setBezier(input, timeline, bezier++, frame, 0, time, time2, mixRotate, mixRotate2, 1);
-					setBezier(input, timeline, bezier++, frame, 1, time, time2, mixX, mixX2, 1);
-					setBezier(input, timeline, bezier++, frame, 2, time, time2, mixY, mixY2, 1);
-					setBezier(input, timeline, bezier++, frame, 3, time, time2, mixScaleX, mixScaleX2, 1);
-					setBezier(input, timeline, bezier++, frame, 4, time, time2, mixScaleY, mixScaleY2, 1);
-					setBezier(input, timeline, bezier++, frame, 5, time, time2, mixShearY, mixShearY2, 1);
-				}
+                switch (input.readByte()) {
+                    case CURVE_STEPPED -> timeline.setStepped(frame);
+                    case CURVE_BEZIER -> {
+                        setBezier(input, timeline, bezier++, frame, 0, time, time2, mixRotate, mixRotate2, 1);
+                        setBezier(input, timeline, bezier++, frame, 1, time, time2, mixX, mixX2, 1);
+                        setBezier(input, timeline, bezier++, frame, 2, time, time2, mixY, mixY2, 1);
+                        setBezier(input, timeline, bezier++, frame, 3, time, time2, mixScaleX, mixScaleX2, 1);
+                        setBezier(input, timeline, bezier++, frame, 4, time, time2, mixScaleY, mixScaleY2, 1);
+                        setBezier(input, timeline, bezier++, frame, 5, time, time2, mixShearY, mixShearY2, 1);
+                    }
+                }
 				time = time2;
 				mixRotate = mixRotate2;
 				mixX = mixX2;
@@ -846,42 +779,38 @@ public class SkeletonBinary extends SkeletonLoader {
 			int index = input.readInt(true);
 			PathConstraintData data = skeletonData.pathConstraints.get(index);
 			for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-				switch (input.readByte()) {
-				case PATH_POSITION:
-					timelines
-						.add(readTimeline(input, new PathConstraintPositionTimeline(input.readInt(true), input.readInt(true), index),
-							data.positionMode == PositionMode.fixed ? scale : 1));
-					break;
-				case PATH_SPACING:
-					timelines
-						.add(readTimeline(input, new PathConstraintSpacingTimeline(input.readInt(true), input.readInt(true), index),
-							data.spacingMode == SpacingMode.length || data.spacingMode == SpacingMode.fixed ? scale : 1));
-					break;
-				case PATH_MIX:
-					PathConstraintMixTimeline timeline = new PathConstraintMixTimeline(input.readInt(true), input.readInt(true),
-						index);
-					float time = input.readFloat(), mixRotate = input.readFloat(), mixX = input.readFloat(), mixY = input.readFloat();
-					for (int frame = 0, bezier = 0, frameLast = nn - 1;; frame++) {
-						timeline.setFrame(frame, time, mixRotate, mixX, mixY);
-						if (frame == frameLast) break;
-						float time2 = input.readFloat(), mixRotate2 = input.readFloat(), mixX2 = input.readFloat(),
-							mixY2 = input.readFloat();
-						switch (input.readByte()) {
-						case CURVE_STEPPED:
-							timeline.setStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							setBezier(input, timeline, bezier++, frame, 0, time, time2, mixRotate, mixRotate2, 1);
-							setBezier(input, timeline, bezier++, frame, 1, time, time2, mixX, mixX2, 1);
-							setBezier(input, timeline, bezier++, frame, 2, time, time2, mixY, mixY2, 1);
-						}
-						time = time2;
-						mixRotate = mixRotate2;
-						mixX = mixX2;
-						mixY = mixY2;
-					}
-					timelines.add(timeline);
-				}
+                switch (input.readByte()) {
+                    case PATH_POSITION -> timelines
+                            .add(readTimeline(input, new PathConstraintPositionTimeline(input.readInt(true), input.readInt(true), index),
+                                    data.positionMode == PositionMode.fixed ? scale : 1));
+                    case PATH_SPACING -> timelines
+                            .add(readTimeline(input, new PathConstraintSpacingTimeline(input.readInt(true), input.readInt(true), index),
+                                    data.spacingMode == SpacingMode.length || data.spacingMode == SpacingMode.fixed ? scale : 1));
+                    case PATH_MIX -> {
+                        PathConstraintMixTimeline timeline = new PathConstraintMixTimeline(input.readInt(true), input.readInt(true),
+                                index);
+                        float time = input.readFloat(), mixRotate = input.readFloat(), mixX = input.readFloat(), mixY = input.readFloat();
+                        for (int frame = 0, bezier = 0, frameLast = nn - 1; ; frame++) {
+                            timeline.setFrame(frame, time, mixRotate, mixX, mixY);
+                            if (frame == frameLast) break;
+                            float time2 = input.readFloat(), mixRotate2 = input.readFloat(), mixX2 = input.readFloat(),
+                                    mixY2 = input.readFloat();
+                            switch (input.readByte()) {
+                                case CURVE_STEPPED -> timeline.setStepped(frame);
+                                case CURVE_BEZIER -> {
+                                    setBezier(input, timeline, bezier++, frame, 0, time, time2, mixRotate, mixRotate2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 1, time, time2, mixX, mixX2, 1);
+                                    setBezier(input, timeline, bezier++, frame, 2, time, time2, mixY, mixY2, 1);
+                                }
+                            }
+                            time = time2;
+                            mixRotate = mixRotate2;
+                            mixX = mixX2;
+                            mixY = mixY2;
+                        }
+                        timelines.add(timeline);
+                    }
+                }
 			}
 		}
 
@@ -926,13 +855,10 @@ public class SkeletonBinary extends SkeletonLoader {
 						timeline.setFrame(frame, time, deform);
 						if (frame == frameLast) break;
 						float time2 = input.readFloat();
-						switch (input.readByte()) {
-						case CURVE_STEPPED:
-							timeline.setStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							setBezier(input, timeline, bezier++, frame, 0, time, time2, 0, 1, 1);
-						}
+                        switch (input.readByte()) {
+                            case CURVE_STEPPED -> timeline.setStepped(frame);
+                            case CURVE_BEZIER -> setBezier(input, timeline, bezier++, frame, 0, time, time2, 0, 1, 1);
+                        }
 						time = time2;
 					}
 					timelines.add(timeline);
@@ -1005,13 +931,10 @@ public class SkeletonBinary extends SkeletonLoader {
 			timeline.setFrame(frame, time, value);
 			if (frame == frameLast) break;
 			float time2 = input.readFloat(), value2 = input.readFloat() * scale;
-			switch (input.readByte()) {
-			case CURVE_STEPPED:
-				timeline.setStepped(frame);
-				break;
-			case CURVE_BEZIER:
-				setBezier(input, timeline, bezier++, frame, 0, time, time2, value, value2, 1);
-			}
+            switch (input.readByte()) {
+                case CURVE_STEPPED -> timeline.setStepped(frame);
+                case CURVE_BEZIER -> setBezier(input, timeline, bezier++, frame, 0, time, time2, value, value2, 1);
+            }
 			time = time2;
 			value = value2;
 		}
@@ -1024,14 +947,13 @@ public class SkeletonBinary extends SkeletonLoader {
 			timeline.setFrame(frame, time, value1, value2);
 			if (frame == frameLast) break;
 			float time2 = input.readFloat(), nvalue1 = input.readFloat() * scale, nvalue2 = input.readFloat() * scale;
-			switch (input.readByte()) {
-			case CURVE_STEPPED:
-				timeline.setStepped(frame);
-				break;
-			case CURVE_BEZIER:
-				setBezier(input, timeline, bezier++, frame, 0, time, time2, value1, nvalue1, scale);
-				setBezier(input, timeline, bezier++, frame, 1, time, time2, value2, nvalue2, scale);
-			}
+            switch (input.readByte()) {
+                case CURVE_STEPPED -> timeline.setStepped(frame);
+                case CURVE_BEZIER -> {
+                    setBezier(input, timeline, bezier++, frame, 0, time, time2, value1, nvalue1, scale);
+                    setBezier(input, timeline, bezier++, frame, 1, time, time2, value2, nvalue2, scale);
+                }
+            }
 			time = time2;
 			value1 = nvalue1;
 			value2 = nvalue2;
@@ -1077,22 +999,21 @@ public class SkeletonBinary extends SkeletonLoader {
 			int charCount = 0;
 			for (int i = 0; i < byteCount;) {
 				int b = read();
-				switch (b >> 4) {
-				case -1:
-					throw new EOFException();
-				case 12:
-				case 13:
-					chars[charCount++] = (char)((b & 0x1F) << 6 | read() & 0x3F);
-					i += 2;
-					break;
-				case 14:
-					chars[charCount++] = (char)((b & 0x0F) << 12 | (read() & 0x3F) << 6 | read() & 0x3F);
-					i += 3;
-					break;
-				default:
-					chars[charCount++] = (char)b;
-					i++;
-				}
+                switch (b >> 4) {
+                    case -1 -> throw new EOFException();
+                    case 12, 13 -> {
+                        chars[charCount++] = (char) ((b & 0x1F) << 6 | read() & 0x3F);
+                        i += 2;
+                    }
+                    case 14 -> {
+                        chars[charCount++] = (char) ((b & 0x0F) << 12 | (read() & 0x3F) << 6 | read() & 0x3F);
+                        i += 3;
+                    }
+                    default -> {
+                        chars[charCount++] = (char) b;
+                        i++;
+                    }
+                }
 			}
 			return new String(chars, 0, charCount);
 		}

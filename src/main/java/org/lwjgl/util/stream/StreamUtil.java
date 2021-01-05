@@ -76,8 +76,8 @@ public final class StreamUtil {
 		return texID;
 	}
 
-	static int createRenderBuffer(final FBOUtil fboUtil, final int width, final int height, final int internalformat) {
-		return createRenderBuffer(fboUtil, width, height, 1, internalformat);
+	static int createRenderBuffer(final FBOUtil fboUtil, final int width, final int height) {
+		return createRenderBuffer(fboUtil, width, height, 1, org.lwjgl.opengl.GL11.GL_RGBA8);
 	}
 
 	static int createRenderBuffer(final FBOUtil fboUtil, final int width, final int height, final int samples, final int internalformat) {

@@ -40,14 +40,10 @@ public class IkConstraint {
 	public void apply () {
 		Bone target = this.target;
 		Array<Bone> bones = this.bones;
-		switch (bones.size) {
-		case 1:
-			apply(bones.first(), target.worldX, target.worldY, mix);
-			break;
-		case 2:
-			apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, mix);
-			break;
-		}
+        switch (bones.size) {
+            case 1 -> apply(bones.first(), target.worldX, target.worldY, mix);
+            case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, mix);
+        }
 	}
 
 	public Array<Bone> getBones () {

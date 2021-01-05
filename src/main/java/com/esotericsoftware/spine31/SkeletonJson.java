@@ -1,34 +1,3 @@
-/******************************************************************************
- * Spine Runtimes Software License
- * Version 2.3
- * 
- * Copyright (c) 2013-2015, Esoteric Software
- * All rights reserved.
- * 
- * You are granted a perpetual, non-exclusive, non-sublicensable and
- * non-transferable license to use, install, execute and perform the Spine
- * Runtimes Software (the "Software") and derivative works solely for personal
- * or internal use. Without the written permission of Esoteric Software (see
- * Section 2 of the Spine Software License Agreement), you may not (a) modify,
- * translate, adapt or otherwise create derivative works, improvements of the
- * Software or develop new applications using the Software or (b) remove,
- * delete, alter or obscure any trademarks or any copyright, trademark, patent
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
- * 
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine31;
 
 import com.badlogic.gdx.files.FileHandle;
@@ -63,7 +32,7 @@ import com.esotericsoftware.spine31.attachments.WeightedMeshAttachment;
 public class SkeletonJson {
 	private final AttachmentLoader attachmentLoader;
 	private float scale = 1;
-	private Array<LinkedMesh> linkedMeshes = new Array();
+	private final Array<LinkedMesh> linkedMeshes = new Array();
 
 	public SkeletonJson (TextureAtlas atlas) {
 		attachmentLoader = new AtlasAttachmentLoader(atlas);
@@ -245,111 +214,109 @@ public class SkeletonJson {
 
 		String type = map.getString("type", AttachmentType.region.name());
 		if (type.equals("skinnedmesh")) type = "weightedmesh";
-		switch (AttachmentType.valueOf(type)) {
-		case region: {
-			RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
-			if (region == null) return null;
-			region.setPath(path);
-			region.setX(map.getFloat("x", 0) * scale);
-			region.setY(map.getFloat("y", 0) * scale);
-			region.setScaleX(map.getFloat("scaleX", 1));
-			region.setScaleY(map.getFloat("scaleY", 1));
-			region.setRotation(map.getFloat("rotation", 0));
-			region.setWidth(map.getFloat("width") * scale);
-			region.setHeight(map.getFloat("height") * scale);
+        switch (AttachmentType.valueOf(type)) {
+            case region -> {
+                RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
+                if (region == null) return null;
+                region.setPath(path);
+                region.setX(map.getFloat("x", 0) * scale);
+                region.setY(map.getFloat("y", 0) * scale);
+                region.setScaleX(map.getFloat("scaleX", 1));
+                region.setScaleY(map.getFloat("scaleY", 1));
+                region.setRotation(map.getFloat("rotation", 0));
+                region.setWidth(map.getFloat("width") * scale);
+                region.setHeight(map.getFloat("height") * scale);
 
-			String color = map.getString("color", null);
-			if (color != null) region.getColor().set(Color.valueOf(color));
+                String color = map.getString("color", null);
+                if (color != null) region.getColor().set(Color.valueOf(color));
 
-			region.updateOffset();
-			return region;
-		}
-		case boundingbox: {
-			BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
-			if (box == null) return null;
-			float[] vertices = map.require("vertices").asFloatArray();
-			if (scale != 1) {
-				for (int i = 0, n = vertices.length; i < n; i++)
-					vertices[i] *= scale;
-			}
-			box.setVertices(vertices);
-			return box;
-		}
-		case mesh:
-		case linkedmesh: {
-			MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
-			if (mesh == null) return null;
-			mesh.setPath(path);
+                region.updateOffset();
+                return region;
+            }
+            case boundingbox -> {
+                BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
+                if (box == null) return null;
+                float[] vertices = map.require("vertices").asFloatArray();
+                if (scale != 1) {
+                    for (int i = 0, n = vertices.length; i < n; i++)
+                        vertices[i] *= scale;
+                }
+                box.setVertices(vertices);
+                return box;
+            }
+            case mesh, linkedmesh -> {
+                MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
+                if (mesh == null) return null;
+                mesh.setPath(path);
 
-			String color = map.getString("color", null);
-			if (color != null) mesh.getColor().set(Color.valueOf(color));
+                String color = map.getString("color", null);
+                if (color != null) mesh.getColor().set(Color.valueOf(color));
 
-			mesh.setWidth(map.getFloat("width", 0) * scale);
-			mesh.setHeight(map.getFloat("height", 0) * scale);
+                mesh.setWidth(map.getFloat("width", 0) * scale);
+                mesh.setHeight(map.getFloat("height", 0) * scale);
 
-			String parent = map.getString("parent", null);
-			if (parent == null) {
-				float[] vertices = map.require("vertices").asFloatArray();
-				if (scale != 1) {
-					for (int i = 0, n = vertices.length; i < n; i++)
-						vertices[i] *= scale;
-				}
-				mesh.setVertices(vertices);
-				mesh.setTriangles(map.require("triangles").asShortArray());
-				mesh.setRegionUVs(map.require("uvs").asFloatArray());
-				mesh.updateUVs();
+                String parent = map.getString("parent", null);
+                if (parent == null) {
+                    float[] vertices = map.require("vertices").asFloatArray();
+                    if (scale != 1) {
+                        for (int i = 0, n = vertices.length; i < n; i++)
+                            vertices[i] *= scale;
+                    }
+                    mesh.setVertices(vertices);
+                    mesh.setTriangles(map.require("triangles").asShortArray());
+                    mesh.setRegionUVs(map.require("uvs").asFloatArray());
+                    mesh.updateUVs();
 
-				if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
-				if (map.has("edges")) mesh.setEdges(map.require("edges").asShortArray());
-			} else {
-				mesh.setInheritFFD(map.getBoolean("ffd", true));
-				linkedMeshes.add(new LinkedMesh(mesh, map.getString("skin", null), slotIndex, parent));
-			}
-			return mesh;
-		}
-		case weightedmesh:
-		case weightedlinkedmesh: {
-			WeightedMeshAttachment mesh = attachmentLoader.newWeightedMeshAttachment(skin, name, path);
-			if (mesh == null) return null;
-			mesh.setPath(path);
+                    if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
+                    if (map.has("edges")) mesh.setEdges(map.require("edges").asShortArray());
+                } else {
+                    mesh.setInheritFFD(map.getBoolean("ffd", true));
+                    linkedMeshes.add(new LinkedMesh(mesh, map.getString("skin", null), slotIndex, parent));
+                }
+                return mesh;
+            }
+            case weightedmesh, weightedlinkedmesh -> {
+                WeightedMeshAttachment mesh = attachmentLoader.newWeightedMeshAttachment(skin, name, path);
+                if (mesh == null) return null;
+                mesh.setPath(path);
 
-			String color = map.getString("color", null);
-			if (color != null) mesh.getColor().set(Color.valueOf(color));
+                String color = map.getString("color", null);
+                if (color != null) mesh.getColor().set(Color.valueOf(color));
 
-			mesh.setWidth(map.getFloat("width", 0) * scale);
-			mesh.setHeight(map.getFloat("height", 0) * scale);
+                mesh.setWidth(map.getFloat("width", 0) * scale);
+                mesh.setHeight(map.getFloat("height", 0) * scale);
 
-			String parent = map.getString("parent", null);
-			if (parent == null) {
-				float[] uvs = map.require("uvs").asFloatArray();
-				float[] vertices = map.require("vertices").asFloatArray();
-				FloatArray weights = new FloatArray(uvs.length * 3 * 3);
-				IntArray bones = new IntArray(uvs.length * 3);
-				for (int i = 0, n = vertices.length; i < n;) {
-					int boneCount = (int)vertices[i++];
-					bones.add(boneCount);
-					for (int nn = i + boneCount * 4; i < nn; i += 4) {
-						bones.add((int)vertices[i]);
-						weights.add(vertices[i + 1] * scale);
-						weights.add(vertices[i + 2] * scale);
-						weights.add(vertices[i + 3]);
-					}
-				}
-				mesh.setBones(bones.toArray());
-				mesh.setWeights(weights.toArray());
-				mesh.setTriangles(map.require("triangles").asShortArray());
-				mesh.setRegionUVs(uvs);
-				mesh.updateUVs();
+                String parent = map.getString("parent", null);
+                if (parent == null) {
+                    float[] uvs = map.require("uvs").asFloatArray();
+                    float[] vertices = map.require("vertices").asFloatArray();
+                    FloatArray weights = new FloatArray(uvs.length * 3 * 3);
+                    IntArray bones = new IntArray(uvs.length * 3);
+                    for (int i = 0, n = vertices.length; i < n; ) {
+                        int boneCount = (int) vertices[i++];
+                        bones.add(boneCount);
+                        for (int nn = i + boneCount * 4; i < nn; i += 4) {
+                            bones.add((int) vertices[i]);
+                            weights.add(vertices[i + 1] * scale);
+                            weights.add(vertices[i + 2] * scale);
+                            weights.add(vertices[i + 3]);
+                        }
+                    }
+                    mesh.setBones(bones.toArray());
+                    mesh.setWeights(weights.toArray());
+                    mesh.setTriangles(map.require("triangles").asShortArray());
+                    mesh.setRegionUVs(uvs);
+                    mesh.updateUVs();
 
-				if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
-				if (map.has("edges")) mesh.setEdges(map.require("edges").asShortArray());
-			} else {
-				mesh.setInheritFFD(map.getBoolean("ffd", true));
-				linkedMeshes.add(new LinkedMesh(mesh, map.getString("skin", null), slotIndex, parent));
-			}
-			return mesh;
-		}
-		}
+                    if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
+                    if (map.has("edges")) mesh.setEdges(map.require("edges").asShortArray());
+                } else {
+                    mesh.setInheritFFD(map.getBoolean("ffd", true));
+                    linkedMeshes.add(new LinkedMesh(mesh, map.getString("skin", null), slotIndex, parent));
+                }
+                return mesh;
+            }
+        }
 
 		// RegionSequenceAttachment regionSequenceAttachment = (RegionSequenceAttachment)attachment;
 		//
@@ -589,9 +556,10 @@ public class SkeletonJson {
 	}
 
 	static class LinkedMesh {
-		String parent, skin;
-		int slotIndex;
-		Attachment mesh;
+		final String parent;
+		final String skin;
+		final int slotIndex;
+		final Attachment mesh;
 
 		public LinkedMesh (Attachment mesh, String skin, int slotIndex, String parent) {
 			this.mesh = mesh;

@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated May 1, 2019. Replaces all prior versions.
- *
- * Copyright (c) 2013-2019, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
- * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
- * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine37.utils;
 
 import com.badlogic.gdx.graphics.Color;
@@ -41,9 +12,9 @@ import com.esotericsoftware.spine37.SkeletonRenderer;
 import com.esotericsoftware.spine37.Skin;
 
 public class SkeletonActorPool extends Pool<SkeletonActor> {
-	private SkeletonRenderer renderer;
-	SkeletonData skeletonData;
-	AnimationStateData stateData;
+	private final SkeletonRenderer renderer;
+	final SkeletonData skeletonData;
+	final AnimationStateData stateData;
 	private final Pool<Skeleton> skeletonPool;
 	private final Pool<AnimationState> statePool;
 	private final Array<SkeletonActor> obtained;
@@ -62,30 +33,30 @@ public class SkeletonActorPool extends Pool<SkeletonActor> {
 
 		obtained = new Array(false, initialCapacity);
 
-		skeletonPool = new Pool<Skeleton>(initialCapacity, max) {
-			protected Skeleton newObject () {
-				return new Skeleton(SkeletonActorPool.this.skeletonData);
-			}
+		skeletonPool = new Pool<>(initialCapacity, max) {
+            protected Skeleton newObject() {
+                return new Skeleton(SkeletonActorPool.this.skeletonData);
+            }
 
-			protected void reset (Skeleton skeleton) {
-				skeleton.setColor(Color.WHITE);
-				skeleton.setScale(1, 1);
-				skeleton.setSkin((Skin)null);
-				skeleton.setSkin(SkeletonActorPool.this.skeletonData.getDefaultSkin());
-				skeleton.setToSetupPose();
-			}
-		};
+            protected void reset(Skeleton skeleton) {
+                skeleton.setColor(Color.WHITE);
+                skeleton.setScale(1, 1);
+                skeleton.setSkin((Skin) null);
+                skeleton.setSkin(SkeletonActorPool.this.skeletonData.getDefaultSkin());
+                skeleton.setToSetupPose();
+            }
+        };
 
-		statePool = new Pool<AnimationState>(initialCapacity, max) {
-			protected AnimationState newObject () {
-				return new AnimationState(SkeletonActorPool.this.stateData);
-			}
+		statePool = new Pool<>(initialCapacity, max) {
+            protected AnimationState newObject() {
+                return new AnimationState(SkeletonActorPool.this.stateData);
+            }
 
-			protected void reset (AnimationState state) {
-				state.clearTracks();
-				state.clearListeners();
-			}
-		};
+            protected void reset(AnimationState state) {
+                state.clearTracks();
+                state.clearListeners();
+            }
+        };
 	}
 
 	/** Each obtained skeleton actor that is no longer playing an animation is removed from the stage and returned to the pool. */

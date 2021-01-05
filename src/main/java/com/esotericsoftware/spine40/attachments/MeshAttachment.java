@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
- *
- * Copyright (c) 2013-2020, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
- * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine40.attachments;
 
 import static com.esotericsoftware.spine40.utils.SpineUtils.*;
@@ -80,38 +51,41 @@ public class MeshAttachment extends VertexAttachment {
 			v = region.getV();
 			AtlasRegion region = (AtlasRegion)this.region;
 			float textureWidth = region.getTexture().getWidth(), textureHeight = region.getTexture().getHeight();
-			switch (region.degrees) {
-			case 90:
-				u -= (region.originalHeight - region.offsetY - region.packedWidth) / textureWidth;
-				v -= (region.originalWidth - region.offsetX - region.packedHeight) / textureHeight;
-				width = region.originalHeight / textureWidth;
-				height = region.originalWidth / textureHeight;
-				for (int i = 0; i < n; i += 2) {
-					uvs[i] = u + regionUVs[i + 1] * width;
-					uvs[i + 1] = v + (1 - regionUVs[i]) * height;
-				}
-				return;
-			case 180:
-				u -= (region.originalWidth - region.offsetX - region.packedWidth) / textureWidth;
-				v -= region.offsetY / textureHeight;
-				width = region.originalWidth / textureWidth;
-				height = region.originalHeight / textureHeight;
-				for (int i = 0; i < n; i += 2) {
-					uvs[i] = u + (1 - regionUVs[i]) * width;
-					uvs[i + 1] = v + (1 - regionUVs[i + 1]) * height;
-				}
-				return;
-			case 270:
-				u -= region.offsetY / textureWidth;
-				v -= region.offsetX / textureHeight;
-				width = region.originalHeight / textureWidth;
-				height = region.originalWidth / textureHeight;
-				for (int i = 0; i < n; i += 2) {
-					uvs[i] = u + (1 - regionUVs[i + 1]) * width;
-					uvs[i + 1] = v + regionUVs[i] * height;
-				}
-				return;
-			}
+            switch (region.degrees) {
+                case 90 -> {
+                    u -= (region.originalHeight - region.offsetY - region.packedWidth) / textureWidth;
+                    v -= (region.originalWidth - region.offsetX - region.packedHeight) / textureHeight;
+                    width = region.originalHeight / textureWidth;
+                    height = region.originalWidth / textureHeight;
+                    for (int i = 0; i < n; i += 2) {
+                        uvs[i] = u + regionUVs[i + 1] * width;
+                        uvs[i + 1] = v + (1 - regionUVs[i]) * height;
+                    }
+                    return;
+                }
+                case 180 -> {
+                    u -= (region.originalWidth - region.offsetX - region.packedWidth) / textureWidth;
+                    v -= region.offsetY / textureHeight;
+                    width = region.originalWidth / textureWidth;
+                    height = region.originalHeight / textureHeight;
+                    for (int i = 0; i < n; i += 2) {
+                        uvs[i] = u + (1 - regionUVs[i]) * width;
+                        uvs[i + 1] = v + (1 - regionUVs[i + 1]) * height;
+                    }
+                    return;
+                }
+                case 270 -> {
+                    u -= region.offsetY / textureWidth;
+                    v -= region.offsetX / textureHeight;
+                    width = region.originalHeight / textureWidth;
+                    height = region.originalWidth / textureHeight;
+                    for (int i = 0; i < n; i += 2) {
+                        uvs[i] = u + (1 - regionUVs[i + 1]) * width;
+                        uvs[i + 1] = v + regionUVs[i] * height;
+                    }
+                    return;
+                }
+            }
 			u -= region.offsetX / textureWidth;
 			v -= (region.originalHeight - region.offsetY - region.packedHeight) / textureHeight;
 			width = region.originalWidth / textureWidth;

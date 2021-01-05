@@ -21,7 +21,7 @@ public class RuntimesLoader extends Controller {
     private final String[] extraSuffixes = {"", ".txt", ".bytes"};
     private final String[] dataSuffixes = {"", ".json", ".skel"};
     private final String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas", "-pma.atlas"};
-    LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+    final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
     private boolean binaryVersion(File skelFile) {
         try {

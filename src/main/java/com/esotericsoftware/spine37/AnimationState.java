@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated May 1, 2019. Replaces all prior versions.
- *
- * Copyright (c) 2013-2019, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
- * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
- * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine37;
 
 import static com.esotericsoftware.spine37.Animation.RotateTimeline.ENTRIES;
@@ -285,25 +256,25 @@ public class AnimationState {
 				MixBlend timelineBlend;
 				float alpha;
 				switch (timelineMode[i]) {
-				case SUBSEQUENT:
-					if (!attachments && timeline instanceof AttachmentTimeline) continue;
-					if (!drawOrder && timeline instanceof DrawOrderTimeline) continue;
-					timelineBlend = blend;
-					alpha = alphaMix;
-					break;
-				case FIRST:
-					timelineBlend = MixBlend.setup;
-					alpha = alphaMix;
-					break;
-				case HOLD:
-					timelineBlend = MixBlend.setup;
-					alpha = alphaHold;
-					break;
-				default:
-					timelineBlend = MixBlend.setup;
-					TrackEntry holdMix = (TrackEntry)timelineHoldMix[i];
-					alpha = alphaHold * Math.max(0, 1 - holdMix.mixTime / holdMix.mixDuration);
-					break;
+					case SUBSEQUENT -> {
+						if (!attachments && timeline instanceof AttachmentTimeline) continue;
+						if (!drawOrder && timeline instanceof DrawOrderTimeline) continue;
+						timelineBlend = blend;
+						alpha = alphaMix;
+					}
+					case FIRST -> {
+						timelineBlend = MixBlend.setup;
+						alpha = alphaMix;
+					}
+					case HOLD -> {
+						timelineBlend = MixBlend.setup;
+						alpha = alphaHold;
+					}
+					default -> {
+						timelineBlend = MixBlend.setup;
+						TrackEntry holdMix = (TrackEntry) timelineHoldMix[i];
+						alpha = alphaHold * Math.max(0, 1 - holdMix.mixTime / holdMix.mixDuration);
+					}
 				}
 				from.totalAlpha += alpha;
 				if (timeline instanceof RotateTimeline) {
@@ -1228,7 +1199,7 @@ public class AnimationState {
 		}
 	}
 
-	static private enum EventType {
+	private enum EventType {
 		start, interrupt, end, dispose, complete, event
 	}
 
@@ -1237,30 +1208,30 @@ public class AnimationState {
 	 * <p>
 	 * See TrackEntry {@link TrackEntry#setListener(AnimationStateListener)} and AnimationState
 	 * {@link AnimationState#addListener(AnimationStateListener)}. */
-	static public interface AnimationStateListener {
+	public interface AnimationStateListener {
 		/** Invoked when this entry has been set as the current entry. */
-		public void start (TrackEntry entry);
+		void start(TrackEntry entry);
 
 		/** Invoked when another entry has replaced this entry as the current entry. This entry may continue being applied for
 		 * mixing. */
-		public void interrupt (TrackEntry entry);
+		void interrupt(TrackEntry entry);
 
 		/** Invoked when this entry is no longer the current entry and will never be applied again. */
-		public void end (TrackEntry entry);
+		void end(TrackEntry entry);
 
 		/** Invoked when this entry will be disposed. This may occur without the entry ever being set as the current entry.
 		 * References to the entry should not be kept after <code>dispose</code> is called, as it may be destroyed or reused. */
-		public void dispose (TrackEntry entry);
+		void dispose(TrackEntry entry);
 
 		/** Invoked every time this entry's animation completes a loop. Because this event is trigged in
 		 * {@link AnimationState#apply(Skeleton)}, any animations set in response to the event won't be applied until the next time
 		 * the AnimationState is applied. */
-		public void complete (TrackEntry entry);
+		void complete(TrackEntry entry);
 
 		/** Invoked when this entry's animation triggers an event. Because this event is trigged in
 		 * {@link AnimationState#apply(Skeleton)}, any animations set in response to the event won't be applied until the next time
 		 * the AnimationState is applied. */
-		public void event (TrackEntry entry, Event event);
+		void event(TrackEntry entry, Event event);
 	}
 
 	static public abstract class AnimationStateAdapter implements AnimationStateListener {

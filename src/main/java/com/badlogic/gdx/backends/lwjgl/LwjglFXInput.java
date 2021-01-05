@@ -20,34 +20,34 @@ import java.util.Set;
  * 
  * @author Trixt0r */
 final public class LwjglFXInput implements Input {
-	static public float keyRepeatInitialTime = 0.4f;
+	static public final float keyRepeatInitialTime = 0.4f;
 	static public float keyRepeatTime = 0.1f;
 
-	List<KeyEvent> keyEvents = new ArrayList<>();
-	List<TouchEvent> touchEvents = new ArrayList<>();
+	final List<KeyEvent> keyEvents = new ArrayList<>();
+	final List<TouchEvent> touchEvents = new ArrayList<>();
 	boolean mousePressed = false;
 	int mouseX, mouseY;
 	int deltaX, deltaY;
 	int pressedKeys = 0;
 	boolean justTouched = false;
-	Set<Integer> pressedButtons = new HashSet<>();
+	final Set<Integer> pressedButtons = new HashSet<>();
 	InputProcessor processor;
 	char lastKeyCharPressed;
 	float keyRepeatTimer;
 	long currentEventTimeStamp;
-	ImageView target;
+	final ImageView target;
 	int x,y, lastX, lastY;
 	KeyCode lastKeyCode;
 	MouseButton lastButton;
 	boolean isPressed, hasFocus = false;
 
-	Pool<KeyEvent> usedKeyEvents = new Pool<>(16, 1000) {
+	final Pool<KeyEvent> usedKeyEvents = new Pool<>(16, 1000) {
 		protected KeyEvent newObject() {
 			return new KeyEvent();
 		}
 	};
 
-	Pool<TouchEvent> usedTouchEvents = new Pool<>(16, 1000) {
+	final Pool<TouchEvent> usedTouchEvents = new Pool<>(16, 1000) {
 		protected TouchEvent newObject() {
 			return new TouchEvent();
 		}
@@ -261,7 +261,7 @@ final public class LwjglFXInput implements Input {
 		isPressed = target.isPressed();
 		if(isPressed && !hasFocus){
 			hasFocus = true;
-			Platform.runLater(() -> target.requestFocus());
+			Platform.runLater(target::requestFocus);
 		}
 		if(!isPressed && hasFocus && target.getScene().getRoot().isPressed()) hasFocus = false;
 		synchronized (this) {
@@ -666,7 +666,7 @@ final public class LwjglFXInput implements Input {
 
 	}
 
-	class KeyEvent {
+	static class KeyEvent {
 		static final int KEY_DOWN = 0;
 		static final int KEY_UP = 1;
 		static final int KEY_TYPED = 2;
@@ -677,7 +677,7 @@ final public class LwjglFXInput implements Input {
 		char keyChar;
 	}
 
-	class TouchEvent {
+	static class TouchEvent {
 		static final int TOUCH_DOWN = 0;
 		static final int TOUCH_UP = 1;
 		static final int TOUCH_DRAGGED = 2;

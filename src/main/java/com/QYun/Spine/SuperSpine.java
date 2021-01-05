@@ -12,20 +12,20 @@ public class SuperSpine extends ApplicationAdapter {
 
     public static FileHandle skelFile;
     public static FileHandle atlasFile;
-    public static SimpleBooleanProperty isReload = new SimpleBooleanProperty(false);
+    public static final SimpleBooleanProperty isReload = new SimpleBooleanProperty(false);
     public static boolean isBinary = true;
 
     static ObservableList<String> skinsList = FXCollections.observableArrayList();
     static ObservableList<String> animatesList = FXCollections.observableArrayList();
-    static SimpleStringProperty spineVersion = new SimpleStringProperty(null);
-    static SimpleStringProperty skin = new SimpleStringProperty(null);
-    static SimpleStringProperty animate = new SimpleStringProperty(null);
-    static SimpleBooleanProperty isLoop = new SimpleBooleanProperty(false);
-    static SimpleBooleanProperty isPlay = new SimpleBooleanProperty(false);
-    static SimpleFloatProperty scale = new SimpleFloatProperty(2.0f);
-    static SimpleFloatProperty X = new SimpleFloatProperty(0.0f);
-    static SimpleFloatProperty Y = new SimpleFloatProperty(-200f);
-    static SimpleFloatProperty speed = new SimpleFloatProperty(1);
+    static final SimpleStringProperty spineVersion = new SimpleStringProperty(null);
+    static final SimpleStringProperty skin = new SimpleStringProperty(null);
+    static final SimpleStringProperty animate = new SimpleStringProperty(null);
+    static final SimpleBooleanProperty isLoop = new SimpleBooleanProperty(false);
+    static final SimpleBooleanProperty isPlay = new SimpleBooleanProperty(false);
+    static final SimpleFloatProperty scale = new SimpleFloatProperty(2.0f);
+    static final SimpleFloatProperty X = new SimpleFloatProperty(0.0f);
+    static final SimpleFloatProperty Y = new SimpleFloatProperty(-200f);
+    static final SimpleFloatProperty speed = new SimpleFloatProperty(1);
 
     public void setSpeed(float speed) {
         SuperSpine.speed.set(speed);

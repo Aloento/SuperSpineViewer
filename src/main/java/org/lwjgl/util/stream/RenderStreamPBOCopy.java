@@ -51,14 +51,14 @@ final class RenderStreamPBOCopy extends RenderStreamPBO {
 		}
 
 		public RenderStream create(final StreamHandler handler, final int samples, final int transfersToBuffer) {
-			return new RenderStreamPBOCopy(handler, samples, transfersToBuffer, ReadbackType.GET_TEX_IMAGE);
+			return new RenderStreamPBOCopy(handler, samples, transfersToBuffer);
 		}
 	};
 
 	private int devicePBO;
 
-	RenderStreamPBOCopy(final StreamHandler handler, final int samples, final int transfersToBuffer, final ReadbackType readbackType) {
-		super(handler, samples, transfersToBuffer, readbackType);
+	RenderStreamPBOCopy(final StreamHandler handler, final int samples, final int transfersToBuffer) {
+		super(handler, samples, transfersToBuffer, ReadbackType.GET_TEX_IMAGE);
 	}
 
 	protected void resizeBuffers(final int height, final int stride) {

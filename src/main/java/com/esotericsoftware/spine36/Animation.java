@@ -1,33 +1,3 @@
-/******************************************************************************
- * Spine Runtimes Software License v2.5
- *
- * Copyright (c) 2013-2016, Esoteric Software
- * All rights reserved.
- *
- * You are granted a perpetual, non-exclusive, non-sublicensable, and
- * non-transferable license to use, install, execute, and perform the Spine
- * Runtimes software and derivative works solely for personal or internal
- * use. Without the written permission of Esoteric Software (see Section 2 of
- * the Spine Software License Agreement), you may not (a) modify, translate,
- * adapt, or develop new applications using the Spine Runtimes or otherwise
- * create derivative works or improvements of the Spine Runtimes or (b) remove,
- * delete, alter, or obscure any trademarks or any copyright, trademark, patent,
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS INTERRUPTION, OR LOSS OF
- * USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine36;
 
 import static com.esotericsoftware.spine36.Animation.MixDirection.*;
@@ -134,7 +104,7 @@ public class Animation {
 	}
 
 	/** The interface for all timelines. */
-	static public interface Timeline {
+	public interface Timeline {
 		/** Applies this timeline to the skeleton.
 		 * @param skeleton The skeleton the timeline is being applied to. This provides access to the bones, slots, and other
 		 *           skeleton components the timeline may change.
@@ -152,17 +122,17 @@ public class Animation {
 		 * @param pose Controls how mixing is applied when <code>alpha</code> < 1.
 		 * @param direction Indicates whether the timeline is mixing in or out. Used by timelines which perform instant transitions,
 		 *           such as {@link DrawOrderTimeline} or {@link AttachmentTimeline}. */
-		public void apply (Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixPose pose,
-			MixDirection direction);
+		void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixPose pose,
+				   MixDirection direction);
 
 		/** Uniquely encodes both the type of this timeline and the skeleton property that it affects. */
-		public int getPropertyId ();
+		int getPropertyId();
 	}
 
 	/** Controls how a timeline is mixed with the setup or current pose.
 	 * <p>
 	 * See Timeline {@link Timeline#apply(Skeleton, float, float, Array, float, MixPose, MixDirection)}. */
-	static public enum MixPose {
+	public enum MixPose {
 		/** The timeline value is mixed with the setup pose (the current pose is not used). */
 		setup,
 		/** The timeline value is mixed with the current pose. The setup pose is used as the timeline value before the first key,
@@ -178,11 +148,11 @@ public class Animation {
 	 * toward 1 (the timeline's pose).
 	 * <p>
 	 * See Timeline {@link Timeline#apply(Skeleton, float, float, Array, float, MixPose, MixDirection)}. */
-	static public enum MixDirection {
+	public enum MixDirection {
 		in, out
 	}
 
-	static private enum TimelineType {
+	private enum TimelineType {
 		rotate, translate, scale, shear, //
 		attachment, color, deform, //
 		event, drawOrder, //
@@ -325,13 +295,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					bone.rotation = bone.data.rotation;
-					return;
-				case current:
-					float r = bone.data.rotation - bone.rotation;
-					r -= (16384 - (int)(16384.499999999996 - r / 360)) * 360;
-					bone.rotation += r * alpha;
+					case setup -> {
+						bone.rotation = bone.data.rotation;
+						return;
+					}
+					case current -> {
+						float r = bone.data.rotation - bone.rotation;
+						r -= (16384 - (int) (16384.499999999996 - r / 360)) * 360;
+						bone.rotation += r * alpha;
+					}
 				}
 				return;
 			}
@@ -415,13 +387,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					bone.x = bone.data.x;
-					bone.y = bone.data.y;
-					return;
-				case current:
-					bone.x += (bone.data.x - bone.x) * alpha;
-					bone.y += (bone.data.y - bone.y) * alpha;
+					case setup -> {
+						bone.x = bone.data.x;
+						bone.y = bone.data.y;
+						return;
+					}
+					case current -> {
+						bone.x += (bone.data.x - bone.x) * alpha;
+						bone.y += (bone.data.y - bone.y) * alpha;
+					}
 				}
 				return;
 			}
@@ -469,13 +443,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					bone.scaleX = bone.data.scaleX;
-					bone.scaleY = bone.data.scaleY;
-					return;
-				case current:
-					bone.scaleX += (bone.data.scaleX - bone.scaleX) * alpha;
-					bone.scaleY += (bone.data.scaleY - bone.scaleY) * alpha;
+					case setup -> {
+						bone.scaleX = bone.data.scaleX;
+						bone.scaleY = bone.data.scaleY;
+						return;
+					}
+					case current -> {
+						bone.scaleX += (bone.data.scaleX - bone.scaleX) * alpha;
+						bone.scaleY += (bone.data.scaleY - bone.scaleY) * alpha;
+					}
 				}
 				return;
 			}
@@ -539,13 +515,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					bone.shearX = bone.data.shearX;
-					bone.shearY = bone.data.shearY;
-					return;
-				case current:
-					bone.shearX += (bone.data.shearX - bone.shearX) * alpha;
-					bone.shearY += (bone.data.shearY - bone.shearY) * alpha;
+					case setup -> {
+						bone.shearX = bone.data.shearX;
+						bone.shearY = bone.data.shearY;
+						return;
+					}
+					case current -> {
+						bone.shearX += (bone.data.shearX - bone.shearX) * alpha;
+						bone.shearY += (bone.data.shearY - bone.shearY) * alpha;
+					}
 				}
 				return;
 			}
@@ -626,13 +604,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					slot.color.set(slot.data.color);
-					return;
-				case current:
-					Color color = slot.color, setup = slot.data.color;
-					color.add((setup.r - color.r) * alpha, (setup.g - color.g) * alpha, (setup.b - color.b) * alpha,
-						(setup.a - color.a) * alpha);
+					case setup -> {
+						slot.color.set(slot.data.color);
+						return;
+					}
+					case current -> {
+						Color color = slot.color, setup = slot.data.color;
+						color.add((setup.r - color.r) * alpha, (setup.g - color.g) * alpha, (setup.b - color.b) * alpha,
+								(setup.a - color.a) * alpha);
+					}
 				}
 				return;
 			}
@@ -724,15 +704,17 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					slot.color.set(slot.data.color);
-					slot.darkColor.set(slot.data.darkColor);
-					return;
-				case current:
-					Color light = slot.color, dark = slot.darkColor, setupLight = slot.data.color, setupDark = slot.data.darkColor;
-					light.add((setupLight.r - light.r) * alpha, (setupLight.g - light.g) * alpha, (setupLight.b - light.b) * alpha,
-						(setupLight.a - light.a) * alpha);
-					dark.add((setupDark.r - dark.r) * alpha, (setupDark.g - dark.g) * alpha, (setupDark.b - dark.b) * alpha, 0);
+					case setup -> {
+						slot.color.set(slot.data.color);
+						slot.darkColor.set(slot.data.darkColor);
+						return;
+					}
+					case current -> {
+						Color light = slot.color, dark = slot.darkColor, setupLight = slot.data.color, setupDark = slot.data.darkColor;
+						light.add((setupLight.r - light.r) * alpha, (setupLight.g - light.g) * alpha, (setupLight.b - light.b) * alpha,
+								(setupLight.a - light.a) * alpha);
+						dark.add((setupDark.r - dark.r) * alpha, (setupDark.g - dark.g) * alpha, (setupDark.b - dark.b) * alpha, 0);
+					}
 				}
 				return;
 			}
@@ -930,25 +912,27 @@ public class Animation {
 			if (time < frames[0]) { // Time is before first frame.
 				VertexAttachment vertexAttachment = (VertexAttachment)slotAttachment;
 				switch (pose) {
-				case setup:
-					verticesArray.clear();
-					return;
-				case current:
-					if (alpha == 1) {
+					case setup -> {
 						verticesArray.clear();
 						return;
 					}
-					float[] vertices = verticesArray.setSize(vertexCount);
-					if (vertexAttachment.getBones() == null) {
-						// Unweighted vertex positions.
-						float[] setupVertices = vertexAttachment.getVertices();
-						for (int i = 0; i < vertexCount; i++)
-							vertices[i] += (setupVertices[i] - vertices[i]) * alpha;
-					} else {
-						// Weighted deform offsets.
-						alpha = 1 - alpha;
-						for (int i = 0; i < vertexCount; i++)
-							vertices[i] *= alpha;
+					case current -> {
+						if (alpha == 1) {
+							verticesArray.clear();
+							return;
+						}
+						float[] vertices = verticesArray.setSize(vertexCount);
+						if (vertexAttachment.getBones() == null) {
+							// Unweighted vertex positions.
+							float[] setupVertices = vertexAttachment.getVertices();
+							for (int i = 0; i < vertexCount; i++)
+								vertices[i] += (setupVertices[i] - vertices[i]) * alpha;
+						} else {
+							// Weighted deform offsets.
+							alpha = 1 - alpha;
+							for (int i = 0; i < vertexCount; i++)
+								vertices[i] *= alpha;
+						}
 					}
 				}
 				return;
@@ -1205,13 +1189,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					constraint.mix = constraint.data.mix;
-					constraint.bendDirection = constraint.data.bendDirection;
-					return;
-				case current:
-					constraint.mix += (constraint.data.mix - constraint.mix) * alpha;
-					constraint.bendDirection = constraint.data.bendDirection;
+					case setup -> {
+						constraint.mix = constraint.data.mix;
+						constraint.bendDirection = constraint.data.bendDirection;
+						return;
+					}
+					case current -> {
+						constraint.mix += (constraint.data.mix - constraint.mix) * alpha;
+						constraint.bendDirection = constraint.data.bendDirection;
+					}
 				}
 				return;
 			}
@@ -1296,17 +1282,19 @@ public class Animation {
 			if (time < frames[0]) { // Time is before first frame.
 				TransformConstraintData data = constraint.data;
 				switch (pose) {
-				case setup:
-					constraint.rotateMix = data.rotateMix;
-					constraint.translateMix = data.translateMix;
-					constraint.scaleMix = data.scaleMix;
-					constraint.shearMix = data.shearMix;
-					return;
-				case current:
-					constraint.rotateMix += (data.rotateMix - constraint.rotateMix) * alpha;
-					constraint.translateMix += (data.translateMix - constraint.translateMix) * alpha;
-					constraint.scaleMix += (data.scaleMix - constraint.scaleMix) * alpha;
-					constraint.shearMix += (data.shearMix - constraint.shearMix) * alpha;
+					case setup -> {
+						constraint.rotateMix = data.rotateMix;
+						constraint.translateMix = data.translateMix;
+						constraint.scaleMix = data.scaleMix;
+						constraint.shearMix = data.shearMix;
+						return;
+					}
+					case current -> {
+						constraint.rotateMix += (data.rotateMix - constraint.rotateMix) * alpha;
+						constraint.translateMix += (data.translateMix - constraint.translateMix) * alpha;
+						constraint.scaleMix += (data.scaleMix - constraint.scaleMix) * alpha;
+						constraint.shearMix += (data.shearMix - constraint.shearMix) * alpha;
+					}
 				}
 				return;
 			}
@@ -1397,11 +1385,11 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					constraint.position = constraint.data.position;
-					return;
-				case current:
-					constraint.position += (constraint.data.position - constraint.position) * alpha;
+					case setup -> {
+						constraint.position = constraint.data.position;
+						return;
+					}
+					case current -> constraint.position += (constraint.data.position - constraint.position) * alpha;
 				}
 				return;
 			}
@@ -1443,11 +1431,11 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					constraint.spacing = constraint.data.spacing;
-					return;
-				case current:
-					constraint.spacing += (constraint.data.spacing - constraint.spacing) * alpha;
+					case setup -> {
+						constraint.spacing = constraint.data.spacing;
+						return;
+					}
+					case current -> constraint.spacing += (constraint.data.spacing - constraint.spacing) * alpha;
 				}
 				return;
 			}
@@ -1522,13 +1510,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (pose) {
-				case setup:
-					constraint.rotateMix = constraint.data.rotateMix;
-					constraint.translateMix = constraint.data.translateMix;
-					return;
-				case current:
-					constraint.rotateMix += (constraint.data.rotateMix - constraint.rotateMix) * alpha;
-					constraint.translateMix += (constraint.data.translateMix - constraint.translateMix) * alpha;
+					case setup -> {
+						constraint.rotateMix = constraint.data.rotateMix;
+						constraint.translateMix = constraint.data.translateMix;
+						return;
+					}
+					case current -> {
+						constraint.rotateMix += (constraint.data.rotateMix - constraint.rotateMix) * alpha;
+						constraint.translateMix += (constraint.data.translateMix - constraint.translateMix) * alpha;
+					}
 				}
 				return;
 			}

@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated May 1, 2019. Replaces all prior versions.
- *
- * Copyright (c) 2013-2019, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
- * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
- * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine37;
 
 import static com.esotericsoftware.spine37.Animation.MixBlend.*;
@@ -135,7 +106,7 @@ public class Animation {
 	}
 
 	/** The interface for all timelines. */
-	static public interface Timeline {
+	public interface Timeline {
 		/** Applies this timeline to the skeleton.
 		 * @param skeleton The skeleton the timeline is being applied to. This provides access to the bones, slots, and other
 		 *           skeleton components the timeline may change.
@@ -153,17 +124,17 @@ public class Animation {
 		 * @param blend Controls how mixing is applied when <code>alpha</code> < 1.
 		 * @param direction Indicates whether the timeline is mixing in or out. Used by timelines which perform instant transitions,
 		 *           such as {@link DrawOrderTimeline} or {@link AttachmentTimeline}. */
-		public void apply (Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
-			MixDirection direction);
+		void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+				   MixDirection direction);
 
 		/** Uniquely encodes both the type of this timeline and the skeleton property that it affects. */
-		public int getPropertyId ();
+		int getPropertyId();
 	}
 
 	/** Controls how a timeline value is mixed with the setup pose value or current pose value.
 	 * <p>
 	 * See Timeline {@link Timeline#apply(Skeleton, float, float, Array, float, MixBlend, MixDirection)}. */
-	static public enum MixBlend {
+	public enum MixBlend {
 		/** Transitions from the setup value to the timeline value (the current value is not used). Before the first key, the setup
 		 * value is set. */
 		setup,
@@ -189,11 +160,11 @@ public class Animation {
 	 * mixing in toward 1 (the timeline's value).
 	 * <p>
 	 * See Timeline {@link Timeline#apply(Skeleton, float, float, Array, float, MixBlend, MixDirection)}. */
-	static public enum MixDirection {
+	public enum MixDirection {
 		in, out
 	}
 
-	static private enum TimelineType {
+	private enum TimelineType {
 		rotate, translate, scale, shear, //
 		attachment, color, deform, //
 		event, drawOrder, //
@@ -203,19 +174,19 @@ public class Animation {
 	}
 
 	/** An interface for timelines which change the property of a bone. */
-	static public interface BoneTimeline extends Timeline {
-		public void setBoneIndex (int index);
+	public interface BoneTimeline extends Timeline {
+		void setBoneIndex(int index);
 
 		/** The index of the bone in {@link Skeleton#getBones()} that will be changed. */
-		public int getBoneIndex ();
+		int getBoneIndex();
 	}
 
 	/** An interface for timelines which change the property of a slot. */
-	static public interface SlotTimeline extends Timeline {
-		public void setSlotIndex (int index);
+	public interface SlotTimeline extends Timeline {
+		void setSlotIndex(int index);
 
 		/** The index of the slot in {@link Skeleton#getSlots()} that will be changed. */
-		public int getSlotIndex ();
+		int getSlotIndex();
 	}
 
 	/** The base class for timelines that use interpolation between key frame values. */
@@ -352,12 +323,14 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					bone.rotation = bone.data.rotation;
-					return;
-				case first:
-					float r = bone.data.rotation - bone.rotation;
-					bone.rotation += (r - (16384 - (int)(16384.499999999996 - r / 360)) * 360) * alpha;
+					case setup -> {
+						bone.rotation = bone.data.rotation;
+						return;
+					}
+					case first -> {
+						float r = bone.data.rotation - bone.rotation;
+						bone.rotation += (r - (16384 - (int) (16384.499999999996 - r / 360)) * 360) * alpha;
+					}
 				}
 				return;
 			}
@@ -449,13 +422,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					bone.x = bone.data.x;
-					bone.y = bone.data.y;
-					return;
-				case first:
-					bone.x += (bone.data.x - bone.x) * alpha;
-					bone.y += (bone.data.y - bone.y) * alpha;
+					case setup -> {
+						bone.x = bone.data.x;
+						bone.y = bone.data.y;
+						return;
+					}
+					case first -> {
+						bone.x += (bone.data.x - bone.x) * alpha;
+						bone.y += (bone.data.y - bone.y) * alpha;
+					}
 				}
 				return;
 			}
@@ -477,18 +452,18 @@ public class Animation {
 				y += (frames[frame + Y] - y) * percent;
 			}
 			switch (blend) {
-			case setup:
-				bone.x = bone.data.x + x * alpha;
-				bone.y = bone.data.y + y * alpha;
-				break;
-			case first:
-			case replace:
-				bone.x += (bone.data.x + x - bone.x) * alpha;
-				bone.y += (bone.data.y + y - bone.y) * alpha;
-				break;
-			case add:
-				bone.x += x * alpha;
-				bone.y += y * alpha;
+				case setup -> {
+					bone.x = bone.data.x + x * alpha;
+					bone.y = bone.data.y + y * alpha;
+				}
+				case first, replace -> {
+					bone.x += (bone.data.x + x - bone.x) * alpha;
+					bone.y += (bone.data.y + y - bone.y) * alpha;
+				}
+				case add -> {
+					bone.x += x * alpha;
+					bone.y += y * alpha;
+				}
 			}
 		}
 	}
@@ -510,13 +485,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					bone.scaleX = bone.data.scaleX;
-					bone.scaleY = bone.data.scaleY;
-					return;
-				case first:
-					bone.scaleX += (bone.data.scaleX - bone.scaleX) * alpha;
-					bone.scaleY += (bone.data.scaleY - bone.scaleY) * alpha;
+					case setup -> {
+						bone.scaleX = bone.data.scaleX;
+						bone.scaleY = bone.data.scaleY;
+						return;
+					}
+					case first -> {
+						bone.scaleX += (bone.data.scaleX - bone.scaleX) * alpha;
+						bone.scaleY += (bone.data.scaleY - bone.scaleY) * alpha;
+					}
 				}
 				return;
 			}
@@ -550,45 +527,45 @@ public class Animation {
 				float bx, by;
 				if (direction == out) {
 					switch (blend) {
-					case setup:
-						bx = bone.data.scaleX;
-						by = bone.data.scaleY;
-						bone.scaleX = bx + (Math.abs(x) * Math.signum(bx) - bx) * alpha;
-						bone.scaleY = by + (Math.abs(y) * Math.signum(by) - by) * alpha;
-						break;
-					case first:
-					case replace:
-						bx = bone.scaleX;
-						by = bone.scaleY;
-						bone.scaleX = bx + (Math.abs(x) * Math.signum(bx) - bx) * alpha;
-						bone.scaleY = by + (Math.abs(y) * Math.signum(by) - by) * alpha;
-						break;
-					case add:
-						bx = bone.scaleX;
-						by = bone.scaleY;
-						bone.scaleX = bx + (Math.abs(x) * Math.signum(bx) - bone.data.scaleX) * alpha;
-						bone.scaleY = by + (Math.abs(y) * Math.signum(by) - bone.data.scaleY) * alpha;
+						case setup -> {
+							bx = bone.data.scaleX;
+							by = bone.data.scaleY;
+							bone.scaleX = bx + (Math.abs(x) * Math.signum(bx) - bx) * alpha;
+							bone.scaleY = by + (Math.abs(y) * Math.signum(by) - by) * alpha;
+						}
+						case first, replace -> {
+							bx = bone.scaleX;
+							by = bone.scaleY;
+							bone.scaleX = bx + (Math.abs(x) * Math.signum(bx) - bx) * alpha;
+							bone.scaleY = by + (Math.abs(y) * Math.signum(by) - by) * alpha;
+						}
+						case add -> {
+							bx = bone.scaleX;
+							by = bone.scaleY;
+							bone.scaleX = bx + (Math.abs(x) * Math.signum(bx) - bone.data.scaleX) * alpha;
+							bone.scaleY = by + (Math.abs(y) * Math.signum(by) - bone.data.scaleY) * alpha;
+						}
 					}
 				} else {
 					switch (blend) {
-					case setup:
-						bx = Math.abs(bone.data.scaleX) * Math.signum(x);
-						by = Math.abs(bone.data.scaleY) * Math.signum(y);
-						bone.scaleX = bx + (x - bx) * alpha;
-						bone.scaleY = by + (y - by) * alpha;
-						break;
-					case first:
-					case replace:
-						bx = Math.abs(bone.scaleX) * Math.signum(x);
-						by = Math.abs(bone.scaleY) * Math.signum(y);
-						bone.scaleX = bx + (x - bx) * alpha;
-						bone.scaleY = by + (y - by) * alpha;
-						break;
-					case add:
-						bx = Math.signum(x);
-						by = Math.signum(y);
-						bone.scaleX = Math.abs(bone.scaleX) * bx + (x - Math.abs(bone.data.scaleX) * bx) * alpha;
-						bone.scaleY = Math.abs(bone.scaleY) * by + (y - Math.abs(bone.data.scaleY) * by) * alpha;
+						case setup -> {
+							bx = Math.abs(bone.data.scaleX) * Math.signum(x);
+							by = Math.abs(bone.data.scaleY) * Math.signum(y);
+							bone.scaleX = bx + (x - bx) * alpha;
+							bone.scaleY = by + (y - by) * alpha;
+						}
+						case first, replace -> {
+							bx = Math.abs(bone.scaleX) * Math.signum(x);
+							by = Math.abs(bone.scaleY) * Math.signum(y);
+							bone.scaleX = bx + (x - bx) * alpha;
+							bone.scaleY = by + (y - by) * alpha;
+						}
+						case add -> {
+							bx = Math.signum(x);
+							by = Math.signum(y);
+							bone.scaleX = Math.abs(bone.scaleX) * bx + (x - Math.abs(bone.data.scaleX) * bx) * alpha;
+							bone.scaleY = Math.abs(bone.scaleY) * by + (y - Math.abs(bone.data.scaleY) * by) * alpha;
+						}
 					}
 				}
 			}
@@ -612,13 +589,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					bone.shearX = bone.data.shearX;
-					bone.shearY = bone.data.shearY;
-					return;
-				case first:
-					bone.shearX += (bone.data.shearX - bone.shearX) * alpha;
-					bone.shearY += (bone.data.shearY - bone.shearY) * alpha;
+					case setup -> {
+						bone.shearX = bone.data.shearX;
+						bone.shearY = bone.data.shearY;
+						return;
+					}
+					case first -> {
+						bone.shearX += (bone.data.shearX - bone.shearX) * alpha;
+						bone.shearY += (bone.data.shearY - bone.shearY) * alpha;
+					}
 				}
 				return;
 			}
@@ -640,18 +619,18 @@ public class Animation {
 				y = y + (frames[frame + Y] - y) * percent;
 			}
 			switch (blend) {
-			case setup:
-				bone.shearX = bone.data.shearX + x * alpha;
-				bone.shearY = bone.data.shearY + y * alpha;
-				break;
-			case first:
-			case replace:
-				bone.shearX += (bone.data.shearX + x - bone.shearX) * alpha;
-				bone.shearY += (bone.data.shearY + y - bone.shearY) * alpha;
-				break;
-			case add:
-				bone.shearX += x * alpha;
-				bone.shearY += y * alpha;
+				case setup -> {
+					bone.shearX = bone.data.shearX + x * alpha;
+					bone.shearY = bone.data.shearY + y * alpha;
+				}
+				case first, replace -> {
+					bone.shearX += (bone.data.shearX + x - bone.shearX) * alpha;
+					bone.shearY += (bone.data.shearY + y - bone.shearY) * alpha;
+				}
+				case add -> {
+					bone.shearX += x * alpha;
+					bone.shearY += y * alpha;
+				}
 			}
 		}
 	}
@@ -706,13 +685,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					slot.color.set(slot.data.color);
-					return;
-				case first:
-					Color color = slot.color, setup = slot.data.color;
-					color.add((setup.r - color.r) * alpha, (setup.g - color.g) * alpha, (setup.b - color.b) * alpha,
-						(setup.a - color.a) * alpha);
+					case setup -> {
+						slot.color.set(slot.data.color);
+						return;
+					}
+					case first -> {
+						Color color = slot.color, setup = slot.data.color;
+						color.add((setup.r - color.r) * alpha, (setup.g - color.g) * alpha, (setup.b - color.b) * alpha,
+								(setup.a - color.a) * alpha);
+					}
 				}
 				return;
 			}
@@ -804,15 +785,17 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					slot.color.set(slot.data.color);
-					slot.darkColor.set(slot.data.darkColor);
-					return;
-				case first:
-					Color light = slot.color, dark = slot.darkColor, setupLight = slot.data.color, setupDark = slot.data.darkColor;
-					light.add((setupLight.r - light.r) * alpha, (setupLight.g - light.g) * alpha, (setupLight.b - light.b) * alpha,
-						(setupLight.a - light.a) * alpha);
-					dark.add((setupDark.r - dark.r) * alpha, (setupDark.g - dark.g) * alpha, (setupDark.b - dark.b) * alpha, 0);
+					case setup -> {
+						slot.color.set(slot.data.color);
+						slot.darkColor.set(slot.data.darkColor);
+						return;
+					}
+					case first -> {
+						Color light = slot.color, dark = slot.darkColor, setupLight = slot.data.color, setupDark = slot.data.darkColor;
+						light.add((setupLight.r - light.r) * alpha, (setupLight.g - light.g) * alpha, (setupLight.b - light.b) * alpha,
+								(setupLight.a - light.a) * alpha);
+						dark.add((setupDark.r - dark.r) * alpha, (setupDark.g - dark.g) * alpha, (setupDark.b - dark.b) * alpha, 0);
+					}
 				}
 				return;
 			}
@@ -1010,25 +993,27 @@ public class Animation {
 			if (time < frames[0]) { // Time is before first frame.
 				VertexAttachment vertexAttachment = (VertexAttachment)slotAttachment;
 				switch (blend) {
-				case setup:
-					verticesArray.clear();
-					return;
-				case first:
-					if (alpha == 1) {
+					case setup -> {
 						verticesArray.clear();
 						return;
 					}
-					float[] vertices = verticesArray.setSize(vertexCount);
-					if (vertexAttachment.getBones() == null) {
-						// Unweighted vertex positions.
-						float[] setupVertices = vertexAttachment.getVertices();
-						for (int i = 0; i < vertexCount; i++)
-							vertices[i] += (setupVertices[i] - vertices[i]) * alpha;
-					} else {
-						// Weighted deform offsets.
-						alpha = 1 - alpha;
-						for (int i = 0; i < vertexCount; i++)
-							vertices[i] *= alpha;
+					case first -> {
+						if (alpha == 1) {
+							verticesArray.clear();
+							return;
+						}
+						float[] vertices = verticesArray.setSize(vertexCount);
+						if (vertexAttachment.getBones() == null) {
+							// Unweighted vertex positions.
+							float[] setupVertices = vertexAttachment.getVertices();
+							for (int i = 0; i < vertexCount; i++)
+								vertices[i] += (setupVertices[i] - vertices[i]) * alpha;
+						} else {
+							// Weighted deform offsets.
+							alpha = 1 - alpha;
+							for (int i = 0; i < vertexCount; i++)
+								vertices[i] *= alpha;
+						}
 					}
 				}
 				return;
@@ -1362,17 +1347,19 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					constraint.mix = constraint.data.mix;
-					constraint.bendDirection = constraint.data.bendDirection;
-					constraint.compress = constraint.data.compress;
-					constraint.stretch = constraint.data.stretch;
-					return;
-				case first:
-					constraint.mix += (constraint.data.mix - constraint.mix) * alpha;
-					constraint.bendDirection = constraint.data.bendDirection;
-					constraint.compress = constraint.data.compress;
-					constraint.stretch = constraint.data.stretch;
+					case setup -> {
+						constraint.mix = constraint.data.mix;
+						constraint.bendDirection = constraint.data.bendDirection;
+						constraint.compress = constraint.data.compress;
+						constraint.stretch = constraint.data.stretch;
+						return;
+					}
+					case first -> {
+						constraint.mix += (constraint.data.mix - constraint.mix) * alpha;
+						constraint.bendDirection = constraint.data.bendDirection;
+						constraint.compress = constraint.data.compress;
+						constraint.stretch = constraint.data.stretch;
+					}
 				}
 				return;
 			}
@@ -1479,17 +1466,19 @@ public class Animation {
 			if (time < frames[0]) { // Time is before first frame.
 				TransformConstraintData data = constraint.data;
 				switch (blend) {
-				case setup:
-					constraint.rotateMix = data.rotateMix;
-					constraint.translateMix = data.translateMix;
-					constraint.scaleMix = data.scaleMix;
-					constraint.shearMix = data.shearMix;
-					return;
-				case first:
-					constraint.rotateMix += (data.rotateMix - constraint.rotateMix) * alpha;
-					constraint.translateMix += (data.translateMix - constraint.translateMix) * alpha;
-					constraint.scaleMix += (data.scaleMix - constraint.scaleMix) * alpha;
-					constraint.shearMix += (data.shearMix - constraint.shearMix) * alpha;
+					case setup -> {
+						constraint.rotateMix = data.rotateMix;
+						constraint.translateMix = data.translateMix;
+						constraint.scaleMix = data.scaleMix;
+						constraint.shearMix = data.shearMix;
+						return;
+					}
+					case first -> {
+						constraint.rotateMix += (data.rotateMix - constraint.rotateMix) * alpha;
+						constraint.translateMix += (data.translateMix - constraint.translateMix) * alpha;
+						constraint.scaleMix += (data.scaleMix - constraint.scaleMix) * alpha;
+						constraint.shearMix += (data.shearMix - constraint.shearMix) * alpha;
+					}
 				}
 				return;
 			}
@@ -1580,11 +1569,11 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					constraint.position = constraint.data.position;
-					return;
-				case first:
-					constraint.position += (constraint.data.position - constraint.position) * alpha;
+					case setup -> {
+						constraint.position = constraint.data.position;
+						return;
+					}
+					case first -> constraint.position += (constraint.data.position - constraint.position) * alpha;
 				}
 				return;
 			}
@@ -1626,11 +1615,11 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					constraint.spacing = constraint.data.spacing;
-					return;
-				case first:
-					constraint.spacing += (constraint.data.spacing - constraint.spacing) * alpha;
+					case setup -> {
+						constraint.spacing = constraint.data.spacing;
+						return;
+					}
+					case first -> constraint.spacing += (constraint.data.spacing - constraint.spacing) * alpha;
 				}
 				return;
 			}
@@ -1705,13 +1694,15 @@ public class Animation {
 			float[] frames = this.frames;
 			if (time < frames[0]) { // Time is before first frame.
 				switch (blend) {
-				case setup:
-					constraint.rotateMix = constraint.data.rotateMix;
-					constraint.translateMix = constraint.data.translateMix;
-					return;
-				case first:
-					constraint.rotateMix += (constraint.data.rotateMix - constraint.rotateMix) * alpha;
-					constraint.translateMix += (constraint.data.translateMix - constraint.translateMix) * alpha;
+					case setup -> {
+						constraint.rotateMix = constraint.data.rotateMix;
+						constraint.translateMix = constraint.data.translateMix;
+						return;
+					}
+					case first -> {
+						constraint.rotateMix += (constraint.data.rotateMix - constraint.rotateMix) * alpha;
+						constraint.translateMix += (constraint.data.translateMix - constraint.translateMix) * alpha;
+					}
 				}
 				return;
 			}

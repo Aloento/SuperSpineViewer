@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated May 1, 2019. Replaces all prior versions.
- *
- * Copyright (c) 2013-2019, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
- * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
- * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine37.utils;
 
 import com.badlogic.gdx.Gdx;
@@ -116,7 +87,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 	public void begin () {
 		if (drawing) throw new IllegalStateException("end must be called before begin.");
 		Gdx.gl.glDepthMask(false);
-		shader.begin();
+		shader.bind();
 		setupMatrices();
 		drawing = true;
 	}
@@ -204,8 +175,8 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 		int vertexIndex = this.vertexIndex;
 		final int startVertex = vertexIndex / VERTEX_SIZE;
 
-		for (int i = 0; i < regionTrianglesLength; i++)
-			triangles[triangleIndex++] = (short)(regionTriangles[i] + startVertex);
+		for (short regionTriangle : regionTriangles)
+			triangles[triangleIndex++] = (short) (regionTriangle + startVertex);
 		this.triangleIndex = triangleIndex;
 
 		final float[] vertices = this.vertices;
@@ -245,8 +216,8 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 		int vertexIndex = this.vertexIndex;
 		final int startVertex = vertexIndex / VERTEX_SIZE;
 
-		for (int i = 0, n = regionTriangles.length; i < n; i++)
-			triangles[triangleIndex++] = (short)(regionTriangles[i] + startVertex);
+		for (short regionTriangle : regionTriangles)
+			triangles[triangleIndex++] = (short) (regionTriangle + startVertex);
 		this.triangleIndex = triangleIndex;
 
 		final float[] vertices = this.vertices;
@@ -292,8 +263,8 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 		int vertexIndex = this.vertexIndex;
 		final int startVertex = vertexIndex / VERTEX_SIZE;
 
-		for (int i = 0; i < regionTrianglesLength; i++)
-			triangles[triangleIndex++] = (short)(regionTriangles[i] + startVertex);
+		for (short regionTriangle : regionTriangles)
+			triangles[triangleIndex++] = (short) (regionTriangle + startVertex);
 		this.triangleIndex = triangleIndex;
 
 		final float[] vertices = this.vertices;
@@ -1388,7 +1359,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 		}
 		shader = newShader == null ? defaultShader : newShader;
 		if (drawing) {
-			shader.begin();
+			shader.bind();
 			setupMatrices();
 		}
 	}
@@ -1447,43 +1418,78 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 	}
 
 	private ShaderProgram createDefaultShader () {
-		String vertexShader = "attribute vec4 a_position;\n" //
-			+ "attribute vec4 a_light;\n" //
-			+ "attribute vec4 a_dark;\n" //
-			+ "attribute vec2 a_texCoord0;\n" //
-			+ "uniform mat4 u_projTrans;\n" //
-			+ "varying vec4 v_light;\n" //
-			+ "varying vec4 v_dark;\n" //
-			+ "varying vec2 v_texCoords;\n" //
-			+ "\n" //
-			+ "void main()\n" //
-			+ "{\n" //
-			+ "   v_light = a_light;\n" //
-			+ "   v_light.a = v_light.a * (255.0/254.0);\n" //
-			+ "   v_dark = a_dark;\n" //
-			+ "   v_texCoords = a_texCoord0;\n" //
-			+ "   gl_Position =  u_projTrans * a_position;\n" //
-			+ "}\n";
-		String fragmentShader = "#ifdef GL_ES\n" //
-			+ "#define LOWP lowp\n" //
-			+ "precision mediump float;\n" //
-			+ "#else\n" //
-			+ "#define LOWP \n" //
-			+ "#endif\n" //
-			+ "varying LOWP vec4 v_light;\n" //
-			+ "varying LOWP vec4 v_dark;\n" //
-			+ "uniform float u_pma;\n" //
-			+ "varying vec2 v_texCoords;\n" //
-			+ "uniform sampler2D u_texture;\n" //
-			+ "void main()\n"//
-			+ "{\n" //
-			+ "  vec4 texColor = texture2D(u_texture, v_texCoords);\n" //
-			+ "  gl_FragColor.a = texColor.a * v_light.a;\n" //
-			+ "  gl_FragColor.rgb = ((texColor.a - 1.0) * u_pma + 1.0 - texColor.rgb) * v_dark.rgb + texColor.rgb * v_light.rgb;\n" //
-			+ "}";
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        String vertexShader = """
+                attribute vec4 a_position;
+                attribute vec4 a_light;
+                attribute vec4 a_dark;
+                attribute vec2 a_texCoord0;
+                uniform mat4 u_projTrans;
+                varying vec4 v_light;
+                varying vec4 v_dark;
+                varying vec2 v_texCoords;
+
+                void main()
+                {
+                   v_light = a_light;
+                   v_light.a = v_light.a * (255.0/254.0);
+                   v_dark = a_dark;
+                   v_texCoords = a_texCoord0;
+                   gl_Position =  u_projTrans * a_position;
+                }
+                """;
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        String fragmentShader = """
+                #ifdef GL_ES
+                #define LOWP lowp
+                precision mediump float;
+                #else
+                #define LOWP\s
+                #endif
+                varying LOWP vec4 v_light;
+                varying LOWP vec4 v_dark;
+                uniform float u_pma;
+                varying vec2 v_texCoords;
+                uniform sampler2D u_texture;
+                void main()
+                {
+                  vec4 texColor = texture2D(u_texture, v_texCoords);
+                  gl_FragColor.a = texColor.a * v_light.a;
+                  gl_FragColor.rgb = ((texColor.a - 1.0) * u_pma + 1.0 - texColor.rgb) * v_dark.rgb + texColor.rgb * v_light.rgb;
+                }""";
 
 		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
-		if (shader.isCompiled() == false) throw new IllegalArgumentException("Error compiling shader: " + shader.getLog());
+		if (!shader.isCompiled()) throw new IllegalArgumentException("Error compiling shader: " + shader.getLog());
 		return shader;
 	}
 }

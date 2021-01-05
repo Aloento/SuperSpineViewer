@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
- *
- * Copyright (c) 2013-2020, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
- * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine40;
 
 import static com.badlogic.gdx.math.Matrix3.*;
@@ -126,77 +97,73 @@ public class Bone implements Updatable {
 		worldY = pc * x + pd * y + parent.worldY;
 
 		switch (data.transformMode) {
-		case normal: {
-			float rotationY = rotation + 90 + shearY;
-			float la = cosDeg(rotation + shearX) * scaleX;
-			float lb = cosDeg(rotationY) * scaleY;
-			float lc = sinDeg(rotation + shearX) * scaleX;
-			float ld = sinDeg(rotationY) * scaleY;
-			a = pa * la + pb * lc;
-			b = pa * lb + pb * ld;
-			c = pc * la + pd * lc;
-			d = pc * lb + pd * ld;
-			return;
-		}
-		case onlyTranslation: {
-			float rotationY = rotation + 90 + shearY;
-			a = cosDeg(rotation + shearX) * scaleX;
-			b = cosDeg(rotationY) * scaleY;
-			c = sinDeg(rotation + shearX) * scaleX;
-			d = sinDeg(rotationY) * scaleY;
-			break;
-		}
-		case noRotationOrReflection: {
-			float s = pa * pa + pc * pc, prx;
-			if (s > 0.0001f) {
-				s = Math.abs(pa * pd - pb * pc) / s;
-				pa /= skeleton.scaleX;
-				pc /= skeleton.scaleY;
-				pb = pc * s;
-				pd = pa * s;
-				prx = atan2(pc, pa) * radDeg;
-			} else {
-				pa = 0;
-				pc = 0;
-				prx = 90 - atan2(pd, pb) * radDeg;
+			case normal -> {
+				float rotationY = rotation + 90 + shearY;
+				float la = cosDeg(rotation + shearX) * scaleX;
+				float lb = cosDeg(rotationY) * scaleY;
+				float lc = sinDeg(rotation + shearX) * scaleX;
+				float ld = sinDeg(rotationY) * scaleY;
+				a = pa * la + pb * lc;
+				b = pa * lb + pb * ld;
+				c = pc * la + pd * lc;
+				d = pc * lb + pd * ld;
+				return;
 			}
-			float rx = rotation + shearX - prx;
-			float ry = rotation + shearY - prx + 90;
-			float la = cosDeg(rx) * scaleX;
-			float lb = cosDeg(ry) * scaleY;
-			float lc = sinDeg(rx) * scaleX;
-			float ld = sinDeg(ry) * scaleY;
-			a = pa * la - pb * lc;
-			b = pa * lb - pb * ld;
-			c = pc * la + pd * lc;
-			d = pc * lb + pd * ld;
-			break;
-		}
-		case noScale:
-		case noScaleOrReflection: {
-			float cos = cosDeg(rotation), sin = sinDeg(rotation);
-			float za = (pa * cos + pb * sin) / skeleton.scaleX;
-			float zc = (pc * cos + pd * sin) / skeleton.scaleY;
-			float s = (float)Math.sqrt(za * za + zc * zc);
-			if (s > 0.00001f) s = 1 / s;
-			za *= s;
-			zc *= s;
-			s = (float)Math.sqrt(za * za + zc * zc);
-			if (data.transformMode == TransformMode.noScale
-				&& (pa * pd - pb * pc < 0) != (skeleton.scaleX < 0 != skeleton.scaleY < 0)) s = -s;
-			float r = PI / 2 + atan2(zc, za);
-			float zb = cos(r) * s;
-			float zd = sin(r) * s;
-			float la = cosDeg(shearX) * scaleX;
-			float lb = cosDeg(90 + shearY) * scaleY;
-			float lc = sinDeg(shearX) * scaleX;
-			float ld = sinDeg(90 + shearY) * scaleY;
-			a = za * la + zb * lc;
-			b = za * lb + zb * ld;
-			c = zc * la + zd * lc;
-			d = zc * lb + zd * ld;
-			break;
-		}
+			case onlyTranslation -> {
+				float rotationY = rotation + 90 + shearY;
+				a = cosDeg(rotation + shearX) * scaleX;
+				b = cosDeg(rotationY) * scaleY;
+				c = sinDeg(rotation + shearX) * scaleX;
+				d = sinDeg(rotationY) * scaleY;
+			}
+			case noRotationOrReflection -> {
+				float s = pa * pa + pc * pc, prx;
+				if (s > 0.0001f) {
+					s = Math.abs(pa * pd - pb * pc) / s;
+					pa /= skeleton.scaleX;
+					pc /= skeleton.scaleY;
+					pb = pc * s;
+					pd = pa * s;
+					prx = atan2(pc, pa) * radDeg;
+				} else {
+					pa = 0;
+					pc = 0;
+					prx = 90 - atan2(pd, pb) * radDeg;
+				}
+				float rx = rotation + shearX - prx;
+				float ry = rotation + shearY - prx + 90;
+				float la = cosDeg(rx) * scaleX;
+				float lb = cosDeg(ry) * scaleY;
+				float lc = sinDeg(rx) * scaleX;
+				float ld = sinDeg(ry) * scaleY;
+				a = pa * la - pb * lc;
+				b = pa * lb - pb * ld;
+				c = pc * la + pd * lc;
+				d = pc * lb + pd * ld;
+			}
+			case noScale, noScaleOrReflection -> {
+				float cos = cosDeg(rotation), sin = sinDeg(rotation);
+				float za = (pa * cos + pb * sin) / skeleton.scaleX;
+				float zc = (pc * cos + pd * sin) / skeleton.scaleY;
+				float s = (float) Math.sqrt(za * za + zc * zc);
+				if (s > 0.00001f) s = 1 / s;
+				za *= s;
+				zc *= s;
+				s = (float) Math.sqrt(za * za + zc * zc);
+				if (data.transformMode == TransformMode.noScale
+						&& (pa * pd - pb * pc < 0) == (skeleton.scaleX < 0 == skeleton.scaleY < 0)) s = -s;
+				float r = PI / 2 + atan2(zc, za);
+				float zb = cos(r) * s;
+				float zd = sin(r) * s;
+				float la = cosDeg(shearX) * scaleX;
+				float lb = cosDeg(90 + shearY) * scaleY;
+				float lc = sinDeg(shearX) * scaleX;
+				float ld = sinDeg(90 + shearY) * scaleY;
+				a = za * la + zb * lc;
+				b = za * lb + zb * ld;
+				c = zc * la + zd * lc;
+				d = zc * lb + zd * ld;
+			}
 		}
 		a *= skeleton.scaleX;
 		b *= skeleton.scaleX;

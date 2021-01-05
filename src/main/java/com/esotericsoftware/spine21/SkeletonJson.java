@@ -1,33 +1,3 @@
-/******************************************************************************
- * Spine Runtimes Software License
- * Version 2.1
- * 
- * Copyright (c) 2013, Esoteric Software
- * All rights reserved.
- * 
- * You are granted a perpetual, non-exclusive, non-sublicensable and
- * non-transferable license to install, execute and perform the Spine Runtimes
- * Software (the "Software") solely for internal use. Without the written
- * permission of Esoteric Software (typically granted by licensing Spine), you
- * may not (a) modify, translate, adapt or otherwise create derivative works,
- * improvements of the Software or develop new applications using the Software
- * or (b) remove, delete, alter or obscure any trademarks or any copyright,
- * trademark, patent or other intellectual property or proprietary rights
- * notices on or in the Software, including any copy thereof. Redistributions
- * in binary or source form must include this license and terms.
- * 
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine21;
 
 import com.badlogic.gdx.files.FileHandle;
@@ -209,94 +179,94 @@ public class SkeletonJson {
 		name = map.getString("name", name);
 		String path = map.getString("path", name);
 
-		switch (AttachmentType.valueOf(map.getString("type", AttachmentType.region.name()))) {
-		case region: {
-			RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
-			if (region == null) return null;
-			region.setPath(path);
-			region.setX(map.getFloat("x", 0) * scale);
-			region.setY(map.getFloat("y", 0) * scale);
-			region.setScaleX(map.getFloat("scaleX", 1));
-			region.setScaleY(map.getFloat("scaleY", 1));
-			region.setRotation(map.getFloat("rotation", 0));
-			region.setWidth(map.getFloat("width") * scale);
-			region.setHeight(map.getFloat("height") * scale);
+        switch (AttachmentType.valueOf(map.getString("type", AttachmentType.region.name()))) {
+            case region -> {
+                RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
+                if (region == null) return null;
+                region.setPath(path);
+                region.setX(map.getFloat("x", 0) * scale);
+                region.setY(map.getFloat("y", 0) * scale);
+                region.setScaleX(map.getFloat("scaleX", 1));
+                region.setScaleY(map.getFloat("scaleY", 1));
+                region.setRotation(map.getFloat("rotation", 0));
+                region.setWidth(map.getFloat("width") * scale);
+                region.setHeight(map.getFloat("height") * scale);
 
-			String color = map.getString("color", null);
-			if (color != null) region.getColor().set(Color.valueOf(color));
+                String color = map.getString("color", null);
+                if (color != null) region.getColor().set(Color.valueOf(color));
 
-			region.updateOffset();
-			return region;
-		}
-		case boundingbox: {
-			BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
-			if (box == null) return null;
-			float[] vertices = map.require("vertices").asFloatArray();
-			if (scale != 1) {
-				for (int i = 0, n = vertices.length; i < n; i++)
-					vertices[i] *= scale;
-			}
-			box.setVertices(vertices);
-			return box;
-		}
-		case mesh: {
-			MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
-			if (mesh == null) return null;
-			mesh.setPath(path);
-			float[] vertices = map.require("vertices").asFloatArray();
-			if (scale != 1) {
-				for (int i = 0, n = vertices.length; i < n; i++)
-					vertices[i] *= scale;
-			}
-			mesh.setVertices(vertices);
-			mesh.setTriangles(map.require("triangles").asShortArray());
-			mesh.setRegionUVs(map.require("uvs").asFloatArray());
-			mesh.updateUVs();
+                region.updateOffset();
+                return region;
+            }
+            case boundingbox -> {
+                BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
+                if (box == null) return null;
+                float[] vertices = map.require("vertices").asFloatArray();
+                if (scale != 1) {
+                    for (int i = 0, n = vertices.length; i < n; i++)
+                        vertices[i] *= scale;
+                }
+                box.setVertices(vertices);
+                return box;
+            }
+            case mesh -> {
+                MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
+                if (mesh == null) return null;
+                mesh.setPath(path);
+                float[] vertices = map.require("vertices").asFloatArray();
+                if (scale != 1) {
+                    for (int i = 0, n = vertices.length; i < n; i++)
+                        vertices[i] *= scale;
+                }
+                mesh.setVertices(vertices);
+                mesh.setTriangles(map.require("triangles").asShortArray());
+                mesh.setRegionUVs(map.require("uvs").asFloatArray());
+                mesh.updateUVs();
 
-			String color = map.getString("color", null);
-			if (color != null) mesh.getColor().set(Color.valueOf(color));
+                String color = map.getString("color", null);
+                if (color != null) mesh.getColor().set(Color.valueOf(color));
 
-			if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
-			if (map.has("edges")) mesh.setEdges(map.require("edges").asIntArray());
-			mesh.setWidth(map.getFloat("width", 0) * scale);
-			mesh.setHeight(map.getFloat("height", 0) * scale);
-			return mesh;
-		}
-		case skinnedmesh: {
-			SkinnedMeshAttachment mesh = attachmentLoader.newSkinnedMeshAttachment(skin, name, path);
-			if (mesh == null) return null;
-			mesh.setPath(path);
-			float[] uvs = map.require("uvs").asFloatArray();
-			float[] vertices = map.require("vertices").asFloatArray();
-			FloatArray weights = new FloatArray(uvs.length * 3 * 3);
-			IntArray bones = new IntArray(uvs.length * 3);
-			for (int i = 0, n = vertices.length; i < n;) {
-				int boneCount = (int)vertices[i++];
-				bones.add(boneCount);
-				for (int nn = i + boneCount * 4; i < nn;) {
-					bones.add((int)vertices[i]);
-					weights.add(vertices[i + 1] * scale);
-					weights.add(vertices[i + 2] * scale);
-					weights.add(vertices[i + 3]);
-					i += 4;
-				}
-			}
-			mesh.setBones(bones.toArray());
-			mesh.setWeights(weights.toArray());
-			mesh.setTriangles(map.require("triangles").asShortArray());
-			mesh.setRegionUVs(uvs);
-			mesh.updateUVs();
+                if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
+                if (map.has("edges")) mesh.setEdges(map.require("edges").asIntArray());
+                mesh.setWidth(map.getFloat("width", 0) * scale);
+                mesh.setHeight(map.getFloat("height", 0) * scale);
+                return mesh;
+            }
+            case skinnedmesh -> {
+                SkinnedMeshAttachment mesh = attachmentLoader.newSkinnedMeshAttachment(skin, name, path);
+                if (mesh == null) return null;
+                mesh.setPath(path);
+                float[] uvs = map.require("uvs").asFloatArray();
+                float[] vertices = map.require("vertices").asFloatArray();
+                FloatArray weights = new FloatArray(uvs.length * 3 * 3);
+                IntArray bones = new IntArray(uvs.length * 3);
+                for (int i = 0, n = vertices.length; i < n; ) {
+                    int boneCount = (int) vertices[i++];
+                    bones.add(boneCount);
+                    for (int nn = i + boneCount * 4; i < nn; ) {
+                        bones.add((int) vertices[i]);
+                        weights.add(vertices[i + 1] * scale);
+                        weights.add(vertices[i + 2] * scale);
+                        weights.add(vertices[i + 3]);
+                        i += 4;
+                    }
+                }
+                mesh.setBones(bones.toArray());
+                mesh.setWeights(weights.toArray());
+                mesh.setTriangles(map.require("triangles").asShortArray());
+                mesh.setRegionUVs(uvs);
+                mesh.updateUVs();
 
-			String color = map.getString("color", null);
-			if (color != null) mesh.getColor().set(Color.valueOf(color));
+                String color = map.getString("color", null);
+                if (color != null) mesh.getColor().set(Color.valueOf(color));
 
-			if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
-			if (map.has("edges")) mesh.setEdges(map.require("edges").asIntArray());
-			mesh.setWidth(map.getFloat("width", 0) * scale);
-			mesh.setHeight(map.getFloat("height", 0) * scale);
-			return mesh;
-		}
-		}
+                if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
+                if (map.has("edges")) mesh.setEdges(map.require("edges").asIntArray());
+                mesh.setWidth(map.getFloat("width", 0) * scale);
+                mesh.setHeight(map.getFloat("height", 0) * scale);
+                return mesh;
+            }
+        }
 
 		// RegionSequenceAttachment regionSequenceAttachment = (RegionSequenceAttachment)attachment;
 		//
@@ -356,56 +326,60 @@ public class SkeletonJson {
 
 			for (JsonValue timelineMap = boneMap.child; timelineMap != null; timelineMap = timelineMap.next) {
 				String timelineName = timelineMap.name;
-				if (timelineName.equals("rotate")) {
-					RotateTimeline timeline = new RotateTimeline(timelineMap.size);
-					timeline.boneIndex = boneIndex;
+				switch (timelineName) {
+					case "rotate" -> {
+						RotateTimeline timeline = new RotateTimeline(timelineMap.size);
+						timeline.boneIndex = boneIndex;
 
-					int frameIndex = 0;
-					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
-						timeline.setFrame(frameIndex, valueMap.getFloat("time"), valueMap.getFloat("angle"));
-						readCurve(timeline, frameIndex, valueMap);
-						frameIndex++;
+						int frameIndex = 0;
+						for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+							timeline.setFrame(frameIndex, valueMap.getFloat("time"), valueMap.getFloat("angle"));
+							readCurve(timeline, frameIndex, valueMap);
+							frameIndex++;
+						}
+						timelines.add(timeline);
+						duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 2 - 2]);
+
 					}
-					timelines.add(timeline);
-					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 2 - 2]);
+					case "translate", "scale" -> {
+						TranslateTimeline timeline;
+						float timelineScale = 1;
+						if (timelineName.equals("scale"))
+							timeline = new ScaleTimeline(timelineMap.size);
+						else {
+							timeline = new TranslateTimeline(timelineMap.size);
+							timelineScale = scale;
+						}
+						timeline.boneIndex = boneIndex;
 
-				} else if (timelineName.equals("translate") || timelineName.equals("scale")) {
-					TranslateTimeline timeline;
-					float timelineScale = 1;
-					if (timelineName.equals("scale"))
-						timeline = new ScaleTimeline(timelineMap.size);
-					else {
-						timeline = new TranslateTimeline(timelineMap.size);
-						timelineScale = scale;
+						int frameIndex = 0;
+						for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+							float x = valueMap.getFloat("x", 0), y = valueMap.getFloat("y", 0);
+							timeline.setFrame(frameIndex, valueMap.getFloat("time"), x * timelineScale, y * timelineScale);
+							readCurve(timeline, frameIndex, valueMap);
+							frameIndex++;
+						}
+						timelines.add(timeline);
+						duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 3 - 3]);
+
 					}
-					timeline.boneIndex = boneIndex;
+					case "flipX", "flipY" -> {
+						boolean x = timelineName.equals("flipX");
+						FlipXTimeline timeline = x ? new FlipXTimeline(timelineMap.size) : new FlipYTimeline(timelineMap.size);
+						timeline.boneIndex = boneIndex;
 
-					int frameIndex = 0;
-					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
-						float x = valueMap.getFloat("x", 0), y = valueMap.getFloat("y", 0);
-						timeline.setFrame(frameIndex, valueMap.getFloat("time"), x * timelineScale, y * timelineScale);
-						readCurve(timeline, frameIndex, valueMap);
-						frameIndex++;
+						String field = x ? "x" : "y";
+						int frameIndex = 0;
+						for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+							timeline.setFrame(frameIndex, valueMap.getFloat("time"), valueMap.getBoolean(field, false));
+							frameIndex++;
+						}
+						timelines.add(timeline);
+						duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 2 - 2]);
+
 					}
-					timelines.add(timeline);
-					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 3 - 3]);
-
-				} else if (timelineName.equals("flipX") || timelineName.equals("flipY")) {
-					boolean x = timelineName.equals("flipX");
-					FlipXTimeline timeline = x ? new FlipXTimeline(timelineMap.size) : new FlipYTimeline(timelineMap.size);
-					timeline.boneIndex = boneIndex;
-
-					String field = x ? "x" : "y";
-					int frameIndex = 0;
-					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
-						timeline.setFrame(frameIndex, valueMap.getFloat("time"), valueMap.getBoolean(field, false));
-						frameIndex++;
-					}
-					timelines.add(timeline);
-					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 2 - 2]);
-
-				} else
-					throw new RuntimeException("Invalid timeline type for a bone: " + timelineName + " (" + boneMap.name + ")");
+					default -> throw new RuntimeException("Invalid timeline type for a bone: " + timelineName + " (" + boneMap.name + ")");
+				}
 			}
 		}
 

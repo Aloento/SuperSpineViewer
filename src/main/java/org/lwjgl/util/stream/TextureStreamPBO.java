@@ -182,10 +182,10 @@ abstract class TextureStreamPBO extends StreamBufferedPBO implements TextureStre
 
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
-		for ( int i = 0; i < pbos.length; i++ ) {
-			if ( pbos[i] != 0 )
-				glDeleteBuffers(pbos[i]);
-		}
+        for (int pbo : pbos) {
+            if (pbo != 0)
+                glDeleteBuffers(pbo);
+        }
 	}
 
 	public void destroy() {

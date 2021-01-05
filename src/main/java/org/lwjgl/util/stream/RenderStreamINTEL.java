@@ -77,7 +77,7 @@ final class RenderStreamINTEL extends StreamBuffered implements RenderStream {
 	private final int   resolveFBO;
 	private final int[] resolveBuffers;
 
-	private int samples;
+	private final int samples;
 
 	private int synchronousFrames;
 

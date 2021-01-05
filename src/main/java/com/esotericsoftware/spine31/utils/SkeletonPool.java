@@ -6,7 +6,7 @@ import com.esotericsoftware.spine31.Skeleton;
 import com.esotericsoftware.spine31.SkeletonData;
 
 public class SkeletonPool extends Pool<Skeleton> {
-	private SkeletonData skeletonData;
+	private final SkeletonData skeletonData;
 
 	public SkeletonPool (SkeletonData skeletonData) {
 		this.skeletonData = skeletonData;

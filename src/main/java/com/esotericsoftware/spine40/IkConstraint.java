@@ -1,32 +1,3 @@
-/******************************************************************************
- * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
- *
- * Copyright (c) 2013-2020, Esoteric Software LLC
- *
- * Integration of the Spine Runtimes into software or otherwise creating
- * derivative works of the Spine Runtimes is permitted under the terms and
- * conditions of Section 2 of the Spine Editor License Agreement:
- * http://esotericsoftware.com/spine-editor-license
- *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
- * "Products"), provided that each user of the Products must obtain their own
- * Spine Editor license and redistribution of the Products in any form must
- * include this license and copyright notice.
- *
- * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
- * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine40;
 
 import static com.esotericsoftware.spine40.utils.SpineUtils.*;
@@ -84,14 +55,10 @@ public class IkConstraint implements Updatable {
 		if (mix == 0) return;
 		Bone target = this.target;
 		Object[] bones = this.bones.items;
-		switch (this.bones.size) {
-		case 1:
-			apply((Bone)bones[0], target.worldX, target.worldY, compress, stretch, data.uniform, mix);
-			break;
-		case 2:
-			apply((Bone)bones[0], (Bone)bones[1], target.worldX, target.worldY, bendDirection, stretch, softness, mix);
-			break;
-		}
+        switch (this.bones.size) {
+            case 1 -> apply((Bone) bones[0], target.worldX, target.worldY, compress, stretch, data.uniform, mix);
+            case 2 -> apply((Bone) bones[0], (Bone) bones[1], target.worldX, target.worldY, bendDirection, stretch, softness, mix);
+        }
 	}
 
 	/** The bones that will be modified by this IK constraint. */
@@ -203,12 +170,12 @@ public class IkConstraint implements Updatable {
 			rotationIK += 360;
 		float sx = bone.ascaleX, sy = bone.ascaleY;
 		if (compress || stretch) {
-			switch (bone.data.transformMode) {
-			case noScale:
-			case noScaleOrReflection:
-				tx = targetX - bone.worldX;
-				ty = targetY - bone.worldY;
-			}
+            switch (bone.data.transformMode) {
+                case noScale, noScaleOrReflection -> {
+                    tx = targetX - bone.worldX;
+                    ty = targetY - bone.worldY;
+                }
+            }
 			float b = bone.data.length * sx, dd = (float)Math.sqrt(tx * tx + ty * ty);
 			if ((compress && dd < b) || (stretch && dd > b) && b > 0.0001f) {
 				float s = (dd / b - 1) * alpha + 1;

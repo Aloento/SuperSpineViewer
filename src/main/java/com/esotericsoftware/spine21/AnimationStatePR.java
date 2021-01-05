@@ -1,33 +1,3 @@
-/******************************************************************************
- * Spine Runtimes Software License
- * Version 2.1
- * 
- * Copyright (c) 2013, Esoteric Software
- * All rights reserved.
- * 
- * You are granted a perpetual, non-exclusive, non-sublicensable and
- * non-transferable license to install, execute and perform the Spine Runtimes
- * Software (the "Software") solely for internal use. Without the written
- * permission of Esoteric Software (typically granted by licensing Spine), you
- * may not (a) modify, translate, adapt or otherwise create derivative works,
- * improvements of the Software or develop new applications using the Software
- * or (b) remove, delete, alter or obscure any trademarks or any copyright,
- * trademark, patent or other intellectual property or proprietary rights
- * notices on or in the Software, including any copy thereof. Redistributions
- * in binary or source form must include this license and terms.
- * 
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine21;
 
 import com.badlogic.gdx.utils.Array;
@@ -37,7 +7,7 @@ import com.badlogic.gdx.utils.Pools;
 /** Stores state for an animation and automatically mixes between animations. */
 public class AnimationStatePR {
 	private final AnimationStateData data;
-	private Array<TrackEntry> tracks = new Array();
+	private final Array<TrackEntry> tracks = new Array();
 	private final Array<Event> events = new Array();
 	private final Array<AnimationStateListener> listeners = new Array();
 	private float timeScale = 1;
@@ -401,19 +371,19 @@ public class AnimationStatePR {
 		}
 	}
 
-	static public interface AnimationStateListener {
+	public interface AnimationStateListener {
 		/** Invoked when the current animation triggers an event. */
-		public void event (int trackIndex, Event event);
+		void event(int trackIndex, Event event);
 
 		/** Invoked when the current animation has completed.
 		 * @param loopCount The number of times the animation reached the end. */
-		public void complete (int trackIndex, int loopCount);
+		void complete(int trackIndex, int loopCount);
 
 		/** Invoked just after the current animation is set. */
-		public void start (int trackIndex);
+		void start(int trackIndex);
 
 		/** Invoked just before the current animation is replaced. */
-		public void end (int trackIndex);
+		void end(int trackIndex);
 	}
 
 	static public abstract class AnimationStateAdapter implements AnimationStateListener {

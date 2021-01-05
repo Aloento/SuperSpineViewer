@@ -120,19 +120,17 @@
                     <padding>
                         <Insets right="10.0"/>
                     </padding>
-                    <children>
-                        <JFXButton onAction="#B_Export" text="Export" textFill="#5264ae">
-                            <font>
-                                <Font name="System Bold" size="14.0"/>
-                            </font>
-                        </JFXButton>
-                        <JFXButton layoutX="10.0" layoutY="10.0" onAction="#B_Preview" text="Preview"
-                                   textFill="#5264ae">
-                            <font>
-                                <Font name="System Bold" size="14.0"/>
-                            </font>
-                        </JFXButton>
-                    </children>
+                    <JFXButton onAction="#B_Export" text="Export" textFill="#5264ae">
+                        <font>
+                            <Font name="System Bold" size="14.0"/>
+                        </font>
+                    </JFXButton>
+                    <JFXButton layoutX="10.0" layoutY="10.0" onAction="#B_Preview" text="Preview"
+                               textFill="#5264ae">
+                        <font>
+                            <Font name="System Bold" size="14.0"/>
+                        </font>
+                    </JFXButton>
                 </HBox>
                 <JFXProgressBar fx:id="P_Export" maxWidth="250.0"/>
             </VBox>
