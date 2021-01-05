@@ -3,201 +3,239 @@ package com.esotericsoftware.spine21;
 import com.badlogic.gdx.utils.Array;
 
 public class SkeletonData {
-	String name;
-	final Array<BoneData> bones = new Array(); // Ordered parents first.
-	final Array<SlotData> slots = new Array(); // Setup pose draw order.
-	final Array<Skin> skins = new Array();
-	Skin defaultSkin;
-	final Array<EventData> events = new Array();
-	final Array<Animation> animations = new Array();
-	final Array<IkConstraintData> ikConstraints = new Array();
-	float width, height;
-	String version, hash, imagesPath;
+    final Array<BoneData> bones = new Array(); // Ordered parents first.
+    final Array<SlotData> slots = new Array(); // Setup pose draw order.
+    final Array<Skin> skins = new Array();
+    final Array<EventData> events = new Array();
+    final Array<Animation> animations = new Array();
+    final Array<IkConstraintData> ikConstraints = new Array();
+    String name;
+    Skin defaultSkin;
+    float width, height;
+    String version, hash, imagesPath;
 
-	// --- Bones.
+    // --- Bones.
 
-	public Array<BoneData> getBones () {
-		return bones;
-	}
+    public Array<BoneData> getBones() {
+        return bones;
+    }
 
-	/** @return May be null. */
-	public BoneData findBone (String boneName) {
-		if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
-		Array<BoneData> bones = this.bones;
-		for (int i = 0, n = bones.size; i < n; i++) {
-			BoneData bone = bones.get(i);
-			if (bone.name.equals(boneName)) return bone;
-		}
-		return null;
-	}
+    /**
+     * @return May be null.
+     */
+    public BoneData findBone(String boneName) {
+        if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
+        Array<BoneData> bones = this.bones;
+        for (int i = 0, n = bones.size; i < n; i++) {
+            BoneData bone = bones.get(i);
+            if (bone.name.equals(boneName)) return bone;
+        }
+        return null;
+    }
 
-	/** @return -1 if the bone was not found. */
-	public int findBoneIndex (String boneName) {
-		if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
-		Array<BoneData> bones = this.bones;
-		for (int i = 0, n = bones.size; i < n; i++)
-			if (bones.get(i).name.equals(boneName)) return i;
-		return -1;
-	}
+    /**
+     * @return -1 if the bone was not found.
+     */
+    public int findBoneIndex(String boneName) {
+        if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
+        Array<BoneData> bones = this.bones;
+        for (int i = 0, n = bones.size; i < n; i++)
+            if (bones.get(i).name.equals(boneName)) return i;
+        return -1;
+    }
 
-	// --- Slots.
+    // --- Slots.
 
-	public Array<SlotData> getSlots () {
-		return slots;
-	}
+    public Array<SlotData> getSlots() {
+        return slots;
+    }
 
-	/** @return May be null. */
-	public SlotData findSlot (String slotName) {
-		if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
-		Array<SlotData> slots = this.slots;
-		for (int i = 0, n = slots.size; i < n; i++) {
-			SlotData slot = slots.get(i);
-			if (slot.name.equals(slotName)) return slot;
-		}
-		return null;
-	}
+    /**
+     * @return May be null.
+     */
+    public SlotData findSlot(String slotName) {
+        if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
+        Array<SlotData> slots = this.slots;
+        for (int i = 0, n = slots.size; i < n; i++) {
+            SlotData slot = slots.get(i);
+            if (slot.name.equals(slotName)) return slot;
+        }
+        return null;
+    }
 
-	/** @return -1 if the bone was not found. */
-	public int findSlotIndex (String slotName) {
-		if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
-		Array<SlotData> slots = this.slots;
-		for (int i = 0, n = slots.size; i < n; i++)
-			if (slots.get(i).name.equals(slotName)) return i;
-		return -1;
-	}
+    /**
+     * @return -1 if the bone was not found.
+     */
+    public int findSlotIndex(String slotName) {
+        if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
+        Array<SlotData> slots = this.slots;
+        for (int i = 0, n = slots.size; i < n; i++)
+            if (slots.get(i).name.equals(slotName)) return i;
+        return -1;
+    }
 
-	// --- Skins.
+    // --- Skins.
 
-	/** @return May be null. */
-	public Skin getDefaultSkin () {
-		return defaultSkin;
-	}
+    /**
+     * @return May be null.
+     */
+    public Skin getDefaultSkin() {
+        return defaultSkin;
+    }
 
-	/** @param defaultSkin May be null. */
-	public void setDefaultSkin (Skin defaultSkin) {
-		this.defaultSkin = defaultSkin;
-	}
+    /**
+     * @param defaultSkin May be null.
+     */
+    public void setDefaultSkin(Skin defaultSkin) {
+        this.defaultSkin = defaultSkin;
+    }
 
-	/** @return May be null. */
-	public Skin findSkin (String skinName) {
-		if (skinName == null) throw new IllegalArgumentException("skinName cannot be null.");
-		for (Skin skin : skins)
-			if (skin.name.equals(skinName)) return skin;
-		return null;
-	}
+    /**
+     * @return May be null.
+     */
+    public Skin findSkin(String skinName) {
+        if (skinName == null) throw new IllegalArgumentException("skinName cannot be null.");
+        for (Skin skin : skins)
+            if (skin.name.equals(skinName)) return skin;
+        return null;
+    }
 
-	/** Returns all skins, including the default skin. */
-	public Array<Skin> getSkins () {
-		return skins;
-	}
+    /**
+     * Returns all skins, including the default skin.
+     */
+    public Array<Skin> getSkins() {
+        return skins;
+    }
 
-	// --- Events.
+    // --- Events.
 
-	/** @return May be null. */
-	public EventData findEvent (String eventDataName) {
-		if (eventDataName == null) throw new IllegalArgumentException("eventDataName cannot be null.");
-		for (EventData eventData : events)
-			if (eventData.name.equals(eventDataName)) return eventData;
-		return null;
-	}
+    /**
+     * @return May be null.
+     */
+    public EventData findEvent(String eventDataName) {
+        if (eventDataName == null) throw new IllegalArgumentException("eventDataName cannot be null.");
+        for (EventData eventData : events)
+            if (eventData.name.equals(eventDataName)) return eventData;
+        return null;
+    }
 
-	public Array<EventData> getEvents () {
-		return events;
-	}
+    public Array<EventData> getEvents() {
+        return events;
+    }
 
-	// --- Animations.
+    // --- Animations.
 
-	public Array<Animation> getAnimations () {
-		return animations;
-	}
+    public Array<Animation> getAnimations() {
+        return animations;
+    }
 
-	/** @return May be null. */
-	public Animation findAnimation (String animationName) {
-		if (animationName == null) throw new IllegalArgumentException("animationName cannot be null.");
-		Array<Animation> animations = this.animations;
-		for (int i = 0, n = animations.size; i < n; i++) {
-			Animation animation = animations.get(i);
-			if (animation.name.equals(animationName)) return animation;
-		}
-		return null;
-	}
+    /**
+     * @return May be null.
+     */
+    public Animation findAnimation(String animationName) {
+        if (animationName == null) throw new IllegalArgumentException("animationName cannot be null.");
+        Array<Animation> animations = this.animations;
+        for (int i = 0, n = animations.size; i < n; i++) {
+            Animation animation = animations.get(i);
+            if (animation.name.equals(animationName)) return animation;
+        }
+        return null;
+    }
 
-	// --- IK
+    // --- IK
 
-	public Array<IkConstraintData> getIkConstraints () {
-		return ikConstraints;
-	}
+    public Array<IkConstraintData> getIkConstraints() {
+        return ikConstraints;
+    }
 
-	/** @return May be null. */
-	public IkConstraintData findIkConstraint (String ikConstraintName) {
-		if (ikConstraintName == null) throw new IllegalArgumentException("ikConstraintName cannot be null.");
-		Array<IkConstraintData> ikConstraints = this.ikConstraints;
-		for (int i = 0, n = ikConstraints.size; i < n; i++) {
-			IkConstraintData ikConstraint = ikConstraints.get(i);
-			if (ikConstraint.name.equals(ikConstraintName)) return ikConstraint;
-		}
-		return null;
-	}
+    /**
+     * @return May be null.
+     */
+    public IkConstraintData findIkConstraint(String ikConstraintName) {
+        if (ikConstraintName == null) throw new IllegalArgumentException("ikConstraintName cannot be null.");
+        Array<IkConstraintData> ikConstraints = this.ikConstraints;
+        for (int i = 0, n = ikConstraints.size; i < n; i++) {
+            IkConstraintData ikConstraint = ikConstraints.get(i);
+            if (ikConstraint.name.equals(ikConstraintName)) return ikConstraint;
+        }
+        return null;
+    }
 
-	// ---
+    // ---
 
-	/** @return May be null. */
-	public String getName () {
-		return name;
-	}
+    /**
+     * @return May be null.
+     */
+    public String getName() {
+        return name;
+    }
 
-	/** @param name May be null. */
-	public void setName (String name) {
-		this.name = name;
-	}
+    /**
+     * @param name May be null.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public float getWidth () {
-		return width;
-	}
+    public float getWidth() {
+        return width;
+    }
 
-	public void setWidth (float width) {
-		this.width = width;
-	}
+    public void setWidth(float width) {
+        this.width = width;
+    }
 
-	public float getHeight () {
-		return height;
-	}
+    public float getHeight() {
+        return height;
+    }
 
-	public void setHeight (float height) {
-		this.height = height;
-	}
+    public void setHeight(float height) {
+        this.height = height;
+    }
 
-	/** Returns the Spine version used to export this data, or null. */
-	public String getVersion () {
-		return version;
-	}
+    /**
+     * Returns the Spine version used to export this data, or null.
+     */
+    public String getVersion() {
+        return version;
+    }
 
-	/** @param version May be null. */
-	public void setVersion (String version) {
-		this.version = version;
-	}
+    /**
+     * @param version May be null.
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	/** @return May be null. */
-	public String getHash () {
-		return hash;
-	}
+    /**
+     * @return May be null.
+     */
+    public String getHash() {
+        return hash;
+    }
 
-	/** @param hash May be null. */
-	public void setHash (String hash) {
-		this.hash = hash;
-	}
+    /**
+     * @param hash May be null.
+     */
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
 
-	/** @return May be null. */
-	public String getImagesPath () {
-		return imagesPath;
-	}
+    /**
+     * @return May be null.
+     */
+    public String getImagesPath() {
+        return imagesPath;
+    }
 
-	/** @param imagesPath May be null. */
-	public void setImagesPath (String imagesPath) {
-		this.imagesPath = imagesPath;
-	}
+    /**
+     * @param imagesPath May be null.
+     */
+    public void setImagesPath(String imagesPath) {
+        this.imagesPath = imagesPath;
+    }
 
-	public String toString () {
-		return name != null ? name : super.toString();
-	}
+    public String toString() {
+        return name != null ? name : super.toString();
+    }
 }

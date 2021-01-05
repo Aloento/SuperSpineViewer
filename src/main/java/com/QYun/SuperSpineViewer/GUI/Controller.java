@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 
 public class Controller {
 
+    public static final SimpleBooleanProperty isLoad = new SimpleBooleanProperty(false);
     public static SpineController spineController;
     public static ExporterController exporterController;
     public static ImageView spineRender;
@@ -14,6 +15,5 @@ public class Controller {
     public static boolean isFX = true;
     public static boolean requestReload = false;
     public static String path;
-    public static final SimpleBooleanProperty isLoad = new SimpleBooleanProperty(false);
 
 }
