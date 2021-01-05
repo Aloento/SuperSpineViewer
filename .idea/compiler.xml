@@ -13,4 +13,9 @@
       <module name="SuperSpineViewer" target="15" />
     </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="SuperSpineViewer" options="--module-path U:\Codes\Java\SuperSpineViewer/lib/OpenJFX --add-modules javafx.controls,javafx.fxml --add-reads javafx.graphics=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED" />
+    </option>
+  </component>
 </project>

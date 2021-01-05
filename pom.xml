@@ -9,11 +9,6 @@
     <version>0.1.0</version>
     <repositories>
         <repository>
-            <id>gluonhq</id>
-            <name>Gluonhq</name>
-            <url>http://nexus.gluonhq.com/nexus/content/repositories/releases//</url>
-        </repository>
-        <repository>
             <id>sonatype</id>
             <name>Sonatype</name>
             <url>https://repository.sonatype.org/content/groups/public/</url>
@@ -88,11 +83,6 @@
             <groupId>org.jcodec</groupId>
             <artifactId>jcodec-javase</artifactId>
             <version>0.2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-glisten</artifactId>
-            <version>6.0.6</version>
         </dependency>
         <dependency>
             <groupId>com.jfoenix</groupId>
@@ -196,7 +186,6 @@
             <systemPath>${project.basedir}/lib/LibGDFX-1.0.0.jar
             </systemPath>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -206,8 +195,42 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
+                    <compilerArgs>
+                        <arg>--module-path</arg>
+                        <arg>${project.basedir}/lib/OpenJFX</arg>
+                        <arg>--add-modules</arg>
+                        <arg>javafx.controls,javafx.fxml</arg>
+                        <arg>--add-reads</arg>
+                        <arg>javafx.graphics=ALL-UNNAMED</arg>
+                        <arg>--add-exports</arg>
+                        <arg>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</arg>
+                    </compilerArgs>
                     <release>15</release>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.QYun.SuperSpineViewer.AppLauncher</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
