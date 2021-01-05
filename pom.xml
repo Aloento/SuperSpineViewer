@@ -114,78 +114,6 @@
             <artifactId>batik-transcoder</artifactId>
             <version>1.13</version>
         </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware.spine</groupId>
-            <artifactId>spine-libgdx_2.1</artifactId>
-            <version>2.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spine-libgdx_2.1-2.1.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware.spine</groupId>
-            <artifactId>spine-libgdx_3.1</artifactId>
-            <version>3.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spine-libgdx_3.1-3.1.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware.spine</groupId>
-            <artifactId>spine-libgdx_3.4</artifactId>
-            <version>3.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spine-libgdx_3.4-3.4.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware.spine</groupId>
-            <artifactId>spine-libgdx_3.5</artifactId>
-            <version>3.5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spine-libgdx_3.5-3.5.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware.spine</groupId>
-            <artifactId>spine-libgdx_3.6</artifactId>
-            <version>3.6</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spine-libgdx_3.6-3.6.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware.spine</groupId>
-            <artifactId>spine-libgdx_3.7</artifactId>
-            <version>3.7</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spine-libgdx_3.7-3.7.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware.spine</groupId>
-            <artifactId>spine-libgdx_3.8</artifactId>
-            <version>3.8</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spine-libgdx_3.8-3.8.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware.spine</groupId>
-            <artifactId>spine-libgdx_4.0</artifactId>
-            <version>4.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/spine-libgdx_4.0-4.0.jar
-            </systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.QYun</groupId>
-            <artifactId>LibGDFX</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/LibGDFX-1.0.0.jar
-            </systemPath>
-        </dependency>
     </dependencies>
 
     <build>
@@ -197,7 +125,7 @@
                 <configuration>
                     <compilerArgs>
                         <arg>--module-path</arg>
-                        <arg>${project.basedir}/lib/OpenJFX</arg>
+                        <arg>C:\Users\SoarT\scoop\apps\gluon-openjfx-sdk\current\lib</arg>
                         <arg>--add-modules</arg>
                         <arg>javafx.controls,javafx.fxml</arg>
                         <arg>--add-reads</arg>
