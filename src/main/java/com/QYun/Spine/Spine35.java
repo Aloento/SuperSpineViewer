@@ -101,18 +101,27 @@ public class Spine35 extends SuperSpine {
         });
 
         scale.addListener((observable, oldValue, newValue) -> {
-            if (state != null)
+            if (state != null) {
                 loadSkel();
+                if (animate.get() != null)
+                    state.setAnimation(0, animate.get(), isLoop.get());
+            }
         });
 
         X.addListener((observable, oldValue, newValue) -> {
-            if (state != null)
+            if (state != null) {
                 loadSkel();
+                if (animate.get() != null)
+                    state.setAnimation(0, animate.get(), isLoop.get());
+            }
         });
 
         Y.addListener((observable, oldValue, newValue) -> {
-            if (state != null)
+            if (state != null) {
                 loadSkel();
+                if (animate.get() != null)
+                    state.setAnimation(0, animate.get(), isLoop.get());
+            }
         });
 
         speed.addListener((observable, oldValue, newValue) -> {
