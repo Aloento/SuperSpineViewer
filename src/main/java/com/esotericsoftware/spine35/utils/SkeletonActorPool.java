@@ -34,29 +34,29 @@ public class SkeletonActorPool extends Pool<SkeletonActor> {
 		obtained = new Array(false, initialCapacity);
 
 		skeletonPool = new Pool<>(initialCapacity, max) {
-            protected Skeleton newObject() {
-                return new Skeleton(SkeletonActorPool.this.skeletonData);
-            }
+			protected Skeleton newObject() {
+				return new Skeleton(SkeletonActorPool.this.skeletonData);
+			}
 
-            protected void reset(Skeleton skeleton) {
-                skeleton.setColor(Color.WHITE);
-                skeleton.setFlip(false, false);
-                skeleton.setSkin((Skin) null);
-                skeleton.setSkin(SkeletonActorPool.this.skeletonData.getDefaultSkin());
-                skeleton.setToSetupPose();
-            }
-        };
+			protected void reset(Skeleton skeleton) {
+				skeleton.setColor(Color.WHITE);
+				skeleton.setFlip(false, false);
+				skeleton.setSkin((Skin) null);
+				skeleton.setSkin(SkeletonActorPool.this.skeletonData.getDefaultSkin());
+				skeleton.setToSetupPose();
+			}
+		};
 
 		statePool = new Pool<>(initialCapacity, max) {
-            protected AnimationState newObject() {
-                return new AnimationState(SkeletonActorPool.this.stateData);
-            }
+			protected AnimationState newObject() {
+				return new AnimationState(SkeletonActorPool.this.stateData);
+			}
 
-            protected void reset(AnimationState state) {
-                state.clearTracks();
-                state.clearListeners();
-            }
-        };
+			protected void reset(AnimationState state) {
+				state.clearTracks();
+				state.clearListeners();
+			}
+		};
 	}
 
 	/** Each obtained skeleton actor that is no longer playing an animation is removed from the stage and returned to the pool. */

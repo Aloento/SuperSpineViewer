@@ -11,9 +11,10 @@ import com.esotericsoftware.spine35.attachments.Attachment;
  * See SkeletonData {@link SkeletonData#defaultSkin}, Skeleton {@link Skeleton#skin}, and
  * <a href="http://esotericsoftware.com/spine-runtime-skins">Runtime skins</a> in the Spine Runtimes Guide. */
 public class Skin {
+	static private final Key lookup = new Key();
+
 	final String name;
 	final ObjectMap<Key, Attachment> attachments = new ObjectMap();
-	private final Key lookup = new Key();
 	final Pool<Key> keyPool = new Pool(64) {
 		protected Object newObject () {
 			return new Key();
@@ -102,8 +103,8 @@ public class Skin {
 			if (object == null) return false;
 			Key other = (Key)object;
 			if (slotIndex != other.slotIndex) return false;
-            return name.equals(other.name);
-        }
+			return name.equals(other.name);
+		}
 
 		public String toString () {
 			return slotIndex + ":" + name;

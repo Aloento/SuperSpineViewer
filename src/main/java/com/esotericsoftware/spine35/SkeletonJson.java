@@ -25,7 +25,6 @@ import com.esotericsoftware.spine35.Animation.ShearTimeline;
 import com.esotericsoftware.spine35.Animation.Timeline;
 import com.esotericsoftware.spine35.Animation.TransformConstraintTimeline;
 import com.esotericsoftware.spine35.Animation.TranslateTimeline;
-import com.esotericsoftware.spine35.Animation.TwoColorTimeline;
 import com.esotericsoftware.spine35.BoneData.TransformMode;
 import com.esotericsoftware.spine35.PathConstraintData.PositionMode;
 import com.esotericsoftware.spine35.PathConstraintData.RotateMode;
@@ -35,10 +34,8 @@ import com.esotericsoftware.spine35.attachments.Attachment;
 import com.esotericsoftware.spine35.attachments.AttachmentLoader;
 import com.esotericsoftware.spine35.attachments.AttachmentType;
 import com.esotericsoftware.spine35.attachments.BoundingBoxAttachment;
-import com.esotericsoftware.spine35.attachments.ClippingAttachment;
 import com.esotericsoftware.spine35.attachments.MeshAttachment;
 import com.esotericsoftware.spine35.attachments.PathAttachment;
-import com.esotericsoftware.spine35.attachments.PointAttachment;
 import com.esotericsoftware.spine35.attachments.RegionAttachment;
 import com.esotericsoftware.spine35.attachments.VertexAttachment;
 
@@ -130,9 +127,6 @@ public class SkeletonJson {
 			String color = slotMap.getString("color", null);
 			if (color != null) data.getColor().set(Color.valueOf(color));
 
-			String dark = slotMap.getString("dark", null);
-			if (dark != null) data.setDarkColor(Color.valueOf(dark));
-
 			data.attachmentName = slotMap.getString("attachment", null);
 			data.blendMode = BlendMode.valueOf(slotMap.getString("blend", BlendMode.normal.name()));
 			skeletonData.slots.add(data);
@@ -175,9 +169,6 @@ public class SkeletonJson {
 			String targetName = constraintMap.getString("target");
 			data.target = skeletonData.findBone(targetName);
 			if (data.target == null) throw new SerializationException("Transform constraint target bone not found: " + targetName);
-
-			data.local = constraintMap.getBoolean("local", false);
-			data.relative = constraintMap.getBoolean("relative", false);
 
 			data.offsetRotation = constraintMap.getFloat("rotation", 0);
 			data.offsetX = constraintMap.getFloat("x", 0) * scale;
@@ -232,7 +223,7 @@ public class SkeletonJson {
 				if (slot == null) throw new SerializationException("Slot not found: " + slotEntry.name);
 				for (JsonValue entry = slotEntry.child; entry != null; entry = entry.next) {
 					try {
-						Attachment attachment = readAttachment(entry, skin, slot.index, entry.name, skeletonData);
+						Attachment attachment = readAttachment(entry, skin, slot.index, entry.name);
 						if (attachment != null) skin.addAttachment(slot.index, entry.name, attachment);
 					} catch (Exception ex) {
 						throw new SerializationException("Error reading attachment: " + entry.name + ", skin: " + skin, ex);
@@ -282,118 +273,90 @@ public class SkeletonJson {
 		return skeletonData;
 	}
 
-	private Attachment readAttachment (JsonValue map, Skin skin, int slotIndex, String name, SkeletonData skeletonData) {
+	private Attachment readAttachment (JsonValue map, Skin skin, int slotIndex, String name) {
 		float scale = this.scale;
 		name = map.getString("name", name);
 
 		String type = map.getString("type", AttachmentType.region.name());
 
-        switch (AttachmentType.valueOf(type)) {
-            case region -> {
-                String path = map.getString("path", name);
-                RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
-                if (region == null) return null;
-                region.setPath(path);
-                region.setX(map.getFloat("x", 0) * scale);
-                region.setY(map.getFloat("y", 0) * scale);
-                region.setScaleX(map.getFloat("scaleX", 1));
-                region.setScaleY(map.getFloat("scaleY", 1));
-                region.setRotation(map.getFloat("rotation", 0));
-                region.setWidth(map.getFloat("width") * scale);
-                region.setHeight(map.getFloat("height") * scale);
+		switch (AttachmentType.valueOf(type)) {
+			case region -> {
+				String path = map.getString("path", name);
+				RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
+				if (region == null) return null;
+				region.setPath(path);
+				region.setX(map.getFloat("x", 0) * scale);
+				region.setY(map.getFloat("y", 0) * scale);
+				region.setScaleX(map.getFloat("scaleX", 1));
+				region.setScaleY(map.getFloat("scaleY", 1));
+				region.setRotation(map.getFloat("rotation", 0));
+				region.setWidth(map.getFloat("width") * scale);
+				region.setHeight(map.getFloat("height") * scale);
 
-                String color = map.getString("color", null);
-                if (color != null) region.getColor().set(Color.valueOf(color));
+				String color = map.getString("color", null);
+				if (color != null) region.getColor().set(Color.valueOf(color));
 
-                region.updateOffset();
-                return region;
-            }
-            case boundingbox -> {
-                BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
-                if (box == null) return null;
-                readVertices(map, box, map.getInt("vertexCount") << 1);
+				region.updateOffset();
+				return region;
+			}
+			case boundingbox -> {
+				BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
+				if (box == null) return null;
+				readVertices(map, box, map.getInt("vertexCount") << 1);
 
-                String color = map.getString("color", null);
-                if (color != null) box.getColor().set(Color.valueOf(color));
-                return box;
-            }
-            case mesh, linkedmesh -> {
-                String path = map.getString("path", name);
-                MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
-                if (mesh == null) return null;
-                mesh.setPath(path);
+				String color = map.getString("color", null);
+				if (color != null) box.getColor().set(Color.valueOf(color));
+				return box;
+			}
+			case mesh, linkedmesh -> {
+				String path = map.getString("path", name);
+				MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
+				if (mesh == null) return null;
+				mesh.setPath(path);
 
-                String color = map.getString("color", null);
-                if (color != null) mesh.getColor().set(Color.valueOf(color));
+				String color = map.getString("color", null);
+				if (color != null) mesh.getColor().set(Color.valueOf(color));
 
-                mesh.setWidth(map.getFloat("width", 0) * scale);
-                mesh.setHeight(map.getFloat("height", 0) * scale);
+				mesh.setWidth(map.getFloat("width", 0) * scale);
+				mesh.setHeight(map.getFloat("height", 0) * scale);
 
-                String parent = map.getString("parent", null);
-                if (parent != null) {
-                    mesh.setInheritDeform(map.getBoolean("deform", true));
-                    linkedMeshes.add(new LinkedMesh(mesh, map.getString("skin", null), slotIndex, parent));
-                    return mesh;
-                }
+				String parent = map.getString("parent", null);
+				if (parent != null) {
+					mesh.setInheritDeform(map.getBoolean("deform", true));
+					linkedMeshes.add(new LinkedMesh(mesh, map.getString("skin", null), slotIndex, parent));
+					return mesh;
+				}
 
-                float[] uvs = map.require("uvs").asFloatArray();
-                readVertices(map, mesh, uvs.length);
-                mesh.setTriangles(map.require("triangles").asShortArray());
-                mesh.setRegionUVs(uvs);
-                mesh.updateUVs();
+				float[] uvs = map.require("uvs").asFloatArray();
+				readVertices(map, mesh, uvs.length);
+				mesh.setTriangles(map.require("triangles").asShortArray());
+				mesh.setRegionUVs(uvs);
+				mesh.updateUVs();
 
-                if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
-                if (map.has("edges")) mesh.setEdges(map.require("edges").asShortArray());
-                return mesh;
-            }
-            case path -> {
-                PathAttachment path = attachmentLoader.newPathAttachment(skin, name);
-                if (path == null) return null;
-                path.setClosed(map.getBoolean("closed", false));
-                path.setConstantSpeed(map.getBoolean("constantSpeed", true));
+				if (map.has("hull")) mesh.setHullLength(map.require("hull").asInt() * 2);
+				if (map.has("edges")) mesh.setEdges(map.require("edges").asShortArray());
+				return mesh;
+			}
+			case path -> {
+				PathAttachment path = attachmentLoader.newPathAttachment(skin, name);
+				if (path == null) return null;
+				path.setClosed(map.getBoolean("closed", false));
+				path.setConstantSpeed(map.getBoolean("constantSpeed", true));
 
-                int vertexCount = map.getInt("vertexCount");
-                readVertices(map, path, vertexCount << 1);
+				int vertexCount = map.getInt("vertexCount");
+				readVertices(map, path, vertexCount << 1);
 
-                float[] lengths = new float[vertexCount / 3];
-                int i = 0;
-                for (JsonValue curves = map.require("lengths").child; curves != null; curves = curves.next)
-                    lengths[i++] = curves.asFloat() * scale;
-                path.setLengths(lengths);
+				float[] lengths = new float[vertexCount / 3];
+				int i = 0;
+				for (JsonValue curves = map.require("lengths").child; curves != null; curves = curves.next)
+					lengths[i++] = curves.asFloat() * scale;
+				path.setLengths(lengths);
 
-                String color = map.getString("color", null);
-                if (color != null) path.getColor().set(Color.valueOf(color));
-                return path;
-            }
-            case point -> {
-                PointAttachment point = attachmentLoader.newPointAttachment(skin, name);
-                if (point == null) return null;
-                point.setX(map.getFloat("x", 0) * scale);
-                point.setY(map.getFloat("y", 0) * scale);
-                point.setRotation(map.getFloat("rotation", 0));
-
-                String color = map.getString("color", null);
-                if (color != null) point.getColor().set(Color.valueOf(color));
-                return point;
-            }
-            case clipping -> {
-                ClippingAttachment clip = attachmentLoader.newClippingAttachment(skin, name);
-                if (clip == null) return null;
-
-                String end = map.getString("end", null);
-                if (end != null) {
-                    SlotData slot = skeletonData.findSlot(end);
-                    if (slot == null) throw new SerializationException("Clipping end slot not found: " + end);
-                    clip.setEndSlot(slot);
-                }
-
-                readVertices(map, clip, map.getInt("vertexCount") << 1);
-
-                String color = map.getString("color", null);
-                if (color != null) clip.getColor().set(Color.valueOf(color));
-                return clip;
-            }
-        }
+				String color = map.getString("color", null);
+				if (color != null) path.getColor().set(Color.valueOf(color));
+				return path;
+			}
+		}
 		return null;
 	}
 
@@ -435,52 +398,31 @@ public class SkeletonJson {
 			if (slot == null) throw new SerializationException("Slot not found: " + slotMap.name);
 			for (JsonValue timelineMap = slotMap.child; timelineMap != null; timelineMap = timelineMap.next) {
 				String timelineName = timelineMap.name;
-				switch (timelineName) {
-					case "attachment" -> {
-						AttachmentTimeline timeline = new AttachmentTimeline(timelineMap.size);
-						timeline.slotIndex = slot.index;
+				if (timelineName.equals("color")) {
+					ColorTimeline timeline = new ColorTimeline(timelineMap.size);
+					timeline.slotIndex = slot.index;
 
-						int frameIndex = 0;
-						for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next)
-							timeline.setFrame(frameIndex++, valueMap.getFloat("time"), valueMap.getString("name"));
-						timelines.add(timeline);
-						duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
-
+					int frameIndex = 0;
+					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+						Color color = Color.valueOf(valueMap.getString("color"));
+						timeline.setFrame(frameIndex, valueMap.getFloat("time"), color.r, color.g, color.b, color.a);
+						readCurve(valueMap, timeline, frameIndex);
+						frameIndex++;
 					}
-					case "color" -> {
-						ColorTimeline timeline = new ColorTimeline(timelineMap.size);
-						timeline.slotIndex = slot.index;
+					timelines.add(timeline);
+					duration = Math.max(duration, timeline.getFrames()[(timeline.getFrameCount() - 1) * ColorTimeline.ENTRIES]);
 
-						int frameIndex = 0;
-						for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
-							Color color = Color.valueOf(valueMap.getString("color"));
-							timeline.setFrame(frameIndex, valueMap.getFloat("time"), color.r, color.g, color.b, color.a);
-							readCurve(valueMap, timeline, frameIndex);
-							frameIndex++;
-						}
-						timelines.add(timeline);
-						duration = Math.max(duration, timeline.getFrames()[(timeline.getFrameCount() - 1) * ColorTimeline.ENTRIES]);
+				} else if (timelineName.equals("attachment")) {
+					AttachmentTimeline timeline = new AttachmentTimeline(timelineMap.size);
+					timeline.slotIndex = slot.index;
 
-					}
-					case "twoColor" -> {
-						TwoColorTimeline timeline = new TwoColorTimeline(timelineMap.size);
-						timeline.slotIndex = slot.index;
-
-						int frameIndex = 0;
-						for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
-							Color light = Color.valueOf(valueMap.getString("light"));
-							Color dark = Color.valueOf(valueMap.getString("dark"));
-							timeline.setFrame(frameIndex, valueMap.getFloat("time"), light.r, light.g, light.b, light.a, dark.r, dark.g,
-									dark.b);
-							readCurve(valueMap, timeline, frameIndex);
-							frameIndex++;
-						}
-						timelines.add(timeline);
-						duration = Math.max(duration, timeline.getFrames()[(timeline.getFrameCount() - 1) * TwoColorTimeline.ENTRIES]);
-
-					}
-					default -> throw new RuntimeException("Invalid timeline type for a slot: " + timelineName + " (" + slotMap.name + ")");
-				}
+					int frameIndex = 0;
+					for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next)
+						timeline.setFrame(frameIndex++, valueMap.getFloat("time"), valueMap.getString("name"));
+					timelines.add(timeline);
+					duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
+				} else
+					throw new RuntimeException("Invalid timeline type for a slot: " + timelineName + " (" + slotMap.name + ")");
 			}
 		}
 

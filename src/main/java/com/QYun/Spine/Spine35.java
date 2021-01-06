@@ -3,16 +3,16 @@ package com.QYun.Spine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine35.*;
-import com.esotericsoftware.spine35.utils.TwoColorPolygonBatch;
 
 public class Spine35 extends SuperSpine {
 
-    TwoColorPolygonBatch batch;
+    PolygonSpriteBatch batch;
     OrthographicCamera camera;
-    SkeletonRenderer renderer;
+    SkeletonMeshRenderer renderer;
     TextureAtlas atlas;
     SkeletonData skeletonData;
     private Skeleton skeleton;
@@ -138,9 +138,9 @@ public class Spine35 extends SuperSpine {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
-        batch = new TwoColorPolygonBatch(3100);
+        batch = new PolygonSpriteBatch();
         camera = new OrthographicCamera(w, h);
-        renderer = new SkeletonRenderer();
+        renderer = new SkeletonMeshRenderer();
         renderer.setPremultipliedAlpha(true);
 
         atlas = new TextureAtlas(atlasFile);

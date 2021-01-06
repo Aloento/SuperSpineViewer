@@ -77,9 +77,9 @@ public class AnimationStateData {
 				if (other.a1 != null) return false;
 			} else if (!a1.equals(other.a1)) return false;
 			if (a2 == null) {
-                return other.a2 == null;
+				return other.a2 == null;
 			} else return a2.equals(other.a2);
-        }
+		}
 
 		public String toString () {
 			return a1.name + "->" + a2.name;

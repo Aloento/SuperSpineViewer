@@ -42,8 +42,7 @@ public class SkeletonBounds {
 
 				FloatArray polygon = polygonPool.obtain();
 				polygons.add(polygon);
-				boundingBox.computeWorldVertices(slot, 0, boundingBox.getWorldVerticesLength(),
-					polygon.setSize(boundingBox.getWorldVerticesLength()), 0, 2);
+				boundingBox.computeWorldVertices(slot, polygon.setSize(boundingBox.getWorldVerticesLength()));
 			}
 		}
 
@@ -99,8 +98,8 @@ public class SkeletonBounds {
 		float x = (minY - y1) / m + x1;
 		if (x > minX && x < maxX) return true;
 		x = (maxY - y1) / m + x1;
-        return x > minX && x < maxX;
-    }
+		return x > minX && x < maxX;
+	}
 
 	/** Returns true if the axis aligned bounding box intersects the axis aligned bounding box of the specified bounds. */
 	public boolean aabbIntersectsSkeleton (SkeletonBounds bounds) {

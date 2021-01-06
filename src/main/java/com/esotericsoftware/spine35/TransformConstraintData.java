@@ -12,7 +12,6 @@ public class TransformConstraintData {
 	BoneData target;
 	float rotateMix, translateMix, scaleMix, shearMix;
 	float offsetRotation, offsetX, offsetY, offsetScaleX, offsetScaleY, offsetShearY;
-	boolean relative, local;
 
 	public TransformConstraintData (String name) {
 		if (name == null) throw new IllegalArgumentException("name cannot be null.");
@@ -136,22 +135,6 @@ public class TransformConstraintData {
 
 	public void setOffsetShearY (float offsetShearY) {
 		this.offsetShearY = offsetShearY;
-	}
-
-	public boolean getRelative () {
-		return relative;
-	}
-
-	public void setRelative (boolean relative) {
-		this.relative = relative;
-	}
-
-	public boolean getLocal () {
-		return local;
-	}
-
-	public void setLocal (boolean local) {
-		this.local = local;
 	}
 
 	public String toString () {

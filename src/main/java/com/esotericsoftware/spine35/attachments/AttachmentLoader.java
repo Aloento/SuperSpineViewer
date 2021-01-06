@@ -15,13 +15,7 @@ public interface AttachmentLoader {
 
 	/** @return May be null to not load the attachment. */
 	BoundingBoxAttachment newBoundingBoxAttachment(Skin skin, String name);
-	
-	/** @return May be null to not load the attachment. */
-	ClippingAttachment newClippingAttachment(Skin skin, String name);
 
 	/** @return May be null to not load the attachment. */
 	PathAttachment newPathAttachment(Skin skin, String name);
-
-	/** @return May be null to not load the attachment. */
-	PointAttachment newPointAttachment(Skin skin, String name);
 }

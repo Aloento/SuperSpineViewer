@@ -11,7 +11,7 @@ public class PathAttachment extends VertexAttachment {
 	boolean closed, constantSpeed;
 
 	// Nonessential.
-	final Color color = new Color(1, 0.5f, 0, 1); // ff7f00ff
+	final Color color = new Color(1, 0.5f, 0, 1);
 
 	public PathAttachment (String name) {
 		super(name);

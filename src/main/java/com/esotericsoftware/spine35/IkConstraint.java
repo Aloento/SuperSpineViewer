@@ -2,7 +2,7 @@ package com.esotericsoftware.spine35;
 
 import com.badlogic.gdx.utils.Array;
 
-import static com.esotericsoftware.spine35.utils.SpineUtils.*;
+import static com.esotericsoftware.spine35.utils.TrigUtils.*;
 
 /** Stores the current pose for an IK constraint. An IK constraint adjusts the rotation of 1 or 2 constrained bones so the tip of
  * the last bone is as close to the target bone as possible.
@@ -49,10 +49,10 @@ public class IkConstraint implements Constraint {
 	public void update () {
 		Bone target = this.target;
 		Array<Bone> bones = this.bones;
-        switch (bones.size) {
-            case 1 -> apply(bones.first(), target.worldX, target.worldY, mix);
-            case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, mix);
-        }
+		switch (bones.size) {
+			case 1 -> apply(bones.first(), target.worldX, target.worldY, mix);
+			case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, mix);
+		}
 	}
 
 	public int getOrder () {
@@ -197,26 +197,37 @@ public class IkConstraint implements Constraint {
 					break outer;
 				}
 			}
-			float minAngle = PI, minX = l1 - a, minDist = minX * minX, minY = 0;
-			float maxAngle = 0, maxX = l1 + a, maxDist = maxX * maxX, maxY = 0;
-			c = -a * l1 / (aa - bb);
-			if (c >= -1 && c <= 1) {
-				c = (float)Math.acos(c);
-				x = a * cos(c) + l1;
-				y = b * sin(c);
-				d = x * x + y * y;
-				if (d < minDist) {
-					minAngle = c;
-					minDist = d;
-					minX = x;
-					minY = y;
-				}
-				if (d > maxDist) {
-					maxAngle = c;
-					maxDist = d;
-					maxX = x;
-					maxY = y;
-				}
+			float minAngle = 0, minDist = Float.MAX_VALUE, minX = 0, minY = 0;
+			float maxAngle = 0, maxDist = 0, maxX = 0, maxY = 0;
+			x = l1 + a;
+			d = x * x;
+			if (d > maxDist) {
+				maxAngle = 0;
+				maxDist = d;
+				maxX = x;
+			}
+			x = l1 - a;
+			d = x * x;
+			if (d < minDist) {
+				minAngle = PI;
+				minDist = d;
+				minX = x;
+			}
+			float angle = (float)Math.acos(-a * l1 / (aa - bb));
+			x = a * cos(angle) + l1;
+			y = b * sin(angle);
+			d = x * x + y * y;
+			if (d < minDist) {
+				minAngle = angle;
+				minDist = d;
+				minX = x;
+				minY = y;
+			}
+			if (d > maxDist) {
+				maxAngle = angle;
+				maxDist = d;
+				maxX = x;
+				maxY = y;
 			}
 			if (dd <= (minDist + maxDist) / 2) {
 				a1 = ta - atan2(minY * bendDir, minX);

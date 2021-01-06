@@ -37,15 +37,7 @@ public class AtlasAttachmentLoader implements AttachmentLoader {
 		return new BoundingBoxAttachment(name);
 	}
 
-	public ClippingAttachment newClippingAttachment (Skin skin, String name) {
-		return new ClippingAttachment(name);
-	}
-
 	public PathAttachment newPathAttachment (Skin skin, String name) {
 		return new PathAttachment(name);
-	}
-
-	public PointAttachment newPointAttachment (Skin skin, String name) {
-		return new PointAttachment(name);
 	}
 }

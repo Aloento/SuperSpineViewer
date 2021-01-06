@@ -1,18 +1,14 @@
 package com.esotericsoftware.spine35;
 
+import static com.esotericsoftware.spine35.utils.TrigUtils.*;
+import static com.badlogic.gdx.math.Matrix3.*;
+
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine35.BoneData.TransformMode;
 
-import static com.badlogic.gdx.math.Matrix3.*;
-import static com.esotericsoftware.spine35.utils.SpineUtils.*;
-
-/** Stores a bone's current pose.
- * <p>
- * A bone has a local transform which is used to compute its world transform. A bone also has an applied transform, which is a
- * local transform that can be applied to compute the world transform. The local transform and applied transform may differ if a
- * constraint or application code modifies the world transform after it was computed from the local transform. */
+/** Stores a bone's current pose. */
 public class Bone implements Updatable {
 	final BoneData data;
 	final Skeleton skeleton;
@@ -21,6 +17,7 @@ public class Bone implements Updatable {
 	float x, y, rotation, scaleX, scaleY, shearX, shearY;
 	float ax, ay, arotation, ascaleX, ascaleY, ashearX, ashearY;
 	boolean appliedValid;
+
 	float a, b, worldX;
 	float c, d, worldY;
 
@@ -222,8 +219,6 @@ public class Bone implements Updatable {
 		return children;
 	}
 
-	// -- Local transform
-
 	/** The local x translation. */
 	public float getX () {
 		return x;
@@ -302,90 +297,84 @@ public class Bone implements Updatable {
 		this.shearY = shearY;
 	}
 
-	// -- Applied transform
-
-	/** The applied local x translation. */
-	public float getAX () {
-		return ax;
+	/** Part of the world transform matrix for the X axis. */
+	public float getA () {
+		return a;
 	}
 
-	public void setAX (float ax) {
-		this.ax = ax;
+	/** Part of the world transform matrix for the Y axis. */
+	public float getB () {
+		return b;
 	}
 
-	/** The applied local y translation. */
-	public float getAY () {
-		return ay;
+	/** Part of the world transform matrix for the X axis. */
+	public float getC () {
+		return c;
 	}
 
-	public void setAY (float ay) {
-		this.ay = ay;
+	/** Part of the world transform matrix for the Y axis. */
+	public float getD () {
+		return d;
 	}
 
-	/** The applied local rotation. */
-	public float getARotation () {
-		return arotation;
+	/** The world X position. */
+	public float getWorldX () {
+		return worldX;
 	}
 
-	public void setARotation (float arotation) {
-		this.arotation = arotation;
+	/** The world Y position. */
+	public float getWorldY () {
+		return worldY;
 	}
 
-	/** The applied local scaleX. */
-	public float getAScaleX () {
-		return ascaleX;
+	/** The world rotation for the X axis, calculated using {@link #a} and {@link #c}. */
+	public float getWorldRotationX () {
+		return atan2(c, a) * radDeg;
 	}
 
-	public void setAScaleX (float ascaleX) {
-		this.ascaleX = ascaleX;
+	/** The world rotation for the Y axis, calculated using {@link #b} and {@link #d}. */
+	public float getWorldRotationY () {
+		return atan2(d, b) * radDeg;
 	}
 
-	/** The applied local scaleY. */
-	public float getAScaleY () {
-		return ascaleY;
+	/** The magnitude (always positive) of the world scale X, calculated using {@link #a} and {@link #c}. */
+	public float getWorldScaleX () {
+		return (float)Math.sqrt(a * a + c * c);
 	}
 
-	public void setAScaleY (float ascaleY) {
-		this.ascaleY = ascaleY;
+	/** The magnitude (always positive) of the world scale Y, calculated using {@link #b} and {@link #d}. */
+	public float getWorldScaleY () {
+		return (float)Math.sqrt(b * b + d * d);
 	}
 
-	/** The applied local shearX. */
-	public float getAShearX () {
-		return ashearX;
+	public float worldToLocalRotationX () {
+		Bone parent = this.parent;
+		if (parent == null) return arotation;
+		return atan2(parent.a * c - parent.c * a, parent.d * a - parent.b * c) * radDeg;
 	}
 
-	public void setAShearX (float ashearX) {
-		this.ashearX = ashearX;
+	public float worldToLocalRotationY () {
+		Bone parent = this.parent;
+		if (parent == null) return arotation;
+		return atan2(parent.a * d - parent.c * b, parent.d * b - parent.b * d) * radDeg;
 	}
 
-	/** The applied local shearY. */
-	public float getAShearY () {
-		return ashearY;
+	/** Rotates the world transform the specified amount. {@link #updateWorldTransform()} will need to be called on any child
+	 * bones, recursively. */
+	public void rotateWorld (float degrees) {
+		float cos = cosDeg(degrees), sin = sinDeg(degrees);
+		a = cos * a - sin * c;
+		b = cos * b - sin * d;
+		c = sin * a + cos * c;
+		d = sin * b + cos * d;
+		appliedValid = false;
 	}
 
-	public void setAShearY (float ashearY) {
-		this.ashearY = ashearY;
-	}
-
-	/** If true, the applied transform matches the world transform. If false, the world transform has been modified since it was
-	 * computed and {@link #updateAppliedTransform()} must be called before accessing the applied transform. */
-	public boolean isAppliedValid () {
-		return appliedValid;
-	}
-
-	public void setAppliedValid (boolean appliedValid) {
-		this.appliedValid = appliedValid;
-	}
-
-	/** Computes the applied transform values from the world transform. This allows the applied transform to be accessed after the
-	 * world transform has been modified (by a constraint, {@link #rotateWorld(float)}, etc).
+	/** Computes the individual applied transform values from the world transform. This can be useful to perform processing using
+	 * the applied transform after the world transform has been modified directly (eg, by a constraint).
 	 * <p>
-	 * If {@link #updateWorldTransform()} has been called for a bone and {@link #isAppliedValid()} is false, then
-	 * {@link #updateAppliedTransform()} must be called before accessing the applied transform.
-	 * <p>
-	 * Some information is ambiguous in the world transform, such as -1,-1 scale versus 180 rotation. The applied transform after
-	 * calling this method is equivalent to the local tranform used to compute the world transform, but may not be identical. */
-	public void updateAppliedTransform () {
+	 * Some information is ambiguous in the world transform, such as -1,-1 scale versus 180 rotation. */
+	void updateAppliedTransform () {
 		appliedValid = true;
 		Bone parent = this.parent;
 		if (parent == null) {
@@ -426,82 +415,6 @@ public class Bone implements Updatable {
 		}
 	}
 
-	// -- World transform
-
-	/** Part of the world transform matrix for the X axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
-	public float getA () {
-		return a;
-	}
-
-	public void setA (float a) {
-		this.a = a;
-	}
-
-	/** Part of the world transform matrix for the Y axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
-	public float getB () {
-		return b;
-	}
-
-	public void setB (float b) {
-		this.b = b;
-	}
-
-	/** Part of the world transform matrix for the X axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
-	public float getC () {
-		return c;
-	}
-
-	public void setC (float c) {
-		this.c = c;
-	}
-
-	/** Part of the world transform matrix for the Y axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
-	public float getD () {
-		return d;
-	}
-
-	public void setD (float d) {
-		this.d = d;
-	}
-
-	/** The world X position. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
-	public float getWorldX () {
-		return worldX;
-	}
-
-	public void setWorldX (float worldX) {
-		this.worldX = worldX;
-	}
-
-	/** The world Y position. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
-	public float getWorldY () {
-		return worldY;
-	}
-
-	public void setWorldY (float worldY) {
-		this.worldY = worldY;
-	}
-
-	/** The world rotation for the X axis, calculated using {@link #a} and {@link #c}. */
-	public float getWorldRotationX () {
-		return atan2(c, a) * radDeg;
-	}
-
-	/** The world rotation for the Y axis, calculated using {@link #b} and {@link #d}. */
-	public float getWorldRotationY () {
-		return atan2(d, b) * radDeg;
-	}
-
-	/** The magnitude (always positive) of the world scale X, calculated using {@link #a} and {@link #c}. */
-	public float getWorldScaleX () {
-		return (float)Math.sqrt(a * a + c * c);
-	}
-
-	/** The magnitude (always positive) of the world scale Y, calculated using {@link #b} and {@link #d}. */
-	public float getWorldScaleY () {
-		return (float)Math.sqrt(b * b + d * d);
-	}
-
 	public Matrix3 getWorldTransform (Matrix3 worldTransform) {
 		if (worldTransform == null) throw new IllegalArgumentException("worldTransform cannot be null.");
 		float[] val = worldTransform.val;
@@ -533,31 +446,6 @@ public class Bone implements Updatable {
 		local.y = x * c + y * d + worldY;
 		return local;
 	}
-
-	/** Transforms a world rotation to a local rotation. */
-	public float worldToLocalRotation (float worldRotation) {
-		float sin = sinDeg(worldRotation), cos = cosDeg(worldRotation);
-		return atan2(a * sin - c * cos, d * cos - b * sin) * radDeg;
-	}
-
-	/** Transforms a local rotation to a world rotation. */
-	public float localToWorldRotation (float localRotation) {
-		float sin = sinDeg(localRotation), cos = cosDeg(localRotation);
-		return atan2(cos * c + sin * d, cos * a + sin * b) * radDeg;
-	}
-
-	/** Rotates the world transform the specified amount and sets {@link #isAppliedValid()} to false.
-	 * {@link #updateWorldTransform()} will need to be called on any child bones, recursively, and any constraints reapplied. */
-	public void rotateWorld (float degrees) {
-		float cos = cosDeg(degrees), sin = sinDeg(degrees);
-		a = cos * a - sin * c;
-		b = cos * b - sin * d;
-		c = sin * a + cos * c;
-		d = sin * b + cos * d;
-		appliedValid = false;
-	}
-
-	// ---
 
 	public String toString () {
 		return data.name;

@@ -5,32 +5,26 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.spine35.attachments.Attachment;
-import com.esotericsoftware.spine35.attachments.BoundingBoxAttachment;
-import com.esotericsoftware.spine35.attachments.ClippingAttachment;
-import com.esotericsoftware.spine35.attachments.MeshAttachment;
-import com.esotericsoftware.spine35.attachments.PathAttachment;
-import com.esotericsoftware.spine35.attachments.PointAttachment;
-import com.esotericsoftware.spine35.attachments.RegionAttachment;
+import com.esotericsoftware.spine35.attachments.*;
+
+import static com.badlogic.gdx.graphics.g2d.Batch.*;
 
 public class SkeletonRendererDebug {
 	static private final Color boneLineColor = Color.RED;
 	static private final Color boneOriginColor = Color.GREEN;
 	static private final Color attachmentLineColor = new Color(0, 0, 1, 0.5f);
-	static private final Color triangleLineColor = new Color(1, 0.64f, 0, 0.5f); // ffa3007f
+	static private final Color triangleLineColor = new Color(1, 0.64f, 0, 0.5f);
 	static private final Color aabbColor = new Color(0, 1, 0, 0.5f);
 
 	private final ShapeRenderer shapes;
-	private boolean drawBones = true, drawRegionAttachments = true, drawBoundingBoxes = true, drawPoints = true;
-	private boolean drawMeshHull = true, drawMeshTriangles = true, drawPaths = true, drawClipping = true;
+	private boolean drawBones = true, drawRegionAttachments = true, drawBoundingBoxes = true;
+	private boolean drawMeshHull = true, drawMeshTriangles = true, drawPaths = true;
 	private final SkeletonBounds bounds = new SkeletonBounds();
-	private final FloatArray vertices = new FloatArray(32);
+	private final FloatArray temp = new FloatArray();
 	private float scale = 1;
 	private boolean premultipliedAlpha;
-	private final Vector2 temp1 = new Vector2(), temp2 = new Vector2();
 
 	public SkeletonRendererDebug () {
 		shapes = new ShapeRenderer();
@@ -46,16 +40,14 @@ public class SkeletonRendererDebug {
 		Gdx.gl.glBlendFunc(srcFunc, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 		ShapeRenderer shapes = this.shapes;
+
 		Array<Bone> bones = skeleton.getBones();
-		Array<Slot> slots = skeleton.getSlots();
-
-		shapes.begin(ShapeType.Filled);
-
-		float boneWidth = 2;
 		if (drawBones) {
+			shapes.begin(ShapeType.Filled);
 			for (int i = 0, n = bones.size; i < n; i++) {
 				Bone bone = bones.get(i);
 				if (bone.parent == null) continue;
+				float boneWidth = 2;
 				float length = bone.data.length, width = boneWidth;
 				if (length == 0) {
 					length = 8;
@@ -67,56 +59,44 @@ public class SkeletonRendererDebug {
 				float y = length * bone.c + bone.worldY;
 				shapes.rectLine(bone.worldX, bone.worldY, x, y, width * scale);
 			}
+			shapes.end();
+			shapes.begin(ShapeType.Line);
 			shapes.x(skeleton.getX(), skeleton.getY(), 4 * scale);
-		}
-
-		if (drawPoints) {
-			shapes.setColor(boneOriginColor);
-			for (int i = 0, n = slots.size; i < n; i++) {
-				Slot slot = slots.get(i);
-				Attachment attachment = slot.attachment;
-				if (!(attachment instanceof PointAttachment)) continue;
-				PointAttachment point = (PointAttachment)attachment;
-				point.computeWorldPosition(slot.getBone(), temp1);
-				temp2.set(8, 0).rotate(point.computeWorldRotation(slot.getBone()));
-				shapes.rectLine(temp1, temp2, boneWidth / 2 * scale);
-			}
-		}
-
-		shapes.end();
-		shapes.begin(ShapeType.Line);
+		} else
+			shapes.begin(ShapeType.Line);
 
 		if (drawRegionAttachments) {
 			shapes.setColor(attachmentLineColor);
+			Array<Slot> slots = skeleton.getSlots();
 			for (int i = 0, n = slots.size; i < n; i++) {
 				Slot slot = slots.get(i);
 				Attachment attachment = slot.attachment;
 				if (attachment instanceof RegionAttachment) {
-					RegionAttachment region = (RegionAttachment)attachment;
-					float[] vertices = this.vertices.items;
-					region.computeWorldVertices(slot.getBone(), vertices, 0, 2);
-					shapes.line(vertices[0], vertices[1], vertices[2], vertices[3]);
-					shapes.line(vertices[2], vertices[3], vertices[4], vertices[5]);
-					shapes.line(vertices[4], vertices[5], vertices[6], vertices[7]);
-					shapes.line(vertices[6], vertices[7], vertices[0], vertices[1]);
+					RegionAttachment regionAttachment = (RegionAttachment)attachment;
+					float[] vertices = regionAttachment.updateWorldVertices(slot, false);
+					shapes.line(vertices[X1], vertices[Y1], vertices[X2], vertices[Y2]);
+					shapes.line(vertices[X2], vertices[Y2], vertices[X3], vertices[Y3]);
+					shapes.line(vertices[X3], vertices[Y3], vertices[X4], vertices[Y4]);
+					shapes.line(vertices[X4], vertices[Y4], vertices[X1], vertices[Y1]);
 				}
 			}
 		}
 
 		if (drawMeshHull || drawMeshTriangles) {
+			Array<Slot> slots = skeleton.getSlots();
 			for (int i = 0, n = slots.size; i < n; i++) {
 				Slot slot = slots.get(i);
 				Attachment attachment = slot.attachment;
 				if (!(attachment instanceof MeshAttachment)) continue;
 				MeshAttachment mesh = (MeshAttachment)attachment;
-				float[] vertices = this.vertices.setSize(mesh.getWorldVerticesLength());
-				mesh.computeWorldVertices(slot, 0, mesh.getWorldVerticesLength(), vertices, 0, 2);
+				mesh.updateWorldVertices(slot, false);
+				float[] vertices = mesh.getWorldVertices();
 				short[] triangles = mesh.getTriangles();
 				int hullLength = mesh.getHullLength();
 				if (drawMeshTriangles) {
 					shapes.setColor(triangleLineColor);
 					for (int ii = 0, nn = triangles.length; ii < nn; ii += 3) {
-						int v1 = triangles[ii] * 2, v2 = triangles[ii + 1] * 2, v3 = triangles[ii + 2] * 2;
+						int v1 = triangles[ii] * 5, v2 = triangles[ii + 1] * 5, v3 = triangles[ii + 2] * 5;
 						shapes.triangle(vertices[v1], vertices[v1 + 1], //
 							vertices[v2], vertices[v2 + 1], //
 							vertices[v3], vertices[v3 + 1] //
@@ -125,8 +105,9 @@ public class SkeletonRendererDebug {
 				}
 				if (drawMeshHull && hullLength > 0) {
 					shapes.setColor(attachmentLineColor);
-					float lastX = vertices[hullLength - 2], lastY = vertices[hullLength - 1];
-					for (int ii = 0; ii < hullLength; ii += 2) {
+					hullLength = (hullLength >> 1) * 5;
+					float lastX = vertices[hullLength - 5], lastY = vertices[hullLength - 4];
+					for (int ii = 0, nn = hullLength; ii < nn; ii += 5) {
 						float x = vertices[ii], y = vertices[ii + 1];
 						shapes.line(x, y, lastX, lastY);
 						lastX = x;
@@ -150,38 +131,23 @@ public class SkeletonRendererDebug {
 			}
 		}
 
-		if (drawClipping) {
-			for (int i = 0, n = slots.size; i < n; i++) {
-				Slot slot = slots.get(i);
-				Attachment attachment = slot.attachment;
-				if (!(attachment instanceof ClippingAttachment)) continue;
-				ClippingAttachment clip = (ClippingAttachment)attachment;
-				int nn = clip.getWorldVerticesLength();
-				float[] vertices = this.vertices.setSize(nn);
-				clip.computeWorldVertices(slot, 0, nn, vertices, 0, 2);
-				shapes.setColor(clip.getColor());
-				for (int ii = 2; ii < nn; ii += 2)
-					shapes.line(vertices[ii - 2], vertices[ii - 1], vertices[ii], vertices[ii + 1]);
-				shapes.line(vertices[0], vertices[1], vertices[nn - 2], vertices[nn - 1]);
-			}
-		}
-
 		if (drawPaths) {
+			Array<Slot> slots = skeleton.getSlots();
 			for (int i = 0, n = slots.size; i < n; i++) {
 				Slot slot = slots.get(i);
 				Attachment attachment = slot.attachment;
 				if (!(attachment instanceof PathAttachment)) continue;
 				PathAttachment path = (PathAttachment)attachment;
 				int nn = path.getWorldVerticesLength();
-				float[] vertices = this.vertices.setSize(nn);
-				path.computeWorldVertices(slot, 0, nn, vertices, 0, 2);
+				float[] world = temp.setSize(nn);
+				path.computeWorldVertices(slot, world);
 				Color color = path.getColor();
-				float x1 = vertices[2], y1 = vertices[3], x2 = 0, y2 = 0;
+				float x1 = world[2], y1 = world[3], x2 = 0, y2 = 0;
 				if (path.getClosed()) {
 					shapes.setColor(color);
-					float cx1 = vertices[0], cy1 = vertices[1], cx2 = vertices[nn - 2], cy2 = vertices[nn - 1];
-					x2 = vertices[nn - 4];
-					y2 = vertices[nn - 3];
+					float cx1 = world[0], cy1 = world[1], cx2 = world[nn - 2], cy2 = world[nn - 1];
+					x2 = world[nn - 4];
+					y2 = world[nn - 3];
 					shapes.curve(x1, y1, cx1, cy1, cx2, cy2, x2, y2, 32);
 					shapes.setColor(Color.LIGHT_GRAY);
 					shapes.line(x1, y1, cx1, cy1);
@@ -189,9 +155,9 @@ public class SkeletonRendererDebug {
 				}
 				nn -= 4;
 				for (int ii = 4; ii < nn; ii += 6) {
-					float cx1 = vertices[ii], cy1 = vertices[ii + 1], cx2 = vertices[ii + 2], cy2 = vertices[ii + 3];
-					x2 = vertices[ii + 4];
-					y2 = vertices[ii + 5];
+					float cx1 = world[ii], cy1 = world[ii + 1], cx2 = world[ii + 2], cy2 = world[ii + 3];
+					x2 = world[ii + 4];
+					y2 = world[ii + 5];
 					shapes.setColor(color);
 					shapes.curve(x1, y1, cx1, cy1, cx2, cy2, x2, y2, 32);
 					shapes.setColor(Color.LIGHT_GRAY);
@@ -210,19 +176,8 @@ public class SkeletonRendererDebug {
 			shapes.setColor(boneOriginColor);
 			for (int i = 0, n = bones.size; i < n; i++) {
 				Bone bone = bones.get(i);
+				shapes.setColor(Color.GREEN);
 				shapes.circle(bone.worldX, bone.worldY, 3 * scale, 8);
-			}
-		}
-
-		if (drawPoints) {
-			shapes.setColor(boneOriginColor);
-			for (int i = 0, n = slots.size; i < n; i++) {
-				Slot slot = slots.get(i);
-				Attachment attachment = slot.attachment;
-				if (!(attachment instanceof PointAttachment)) continue;
-				PointAttachment point = (PointAttachment)attachment;
-				point.computeWorldPosition(slot.getBone(), temp1);
-				shapes.circle(temp1.x, temp1.y, 3 * scale, 8);
 			}
 		}
 
@@ -260,14 +215,6 @@ public class SkeletonRendererDebug {
 
 	public void setPaths (boolean paths) {
 		this.drawPaths = paths;
-	}
-
-	public void setPoints (boolean points) {
-		this.drawPoints = points;
-	}
-	
-	public void setClipping (boolean clipping) {
-		this.drawClipping = clipping;
 	}
 
 	public void setPremultipliedAlpha (boolean premultipliedAlpha) {

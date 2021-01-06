@@ -1,31 +1,39 @@
 package com.esotericsoftware.spine35;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine35.attachments.Attachment;
 import com.esotericsoftware.spine35.attachments.RegionAttachment;
 import com.esotericsoftware.spine35.attachments.SkeletonAttachment;
 import com.esotericsoftware.spine35.attachments.MeshAttachment;
 
-public class SkeletonRenderer<T extends Batch> {
-	boolean premultipliedAlpha;
+public class SkeletonMeshRenderer extends SkeletonRenderer<PolygonSpriteBatch> {
+	static private final short[] quadTriangles = {0, 1, 2, 2, 3, 0};
 
-	public void draw (T batch, Skeleton skeleton) {
+	@SuppressWarnings("null")
+	public void draw (PolygonSpriteBatch batch, Skeleton skeleton) {
 		boolean premultipliedAlpha = this.premultipliedAlpha;
+		BlendMode blendMode = null;
 
+		float[] vertices = null;
+		short[] triangles = null;
 		Array<Slot> drawOrder = skeleton.drawOrder;
 		for (int i = 0, n = drawOrder.size; i < n; i++) {
 			Slot slot = drawOrder.get(i);
 			Attachment attachment = slot.attachment;
+			Texture texture = null;
 			if (attachment instanceof RegionAttachment) {
-				RegionAttachment regionAttachment = (RegionAttachment)attachment;
-				float[] vertices = regionAttachment.updateWorldVertices(slot, premultipliedAlpha);
-				BlendMode blendMode = slot.data.getBlendMode();
-				batch.setBlendFunction(blendMode.getSource(premultipliedAlpha), blendMode.getDest());
-				batch.draw(regionAttachment.getRegion().getTexture(), vertices, 0, 20);
+				RegionAttachment region = (RegionAttachment)attachment;
+				vertices = region.updateWorldVertices(slot, premultipliedAlpha);
+				triangles = quadTriangles;
+				texture = region.getRegion().getTexture();
 
 			} else if (attachment instanceof MeshAttachment) {
-				throw new RuntimeException("SkeletonMeshRenderer is required to render meshes.");
+				MeshAttachment mesh = (MeshAttachment)attachment;
+				vertices = mesh.updateWorldVertices(slot, premultipliedAlpha);
+				triangles = mesh.getTriangles();
+				texture = mesh.getRegion().getTexture();
 
 			} else if (attachment instanceof SkeletonAttachment) {
 				Skeleton attachmentSkeleton = ((SkeletonAttachment)attachment).getSkeleton();
@@ -44,16 +52,20 @@ public class SkeletonRenderer<T extends Batch> {
 
 				draw(batch, attachmentSkeleton);
 
-				attachmentSkeleton.setX(0);
-				attachmentSkeleton.setY(0);
+				attachmentSkeleton.setPosition(0, 0);
 				rootBone.setScaleX(oldScaleX);
 				rootBone.setScaleY(oldScaleY);
 				rootBone.setRotation(oldRotation);
 			}
-		}
-	}
 
-	public void setPremultipliedAlpha (boolean premultipliedAlpha) {
-		this.premultipliedAlpha = premultipliedAlpha;
+			if (texture != null) {
+				BlendMode slotBlendMode = slot.data.getBlendMode();
+				if (slotBlendMode != blendMode) {
+					blendMode = slotBlendMode;
+					batch.setBlendFunction(blendMode.getSource(premultipliedAlpha), blendMode.getDest());
+				}
+				batch.draw(texture, vertices, 0, vertices.length, triangles, 0, triangles.length);
+			}
+		}
 	}
 }
