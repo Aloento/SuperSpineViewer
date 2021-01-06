@@ -19,30 +19,23 @@ import java.util.ResourceBundle;
 
 public class ExporterController extends Controller implements Initializable {
 
+    RuntimesLoader runtimesLoader = new RuntimesLoader();
     @FXML
     private StackPane Exporter;
-
     @FXML
     private Label L_Version;
-
     @FXML
     private Label L_Skel;
-
     @FXML
     private Label L_Atlas;
-
     @FXML
     private Label L_FPS;
-
     @FXML
     private ToggleGroup Render;
-
     @FXML
     private ToggleGroup Format;
-
     @FXML
     private JFXTextField T_Path;
-
     @FXML
     private JFXProgressBar P_Export;
 
@@ -58,7 +51,7 @@ public class ExporterController extends Controller implements Initializable {
 
     @FXML
     void B_Open() {
-        RuntimesLoader runtimesLoader = new RuntimesLoader();
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Skeleton");
 
@@ -115,7 +108,11 @@ public class ExporterController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        if (arg != null) {
+            File file = new File(arg);
+            if (runtimesLoader.init(file))
+                System.out.println("初始化成功");
+        }
     }
 
 }

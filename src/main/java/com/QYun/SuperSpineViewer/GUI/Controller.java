@@ -15,5 +15,6 @@ public class Controller {
     public static boolean isFX = true;
     public static boolean requestReload = false;
     public static String path;
+    public static String arg = null;
 
 }

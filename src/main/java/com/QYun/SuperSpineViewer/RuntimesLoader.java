@@ -5,6 +5,7 @@ import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import org.apache.commons.io.FileUtils;
 
@@ -16,8 +17,6 @@ import java.io.IOException;
 public class RuntimesLoader extends Controller {
 
     public static final SimpleIntegerProperty spineVersion = new SimpleIntegerProperty(0);
-    private static LwjglFXApplication gdxApp;
-    private static boolean shouldReload = false;
     final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
     private final String[] extraSuffixes = {"", ".txt", ".bytes"};
     private final String[] dataSuffixes = {"", ".json", ".skel"};
@@ -95,14 +94,14 @@ public class RuntimesLoader extends Controller {
     private boolean initLibDGX() {
         try {
             switch (spineVersion.get()) {
-                case 40 -> gdxApp = new LwjglFXApplication(new Spine40(), spineRender, config);
-                case 38 -> gdxApp = new LwjglFXApplication(new Spine38(), spineRender, config);
-                case 37 -> gdxApp = new LwjglFXApplication(new Spine37(), spineRender, config);
-                case 36 -> gdxApp = new LwjglFXApplication(new Spine36(), spineRender, config);
-                case 35 -> gdxApp = new LwjglFXApplication(new Spine35(), spineRender, config);
-                case 34 -> gdxApp = new LwjglFXApplication(new Spine34(), spineRender, config);
-                case 31 -> gdxApp = new LwjglFXApplication(new Spine31(), spineRender, config);
-                case 21 -> gdxApp = new LwjglFXApplication(new Spine21(), spineRender, config);
+                case 40 -> new LwjglFXApplication(new Spine40(), spineRender, config);
+                case 38 -> new LwjglFXApplication(new Spine38(), spineRender, config);
+                case 37 -> new LwjglFXApplication(new Spine37(), spineRender, config);
+                case 36 -> new LwjglFXApplication(new Spine36(), spineRender, config);
+                case 35 -> new LwjglFXApplication(new Spine35(), spineRender, config);
+                case 34 -> new LwjglFXApplication(new Spine34(), spineRender, config);
+                case 31 -> new LwjglFXApplication(new Spine31(), spineRender, config);
+                case 21 -> new LwjglFXApplication(new Spine21(), spineRender, config);
                 default -> {
                     return false;
                 }
@@ -142,10 +141,29 @@ public class RuntimesLoader extends Controller {
     public boolean init(File file) {
         if (!isLoad.get()) {
             spineVersion.addListener((observable, oldValue, newValue) -> {
-                if (!newValue.equals(oldValue)) {
-                    shouldReload = true;
-                    if (gdxApp != null)
-                        gdxApp.exit();
+                if (!newValue.equals(oldValue) && isLoad.get()) {
+                    if (AppLauncher.class.getResource("").getProtocol().equals("jar")) {
+                        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                            try {
+                                Runtime.getRuntime().exec("java " +
+                                        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:1234 " +
+                                        "-jar "
+                                        + System.getProperty("user.dir")
+                                        + File.separator
+                                        + System.getProperty("java.class.path")
+                                        + " " + file.getAbsolutePath());
+                            } catch (IOException e) {
+                                System.out.println("重启失败，请手动重启");
+                                e.printStackTrace();
+                            }
+                            System.out.println("重新加载LibGDX");
+                        }));
+                        System.exit(0);
+                    }
+                    else {
+                        System.out.println("重新加载，IDE中请自行重启");
+                        Platform.exit();
+                    }
                 }
             });
         }
@@ -155,7 +173,7 @@ public class RuntimesLoader extends Controller {
         SuperSpine.skelFile = skelFile;
         String extension = skelFile.extension();
 
-        if (!requestReload || shouldReload) {
+        if (!requestReload) {
             if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt")) {
                 if (jsonVersion(file))
                     return initLibDGX();
@@ -163,7 +181,6 @@ public class RuntimesLoader extends Controller {
                 if (binaryVersion(file))
                     return initLibDGX();
             }
-            shouldReload = false;
         } else {
             if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt"))
                 jsonVersion(file);
