@@ -72,30 +72,40 @@ public class Spine38 extends SuperSpine {
 
         animate.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
-                if (newValue != null)
+                if (newValue != null) {
                     state.setAnimation(0, newValue, isLoop.get());
-                else state.setEmptyAnimation(0, 0);
+                    isPlay.set(true);
+                } else {
+                    state.setEmptyAnimation(0, 0);
+                    isPlay.set(false);
+                }
             }
         });
 
         isLoop.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
-                if (animate.get() == null)
+                if (animate.get() == null) {
                     state.setEmptyAnimation(0, 0);
-                else state.setAnimation(0, animate.get(), newValue);
+                    isPlay.set(false);
+                } else {
+                    state.setAnimation(0, animate.get(), newValue);
+                    if (newValue) isPlay.set(true);
+                }
             }
         });
 
         isPlay.addListener((observable, oldValue, newValue) -> {
-            if (state != null) {
-                if (newValue) {
-                    if (animate.get() == null)
-                        state.setAnimation(0, animatesList.get(0), isLoop.get());
-                    else if (!isLoop.get())
-                        state.setAnimation(0, animate.get(), isLoop.get());
-                    state.setTimeScale(speed.get());
-                } else {
-                    state.setTimeScale(0);
+            if (!newValue.equals(oldValue)) {
+                if (state != null) {
+                    if (newValue) {
+                        if (animate.get() == null)
+                            state.setAnimation(0, animatesList.get(0), isLoop.get());
+                        else if (!isLoop.get())
+                            state.setAnimation(0, animate.get(), isLoop.get());
+                        state.setTimeScale(speed.get());
+                    } else {
+                        state.setTimeScale(0);
+                    }
                 }
             }
         });
@@ -103,24 +113,30 @@ public class Spine38 extends SuperSpine {
         scale.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
                 loadSkel();
-                if (animate.get() != null)
+                if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
+                    isPlay.set(true);
+                }
             }
         });
 
         X.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
                 loadSkel();
-                if (animate.get() != null)
+                if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
+                    isPlay.set(true);
+                }
             }
         });
 
         Y.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
                 loadSkel();
-                if (animate.get() != null)
+                if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
+                    isPlay.set(true);
+                }
             }
         });
 
@@ -185,6 +201,8 @@ public class Spine38 extends SuperSpine {
             if (entry != null) {
                 double percent = entry.getAnimationTime() / entry.getAnimationEnd();
                 Platform.runLater(() -> Controller.progressBar.setProgress(percent));
+                if (percent == 1 && !isLoop.get())
+                    isPlay.set(false);
             }
         }
     }

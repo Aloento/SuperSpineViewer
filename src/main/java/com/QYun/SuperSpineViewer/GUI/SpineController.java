@@ -251,6 +251,13 @@ public class SpineController extends Controller implements Initializable {
             }
         });
 
+        spine.isPlayProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.equals(oldValue)) {
+                if (newValue) Platform.runLater(() -> playButton.setGraphic(pauseIcon));
+                else Platform.runLater(() -> playButton.setGraphic(playIcon));
+            }
+        });
+
         T_Scale.setTextFormatter(new TextFormatter<String>(change -> {
             if (change.getText().matches("[0-9]*|\\."))
                 return change;
