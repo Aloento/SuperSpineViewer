@@ -60,6 +60,7 @@ public class ExporterController extends Controller implements Initializable {
 
         File file = fileChooser.showOpenDialog(new Stage());
         if (file != null) {
+            arg = file.getAbsolutePath();
             if (isLoad.get()) {
                 requestReload = true;
                 if (runtimesLoader.init(file))
@@ -108,9 +109,13 @@ public class ExporterController extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (arg != null) {
-            File file = new File(arg);
-            if (runtimesLoader.init(file))
-                System.out.println("初始化成功");
+            Platform.runLater(() -> {
+                File file = new File(arg);
+                if (runtimesLoader.init(file)) {
+                    System.out.println("初始化成功");
+                    arg = null;
+                }
+            });
         }
     }
 

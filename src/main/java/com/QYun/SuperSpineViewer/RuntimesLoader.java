@@ -144,21 +144,15 @@ public class RuntimesLoader extends Controller {
                     if (AppLauncher.class.getResource("").getProtocol().equals("jar")) {
                         new Thread(() -> {
                             try {
-                                String path = "";
-                                if (spineVersion.get() != -1)
-                                    path = file.getAbsolutePath();
                                 Runtime.getRuntime().exec("java -jar "
                                         + System.getProperty("java.class.path")
-                                        + " " + path, null, new File(System.getProperty("user.dir")));
+                                        + " " + arg, null, new File(System.getProperty("user.dir")));
                             } catch (IOException ignored) {
                             }
                             System.out.println("重新加载LibGDX");
                         }).start();
-                        System.exit(0);
-                    } else {
-                        System.out.println("重新加载，从源码启动请自行重启");
-                        System.exit(0);
-                    }
+                    } else System.out.println("重新加载，从源码启动请自行重启");
+                    System.exit(0);
                 }
             });
         }
