@@ -14,7 +14,7 @@ public class IkConstraint implements Constraint {
     final IkConstraintData data;
     final Array<Bone> bones;
     Bone target;
-    float mix = 1;
+    float mix;
     int bendDirection;
 
     public IkConstraint(IkConstraintData data, Skeleton skeleton) {

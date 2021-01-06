@@ -7,9 +7,9 @@ import com.esotericsoftware.spine35.Animation.DrawOrderTimeline;
 import com.esotericsoftware.spine35.Animation.RotateTimeline;
 import com.esotericsoftware.spine35.Animation.Timeline;
 
-import static com.esotericsoftware.spine35.Animation.RotateTimeline.*;
-
 import java.lang.StringBuilder;
+
+import static com.esotericsoftware.spine35.Animation.RotateTimeline.*;
 
 /**
  * Applies animations over time, queues animations for later playback, mixes (crossfading) between animations, and applies

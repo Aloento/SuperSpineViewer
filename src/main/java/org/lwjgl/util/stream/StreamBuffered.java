@@ -35,56 +35,58 @@ import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.concurrent.Semaphore;
 
-/** Base functionality for buffered transfers. */
+/**
+ * Base functionality for buffered transfers.
+ */
 abstract class StreamBuffered {
 
-	protected final StreamHandler handler;
+    protected final StreamHandler handler;
 
-	// Low: Less memory usage, less concurrency, less transfers behind
-	// High: More memory usages, more concurrency, more transfers behind
-	protected final int transfersToBuffer; // 3 provides optimal concurrency in most cases
+    // Low: Less memory usage, less concurrency, less transfers behind
+    // High: More memory usages, more concurrency, more transfers behind
+    protected final int transfersToBuffer; // 3 provides optimal concurrency in most cases
 
-	protected final ByteBuffer[] pinnedBuffers;
-	protected final Semaphore[]  semaphores; // Required for synchronization with the processing thread
+    protected final ByteBuffer[] pinnedBuffers;
+    protected final Semaphore[] semaphores; // Required for synchronization with the processing thread
 
-	/**
-	 * A flag per pinned buffer that indicates if it's currently being
-	 * processed by the handler.
-	 */
-	protected final BitSet processingState;
+    /**
+     * A flag per pinned buffer that indicates if it's currently being
+     * processed by the handler.
+     */
+    protected final BitSet processingState;
 
-	protected int width;
-	protected int height;
-	protected int stride;
+    protected int width;
+    protected int height;
+    protected int stride;
 
-	protected long bufferIndex;
+    protected long bufferIndex;
 
-	protected StreamBuffered(final StreamHandler handler, final int transfersToBuffer) {
-		this.handler = handler;
-		this.transfersToBuffer = transfersToBuffer;
+    protected StreamBuffered(final StreamHandler handler, final int transfersToBuffer) {
+        this.handler = handler;
+        this.transfersToBuffer = transfersToBuffer;
 
-		pinnedBuffers = new ByteBuffer[transfersToBuffer];
-		semaphores = new Semaphore[transfersToBuffer];
-		for ( int i = 0; i < semaphores.length; i++ )
-			semaphores[i] = new Semaphore(1, false);
+        pinnedBuffers = new ByteBuffer[transfersToBuffer];
+        semaphores = new Semaphore[transfersToBuffer];
+        for (int i = 0; i < semaphores.length; i++)
+            semaphores[i] = new Semaphore(1, false);
 
-		processingState = new BitSet(transfersToBuffer);
-	}
+        processingState = new BitSet(transfersToBuffer);
+    }
 
-	protected void waitForProcessingToComplete(final int index) {
-		final Semaphore s = semaphores[index];
-		// Early-out: start-up or handler has finished processing
-		if ( s.availablePermits() == 0 ) {
-			// This will block until handler has finished processing
-			s.acquireUninterruptibly();
-			// Give the permit back
-			s.release();
-		}
+    protected void waitForProcessingToComplete(final int index) {
+        final Semaphore s = semaphores[index];
+        // Early-out: start-up or handler has finished processing
+        if (s.availablePermits() == 0) {
+            // This will block until handler has finished processing
+            s.acquireUninterruptibly();
+            // Give the permit back
+            s.release();
+        }
 
-		postProcess(index);
-		processingState.set(index, false);
-	}
+        postProcess(index);
+        processingState.set(index, false);
+    }
 
-	protected abstract void postProcess(int index);
+    protected abstract void postProcess(int index);
 
 }

@@ -1,347 +1,322 @@
 package com.esotericsoftware.spine38;
 
-import java.io.EOFException;
-import java.io.IOException;
-
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.DataInput;
-import com.badlogic.gdx.utils.FloatArray;
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.SerializationException;
-
-import com.esotericsoftware.spine38.Animation.AttachmentTimeline;
-import com.esotericsoftware.spine38.Animation.ColorTimeline;
-import com.esotericsoftware.spine38.Animation.CurveTimeline;
-import com.esotericsoftware.spine38.Animation.DeformTimeline;
-import com.esotericsoftware.spine38.Animation.DrawOrderTimeline;
-import com.esotericsoftware.spine38.Animation.EventTimeline;
-import com.esotericsoftware.spine38.Animation.IkConstraintTimeline;
-import com.esotericsoftware.spine38.Animation.PathConstraintMixTimeline;
-import com.esotericsoftware.spine38.Animation.PathConstraintPositionTimeline;
-import com.esotericsoftware.spine38.Animation.PathConstraintSpacingTimeline;
-import com.esotericsoftware.spine38.Animation.RotateTimeline;
-import com.esotericsoftware.spine38.Animation.ScaleTimeline;
-import com.esotericsoftware.spine38.Animation.ShearTimeline;
-import com.esotericsoftware.spine38.Animation.Timeline;
-import com.esotericsoftware.spine38.Animation.TransformConstraintTimeline;
-import com.esotericsoftware.spine38.Animation.TranslateTimeline;
-import com.esotericsoftware.spine38.Animation.TwoColorTimeline;
+import com.badlogic.gdx.utils.*;
+import com.esotericsoftware.spine38.Animation.*;
 import com.esotericsoftware.spine38.BoneData.TransformMode;
 import com.esotericsoftware.spine38.PathConstraintData.PositionMode;
 import com.esotericsoftware.spine38.PathConstraintData.RotateMode;
 import com.esotericsoftware.spine38.PathConstraintData.SpacingMode;
 import com.esotericsoftware.spine38.SkeletonJson.LinkedMesh;
-import com.esotericsoftware.spine38.attachments.AtlasAttachmentLoader;
-import com.esotericsoftware.spine38.attachments.Attachment;
-import com.esotericsoftware.spine38.attachments.AttachmentLoader;
-import com.esotericsoftware.spine38.attachments.AttachmentType;
-import com.esotericsoftware.spine38.attachments.BoundingBoxAttachment;
-import com.esotericsoftware.spine38.attachments.ClippingAttachment;
-import com.esotericsoftware.spine38.attachments.MeshAttachment;
-import com.esotericsoftware.spine38.attachments.PathAttachment;
-import com.esotericsoftware.spine38.attachments.PointAttachment;
-import com.esotericsoftware.spine38.attachments.RegionAttachment;
-import com.esotericsoftware.spine38.attachments.VertexAttachment;
+import com.esotericsoftware.spine38.attachments.*;
 
-/** Loads skeleton data in the Spine binary format.
+import java.io.EOFException;
+import java.io.IOException;
+
+/**
+ * Loads skeleton data in the Spine binary format.
  * <p>
  * See <a href="http://esotericsoftware.com/spine-binary-format">Spine binary format</a> and
  * <a href="http://esotericsoftware.com/spine-loading-skeleton-data#JSON-and-binary-data">JSON and binary data</a> in the Spine
- * Runtimes Guide. */
+ * Runtimes Guide.
+ */
 public class SkeletonBinary {
-	static public final int BONE_ROTATE = 0;
-	static public final int BONE_TRANSLATE = 1;
-	static public final int BONE_SCALE = 2;
-	static public final int BONE_SHEAR = 3;
+    static public final int BONE_ROTATE = 0;
+    static public final int BONE_TRANSLATE = 1;
+    static public final int BONE_SCALE = 2;
+    static public final int BONE_SHEAR = 3;
 
-	static public final int SLOT_ATTACHMENT = 0;
-	static public final int SLOT_COLOR = 1;
-	static public final int SLOT_TWO_COLOR = 2;
+    static public final int SLOT_ATTACHMENT = 0;
+    static public final int SLOT_COLOR = 1;
+    static public final int SLOT_TWO_COLOR = 2;
 
-	static public final int PATH_POSITION = 0;
-	static public final int PATH_SPACING = 1;
-	static public final int PATH_MIX = 2;
+    static public final int PATH_POSITION = 0;
+    static public final int PATH_SPACING = 1;
+    static public final int PATH_MIX = 2;
 
-	static public final int CURVE_LINEAR = 0;
-	static public final int CURVE_STEPPED = 1;
-	static public final int CURVE_BEZIER = 2;
+    static public final int CURVE_LINEAR = 0;
+    static public final int CURVE_STEPPED = 1;
+    static public final int CURVE_BEZIER = 2;
 
-	static private final Color tempColor1 = new Color(), tempColor2 = new Color();
+    static private final Color tempColor1 = new Color(), tempColor2 = new Color();
 
-	private final AttachmentLoader attachmentLoader;
-	private float scale = 1;
-	private final Array<LinkedMesh> linkedMeshes = new Array();
+    private final AttachmentLoader attachmentLoader;
+    private final Array<LinkedMesh> linkedMeshes = new Array();
+    private float scale = 1;
 
-	public SkeletonBinary (TextureAtlas atlas) {
-		attachmentLoader = new AtlasAttachmentLoader(atlas);
-	}
+    public SkeletonBinary(TextureAtlas atlas) {
+        attachmentLoader = new AtlasAttachmentLoader(atlas);
+    }
 
-	public SkeletonBinary (AttachmentLoader attachmentLoader) {
-		if (attachmentLoader == null) throw new IllegalArgumentException("attachmentLoader cannot be null.");
-		this.attachmentLoader = attachmentLoader;
-	}
+    public SkeletonBinary(AttachmentLoader attachmentLoader) {
+        if (attachmentLoader == null) throw new IllegalArgumentException("attachmentLoader cannot be null.");
+        this.attachmentLoader = attachmentLoader;
+    }
 
-	/** Scales bone positions, image sizes, and translations as they are loaded. This allows different size images to be used at
-	 * runtime than were used in Spine.
-	 * <p>
-	 * See <a href="http://esotericsoftware.com/spine-loading-skeleton-data#Scaling">Scaling</a> in the Spine Runtimes Guide. */
-	public float getScale () {
-		return scale;
-	}
+    /**
+     * Scales bone positions, image sizes, and translations as they are loaded. This allows different size images to be used at
+     * runtime than were used in Spine.
+     * <p>
+     * See <a href="http://esotericsoftware.com/spine-loading-skeleton-data#Scaling">Scaling</a> in the Spine Runtimes Guide.
+     */
+    public float getScale() {
+        return scale;
+    }
 
-	public void setScale (float scale) {
-		if (scale == 0) throw new IllegalArgumentException("scale cannot be 0.");
-		this.scale = scale;
-	}
+    public void setScale(float scale) {
+        if (scale == 0) throw new IllegalArgumentException("scale cannot be 0.");
+        this.scale = scale;
+    }
 
-	public SkeletonData readSkeletonData (FileHandle file) {
-		if (file == null) throw new IllegalArgumentException("file cannot be null.");
+    public SkeletonData readSkeletonData(FileHandle file) {
+        if (file == null) throw new IllegalArgumentException("file cannot be null.");
 
-		float scale = this.scale;
+        float scale = this.scale;
 
-		SkeletonData skeletonData = new SkeletonData();
-		skeletonData.name = file.nameWithoutExtension();
+        SkeletonData skeletonData = new SkeletonData();
+        skeletonData.name = file.nameWithoutExtension();
 
-		try (SkeletonInput input = new SkeletonInput(file)) {
-			skeletonData.hash = input.readString();
-			if (skeletonData.hash.isEmpty()) skeletonData.hash = null;
-			skeletonData.version = input.readString();
-			if (skeletonData.version.isEmpty()) skeletonData.version = null;
-			if ("3.8.75".equals(skeletonData.version))
-				throw new RuntimeException("Unsupported skeleton data, please export with a newer version of Spine.");
-			skeletonData.x = input.readFloat();
-			skeletonData.y = input.readFloat();
-			skeletonData.width = input.readFloat();
-			skeletonData.height = input.readFloat();
+        try (SkeletonInput input = new SkeletonInput(file)) {
+            skeletonData.hash = input.readString();
+            if (skeletonData.hash.isEmpty()) skeletonData.hash = null;
+            skeletonData.version = input.readString();
+            if (skeletonData.version.isEmpty()) skeletonData.version = null;
+            if ("3.8.75".equals(skeletonData.version))
+                throw new RuntimeException("Unsupported skeleton data, please export with a newer version of Spine.");
+            skeletonData.x = input.readFloat();
+            skeletonData.y = input.readFloat();
+            skeletonData.width = input.readFloat();
+            skeletonData.height = input.readFloat();
 
-			boolean nonessential = input.readBoolean();
-			if (nonessential) {
-				skeletonData.fps = input.readFloat();
+            boolean nonessential = input.readBoolean();
+            if (nonessential) {
+                skeletonData.fps = input.readFloat();
 
-				skeletonData.imagesPath = input.readString();
-				if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
+                skeletonData.imagesPath = input.readString();
+                if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
 
-				skeletonData.audioPath = input.readString();
-				if (skeletonData.audioPath.isEmpty()) skeletonData.audioPath = null;
-			}
+                skeletonData.audioPath = input.readString();
+                if (skeletonData.audioPath.isEmpty()) skeletonData.audioPath = null;
+            }
 
-			int n;
-			Object[] o;
+            int n;
+            Object[] o;
 
-			// Strings.
-			input.strings = new Array(n = input.readInt(true));
-			o = input.strings.setSize(n);
-			for (int i = 0; i < n; i++)
-				o[i] = input.readString();
+            // Strings.
+            input.strings = new Array(n = input.readInt(true));
+            o = input.strings.setSize(n);
+            for (int i = 0; i < n; i++)
+                o[i] = input.readString();
 
-			// Bones.
-			o = skeletonData.bones.setSize(n = input.readInt(true));
-			for (int i = 0; i < n; i++) {
-				String name = input.readString();
-				BoneData parent = i == 0 ? null : skeletonData.bones.get(input.readInt(true));
-				BoneData data = new BoneData(i, name, parent);
-				data.rotation = input.readFloat();
-				data.x = input.readFloat() * scale;
-				data.y = input.readFloat() * scale;
-				data.scaleX = input.readFloat();
-				data.scaleY = input.readFloat();
-				data.shearX = input.readFloat();
-				data.shearY = input.readFloat();
-				data.length = input.readFloat() * scale;
-				data.transformMode = TransformMode.values[input.readInt(true)];
-				data.skinRequired = input.readBoolean();
-				if (nonessential) Color.rgba8888ToColor(data.color, input.readInt());
-				o[i] = data;
-			}
+            // Bones.
+            o = skeletonData.bones.setSize(n = input.readInt(true));
+            for (int i = 0; i < n; i++) {
+                String name = input.readString();
+                BoneData parent = i == 0 ? null : skeletonData.bones.get(input.readInt(true));
+                BoneData data = new BoneData(i, name, parent);
+                data.rotation = input.readFloat();
+                data.x = input.readFloat() * scale;
+                data.y = input.readFloat() * scale;
+                data.scaleX = input.readFloat();
+                data.scaleY = input.readFloat();
+                data.shearX = input.readFloat();
+                data.shearY = input.readFloat();
+                data.length = input.readFloat() * scale;
+                data.transformMode = TransformMode.values[input.readInt(true)];
+                data.skinRequired = input.readBoolean();
+                if (nonessential) Color.rgba8888ToColor(data.color, input.readInt());
+                o[i] = data;
+            }
 
-			// Slots.
-			o = skeletonData.slots.setSize(n = input.readInt(true));
-			for (int i = 0; i < n; i++) {
-				String slotName = input.readString();
-				BoneData boneData = skeletonData.bones.get(input.readInt(true));
-				SlotData data = new SlotData(i, slotName, boneData);
-				Color.rgba8888ToColor(data.color, input.readInt());
+            // Slots.
+            o = skeletonData.slots.setSize(n = input.readInt(true));
+            for (int i = 0; i < n; i++) {
+                String slotName = input.readString();
+                BoneData boneData = skeletonData.bones.get(input.readInt(true));
+                SlotData data = new SlotData(i, slotName, boneData);
+                Color.rgba8888ToColor(data.color, input.readInt());
 
-				int darkColor = input.readInt();
-				if (darkColor != -1) Color.rgb888ToColor(data.darkColor = new Color(), darkColor);
+                int darkColor = input.readInt();
+                if (darkColor != -1) Color.rgb888ToColor(data.darkColor = new Color(), darkColor);
 
-				data.attachmentName = input.readStringRef();
-				data.blendMode = BlendMode.values[input.readInt(true)];
-				o[i] = data;
-			}
+                data.attachmentName = input.readStringRef();
+                data.blendMode = BlendMode.values[input.readInt(true)];
+                o[i] = data;
+            }
 
-			// IK constraints.
-			o = skeletonData.ikConstraints.setSize(n = input.readInt(true));
-			for (int i = 0, nn; i < n; i++) {
-				IkConstraintData data = new IkConstraintData(input.readString());
-				data.order = input.readInt(true);
-				data.skinRequired = input.readBoolean();
-				Object[] bones = data.bones.setSize(nn = input.readInt(true));
-				for (int ii = 0; ii < nn; ii++)
-					bones[ii] = skeletonData.bones.get(input.readInt(true));
-				data.target = skeletonData.bones.get(input.readInt(true));
-				data.mix = input.readFloat();
-				data.softness = input.readFloat() * scale;
-				data.bendDirection = input.readByte();
-				data.compress = input.readBoolean();
-				data.stretch = input.readBoolean();
-				data.uniform = input.readBoolean();
-				o[i] = data;
-			}
+            // IK constraints.
+            o = skeletonData.ikConstraints.setSize(n = input.readInt(true));
+            for (int i = 0, nn; i < n; i++) {
+                IkConstraintData data = new IkConstraintData(input.readString());
+                data.order = input.readInt(true);
+                data.skinRequired = input.readBoolean();
+                Object[] bones = data.bones.setSize(nn = input.readInt(true));
+                for (int ii = 0; ii < nn; ii++)
+                    bones[ii] = skeletonData.bones.get(input.readInt(true));
+                data.target = skeletonData.bones.get(input.readInt(true));
+                data.mix = input.readFloat();
+                data.softness = input.readFloat() * scale;
+                data.bendDirection = input.readByte();
+                data.compress = input.readBoolean();
+                data.stretch = input.readBoolean();
+                data.uniform = input.readBoolean();
+                o[i] = data;
+            }
 
-			// Transform constraints.
-			o = skeletonData.transformConstraints.setSize(n = input.readInt(true));
-			for (int i = 0, nn; i < n; i++) {
-				TransformConstraintData data = new TransformConstraintData(input.readString());
-				data.order = input.readInt(true);
-				data.skinRequired = input.readBoolean();
-				Object[] bones = data.bones.setSize(nn = input.readInt(true));
-				for (int ii = 0; ii < nn; ii++)
-					bones[ii] = skeletonData.bones.get(input.readInt(true));
-				data.target = skeletonData.bones.get(input.readInt(true));
-				data.local = input.readBoolean();
-				data.relative = input.readBoolean();
-				data.offsetRotation = input.readFloat();
-				data.offsetX = input.readFloat() * scale;
-				data.offsetY = input.readFloat() * scale;
-				data.offsetScaleX = input.readFloat();
-				data.offsetScaleY = input.readFloat();
-				data.offsetShearY = input.readFloat();
-				data.rotateMix = input.readFloat();
-				data.translateMix = input.readFloat();
-				data.scaleMix = input.readFloat();
-				data.shearMix = input.readFloat();
-				o[i] = data;
-			}
+            // Transform constraints.
+            o = skeletonData.transformConstraints.setSize(n = input.readInt(true));
+            for (int i = 0, nn; i < n; i++) {
+                TransformConstraintData data = new TransformConstraintData(input.readString());
+                data.order = input.readInt(true);
+                data.skinRequired = input.readBoolean();
+                Object[] bones = data.bones.setSize(nn = input.readInt(true));
+                for (int ii = 0; ii < nn; ii++)
+                    bones[ii] = skeletonData.bones.get(input.readInt(true));
+                data.target = skeletonData.bones.get(input.readInt(true));
+                data.local = input.readBoolean();
+                data.relative = input.readBoolean();
+                data.offsetRotation = input.readFloat();
+                data.offsetX = input.readFloat() * scale;
+                data.offsetY = input.readFloat() * scale;
+                data.offsetScaleX = input.readFloat();
+                data.offsetScaleY = input.readFloat();
+                data.offsetShearY = input.readFloat();
+                data.rotateMix = input.readFloat();
+                data.translateMix = input.readFloat();
+                data.scaleMix = input.readFloat();
+                data.shearMix = input.readFloat();
+                o[i] = data;
+            }
 
-			// Path constraints.
-			o = skeletonData.pathConstraints.setSize(n = input.readInt(true));
-			for (int i = 0, nn; i < n; i++) {
-				PathConstraintData data = new PathConstraintData(input.readString());
-				data.order = input.readInt(true);
-				data.skinRequired = input.readBoolean();
-				Object[] bones = data.bones.setSize(nn = input.readInt(true));
-				for (int ii = 0; ii < nn; ii++)
-					bones[ii] = skeletonData.bones.get(input.readInt(true));
-				data.target = skeletonData.slots.get(input.readInt(true));
-				data.positionMode = PositionMode.values[input.readInt(true)];
-				data.spacingMode = SpacingMode.values[input.readInt(true)];
-				data.rotateMode = RotateMode.values[input.readInt(true)];
-				data.offsetRotation = input.readFloat();
-				data.position = input.readFloat();
-				if (data.positionMode == PositionMode.fixed) data.position *= scale;
-				data.spacing = input.readFloat();
-				if (data.spacingMode == SpacingMode.length || data.spacingMode == SpacingMode.fixed)
-					data.spacing *= scale;
-				data.rotateMix = input.readFloat();
-				data.translateMix = input.readFloat();
-				o[i] = data;
-			}
+            // Path constraints.
+            o = skeletonData.pathConstraints.setSize(n = input.readInt(true));
+            for (int i = 0, nn; i < n; i++) {
+                PathConstraintData data = new PathConstraintData(input.readString());
+                data.order = input.readInt(true);
+                data.skinRequired = input.readBoolean();
+                Object[] bones = data.bones.setSize(nn = input.readInt(true));
+                for (int ii = 0; ii < nn; ii++)
+                    bones[ii] = skeletonData.bones.get(input.readInt(true));
+                data.target = skeletonData.slots.get(input.readInt(true));
+                data.positionMode = PositionMode.values[input.readInt(true)];
+                data.spacingMode = SpacingMode.values[input.readInt(true)];
+                data.rotateMode = RotateMode.values[input.readInt(true)];
+                data.offsetRotation = input.readFloat();
+                data.position = input.readFloat();
+                if (data.positionMode == PositionMode.fixed) data.position *= scale;
+                data.spacing = input.readFloat();
+                if (data.spacingMode == SpacingMode.length || data.spacingMode == SpacingMode.fixed)
+                    data.spacing *= scale;
+                data.rotateMix = input.readFloat();
+                data.translateMix = input.readFloat();
+                o[i] = data;
+            }
 
-			// Default skin.
-			Skin defaultSkin = readSkin(input, skeletonData, true, nonessential);
-			if (defaultSkin != null) {
-				skeletonData.defaultSkin = defaultSkin;
-				skeletonData.skins.add(defaultSkin);
-			}
+            // Default skin.
+            Skin defaultSkin = readSkin(input, skeletonData, true, nonessential);
+            if (defaultSkin != null) {
+                skeletonData.defaultSkin = defaultSkin;
+                skeletonData.skins.add(defaultSkin);
+            }
 
-			// Skins.
-			{
-				int i = skeletonData.skins.size;
-				o = skeletonData.skins.setSize(n = i + input.readInt(true));
-				for (; i < n; i++)
-					o[i] = readSkin(input, skeletonData, false, nonessential);
-			}
+            // Skins.
+            {
+                int i = skeletonData.skins.size;
+                o = skeletonData.skins.setSize(n = i + input.readInt(true));
+                for (; i < n; i++)
+                    o[i] = readSkin(input, skeletonData, false, nonessential);
+            }
 
-			// Linked meshes.
-			n = linkedMeshes.size;
-			for (int i = 0; i < n; i++) {
-				LinkedMesh linkedMesh = linkedMeshes.get(i);
-				Skin skin = linkedMesh.skin == null ? skeletonData.getDefaultSkin() : skeletonData.findSkin(linkedMesh.skin);
-				if (skin == null) throw new SerializationException("Skin not found: " + linkedMesh.skin);
-				Attachment parent = skin.getAttachment(linkedMesh.slotIndex, linkedMesh.parent);
-				if (parent == null) throw new SerializationException("Parent mesh not found: " + linkedMesh.parent);
-				linkedMesh.mesh.setDeformAttachment(linkedMesh.inheritDeform ? (VertexAttachment) parent : linkedMesh.mesh);
-				linkedMesh.mesh.setParentMesh((MeshAttachment) parent);
-				linkedMesh.mesh.updateUVs();
-			}
-			linkedMeshes.clear();
+            // Linked meshes.
+            n = linkedMeshes.size;
+            for (int i = 0; i < n; i++) {
+                LinkedMesh linkedMesh = linkedMeshes.get(i);
+                Skin skin = linkedMesh.skin == null ? skeletonData.getDefaultSkin() : skeletonData.findSkin(linkedMesh.skin);
+                if (skin == null) throw new SerializationException("Skin not found: " + linkedMesh.skin);
+                Attachment parent = skin.getAttachment(linkedMesh.slotIndex, linkedMesh.parent);
+                if (parent == null) throw new SerializationException("Parent mesh not found: " + linkedMesh.parent);
+                linkedMesh.mesh.setDeformAttachment(linkedMesh.inheritDeform ? (VertexAttachment) parent : linkedMesh.mesh);
+                linkedMesh.mesh.setParentMesh((MeshAttachment) parent);
+                linkedMesh.mesh.updateUVs();
+            }
+            linkedMeshes.clear();
 
-			// Events.
-			o = skeletonData.events.setSize(n = input.readInt(true));
-			for (int i = 0; i < n; i++) {
-				EventData data = new EventData(input.readStringRef());
-				data.intValue = input.readInt(false);
-				data.floatValue = input.readFloat();
-				data.stringValue = input.readString();
-				data.audioPath = input.readString();
-				if (data.audioPath != null) {
-					data.volume = input.readFloat();
-					data.balance = input.readFloat();
-				}
-				o[i] = data;
-			}
+            // Events.
+            o = skeletonData.events.setSize(n = input.readInt(true));
+            for (int i = 0; i < n; i++) {
+                EventData data = new EventData(input.readStringRef());
+                data.intValue = input.readInt(false);
+                data.floatValue = input.readFloat();
+                data.stringValue = input.readString();
+                data.audioPath = input.readString();
+                if (data.audioPath != null) {
+                    data.volume = input.readFloat();
+                    data.balance = input.readFloat();
+                }
+                o[i] = data;
+            }
 
-			// Animations.
-			o = skeletonData.animations.setSize(n = input.readInt(true));
-			for (int i = 0; i < n; i++)
-				o[i] = readAnimation(input, input.readString(), skeletonData);
+            // Animations.
+            o = skeletonData.animations.setSize(n = input.readInt(true));
+            for (int i = 0; i < n; i++)
+                o[i] = readAnimation(input, input.readString(), skeletonData);
 
-		} catch (IOException ex) {
-			throw new SerializationException("Error reading skeleton file.", ex);
-		}
-		return skeletonData;
-	}
+        } catch (IOException ex) {
+            throw new SerializationException("Error reading skeleton file.", ex);
+        }
+        return skeletonData;
+    }
 
-	/** @return May be null. */
-	private Skin readSkin (SkeletonInput input, SkeletonData skeletonData, boolean defaultSkin, boolean nonessential)
-		throws IOException {
+    /**
+     * @return May be null.
+     */
+    private Skin readSkin(SkeletonInput input, SkeletonData skeletonData, boolean defaultSkin, boolean nonessential)
+            throws IOException {
 
-		Skin skin;
-		int slotCount;
-		if (defaultSkin) {
-			slotCount = input.readInt(true);
-			if (slotCount == 0) return null;
-			skin = new Skin("default");
-		} else {
-			skin = new Skin(input.readStringRef());
-			Object[] bones = skin.bones.setSize(input.readInt(true));
-			for (int i = 0, n = skin.bones.size; i < n; i++)
-				bones[i] = skeletonData.bones.get(input.readInt(true));
+        Skin skin;
+        int slotCount;
+        if (defaultSkin) {
+            slotCount = input.readInt(true);
+            if (slotCount == 0) return null;
+            skin = new Skin("default");
+        } else {
+            skin = new Skin(input.readStringRef());
+            Object[] bones = skin.bones.setSize(input.readInt(true));
+            for (int i = 0, n = skin.bones.size; i < n; i++)
+                bones[i] = skeletonData.bones.get(input.readInt(true));
 
-			for (int i = 0, n = input.readInt(true); i < n; i++)
-				skin.constraints.add(skeletonData.ikConstraints.get(input.readInt(true)));
-			for (int i = 0, n = input.readInt(true); i < n; i++)
-				skin.constraints.add(skeletonData.transformConstraints.get(input.readInt(true)));
-			for (int i = 0, n = input.readInt(true); i < n; i++)
-				skin.constraints.add(skeletonData.pathConstraints.get(input.readInt(true)));
-			skin.constraints.shrink();
+            for (int i = 0, n = input.readInt(true); i < n; i++)
+                skin.constraints.add(skeletonData.ikConstraints.get(input.readInt(true)));
+            for (int i = 0, n = input.readInt(true); i < n; i++)
+                skin.constraints.add(skeletonData.transformConstraints.get(input.readInt(true)));
+            for (int i = 0, n = input.readInt(true); i < n; i++)
+                skin.constraints.add(skeletonData.pathConstraints.get(input.readInt(true)));
+            skin.constraints.shrink();
 
-			slotCount = input.readInt(true);
-		}
+            slotCount = input.readInt(true);
+        }
 
-		for (int i = 0; i < slotCount; i++) {
-			int slotIndex = input.readInt(true);
-			for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-				String name = input.readStringRef();
-				Attachment attachment = readAttachment(input, skeletonData, skin, slotIndex, name, nonessential);
-				if (attachment != null) skin.setAttachment(slotIndex, name, attachment);
-			}
-		}
-		return skin;
-	}
+        for (int i = 0; i < slotCount; i++) {
+            int slotIndex = input.readInt(true);
+            for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                String name = input.readStringRef();
+                Attachment attachment = readAttachment(input, skeletonData, skin, slotIndex, name, nonessential);
+                if (attachment != null) skin.setAttachment(slotIndex, name, attachment);
+            }
+        }
+        return skin;
+    }
 
-	private Attachment readAttachment (SkeletonInput input, SkeletonData skeletonData, Skin skin, int slotIndex,
-		String attachmentName, boolean nonessential) throws IOException {
-		float scale = this.scale;
+    private Attachment readAttachment(SkeletonInput input, SkeletonData skeletonData, Skin skin, int slotIndex,
+                                      String attachmentName, boolean nonessential) throws IOException {
+        float scale = this.scale;
 
-		String name = input.readStringRef();
-		if (name == null) name = attachmentName;
+        String name = input.readStringRef();
+        if (name == null) name = attachmentName;
 
-		AttachmentType type = AttachmentType.values[input.readByte()];
+        AttachmentType type = AttachmentType.values[input.readByte()];
         switch (type) {
             case region -> {
                 String path = input.readStringRef();
@@ -492,65 +467,65 @@ public class SkeletonBinary {
                 return clip;
             }
         }
-		return null;
-	}
+        return null;
+    }
 
-	private Vertices readVertices (SkeletonInput input, int vertexCount) throws IOException {
-		int verticesLength = vertexCount << 1;
-		Vertices vertices = new Vertices();
-		if (!input.readBoolean()) {
-			vertices.vertices = readFloatArray(input, verticesLength, scale);
-			return vertices;
-		}
-		FloatArray weights = new FloatArray(verticesLength * 3 * 3);
-		IntArray bonesArray = new IntArray(verticesLength * 3);
-		for (int i = 0; i < vertexCount; i++) {
-			int boneCount = input.readInt(true);
-			bonesArray.add(boneCount);
-			for (int ii = 0; ii < boneCount; ii++) {
-				bonesArray.add(input.readInt(true));
-				weights.add(input.readFloat() * scale);
-				weights.add(input.readFloat() * scale);
-				weights.add(input.readFloat());
-			}
-		}
-		vertices.vertices = weights.toArray();
-		vertices.bones = bonesArray.toArray();
-		return vertices;
-	}
+    private Vertices readVertices(SkeletonInput input, int vertexCount) throws IOException {
+        int verticesLength = vertexCount << 1;
+        Vertices vertices = new Vertices();
+        if (!input.readBoolean()) {
+            vertices.vertices = readFloatArray(input, verticesLength, scale);
+            return vertices;
+        }
+        FloatArray weights = new FloatArray(verticesLength * 3 * 3);
+        IntArray bonesArray = new IntArray(verticesLength * 3);
+        for (int i = 0; i < vertexCount; i++) {
+            int boneCount = input.readInt(true);
+            bonesArray.add(boneCount);
+            for (int ii = 0; ii < boneCount; ii++) {
+                bonesArray.add(input.readInt(true));
+                weights.add(input.readFloat() * scale);
+                weights.add(input.readFloat() * scale);
+                weights.add(input.readFloat());
+            }
+        }
+        vertices.vertices = weights.toArray();
+        vertices.bones = bonesArray.toArray();
+        return vertices;
+    }
 
-	private float[] readFloatArray (SkeletonInput input, int n, float scale) throws IOException {
-		float[] array = new float[n];
-		if (scale == 1) {
-			for (int i = 0; i < n; i++)
-				array[i] = input.readFloat();
-		} else {
-			for (int i = 0; i < n; i++)
-				array[i] = input.readFloat() * scale;
-		}
-		return array;
-	}
+    private float[] readFloatArray(SkeletonInput input, int n, float scale) throws IOException {
+        float[] array = new float[n];
+        if (scale == 1) {
+            for (int i = 0; i < n; i++)
+                array[i] = input.readFloat();
+        } else {
+            for (int i = 0; i < n; i++)
+                array[i] = input.readFloat() * scale;
+        }
+        return array;
+    }
 
-	private short[] readShortArray (SkeletonInput input) throws IOException {
-		int n = input.readInt(true);
-		short[] array = new short[n];
-		for (int i = 0; i < n; i++)
-			array[i] = input.readShort();
-		return array;
-	}
+    private short[] readShortArray(SkeletonInput input) throws IOException {
+        int n = input.readInt(true);
+        short[] array = new short[n];
+        for (int i = 0; i < n; i++)
+            array[i] = input.readShort();
+        return array;
+    }
 
-	private Animation readAnimation (SkeletonInput input, String name, SkeletonData skeletonData) {
-		Array<Timeline> timelines = new Array(32);
-		float scale = this.scale;
-		float duration = 0;
+    private Animation readAnimation(SkeletonInput input, String name, SkeletonData skeletonData) {
+        Array<Timeline> timelines = new Array(32);
+        float scale = this.scale;
+        float duration = 0;
 
-		try {
-			// Slot timelines.
-			for (int i = 0, n = input.readInt(true); i < n; i++) {
-				int slotIndex = input.readInt(true);
-				for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-					int timelineType = input.readByte();
-					int frameCount = input.readInt(true);
+        try {
+            // Slot timelines.
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int slotIndex = input.readInt(true);
+                for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                    int timelineType = input.readByte();
+                    int frameCount = input.readInt(true);
                     switch (timelineType) {
                         case SLOT_ATTACHMENT -> {
                             AttachmentTimeline timeline = new AttachmentTimeline(frameCount);
@@ -559,7 +534,7 @@ public class SkeletonBinary {
                                 timeline.setFrame(frameIndex, input.readFloat(), input.readStringRef());
                             timelines.add(timeline);
                             duration = Math.max(duration, timeline.getFrames()[frameCount - 1]);
-						}
+                        }
                         case SLOT_COLOR -> {
                             ColorTimeline timeline = new ColorTimeline(frameCount);
                             timeline.slotIndex = slotIndex;
@@ -571,7 +546,7 @@ public class SkeletonBinary {
                             }
                             timelines.add(timeline);
                             duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * ColorTimeline.ENTRIES]);
-						}
+                        }
                         case SLOT_TWO_COLOR -> {
                             TwoColorTimeline timeline = new TwoColorTimeline(frameCount);
                             timeline.slotIndex = slotIndex;
@@ -585,17 +560,17 @@ public class SkeletonBinary {
                             }
                             timelines.add(timeline);
                             duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * TwoColorTimeline.ENTRIES]);
-						}
+                        }
                     }
-				}
-			}
+                }
+            }
 
-			// Bone timelines.
-			for (int i = 0, n = input.readInt(true); i < n; i++) {
-				int boneIndex = input.readInt(true);
-				for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-					int timelineType = input.readByte();
-					int frameCount = input.readInt(true);
+            // Bone timelines.
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int boneIndex = input.readInt(true);
+                for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                    int timelineType = input.readByte();
+                    int frameCount = input.readInt(true);
                     switch (timelineType) {
                         case BONE_ROTATE -> {
                             RotateTimeline timeline = new RotateTimeline(frameCount);
@@ -606,7 +581,7 @@ public class SkeletonBinary {
                             }
                             timelines.add(timeline);
                             duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * RotateTimeline.ENTRIES]);
-						}
+                        }
                         case BONE_TRANSLATE, BONE_SCALE, BONE_SHEAR -> {
                             TranslateTimeline timeline;
                             float timelineScale = 1;
@@ -626,48 +601,48 @@ public class SkeletonBinary {
                             }
                             timelines.add(timeline);
                             duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * TranslateTimeline.ENTRIES]);
-						}
+                        }
                     }
-				}
-			}
+                }
+            }
 
-			// IK constraint timelines.
-			for (int i = 0, n = input.readInt(true); i < n; i++) {
-				int index = input.readInt(true);
-				int frameCount = input.readInt(true);
-				IkConstraintTimeline timeline = new IkConstraintTimeline(frameCount);
-				timeline.ikConstraintIndex = index;
-				for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-					timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readFloat() * scale, input.readByte(),
-						input.readBoolean(), input.readBoolean());
-					if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
-				}
-				timelines.add(timeline);
-				duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * IkConstraintTimeline.ENTRIES]);
-			}
+            // IK constraint timelines.
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int index = input.readInt(true);
+                int frameCount = input.readInt(true);
+                IkConstraintTimeline timeline = new IkConstraintTimeline(frameCount);
+                timeline.ikConstraintIndex = index;
+                for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                    timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readFloat() * scale, input.readByte(),
+                            input.readBoolean(), input.readBoolean());
+                    if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * IkConstraintTimeline.ENTRIES]);
+            }
 
-			// Transform constraint timelines.
-			for (int i = 0, n = input.readInt(true); i < n; i++) {
-				int index = input.readInt(true);
-				int frameCount = input.readInt(true);
-				TransformConstraintTimeline timeline = new TransformConstraintTimeline(frameCount);
-				timeline.transformConstraintIndex = index;
-				for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-					timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readFloat(), input.readFloat(),
-						input.readFloat());
-					if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
-				}
-				timelines.add(timeline);
-				duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * TransformConstraintTimeline.ENTRIES]);
-			}
+            // Transform constraint timelines.
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int index = input.readInt(true);
+                int frameCount = input.readInt(true);
+                TransformConstraintTimeline timeline = new TransformConstraintTimeline(frameCount);
+                timeline.transformConstraintIndex = index;
+                for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                    timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readFloat(), input.readFloat(),
+                            input.readFloat());
+                    if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * TransformConstraintTimeline.ENTRIES]);
+            }
 
-			// Path constraint timelines.
-			for (int i = 0, n = input.readInt(true); i < n; i++) {
-				int index = input.readInt(true);
-				PathConstraintData data = skeletonData.pathConstraints.get(index);
-				for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-					int timelineType = input.readByte();
-					int frameCount = input.readInt(true);
+            // Path constraint timelines.
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int index = input.readInt(true);
+                PathConstraintData data = skeletonData.pathConstraints.get(index);
+                for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                    int timelineType = input.readByte();
+                    int frameCount = input.readInt(true);
                     switch (timelineType) {
                         case PATH_POSITION, PATH_SPACING -> {
                             PathConstraintPositionTimeline timeline;
@@ -687,7 +662,7 @@ public class SkeletonBinary {
                             }
                             timelines.add(timeline);
                             duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * PathConstraintPositionTimeline.ENTRIES]);
-						}
+                        }
                         case PATH_MIX -> {
                             PathConstraintMixTimeline timeline = new PathConstraintMixTimeline(frameCount);
                             timeline.pathConstraintIndex = index;
@@ -697,164 +672,166 @@ public class SkeletonBinary {
                             }
                             timelines.add(timeline);
                             duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * PathConstraintMixTimeline.ENTRIES]);
-						}
+                        }
                     }
-				}
-			}
+                }
+            }
 
-			// Deform timelines.
-			for (int i = 0, n = input.readInt(true); i < n; i++) {
-				Skin skin = skeletonData.skins.get(input.readInt(true));
-				for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-					int slotIndex = input.readInt(true);
-					for (int iii = 0, nnn = input.readInt(true); iii < nnn; iii++) {
-						VertexAttachment attachment = (VertexAttachment)skin.getAttachment(slotIndex, input.readStringRef());
-						boolean weighted = attachment.getBones() != null;
-						float[] vertices = attachment.getVertices();
-						int deformLength = weighted ? vertices.length / 3 * 2 : vertices.length;
+            // Deform timelines.
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                Skin skin = skeletonData.skins.get(input.readInt(true));
+                for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                    int slotIndex = input.readInt(true);
+                    for (int iii = 0, nnn = input.readInt(true); iii < nnn; iii++) {
+                        VertexAttachment attachment = (VertexAttachment) skin.getAttachment(slotIndex, input.readStringRef());
+                        boolean weighted = attachment.getBones() != null;
+                        float[] vertices = attachment.getVertices();
+                        int deformLength = weighted ? vertices.length / 3 * 2 : vertices.length;
 
-						int frameCount = input.readInt(true);
-						DeformTimeline timeline = new DeformTimeline(frameCount);
-						timeline.slotIndex = slotIndex;
-						timeline.attachment = attachment;
+                        int frameCount = input.readInt(true);
+                        DeformTimeline timeline = new DeformTimeline(frameCount);
+                        timeline.slotIndex = slotIndex;
+                        timeline.attachment = attachment;
 
-						for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-							float time = input.readFloat();
-							float[] deform;
-							int end = input.readInt(true);
-							if (end == 0)
-								deform = weighted ? new float[deformLength] : vertices;
-							else {
-								deform = new float[deformLength];
-								int start = input.readInt(true);
-								end += start;
-								if (scale == 1) {
-									for (int v = start; v < end; v++)
-										deform[v] = input.readFloat();
-								} else {
-									for (int v = start; v < end; v++)
-										deform[v] = input.readFloat() * scale;
-								}
-								if (!weighted) {
-									for (int v = 0, vn = deform.length; v < vn; v++)
-										deform[v] += vertices[v];
-								}
-							}
+                        for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                            float time = input.readFloat();
+                            float[] deform;
+                            int end = input.readInt(true);
+                            if (end == 0)
+                                deform = weighted ? new float[deformLength] : vertices;
+                            else {
+                                deform = new float[deformLength];
+                                int start = input.readInt(true);
+                                end += start;
+                                if (scale == 1) {
+                                    for (int v = start; v < end; v++)
+                                        deform[v] = input.readFloat();
+                                } else {
+                                    for (int v = start; v < end; v++)
+                                        deform[v] = input.readFloat() * scale;
+                                }
+                                if (!weighted) {
+                                    for (int v = 0, vn = deform.length; v < vn; v++)
+                                        deform[v] += vertices[v];
+                                }
+                            }
 
-							timeline.setFrame(frameIndex, time, deform);
-							if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
-						}
-						timelines.add(timeline);
-						duration = Math.max(duration, timeline.getFrames()[frameCount - 1]);
-					}
-				}
-			}
+                            timeline.setFrame(frameIndex, time, deform);
+                            if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                        }
+                        timelines.add(timeline);
+                        duration = Math.max(duration, timeline.getFrames()[frameCount - 1]);
+                    }
+                }
+            }
 
-			// Draw order timeline.
-			int drawOrderCount = input.readInt(true);
-			if (drawOrderCount > 0) {
-				DrawOrderTimeline timeline = new DrawOrderTimeline(drawOrderCount);
-				int slotCount = skeletonData.slots.size;
-				for (int i = 0; i < drawOrderCount; i++) {
-					float time = input.readFloat();
-					int offsetCount = input.readInt(true);
-					int[] drawOrder = new int[slotCount];
-					for (int ii = slotCount - 1; ii >= 0; ii--)
-						drawOrder[ii] = -1;
-					int[] unchanged = new int[slotCount - offsetCount];
-					int originalIndex = 0, unchangedIndex = 0;
-					for (int ii = 0; ii < offsetCount; ii++) {
-						int slotIndex = input.readInt(true);
-						// Collect unchanged items.
-						while (originalIndex != slotIndex)
-							unchanged[unchangedIndex++] = originalIndex++;
-						// Set changed items.
-						drawOrder[originalIndex + input.readInt(true)] = originalIndex++;
-					}
-					// Collect remaining unchanged items.
-					while (originalIndex < slotCount)
-						unchanged[unchangedIndex++] = originalIndex++;
-					// Fill in unchanged items.
-					for (int ii = slotCount - 1; ii >= 0; ii--)
-						if (drawOrder[ii] == -1) drawOrder[ii] = unchanged[--unchangedIndex];
-					timeline.setFrame(i, time, drawOrder);
-				}
-				timelines.add(timeline);
-				duration = Math.max(duration, timeline.getFrames()[drawOrderCount - 1]);
-			}
+            // Draw order timeline.
+            int drawOrderCount = input.readInt(true);
+            if (drawOrderCount > 0) {
+                DrawOrderTimeline timeline = new DrawOrderTimeline(drawOrderCount);
+                int slotCount = skeletonData.slots.size;
+                for (int i = 0; i < drawOrderCount; i++) {
+                    float time = input.readFloat();
+                    int offsetCount = input.readInt(true);
+                    int[] drawOrder = new int[slotCount];
+                    for (int ii = slotCount - 1; ii >= 0; ii--)
+                        drawOrder[ii] = -1;
+                    int[] unchanged = new int[slotCount - offsetCount];
+                    int originalIndex = 0, unchangedIndex = 0;
+                    for (int ii = 0; ii < offsetCount; ii++) {
+                        int slotIndex = input.readInt(true);
+                        // Collect unchanged items.
+                        while (originalIndex != slotIndex)
+                            unchanged[unchangedIndex++] = originalIndex++;
+                        // Set changed items.
+                        drawOrder[originalIndex + input.readInt(true)] = originalIndex++;
+                    }
+                    // Collect remaining unchanged items.
+                    while (originalIndex < slotCount)
+                        unchanged[unchangedIndex++] = originalIndex++;
+                    // Fill in unchanged items.
+                    for (int ii = slotCount - 1; ii >= 0; ii--)
+                        if (drawOrder[ii] == -1) drawOrder[ii] = unchanged[--unchangedIndex];
+                    timeline.setFrame(i, time, drawOrder);
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[drawOrderCount - 1]);
+            }
 
-			// Event timeline.
-			int eventCount = input.readInt(true);
-			if (eventCount > 0) {
-				EventTimeline timeline = new EventTimeline(eventCount);
-				for (int i = 0; i < eventCount; i++) {
-					float time = input.readFloat();
-					EventData eventData = skeletonData.events.get(input.readInt(true));
-					Event event = new Event(time, eventData);
-					event.intValue = input.readInt(false);
-					event.floatValue = input.readFloat();
-					event.stringValue = input.readBoolean() ? input.readString() : eventData.stringValue;
-					if (event.getData().audioPath != null) {
-						event.volume = input.readFloat();
-						event.balance = input.readFloat();
-					}
-					timeline.setFrame(i, event);
-				}
-				timelines.add(timeline);
-				duration = Math.max(duration, timeline.getFrames()[eventCount - 1]);
-			}
-		} catch (IOException ex) {
-			throw new SerializationException("Error reading skeleton file.", ex);
-		}
+            // Event timeline.
+            int eventCount = input.readInt(true);
+            if (eventCount > 0) {
+                EventTimeline timeline = new EventTimeline(eventCount);
+                for (int i = 0; i < eventCount; i++) {
+                    float time = input.readFloat();
+                    EventData eventData = skeletonData.events.get(input.readInt(true));
+                    Event event = new Event(time, eventData);
+                    event.intValue = input.readInt(false);
+                    event.floatValue = input.readFloat();
+                    event.stringValue = input.readBoolean() ? input.readString() : eventData.stringValue;
+                    if (event.getData().audioPath != null) {
+                        event.volume = input.readFloat();
+                        event.balance = input.readFloat();
+                    }
+                    timeline.setFrame(i, event);
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[eventCount - 1]);
+            }
+        } catch (IOException ex) {
+            throw new SerializationException("Error reading skeleton file.", ex);
+        }
 
-		timelines.shrink();
-		return new Animation(name, timelines, duration);
-	}
+        timelines.shrink();
+        return new Animation(name, timelines, duration);
+    }
 
-	private void readCurve (SkeletonInput input, int frameIndex, CurveTimeline timeline) throws IOException {
+    private void readCurve(SkeletonInput input, int frameIndex, CurveTimeline timeline) throws IOException {
         switch (input.readByte()) {
             case CURVE_STEPPED -> timeline.setStepped(frameIndex);
             case CURVE_BEZIER -> setCurve(timeline, frameIndex, input.readFloat(), input.readFloat(), input.readFloat(), input.readFloat());
         }
-	}
+    }
 
-	void setCurve (CurveTimeline timeline, int frameIndex, float cx1, float cy1, float cx2, float cy2) {
-		timeline.setCurve(frameIndex, cx1, cy1, cx2, cy2);
-	}
+    void setCurve(CurveTimeline timeline, int frameIndex, float cx1, float cy1, float cx2, float cy2) {
+        timeline.setCurve(frameIndex, cx1, cy1, cx2, cy2);
+    }
 
-	static class Vertices {
-		int[] bones;
-		float[] vertices;
-	}
+    static class Vertices {
+        int[] bones;
+        float[] vertices;
+    }
 
-	static class SkeletonInput extends DataInput {
-		private char[] chars = new char[32];
-		Array<String> strings;
+    static class SkeletonInput extends DataInput {
+        Array<String> strings;
+        private char[] chars = new char[32];
 
-		public SkeletonInput (FileHandle file) {
-			super(file.read(512));
-		}
+        public SkeletonInput(FileHandle file) {
+            super(file.read(512));
+        }
 
-		/** @return May be null. */
-		public String readStringRef () throws IOException {
-			int index = readInt(true);
-			return index == 0 ? null : strings.get(index - 1);
-		}
+        /**
+         * @return May be null.
+         */
+        public String readStringRef() throws IOException {
+            int index = readInt(true);
+            return index == 0 ? null : strings.get(index - 1);
+        }
 
-		public String readString () throws IOException {
-			int byteCount = readInt(true);
-			switch (byteCount) {
-			case 0:
-				return null;
-			case 1:
-				return "";
-			}
-			byteCount--;
-			if (chars.length < byteCount) chars = new char[byteCount];
-			char[] chars = this.chars;
-			int charCount = 0;
-			for (int i = 0; i < byteCount;) {
-				int b = read();
+        public String readString() throws IOException {
+            int byteCount = readInt(true);
+            switch (byteCount) {
+                case 0:
+                    return null;
+                case 1:
+                    return "";
+            }
+            byteCount--;
+            if (chars.length < byteCount) chars = new char[byteCount];
+            char[] chars = this.chars;
+            int charCount = 0;
+            for (int i = 0; i < byteCount; ) {
+                int b = read();
                 switch (b >> 4) {
                     case -1 -> throw new EOFException();
                     case 12, 13 -> {
@@ -870,8 +847,8 @@ public class SkeletonBinary {
                         i++;
                     }
                 }
-			}
-			return new String(chars, 0, charCount);
-		}
-	}
+            }
+            return new String(chars, 0, charCount);
+        }
+    }
 }

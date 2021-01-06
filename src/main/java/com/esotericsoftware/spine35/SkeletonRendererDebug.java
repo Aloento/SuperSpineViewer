@@ -47,8 +47,7 @@ public class SkeletonRendererDebug {
             for (int i = 0, n = bones.size; i < n; i++) {
                 Bone bone = bones.get(i);
                 if (bone.parent == null) continue;
-                float boneWidth = 2;
-                float length = bone.data.length, width = boneWidth;
+                float length = bone.data.length, width = (float) 2;
                 if (length == 0) {
                     length = 8;
                     width /= 2;
@@ -142,7 +141,7 @@ public class SkeletonRendererDebug {
                 float[] world = temp.setSize(nn);
                 path.computeWorldVertices(slot, world);
                 Color color = path.getColor();
-                float x1 = world[2], y1 = world[3], x2 = 0, y2 = 0;
+                float x1 = world[2], y1 = world[3], x2, y2;
                 if (path.getClosed()) {
                     shapes.setColor(color);
                     float cx1 = world[0], cy1 = world[1], cx2 = world[nn - 2], cy2 = world[nn - 1];

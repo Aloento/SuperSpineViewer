@@ -31,21 +31,23 @@
  */
 package org.lwjgl.util.stream;
 
-/** @author Spasi */
+/**
+ * @author Spasi
+ */
 public interface TextureStream {
 
-	StreamHandler getHandler();
+    StreamHandler getHandler();
 
-	int getWidth();
+    int getWidth();
 
-	int getHeight();
+    int getHeight();
 
-	void snapshot();
+    void snapshot();
 
-	void tick();
+    void tick();
 
-	void bind();
+    void bind();
 
-	void destroy();
+    void destroy();
 
 }

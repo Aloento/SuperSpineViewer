@@ -35,81 +35,83 @@ import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.util.stream.StreamUtil.RenderStreamFactory;
 
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL21.*;
+import static org.lwjgl.opengl.GL21.GL_PIXEL_PACK_BUFFER;
 import static org.lwjgl.opengl.GL31.*;
 
-/** Default StreamPBOReader implementation: Asynchronous ReadPixels to PBOs */
+/**
+ * Default StreamPBOReader implementation: Asynchronous ReadPixels to PBOs
+ */
 final class RenderStreamPBOCopy extends RenderStreamPBO {
 
-	public static final RenderStreamFactory FACTORY = new RenderStreamFactory("ARB_copy_buffer") {
-		public boolean isSupported(final ContextCapabilities caps) {
-			return RenderStreamPBODefault.FACTORY.isSupported(caps)
-			       && caps.GL_ARB_copy_buffer
-			       && caps.GL_NV_gpu_program5 // Nvidia only
-			       && (caps.OpenGL40 || caps.GL_ARB_tessellation_shader) // Fermi+
-				;
-		}
+    public static final RenderStreamFactory FACTORY = new RenderStreamFactory("ARB_copy_buffer") {
+        public boolean isSupported(final ContextCapabilities caps) {
+            return RenderStreamPBODefault.FACTORY.isSupported(caps)
+                    && caps.GL_ARB_copy_buffer
+                    && caps.GL_NV_gpu_program5 // Nvidia only
+                    && (caps.OpenGL40 || caps.GL_ARB_tessellation_shader) // Fermi+
+                    ;
+        }
 
-		public RenderStream create(final StreamHandler handler, final int samples, final int transfersToBuffer) {
-			return new RenderStreamPBOCopy(handler, samples, transfersToBuffer);
-		}
-	};
+        public RenderStream create(final StreamHandler handler, final int samples, final int transfersToBuffer) {
+            return new RenderStreamPBOCopy(handler, samples, transfersToBuffer);
+        }
+    };
 
-	private int devicePBO;
+    private int devicePBO;
 
-	RenderStreamPBOCopy(final StreamHandler handler, final int samples, final int transfersToBuffer) {
-		super(handler, samples, transfersToBuffer, ReadbackType.GET_TEX_IMAGE);
-	}
+    RenderStreamPBOCopy(final StreamHandler handler, final int samples, final int transfersToBuffer) {
+        super(handler, samples, transfersToBuffer, ReadbackType.GET_TEX_IMAGE);
+    }
 
-	protected void resizeBuffers(final int height, final int stride) {
-		super.resizeBuffers(height, stride);
+    protected void resizeBuffers(final int height, final int stride) {
+        super.resizeBuffers(height, stride);
 
-		devicePBO = glGenBuffers();
+        devicePBO = glGenBuffers();
 
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, devicePBO);
-		glBufferData(GL_PIXEL_PACK_BUFFER, height * stride, GL_STREAM_COPY); // Should allocate device memory
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-	}
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, devicePBO);
+        glBufferData(GL_PIXEL_PACK_BUFFER, height * stride, GL_STREAM_COPY); // Should allocate device memory
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    }
 
-	protected void readBack(final int index) {
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, devicePBO);
+    protected void readBack(final int index) {
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, devicePBO);
 
-		super.readBack(index);
+        super.readBack(index);
 
-		glBindBuffer(GL_COPY_WRITE_BUFFER, pbos[index]);
+        glBindBuffer(GL_COPY_WRITE_BUFFER, pbos[index]);
 
-		glCopyBufferSubData(GL_PIXEL_PACK_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, height * stride);
+        glCopyBufferSubData(GL_PIXEL_PACK_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, height * stride);
 
-		glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-		glBindBuffer(GL_COPY_READ_BUFFER, 0);
-	}
+        glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+        glBindBuffer(GL_COPY_READ_BUFFER, 0);
+    }
 
-	protected void pinBuffer(final int index) {
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, pbos[index]);
+    protected void pinBuffer(final int index) {
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, pbos[index]);
 
-		// We don't need to manually synchronized here, MapBuffer will block until ReadPixels above has finished.
-		// The buffer will be unmapped in waitForProcessingToComplete
-		pinnedBuffers[index] = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY, height * stride, pinnedBuffers[index]);
+        // We don't need to manually synchronized here, MapBuffer will block until ReadPixels above has finished.
+        // The buffer will be unmapped in waitForProcessingToComplete
+        pinnedBuffers[index] = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY, height * stride, pinnedBuffers[index]);
 
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-	}
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    }
 
-	protected void copyFrames(final int src, final int trg) {
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, pbos[src]);
-		glBindBuffer(GL_COPY_WRITE_BUFFER, pbos[trg]);
+    protected void copyFrames(final int src, final int trg) {
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, pbos[src]);
+        glBindBuffer(GL_COPY_WRITE_BUFFER, pbos[trg]);
 
-		glCopyBufferSubData(GL_PIXEL_PACK_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, height * stride);
+        glCopyBufferSubData(GL_PIXEL_PACK_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, height * stride);
 
-		glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
-	}
+        glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    }
 
-	protected void postProcess(final int index) {
-		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-	}
+    protected void postProcess(final int index) {
+        glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    }
 
-	protected void destroyObjects() {
-		glDeleteBuffers(devicePBO);
-		super.destroyObjects();
-	}
+    protected void destroyObjects() {
+        glDeleteBuffers(devicePBO);
+        super.destroyObjects();
+    }
 }

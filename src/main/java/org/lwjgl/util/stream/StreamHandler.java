@@ -34,13 +34,15 @@ package org.lwjgl.util.stream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Semaphore;
 
-/** @author Spasi */
+/**
+ * @author Spasi
+ */
 public interface StreamHandler {
 
-	int getWidth();
+    int getWidth();
 
-	int getHeight();
+    int getHeight();
 
-	void process(final int width, final int height, ByteBuffer data, final int stride, Semaphore signal);
+    void process(final int width, final int height, ByteBuffer data, final int stride, Semaphore signal);
 
 }

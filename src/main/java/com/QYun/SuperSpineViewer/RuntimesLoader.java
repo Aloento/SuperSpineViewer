@@ -5,7 +5,6 @@ import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import org.apache.commons.io.FileUtils;
 
@@ -158,7 +157,7 @@ public class RuntimesLoader extends Controller {
                         System.exit(0);
                     } else {
                         System.out.println("重新加载，从源码启动请自行重启");
-                        Platform.exit();
+                        System.exit(0);
                     }
                 }
             });

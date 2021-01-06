@@ -40,7 +40,8 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
+import static org.lwjgl.opengl.GL12.GL_BGRA;
+import static org.lwjgl.opengl.GL12.GL_UNSIGNED_INT_8_8_8_8_REV;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.INTELMapTexture.*;
 
@@ -54,200 +55,198 @@ import static org.lwjgl.opengl.INTELMapTexture.*;
  */
 final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
 
-	public static final TextureStreamFactory FACTORY = new TextureStreamFactory("INTEL_map_texture") {
-		public boolean isSupported(final ContextCapabilities caps) {
-			// TODO: We currently require BlitFramebuffer. Relax and implement manually?
-			return caps.GL_INTEL_map_texture && (caps.OpenGL30 || caps.GL_ARB_framebuffer_object || caps.GL_EXT_framebuffer_blit);
-		}
+    public static final TextureStreamFactory FACTORY = new TextureStreamFactory("INTEL_map_texture") {
+        public boolean isSupported(final ContextCapabilities caps) {
+            // We currently require BlitFramebuffer. Relax and implement manually?
+            return caps.GL_INTEL_map_texture && (caps.OpenGL30 || caps.GL_ARB_framebuffer_object || caps.GL_EXT_framebuffer_blit);
+        }
 
-		public TextureStream create(final StreamHandler handler, final int transfersToBuffer) {
-			return new TextureStreamINTEL(handler, transfersToBuffer);
-		}
-	};
+        public TextureStream create(final StreamHandler handler, final int transfersToBuffer) {
+            return new TextureStreamINTEL(handler, transfersToBuffer);
+        }
+    };
 
-	private final IntBuffer strideBuffer;
-	private final IntBuffer layoutBuffer;
+    private final IntBuffer strideBuffer;
+    private final IntBuffer layoutBuffer;
 
-	private final StreamUtil.FBOUtil fboUtil;
+    private final StreamUtil.FBOUtil fboUtil;
 
-	private final int texFBO;
-	private final int bufferFBO;
+    private final int texFBO;
+    private final int bufferFBO;
+    private final int[] buffers;
+    private int texID;
+    private long currentIndex;
 
-	private int   texID;
-	private final int[] buffers;
+    private boolean resetTexture;
 
-	private long currentIndex;
+    TextureStreamINTEL(final StreamHandler handler, final int transfersToBuffer) {
+        super(handler, transfersToBuffer);
 
-	private boolean resetTexture;
+        this.strideBuffer = BufferUtils.createIntBuffer(1);
+        this.layoutBuffer = BufferUtils.createIntBuffer(1);
 
-	TextureStreamINTEL(final StreamHandler handler, final int transfersToBuffer) {
-		super(handler, transfersToBuffer);
+        fboUtil = StreamUtil.getFBOUtil(GLContext.getCapabilities());
 
-		this.strideBuffer = BufferUtils.createIntBuffer(1);
-		this.layoutBuffer = BufferUtils.createIntBuffer(1);
+        texFBO = fboUtil.genFramebuffers();
+        bufferFBO = fboUtil.genFramebuffers();
 
-		fboUtil = StreamUtil.getFBOUtil(GLContext.getCapabilities());
+        buffers = new int[transfersToBuffer];
+    }
 
-		texFBO = fboUtil.genFramebuffers();
-		bufferFBO = fboUtil.genFramebuffers();
+    private static int genLayoutLinearTexture(final int width, final int height) {
+        final int texID = glGenTextures();
 
-		buffers = new int[transfersToBuffer];
-	}
+        glBindTexture(GL_TEXTURE_2D, texID);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MEMORY_LAYOUT_INTEL, GL_LAYOUT_LINEAR_CPU_CACHED_INTEL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) null);
 
-	public StreamHandler getHandler() {
-		return handler;
-	}
+        return texID;
+    }
 
-	public int getWidth() {
-		return width;
-	}
+    public StreamHandler getHandler() {
+        return handler;
+    }
 
-	public int getHeight() {
-		return height;
-	}
+    public int getWidth() {
+        return width;
+    }
 
-	private void resize(final int width, final int height) {
-		if ( width < 0 || height < 0 )
-			throw new IllegalArgumentException("Invalid dimensions: " + width + " x " + height);
+    public int getHeight() {
+        return height;
+    }
 
-		destroyObjects();
+    private void resize(final int width, final int height) {
+        if (width < 0 || height < 0)
+            throw new IllegalArgumentException("Invalid dimensions: " + width + " x " + height);
 
-		this.width = width;
-		this.height = height;
+        destroyObjects();
 
-		this.stride = StreamUtil.getStride(width);
+        this.width = width;
+        this.height = height;
 
-		if ( width == 0 || height == 0 )
-			return;
+        this.stride = StreamUtil.getStride(width);
 
-		bufferIndex = 0;
-		currentIndex = 0;
+        if (width == 0 || height == 0)
+            return;
 
-		resetTexture = true;
+        bufferIndex = 0;
+        currentIndex = 0;
 
-		texID = StreamUtil.createRenderTexture(width, height, GL_LINEAR);
+        resetTexture = true;
 
-		fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, texFBO);
-		fboUtil.framebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texID, 0);
-		fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        texID = StreamUtil.createRenderTexture(width, height, GL_LINEAR);
 
-		for ( int i = 0; i < buffers.length; i++ )
-			buffers[i] = genLayoutLinearTexture(width, height);
+        fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, texFBO);
+        fboUtil.framebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texID, 0);
+        fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+        for (int i = 0; i < buffers.length; i++)
+            buffers[i] = genLayoutLinearTexture(width, height);
 
-	private static int genLayoutLinearTexture(final int width, final int height) {
-		final int texID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 
-		glBindTexture(GL_TEXTURE_2D, texID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MEMORY_LAYOUT_INTEL, GL_LAYOUT_LINEAR_CPU_CACHED_INTEL);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer)null);
+    public void snapshot() {
+        if (width != handler.getWidth() || height != handler.getHeight())
+            resize(handler.getWidth(), handler.getHeight());
 
-		return texID;
-	}
+        if (width == 0 || height == 0)
+            return;
 
-	public void snapshot() {
-		if ( width != handler.getWidth() || height != handler.getHeight() )
-			resize(handler.getWidth(), handler.getHeight());
+        final int trgPBO = (int) (bufferIndex % transfersToBuffer);
 
-		if ( width == 0 || height == 0 )
-			return;
+        // Back-pressure. Make sure we never buffer more than <transfersToBuffer> frames ahead.
 
-		final int trgPBO = (int)(bufferIndex % transfersToBuffer);
+        if (processingState.get(trgPBO))
+            syncCopy(trgPBO);
 
-		// Back-pressure. Make sure we never buffer more than <transfersToBuffer> frames ahead.
+        pinnedBuffers[trgPBO] = glMapTexture2DINTEL(buffers[trgPBO], 0, height * stride, GL_MAP_WRITE_BIT, strideBuffer, layoutBuffer, pinnedBuffers[trgPBO]);
 
-		if ( processingState.get(trgPBO) )
-			syncCopy(trgPBO);
+        // Send the buffer for processing
 
-		pinnedBuffers[trgPBO] = glMapTexture2DINTEL(buffers[trgPBO], 0, height * stride, GL_MAP_WRITE_BIT, strideBuffer, layoutBuffer, pinnedBuffers[trgPBO]);
+        processingState.set(trgPBO, true);
+        semaphores[trgPBO].acquireUninterruptibly();
 
-		// Send the buffer for processing
+        handler.process(
+                width, height,
+                pinnedBuffers[trgPBO],
+                stride,
+                semaphores[trgPBO]
+        );
 
-		processingState.set(trgPBO, true);
-		semaphores[trgPBO].acquireUninterruptibly();
+        bufferIndex++;
 
-		handler.process(
-			width, height,
-			pinnedBuffers[trgPBO],
-			stride,
-			semaphores[trgPBO]
-		);
+        if (resetTexture) {
+            syncCopy(trgPBO);
+            resetTexture = true;
+        }
+    }
 
-		bufferIndex++;
+    public void tick() {
+        final int srcPBO = (int) (currentIndex % transfersToBuffer);
+        if (!processingState.get(srcPBO))
+            return;
 
-		if ( resetTexture ) {
-			syncCopy(trgPBO);
-			resetTexture = true;
-		}
-	}
+        // Try again next frame
+        if (!semaphores[srcPBO].tryAcquire())
+            return;
 
-	public void tick() {
-		final int srcPBO = (int)(currentIndex % transfersToBuffer);
-		if ( !processingState.get(srcPBO) )
-			return;
+        semaphores[srcPBO].release(); // Give it back
 
-		// Try again next frame
-		if ( !semaphores[srcPBO].tryAcquire() )
-			return;
+        postProcess(srcPBO);
+        processingState.set(srcPBO, false);
 
-		semaphores[srcPBO].release(); // Give it back
+        copyTexture(srcPBO);
+    }
 
-		postProcess(srcPBO);
-		processingState.set(srcPBO, false);
+    private void syncCopy(final int index) {
+        waitForProcessingToComplete(index);
+        copyTexture(index);
+    }
 
-		copyTexture(srcPBO);
-	}
+    private void copyTexture(final int index) {
+        fboUtil.bindFramebuffer(GL_READ_FRAMEBUFFER, bufferFBO);
+        fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, texFBO);
 
-	private void syncCopy(final int index) {
-		waitForProcessingToComplete(index);
-		copyTexture(index);
-	}
+        fboUtil.framebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffers[index], 0);
+        fboUtil.blitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        fboUtil.framebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
 
-	private void copyTexture(final int index) {
-		fboUtil.bindFramebuffer(GL_READ_FRAMEBUFFER, bufferFBO);
-		fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, texFBO);
+        fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        fboUtil.bindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
-		fboUtil.framebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buffers[index], 0);
-		fboUtil.blitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-		fboUtil.framebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+        currentIndex++;
+    }
 
-		fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		fboUtil.bindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    protected void postProcess(final int index) {
+        glUnmapTexture2DINTEL(buffers[index], 0);
+    }
 
-		currentIndex++;
-	}
+    public void bind() {
+        glBindTexture(GL_TEXTURE_2D, texID);
+    }
 
-	protected void postProcess(final int index) {
-		glUnmapTexture2DINTEL(buffers[index], 0);
-	}
+    private void destroyObjects() {
+        for (int i = 0; i < semaphores.length; i++) {
+            if (processingState.get(i))
+                waitForProcessingToComplete(i);
+        }
 
-	public void bind() {
-		glBindTexture(GL_TEXTURE_2D, texID);
-	}
+        for (int i = 0; i < buffers.length; i++) {
+            glDeleteTextures(buffers[i]);
+            buffers[i] = 0;
+        }
 
-	private void destroyObjects() {
-		for ( int i = 0; i < semaphores.length; i++ ) {
-			if ( processingState.get(i) )
-				waitForProcessingToComplete(i);
-		}
+        glDeleteTextures(texID);
+    }
 
-		for ( int i = 0; i < buffers.length; i++ ) {
-			glDeleteTextures(buffers[i]);
-			buffers[i] = 0;
-		}
+    public void destroy() {
+        destroyObjects();
 
-		glDeleteTextures(texID);
-	}
-
-	public void destroy() {
-		destroyObjects();
-
-		fboUtil.deleteFramebuffers(bufferFBO);
-		fboUtil.deleteFramebuffers(texFBO);
-	}
+        fboUtil.deleteFramebuffers(bufferFBO);
+        fboUtil.deleteFramebuffers(texFBO);
+    }
 
 }
