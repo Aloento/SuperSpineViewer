@@ -1,42 +1,12 @@
-/******************************************************************************
- * Spine Runtimes Software License v2.5
- *
- * Copyright (c) 2013-2016, Esoteric Software
- * All rights reserved.
- *
- * You are granted a perpetual, non-exclusive, non-sublicensable, and
- * non-transferable license to use, install, execute, and perform the Spine
- * Runtimes software and derivative works solely for personal or internal
- * use. Without the written permission of Esoteric Software (see Section 2 of
- * the Spine Software License Agreement), you may not (a) modify, translate,
- * adapt, or develop new applications using the Spine Runtimes or otherwise
- * create derivative works or improvements of the Spine Runtimes or (b) remove,
- * delete, alter, or obscure any trademarks or any copyright, trademark, patent,
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS INTERRUPTION, OR LOSS OF
- * USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine36;
 
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.esotericsoftware.spine36.Animation.*;
 
-import static com.esotericsoftware.spine36.Animation.RotateTimeline.*;
-
 import java.lang.StringBuilder;
+
+import static com.esotericsoftware.spine36.Animation.RotateTimeline.*;
 
 /**
  * Applies animations over time, queues animations for later playback, mixes (crossfading) between animations, and applies
@@ -81,16 +51,16 @@ public class AnimationState {
     static private final int DIP_MIX = 3;
     final Array<TrackEntry> tracks = new Array();
     final Array<AnimationStateListener> listeners = new Array();
+    final Pool<TrackEntry> trackEntryPool = new Pool() {
+        protected Object newObject() {
+            return new TrackEntry();
+        }
+    };
     private final Array<Event> events = new Array();
     private final EventQueue queue = new EventQueue();
     private final IntSet propertyIDs = new IntSet();
     private final Array<TrackEntry> mixingTo = new Array();
     boolean animationsChanged;
-    Pool<TrackEntry> trackEntryPool = new Pool() {
-        protected Object newObject() {
-            return new TrackEntry();
-        }
-    };
     private AnimationStateData data;
     private float timeScale = 1;
 
@@ -281,24 +251,25 @@ public class AnimationState {
         for (int i = 0; i < timelineCount; i++) {
             Timeline timeline = (Timeline) timelines[i];
             switch (timelineData[i]) {
-                case SUBSEQUENT:
+                case SUBSEQUENT -> {
                     if (!attachments && timeline instanceof AttachmentTimeline) continue;
                     if (!drawOrder && timeline instanceof DrawOrderTimeline) continue;
                     pose = currentPose;
                     alpha = alphaMix;
-                    break;
-                case FIRST:
+                }
+                case FIRST -> {
                     pose = MixPose.setup;
                     alpha = alphaMix;
-                    break;
-                case DIP:
+                }
+                case DIP -> {
                     pose = MixPose.setup;
                     alpha = alphaDip;
-                    break;
-                default:
+                }
+                default -> {
                     pose = MixPose.setup;
                     TrackEntry dipMix = (TrackEntry) timelineDipMix[i];
                     alpha = alphaDip * Math.max(0, 1 - dipMix.mixTime / dipMix.mixDuration);
+                }
             }
             from.totalAlpha += alpha;
             if (timeline instanceof RotateTimeline)
@@ -787,34 +758,34 @@ public class AnimationState {
         /**
          * Invoked when this entry has been set as the current entry.
          */
-		void start(TrackEntry entry);
+        void start(TrackEntry entry);
 
         /**
          * Invoked when another entry has replaced this entry as the current entry. This entry may continue being applied for
          * mixing.
          */
-		void interrupt(TrackEntry entry);
+        void interrupt(TrackEntry entry);
 
         /**
          * Invoked when this entry is no longer the current entry and will never be applied again.
          */
-		void end(TrackEntry entry);
+        void end(TrackEntry entry);
 
         /**
          * Invoked when this entry will be disposed. This may occur without the entry ever being set as the current entry.
          * References to the entry should not be kept after <code>dispose</code> is called, as it may be destroyed or reused.
          */
-		void dispose(TrackEntry entry);
+        void dispose(TrackEntry entry);
 
         /**
          * Invoked every time this entry's animation completes a loop.
          */
-		void complete(TrackEntry entry);
+        void complete(TrackEntry entry);
 
         /**
          * Invoked when this entry's animation triggers an event.
          */
-		void event(TrackEntry entry, Event event);
+        void event(TrackEntry entry, Event event);
     }
 
     /**

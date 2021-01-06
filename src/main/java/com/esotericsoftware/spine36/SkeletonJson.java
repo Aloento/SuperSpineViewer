@@ -1,33 +1,3 @@
-/******************************************************************************
- * Spine Runtimes Software License v2.5
- *
- * Copyright (c) 2013-2016, Esoteric Software
- * All rights reserved.
- *
- * You are granted a perpetual, non-exclusive, non-sublicensable, and
- * non-transferable license to use, install, execute, and perform the Spine
- * Runtimes software and derivative works solely for personal or internal
- * use. Without the written permission of Esoteric Software (see Section 2 of
- * the Spine Software License Agreement), you may not (a) modify, translate,
- * adapt, or develop new applications using the Spine Runtimes or otherwise
- * create derivative works or improvements of the Spine Runtimes or (b) remove,
- * delete, alter, or obscure any trademarks or any copyright, trademark, patent,
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS INTERRUPTION, OR LOSS OF
- * USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine36;
 
 import com.badlogic.gdx.files.FileHandle;
@@ -50,8 +20,8 @@ import com.esotericsoftware.spine36.attachments.*;
  */
 public class SkeletonJson {
     private final AttachmentLoader attachmentLoader;
-    private float scale = 1;
     private final Array<LinkedMesh> linkedMeshes = new Array();
+    private float scale = 1;
 
     public SkeletonJson(TextureAtlas atlas) {
         attachmentLoader = new AtlasAttachmentLoader(atlas);
@@ -293,7 +263,7 @@ public class SkeletonJson {
         String type = map.getString("type", AttachmentType.region.name());
 
         switch (AttachmentType.valueOf(type)) {
-            case region: {
+            case region -> {
                 String path = map.getString("path", name);
                 RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
                 if (region == null) return null;
@@ -312,7 +282,7 @@ public class SkeletonJson {
                 region.updateOffset();
                 return region;
             }
-            case boundingbox: {
+            case boundingbox -> {
                 BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
                 if (box == null) return null;
                 readVertices(map, box, map.getInt("vertexCount") << 1);
@@ -321,8 +291,7 @@ public class SkeletonJson {
                 if (color != null) box.getColor().set(Color.valueOf(color));
                 return box;
             }
-            case mesh:
-            case linkedmesh: {
+            case mesh, linkedmesh -> {
                 String path = map.getString("path", name);
                 MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
                 if (mesh == null) return null;
@@ -351,7 +320,7 @@ public class SkeletonJson {
                 if (map.has("edges")) mesh.setEdges(map.require("edges").asShortArray());
                 return mesh;
             }
-            case path: {
+            case path -> {
                 PathAttachment path = attachmentLoader.newPathAttachment(skin, name);
                 if (path == null) return null;
                 path.setClosed(map.getBoolean("closed", false));
@@ -370,7 +339,7 @@ public class SkeletonJson {
                 if (color != null) path.getColor().set(Color.valueOf(color));
                 return path;
             }
-            case point: {
+            case point -> {
                 PointAttachment point = attachmentLoader.newPointAttachment(skin, name);
                 if (point == null) return null;
                 point.setX(map.getFloat("x", 0) * scale);
@@ -381,7 +350,7 @@ public class SkeletonJson {
                 if (color != null) point.getColor().set(Color.valueOf(color));
                 return point;
             }
-            case clipping: {
+            case clipping -> {
                 ClippingAttachment clip = attachmentLoader.newClippingAttachment(skin, name);
                 if (clip == null) return null;
 
@@ -440,48 +409,52 @@ public class SkeletonJson {
             if (slot == null) throw new SerializationException("Slot not found: " + slotMap.name);
             for (JsonValue timelineMap = slotMap.child; timelineMap != null; timelineMap = timelineMap.next) {
                 String timelineName = timelineMap.name;
-                if (timelineName.equals("attachment")) {
-                    AttachmentTimeline timeline = new AttachmentTimeline(timelineMap.size);
-                    timeline.slotIndex = slot.index;
+                switch (timelineName) {
+                    case "attachment" -> {
+                        AttachmentTimeline timeline = new AttachmentTimeline(timelineMap.size);
+                        timeline.slotIndex = slot.index;
 
-                    int frameIndex = 0;
-                    for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next)
-                        timeline.setFrame(frameIndex++, valueMap.getFloat("time"), valueMap.getString("name"));
-                    timelines.add(timeline);
-                    duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
+                        int frameIndex = 0;
+                        for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next)
+                            timeline.setFrame(frameIndex++, valueMap.getFloat("time"), valueMap.getString("name"));
+                        timelines.add(timeline);
+                        duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
 
-                } else if (timelineName.equals("color")) {
-                    ColorTimeline timeline = new ColorTimeline(timelineMap.size);
-                    timeline.slotIndex = slot.index;
-
-                    int frameIndex = 0;
-                    for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
-                        Color color = Color.valueOf(valueMap.getString("color"));
-                        timeline.setFrame(frameIndex, valueMap.getFloat("time"), color.r, color.g, color.b, color.a);
-                        readCurve(valueMap, timeline, frameIndex);
-                        frameIndex++;
                     }
-                    timelines.add(timeline);
-                    duration = Math.max(duration, timeline.getFrames()[(timeline.getFrameCount() - 1) * ColorTimeline.ENTRIES]);
+                    case "color" -> {
+                        ColorTimeline timeline = new ColorTimeline(timelineMap.size);
+                        timeline.slotIndex = slot.index;
 
-                } else if (timelineName.equals("twoColor")) {
-                    TwoColorTimeline timeline = new TwoColorTimeline(timelineMap.size);
-                    timeline.slotIndex = slot.index;
+                        int frameIndex = 0;
+                        for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+                            Color color = Color.valueOf(valueMap.getString("color"));
+                            timeline.setFrame(frameIndex, valueMap.getFloat("time"), color.r, color.g, color.b, color.a);
+                            readCurve(valueMap, timeline, frameIndex);
+                            frameIndex++;
+                        }
+                        timelines.add(timeline);
+                        duration = Math.max(duration, timeline.getFrames()[(timeline.getFrameCount() - 1) * ColorTimeline.ENTRIES]);
 
-                    int frameIndex = 0;
-                    for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
-                        Color light = Color.valueOf(valueMap.getString("light"));
-                        Color dark = Color.valueOf(valueMap.getString("dark"));
-                        timeline.setFrame(frameIndex, valueMap.getFloat("time"), light.r, light.g, light.b, light.a, dark.r, dark.g,
-                                dark.b);
-                        readCurve(valueMap, timeline, frameIndex);
-                        frameIndex++;
                     }
-                    timelines.add(timeline);
-                    duration = Math.max(duration, timeline.getFrames()[(timeline.getFrameCount() - 1) * TwoColorTimeline.ENTRIES]);
+                    case "twoColor" -> {
+                        TwoColorTimeline timeline = new TwoColorTimeline(timelineMap.size);
+                        timeline.slotIndex = slot.index;
 
-                } else
-                    throw new RuntimeException("Invalid timeline type for a slot: " + timelineName + " (" + slotMap.name + ")");
+                        int frameIndex = 0;
+                        for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+                            Color light = Color.valueOf(valueMap.getString("light"));
+                            Color dark = Color.valueOf(valueMap.getString("dark"));
+                            timeline.setFrame(frameIndex, valueMap.getFloat("time"), light.r, light.g, light.b, light.a, dark.r, dark.g,
+                                    dark.b);
+                            readCurve(valueMap, timeline, frameIndex);
+                            frameIndex++;
+                        }
+                        timelines.add(timeline);
+                        duration = Math.max(duration, timeline.getFrames()[(timeline.getFrameCount() - 1) * TwoColorTimeline.ENTRIES]);
+
+                    }
+                    default -> throw new RuntimeException("Invalid timeline type for a slot: " + timelineName + " (" + slotMap.name + ")");
+                }
             }
         }
 
@@ -732,9 +705,10 @@ public class SkeletonJson {
     }
 
     static class LinkedMesh {
-        String parent, skin;
-        int slotIndex;
-        MeshAttachment mesh;
+        final String parent;
+        final String skin;
+        final int slotIndex;
+        final MeshAttachment mesh;
 
         public LinkedMesh(MeshAttachment mesh, String skin, int slotIndex, String parent) {
             this.mesh = mesh;

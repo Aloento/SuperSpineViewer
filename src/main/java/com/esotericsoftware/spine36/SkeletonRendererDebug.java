@@ -1,33 +1,3 @@
-/******************************************************************************
- * Spine Runtimes Software License v2.5
- *
- * Copyright (c) 2013-2016, Esoteric Software
- * All rights reserved.
- *
- * You are granted a perpetual, non-exclusive, non-sublicensable, and
- * non-transferable license to use, install, execute, and perform the Spine
- * Runtimes software and derivative works solely for personal or internal
- * use. Without the written permission of Esoteric Software (see Section 2 of
- * the Spine Software License Agreement), you may not (a) modify, translate,
- * adapt, or develop new applications using the Spine Runtimes or otherwise
- * create derivative works or improvements of the Spine Runtimes or (b) remove,
- * delete, alter, or obscure any trademarks or any copyright, trademark, patent,
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
- *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS INTERRUPTION, OR LOSS OF
- * USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *****************************************************************************/
-
 package com.esotericsoftware.spine36;
 
 import com.badlogic.gdx.Gdx;
@@ -54,7 +24,6 @@ public class SkeletonRendererDebug {
     private boolean drawBones = true, drawRegionAttachments = true, drawBoundingBoxes = true, drawPoints = true;
     private boolean drawMeshHull = true, drawMeshTriangles = true, drawPaths = true, drawClipping = true;
     private float scale = 1;
-    private final float boneWidth = 2;
     private boolean premultipliedAlpha;
 
     public SkeletonRendererDebug() {
@@ -80,7 +49,7 @@ public class SkeletonRendererDebug {
             for (int i = 0, n = bones.size; i < n; i++) {
                 Bone bone = bones.get(i);
                 if (bone.parent == null) continue;
-                float length = bone.data.length, width = boneWidth;
+                float length = bone.data.length, width = (float) 2;
                 if (length == 0) {
                     length = 8;
                     width /= 2;
@@ -103,7 +72,7 @@ public class SkeletonRendererDebug {
                 PointAttachment point = (PointAttachment) attachment;
                 point.computeWorldPosition(slot.getBone(), temp1);
                 temp2.set(8, 0).rotate(point.computeWorldRotation(slot.getBone()));
-                shapes.rectLine(temp1, temp2, boneWidth / 2 * scale);
+                shapes.rectLine(temp1, temp2, scale);
             }
         }
 
@@ -150,7 +119,7 @@ public class SkeletonRendererDebug {
                 if (drawMeshHull && hullLength > 0) {
                     shapes.setColor(attachmentLineColor);
                     float lastX = vertices[hullLength - 2], lastY = vertices[hullLength - 1];
-                    for (int ii = 0, nn = hullLength; ii < nn; ii += 2) {
+                    for (int ii = 0; ii < hullLength; ii += 2) {
                         float x = vertices[ii], y = vertices[ii + 1];
                         shapes.line(x, y, lastX, lastY);
                         lastX = x;
@@ -200,7 +169,7 @@ public class SkeletonRendererDebug {
                 float[] vertices = this.vertices.setSize(nn);
                 path.computeWorldVertices(slot, 0, nn, vertices, 0, 2);
                 Color color = path.getColor();
-                float x1 = vertices[2], y1 = vertices[3], x2 = 0, y2 = 0;
+                float x1 = vertices[2], y1 = vertices[3], x2, y2;
                 if (path.getClosed()) {
                     shapes.setColor(color);
                     float cx1 = vertices[0], cy1 = vertices[1], cx2 = vertices[nn - 2], cy2 = vertices[nn - 1];
