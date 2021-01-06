@@ -113,6 +113,7 @@ public class ExporterController extends Controller implements Initializable {
         FPS = L_FPS;
         Skel = L_Skel;
         Atlas = L_Atlas;
+        progressBar = P_Export;
         SuperSpine.spineVersion.addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
 
         if (arg != null) {

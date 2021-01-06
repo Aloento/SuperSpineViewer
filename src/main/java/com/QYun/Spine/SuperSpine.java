@@ -17,7 +17,7 @@ public class SuperSpine extends ApplicationAdapter {
     static final SimpleStringProperty animate = new SimpleStringProperty(null);
     static final SimpleBooleanProperty isLoop = new SimpleBooleanProperty(false);
     static final SimpleBooleanProperty isPlay = new SimpleBooleanProperty(false);
-    static final SimpleFloatProperty scale = new SimpleFloatProperty(2.0f);
+    static final SimpleFloatProperty scale = new SimpleFloatProperty(1.0f);
     static final SimpleFloatProperty X = new SimpleFloatProperty(0.0f);
     static final SimpleFloatProperty Y = new SimpleFloatProperty(-200f);
     static final SimpleFloatProperty speed = new SimpleFloatProperty(1);

@@ -139,7 +139,7 @@ public class SpineController extends Controller implements Initializable {
         L_Loop.getStyleClass().add("normal-label");
 
         JFXTextField T_Scale = new JFXTextField();
-        T_Scale.setPromptText("2.0");
+        T_Scale.setPromptText("1.0");
         JFXTextField T_Width = new JFXTextField();
         JFXTextField T_Height = new JFXTextField();
         JFXTextField T_X = new JFXTextField();

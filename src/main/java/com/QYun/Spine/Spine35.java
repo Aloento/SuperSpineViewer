@@ -1,5 +1,6 @@
 package com.QYun.Spine;
 
+import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -7,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine35.*;
+import com.esotericsoftware.spine35.AnimationState.TrackEntry;
+import javafx.application.Platform;
 
 public class Spine35 extends SuperSpine {
 
@@ -167,6 +170,14 @@ public class Spine35 extends SuperSpine {
         batch.begin();
         renderer.draw(batch, skeleton);
         batch.end();
+
+        if (state != null) {
+            TrackEntry entry = state.getCurrent(0);
+            if (entry != null) {
+                double percent = entry.getAnimationTime() / entry.getAnimationEnd();
+                Platform.runLater(() -> Controller.progressBar.setProgress(percent));
+            }
+        }
     }
 
     @Override

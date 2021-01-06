@@ -1,5 +1,6 @@
 package com.QYun.SuperSpineViewer.GUI;
 
+import com.jfoenix.controls.JFXProgressBar;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -10,6 +11,7 @@ public class Controller {
     public static SpineController spineController;
     public static ExporterController exporterController;
     public static ImageView spineRender;
+    public static JFXProgressBar progressBar;
     public static Label FPS;
     public static Label Skel;
     public static Label Atlas;
