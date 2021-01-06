@@ -149,11 +149,8 @@ public class RuntimesLoader extends Controller {
                                 if (spineVersion.get() != -1)
                                     path = file.getAbsolutePath();
                                 Runtime.getRuntime().exec("java -jar "
-                                        + System.getProperty("user.dir")
-                                        + File.separator
                                         + System.getProperty("java.class.path")
-                                        + " " + path);
-                                System.out.println("目前无法二次拉起程序，请手动重启【bug】");
+                                        + " " + path, null, new File(System.getProperty("user.dir")));
                             } catch (IOException ignored) {
                             }
                             System.out.println("重新加载LibGDX");
