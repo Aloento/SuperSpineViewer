@@ -143,27 +143,24 @@ public class RuntimesLoader extends Controller {
             spineVersion.addListener((observable, oldValue, newValue) -> {
                 if (!newValue.equals(oldValue) && isLoad.get()) {
                     if (AppLauncher.class.getResource("").getProtocol().equals("jar")) {
-                        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                        new Thread(() -> {
                             try {
                                 String path = "";
-                                if (arg != null)
+                                if (spineVersion.get() != -1)
                                     path = file.getAbsolutePath();
                                 Runtime.getRuntime().exec("java -jar "
                                         + System.getProperty("user.dir")
                                         + File.separator
                                         + System.getProperty("java.class.path")
                                         + " " + path);
-                                System.out.println("拉起新进程，目前无法重启第二次【bug】");
-                            } catch (Throwable e) {
-                                System.out.println("重启失败，请手动重启");
-                                e.printStackTrace();
+                                System.out.println("目前无法二次拉起程序，请手动重启【bug】");
+                            } catch (IOException ignored) {
                             }
                             System.out.println("重新加载LibGDX");
-                        }));
+                        }).start();
                         System.exit(0);
-                    }
-                    else {
-                        System.out.println("重新加载，IDE中请自行重启");
+                    } else {
+                        System.out.println("重新加载，从源码启动请自行重启");
                         Platform.exit();
                     }
                 }
