@@ -27,21 +27,21 @@ public class RuntimesLoader extends Controller {
             String fistLine = new BufferedReader(new FileReader(skelFile)).readLine();
             System.out.println(fistLine);
 
-            if (fistLine.contains("4.0"))
+            if (fistLine.contains("4.0."))
                 spineVersion.set(40);
-            else if (fistLine.contains("3.8"))
+            else if (fistLine.contains("3.8."))
                 spineVersion.set(38);
-            else if (fistLine.contains("3.7"))
+            else if (fistLine.contains("3.7."))
                 spineVersion.set(37);
-            else if (fistLine.contains("3.6"))
+            else if (fistLine.contains("3.6."))
                 spineVersion.set(36);
-            else if (fistLine.contains("3.5"))
+            else if (fistLine.contains("3.5."))
                 spineVersion.set(35);
-            else if (fistLine.contains("3.4"))
+            else if (fistLine.contains("3.4."))
                 spineVersion.set(34);
-            else if (fistLine.contains("3.1"))
+            else if (fistLine.contains("3.1."))
                 spineVersion.set(31);
-            else if (fistLine.contains("2.1"))
+            else if (fistLine.contains("2.1."))
                 spineVersion.set(21);
             else {
                 System.out.println("Spine二进制版本判断失败");
@@ -61,21 +61,21 @@ public class RuntimesLoader extends Controller {
         try {
             String json = FileUtils.readFileToString(skelFile, "UTF-8");
 
-            if (json.contains("\"spine\": \"4.0"))
+            if (json.contains("4.0."))
                 spineVersion.set(40);
-            else if (json.contains("\"spine\": \"3.8"))
+            else if (json.contains("3.8."))
                 spineVersion.set(38);
-            else if (json.contains("\"spine\": \"3.7"))
+            else if (json.contains("3.7."))
                 spineVersion.set(37);
-            else if (json.contains("\"spine\": \"3.6"))
+            else if (json.contains("3.6."))
                 spineVersion.set(36);
-            else if (json.contains("\"spine\": \"3.5"))
+            else if (json.contains("3.5."))
                 spineVersion.set(35);
-            else if (json.contains("\"spine\": \"3.4"))
+            else if (json.contains("3.4."))
                 spineVersion.set(34);
-            else if (json.contains("\"spine\": \"3.1"))
+            else if (json.contains("3.1."))
                 spineVersion.set(31);
-            else if (json.contains("\"spine\": \"2.1"))
+            else if (json.contains("2.1."))
                 spineVersion.set(21);
             else {
                 System.out.println("SpineJson版本判断失败");
