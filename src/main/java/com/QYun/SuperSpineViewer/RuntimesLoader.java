@@ -145,14 +145,16 @@ public class RuntimesLoader extends Controller {
                     if (AppLauncher.class.getResource("").getProtocol().equals("jar")) {
                         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                             try {
-                                Runtime.getRuntime().exec("java " +
-                                        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:1234 " +
-                                        "-jar "
+                                String path = "";
+                                if (arg != null)
+                                    path = file.getAbsolutePath();
+                                Runtime.getRuntime().exec("java -jar "
                                         + System.getProperty("user.dir")
                                         + File.separator
                                         + System.getProperty("java.class.path")
-                                        + " " + file.getAbsolutePath());
-                            } catch (IOException e) {
+                                        + " " + path);
+                                System.out.println("拉起新进程，目前无法重启第二次【bug】");
+                            } catch (Throwable e) {
                                 System.out.println("重启失败，请手动重启");
                                 e.printStackTrace();
                             }
