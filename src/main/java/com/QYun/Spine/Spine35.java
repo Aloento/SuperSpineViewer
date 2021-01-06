@@ -103,9 +103,7 @@ public class Spine35 extends SuperSpine {
                         else if (!isLoop.get())
                             state.setAnimation(0, animate.get(), isLoop.get());
                         state.setTimeScale(speed.get());
-                    } else {
-                        state.setTimeScale(0);
-                    }
+                    } else state.setTimeScale(0);
                 }
             }
         });
@@ -141,9 +139,8 @@ public class Spine35 extends SuperSpine {
         });
 
         speed.addListener((observable, oldValue, newValue) -> {
-            if (state != null) {
+            if (state != null)
                 state.setTimeScale(speed.get());
-            }
         });
 
         isReload.addListener((observable, oldValue, newValue) -> {
