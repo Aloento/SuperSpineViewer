@@ -5,6 +5,7 @@ import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import org.apache.commons.io.FileUtils;
 
@@ -161,6 +162,11 @@ public class RuntimesLoader extends Controller {
         SuperSpine.atlasFile = atlasFile(skelFile);
         SuperSpine.skelFile = skelFile;
         String extension = skelFile.extension();
+
+        Platform.runLater(() -> {
+            Atlas.setText("Atlas : " + SuperSpine.atlasFile.name());
+            Skel.setText("Skel : " + skelFile.name());
+        });
 
         if (!requestReload) {
             if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt")) {

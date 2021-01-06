@@ -11,7 +11,8 @@ import javafx.collections.ObservableList;
 public class SuperSpine extends ApplicationAdapter {
 
     public static final SimpleBooleanProperty isReload = new SimpleBooleanProperty(false);
-    static final SimpleStringProperty spineVersion = new SimpleStringProperty(null);
+    public static final SimpleStringProperty spineVersion = new SimpleStringProperty(null);
+    public static final SimpleStringProperty projectName = new SimpleStringProperty(null);
     static final SimpleStringProperty skin = new SimpleStringProperty(null);
     static final SimpleStringProperty animate = new SimpleStringProperty(null);
     static final SimpleBooleanProperty isLoop = new SimpleBooleanProperty(false);

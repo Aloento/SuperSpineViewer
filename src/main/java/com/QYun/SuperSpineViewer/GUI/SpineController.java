@@ -113,6 +113,7 @@ public class SpineController extends Controller implements Initializable {
         project.getStyleClass().add("normal-label");
         header.setAlignment(Pos.BOTTOM_LEFT);
         header.getChildren().addAll(hBox, project);
+        SuperSpine.projectName.addListener((observable, oldValue, newValue) -> Platform.runLater(() -> project.setText(newValue)));
 
         VBox.setVgrow(header, Priority.NEVER);
         StackPane body = new StackPane();

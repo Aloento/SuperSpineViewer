@@ -146,6 +146,7 @@ public class Spine38 extends SuperSpine {
         atlas = new TextureAtlas(atlasFile);
         if (loadSkel()) {
             spineVersion.set(skeletonData.getVersion());
+            projectName.set(skeletonData.getName());
             skins(skeletonData.getSkins());
             animates(skeletonData.getAnimations());
             listeners();

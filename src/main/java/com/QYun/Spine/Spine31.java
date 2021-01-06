@@ -1,8 +1,6 @@
 package com.QYun.Spine;
 
-import com.badlogic.gdx.ApplicationAdapter;
-
-public class Spine31 extends ApplicationAdapter {
+public class Spine31 extends SuperSpine {
 
     @Override
     public void create() {

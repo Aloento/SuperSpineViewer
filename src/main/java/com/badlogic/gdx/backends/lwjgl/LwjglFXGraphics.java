@@ -1,5 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
+import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -176,6 +178,6 @@ public class LwjglFXGraphics extends LwjglGraphics {
 
     @Override
     public void setTitle(String FPS) {
-        // Platform.runLater(() -> UITag.RightInf.setText(FPS + "\t渲染正常"));
+        Platform.runLater(() -> Controller.FPS.setText(FPS));
     }
 }

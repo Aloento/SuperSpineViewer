@@ -1,5 +1,6 @@
 package com.QYun.SuperSpineViewer.GUI;
 
+import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
@@ -19,7 +20,7 @@ import java.util.ResourceBundle;
 
 public class ExporterController extends Controller implements Initializable {
 
-    RuntimesLoader runtimesLoader = new RuntimesLoader();
+    final RuntimesLoader runtimesLoader = new RuntimesLoader();
     @FXML
     private StackPane Exporter;
     @FXML
@@ -108,6 +109,12 @@ public class ExporterController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        FPS = L_FPS;
+        Skel = L_Skel;
+        Atlas = L_Atlas;
+        SuperSpine.spineVersion.addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
+
         if (arg != null) {
             Platform.runLater(() -> {
                 File file = new File(arg);

@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class PrimaryController extends Controller implements Initializable {
+public class PrimaryController extends Controller implements Initializable {
 
     @FXML
     private JFXRippler optionsRippler;

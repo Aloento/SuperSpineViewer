@@ -1,6 +1,7 @@
 package com.QYun.SuperSpineViewer.GUI;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
 public class Controller {
@@ -9,12 +10,15 @@ public class Controller {
     public static SpineController spineController;
     public static ExporterController exporterController;
     public static ImageView spineRender;
+    public static Label FPS;
+    public static Label Skel;
+    public static Label Atlas;
     public static int width = 912;
     public static int height = 697;
     public static int format = 1;
     public static boolean isFX = true;
     public static boolean requestReload = false;
     public static String path;
-    public volatile static String arg = null;
+    public static String arg = null;
 
 }
