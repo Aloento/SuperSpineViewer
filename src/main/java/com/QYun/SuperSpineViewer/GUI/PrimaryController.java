@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -140,6 +141,7 @@ public final class PrimaryController extends Controller implements Initializable
                 aboutStage.setResizable(false);
                 aboutStage.setAlwaysOnTop(true);
                 aboutStage.setScene(aboutScene);
+                aboutStage.getIcons().add(new Image("/UI/Q-Audio.png"));
                 aboutStage.setTitle("SuperSpineViewer - Aloento_QYun_SoarTeam");
                 aboutStage.show();
 

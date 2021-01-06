@@ -257,7 +257,7 @@ public class SpineController extends Controller implements Initializable {
         }));
         T_Scale.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER))
-                if (T_Scale.getText().matches("^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
+                if (T_Scale.getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
                     spine.setScale(Float.parseFloat(T_Scale.getText()));
         });
 

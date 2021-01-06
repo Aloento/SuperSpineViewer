@@ -51,7 +51,6 @@ public class ExporterController extends Controller implements Initializable {
 
     @FXML
     void B_Open() {
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Skeleton");
 

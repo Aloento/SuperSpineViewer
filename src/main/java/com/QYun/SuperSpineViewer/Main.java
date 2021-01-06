@@ -56,7 +56,7 @@ public class Main extends Application {
                 JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
                 Main.class.getResource("/UI/Main.css").toExternalForm());
 
-        primaryStage.getIcons().add(new Image("SuperSpineViewer.png"));
+        primaryStage.getIcons().add(new Image("UI/SuperSpineViewer.png"));
         primaryStage.setWidth(1280);
         primaryStage.setTitle("QYun SoarTeam");
         primaryStage.setScene(scene);
