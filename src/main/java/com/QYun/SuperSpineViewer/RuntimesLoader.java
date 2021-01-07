@@ -21,6 +21,7 @@ public class RuntimesLoader extends Controller {
     private final String[] extraSuffixes = {"", ".txt", ".bytes"};
     private final String[] dataSuffixes = {"", ".json", ".skel"};
     private final String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas", "-pma.atlas"};
+    SuperSpine spine = new SuperSpine();
 
     private boolean binaryVersion(File skelFile) {
         try {
@@ -47,7 +48,7 @@ public class RuntimesLoader extends Controller {
                 System.out.println("Spine二进制版本判断失败");
                 return false;
             }
-            SuperSpine.isBinary = true;
+            spine.setIsBinary(true);
             System.out.println("Spine二进制版本：" + spineVersion.get());
         } catch (IOException e) {
             System.out.println("Spine二进制读取失败");
@@ -81,7 +82,7 @@ public class RuntimesLoader extends Controller {
                 System.out.println("SpineJson版本判断失败");
                 return false;
             }
-            SuperSpine.isBinary = false;
+            spine.setIsBinary(false);
             System.out.println("SpineJson版本：" + spineVersion.get());
         } catch (IOException e) {
             System.out.println("SpineJson读取失败");
@@ -159,12 +160,12 @@ public class RuntimesLoader extends Controller {
         }
 
         FileHandle skelFile = new FileHandle(new File(file.getAbsolutePath()));
-        SuperSpine.atlasFile = atlasFile(skelFile);
-        SuperSpine.skelFile = skelFile;
+        spine.setAtlasFile(atlasFile(skelFile));
+        spine.setSkelFile(skelFile);
         String extension = skelFile.extension();
 
         Platform.runLater(() -> {
-            Atlas.setText("Atlas : " + SuperSpine.atlasFile.name());
+            Atlas.setText("Atlas : " + new SuperSpine().getAtlasFile().name());
             Skel.setText("Skel : " + skelFile.name());
         });
 
@@ -181,7 +182,7 @@ public class RuntimesLoader extends Controller {
                 jsonVersion(file);
             else binaryVersion(file);
 
-            SuperSpine.isReload.set(true);
+            new SuperSpine().setIsReload(true);
             requestReload = false;
             return true;
         }

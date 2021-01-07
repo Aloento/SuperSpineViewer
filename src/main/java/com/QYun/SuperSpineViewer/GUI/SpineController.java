@@ -83,6 +83,7 @@ public class SpineController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        SuperSpine spine = new SuperSpine();
         ImageView spineLogo = new ImageView();
         BufferedImageTranscoder transcoder = new BufferedImageTranscoder();
         try (InputStream file = getClass().getResourceAsStream("/UI/SpineLogo.svg")) {
@@ -113,7 +114,7 @@ public class SpineController extends Controller implements Initializable {
         project.getStyleClass().add("normal-label");
         header.setAlignment(Pos.BOTTOM_LEFT);
         header.getChildren().addAll(hBox, project);
-        SuperSpine.projectName.addListener((observable, oldValue, newValue) -> Platform.runLater(() -> project.setText(newValue)));
+        spine.projectNameProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> project.setText(newValue)));
 
         VBox.setVgrow(header, Priority.NEVER);
         StackPane body = new StackPane();
@@ -231,7 +232,6 @@ public class SpineController extends Controller implements Initializable {
         SpineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> T_Width.setPromptText(String.valueOf(newValue.intValue())));
         SpineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> T_Height.setPromptText(String.valueOf(newValue.intValue())));
 
-        SuperSpine spine = new SuperSpine();
         C_Skins.setItems(spine.getSkinsList());
         C_Animate.setItems(spine.getAnimatesList());
 

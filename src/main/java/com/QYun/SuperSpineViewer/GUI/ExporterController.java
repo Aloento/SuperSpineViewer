@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 public class ExporterController extends Controller implements Initializable {
 
     final RuntimesLoader runtimesLoader = new RuntimesLoader();
+    SuperSpine spine = new SuperSpine();
     @FXML
     private StackPane Exporter;
     @FXML
@@ -114,7 +115,7 @@ public class ExporterController extends Controller implements Initializable {
         Skel = L_Skel;
         Atlas = L_Atlas;
         progressBar = P_Export;
-        SuperSpine.spineVersion.addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
+        spine.spineVersionProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
 
         if (arg != null) {
             Platform.runLater(() -> {
