@@ -165,7 +165,7 @@ public class RuntimesLoader extends Controller {
         String extension = skelFile.extension();
 
         Platform.runLater(() -> {
-            Atlas.setText("Atlas : " + new SuperSpine().getAtlasFile().name());
+            Atlas.setText("Atlas : " + spine.getAtlasFile().name());
             Skel.setText("Skel : " + skelFile.name());
         });
 

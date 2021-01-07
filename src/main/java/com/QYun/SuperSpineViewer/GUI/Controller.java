@@ -20,7 +20,7 @@ public class Controller {
     public static int format = 1;
     public static boolean isFX = true;
     public static boolean requestReload = false;
-    public static String path;
+    public static String path = null;
     public static String arg = null;
 
 }

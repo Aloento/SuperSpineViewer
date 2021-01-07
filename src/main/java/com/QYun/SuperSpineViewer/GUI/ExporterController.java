@@ -1,5 +1,6 @@
 package com.QYun.SuperSpineViewer.GUI;
 
+import com.QYun.JavaFX.RecordFX;
 import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.jfoenix.controls.JFXProgressBar;
@@ -16,12 +17,14 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ExporterController extends Controller implements Initializable {
 
     final RuntimesLoader runtimesLoader = new RuntimesLoader();
     SuperSpine spine = new SuperSpine();
+    boolean sequence = false;
     @FXML
     private StackPane Exporter;
     @FXML
@@ -43,7 +46,17 @@ public class ExporterController extends Controller implements Initializable {
 
     @FXML
     void B_Export() {
-
+        if (path != null && spine.getDuration() > 0) {
+            if (isFX && format != 2) {
+                if (format == 3)
+                    sequence = true;
+                RecordFX recordFX = new RecordFX(Objects.requireNonNull(spineRender));
+                spine.setIsLoop(false);
+                spine.setSpeed(1);
+                recordFX.startRecording(path, spine.getProjectName(), spine.getDuration(), 60f, true, sequence);
+                spine.setIsPlay(true);
+            }
+        }
     }
 
     @FXML

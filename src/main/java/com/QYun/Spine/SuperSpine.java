@@ -21,6 +21,7 @@ public class SuperSpine extends ApplicationAdapter {
     static final SimpleFloatProperty X = new SimpleFloatProperty(0.0f);
     static final SimpleFloatProperty Y = new SimpleFloatProperty(-200f);
     static final SimpleFloatProperty speed = new SimpleFloatProperty(1);
+    static float duration = -1;
     static FileHandle skelFile;
     static FileHandle atlasFile;
     static boolean isBinary = true;
@@ -37,6 +38,18 @@ public class SuperSpine extends ApplicationAdapter {
 
     public SimpleBooleanProperty isReloadProperty() {
         return isReload;
+    }
+
+    public String getSpineVersion() {
+        return spineVersion.get();
+    }
+
+    public void setSpineVersion(String spineVersion) {
+        SuperSpine.spineVersion.set(spineVersion);
+    }
+
+    public SimpleStringProperty spineVersionProperty() {
+        return spineVersion;
     }
 
     public String getProjectName() {
@@ -87,6 +100,30 @@ public class SuperSpine extends ApplicationAdapter {
         return isLoop;
     }
 
+    public boolean isIsPlay() {
+        return isPlay.get();
+    }
+
+    public void setIsPlay(boolean isPlay) {
+        SuperSpine.isPlay.set(isPlay);
+    }
+
+    public SimpleBooleanProperty isPlayProperty() {
+        return isPlay;
+    }
+
+    public float getScale() {
+        return scale.get();
+    }
+
+    public void setScale(float scale) {
+        SuperSpine.scale.set(scale);
+    }
+
+    public SimpleFloatProperty scaleProperty() {
+        return scale;
+    }
+
     public float getX() {
         return X.get();
     }
@@ -123,6 +160,14 @@ public class SuperSpine extends ApplicationAdapter {
         return speed;
     }
 
+    public float getDuration() {
+        return duration;
+    }
+
+    public void setDuration(float duration) {
+        SuperSpine.duration = duration;
+    }
+
     public FileHandle getSkelFile() {
         return skelFile;
     }
@@ -147,42 +192,6 @@ public class SuperSpine extends ApplicationAdapter {
         SuperSpine.isBinary = isBinary;
     }
 
-    public SimpleBooleanProperty isPlayProperty() {
-        return isPlay;
-    }
-
-    public boolean isIsPlay() {
-        return isPlay.get();
-    }
-
-    public void setIsPlay(boolean isPlay) {
-        SuperSpine.isPlay.set(isPlay);
-    }
-
-    public float getScale() {
-        return scale.get();
-    }
-
-    public void setScale(float scale) {
-        SuperSpine.scale.set(scale);
-    }
-
-    public SimpleFloatProperty scaleProperty() {
-        return scale;
-    }
-
-    public String getSpineVersion() {
-        return spineVersion.get();
-    }
-
-    public void setSpineVersion(String spineVersion) {
-        SuperSpine.spineVersion.set(spineVersion);
-    }
-
-    public SimpleStringProperty spineVersionProperty() {
-        return spineVersion;
-    }
-
     public ObservableList<String> getSkinsList() {
         return skinsList;
     }
@@ -198,5 +207,4 @@ public class SuperSpine extends ApplicationAdapter {
     public void setAnimatesList(ObservableList<String> animatesList) {
         SuperSpine.animatesList = animatesList;
     }
-
 }

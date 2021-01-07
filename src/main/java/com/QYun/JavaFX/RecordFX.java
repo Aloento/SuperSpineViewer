@@ -26,7 +26,7 @@ public class RecordFX {
     private final AtomicBoolean allowRecording = new AtomicBoolean(false);
     private final AtomicInteger timer = new AtomicInteger(0);
     private final AtomicReference<Float> FPS = new AtomicReference<>(30f);
-    private final AtomicInteger durationS = new AtomicInteger(0);
+    private float durationS = 0;
     private final AtomicBoolean transparent = new AtomicBoolean(true);
     private final AtomicBoolean saveSequence = new AtomicBoolean(true);
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -72,11 +72,11 @@ public class RecordFX {
     private void recordingTimer() {
         timer.getAndIncrement();
         if (allowRecording.get() && timer.get() >= FPS.get()) {
-            durationS.getAndDecrement();
+            durationS--;
             timer.set(0);
 
-            if (durationS.get() <= 0) {
-                durationS.set(0);
+            if (durationS <= 0) {
+                durationS = 0;
                 stopRecording();
             }
         }
@@ -88,9 +88,9 @@ public class RecordFX {
             @Override
             protected Void call() throws InterruptedException {
                 System.out.println("录制开始");
-                while (durationS.get() > 0) {
+                while (durationS > 0) {
                     Platform.runLater(() -> {
-                        if (allowRecording.get() && durationS.get() > 0) {
+                        if (allowRecording.get() && durationS > 0) {
                             addFrame(createFrame());
                         }
                         recordingTimer();
@@ -106,10 +106,10 @@ public class RecordFX {
         recodeThread.start();
     }
 
-    public void startRecording(String rootPath, String fileName, int durationS, Float FPS, boolean transparent, boolean saveSequence) {
+    public void startRecording(String rootPath, String fileName, float durationS, Float FPS, boolean transparent, boolean saveSequence) {
         this.rootPath = rootPath;
         this.fileName = fileName;
-        this.durationS.set(durationS);
+        this.durationS = durationS;
         this.FPS.set(FPS);
         this.transparent.set(transparent);
         this.saveSequence.set(saveSequence);
@@ -127,7 +127,6 @@ public class RecordFX {
     private void saveToArray(Image image) {
         counter.getAndIncrement();
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        imageFrames.add(bufferedImage);
 
         if (saveSequence.get()) {
             new File(rootPath + "Sequence/").mkdirs();
@@ -138,7 +137,10 @@ public class RecordFX {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else System.out.println("缓存：" + counter);
+        } else {
+            imageFrames.add(bufferedImage);
+            System.out.println("缓存：" + counter);
+        }
     }
 
     private void saveRecordFX() {
@@ -148,7 +150,7 @@ public class RecordFX {
                 File root = new File(rootPath);
                 File video = new File((rootPath + fileName) + ".mp4");
                 video.delete();
-
+                recordFrames.clear();
                 try {
                     root.mkdirs();
                     AWTSequenceEncoder encoder = AWTSequenceEncoder.createSequenceEncoder(video, FPS.get().intValue());
@@ -162,6 +164,8 @@ public class RecordFX {
                     }));
                     encoder.finish();
                     System.out.println("保存录像成功");
+                    resetStorages();
+                    System.gc();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -183,7 +187,7 @@ public class RecordFX {
             //                 " -c:v libvpx-vp9 -lossless 1" +
             //                 " -pix_fmt yuva420p -row-mt 1" +
             //                 " " + rootPath + fileName + ".webm");
-
+            System.out.println("FFMPEG处理开始，请确保已安装");
             new File((rootPath + fileName) + ".mov").delete();
             Process ffmpeg = Runtime.getRuntime().exec(
                     "ffmpeg -r " + FPS.get() +
@@ -200,6 +204,8 @@ public class RecordFX {
                     new File(sequence, file).delete();
                 sequence.delete();
                 System.out.println("ffmpeg：" + status);
+                resetStorages();
+                System.gc();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

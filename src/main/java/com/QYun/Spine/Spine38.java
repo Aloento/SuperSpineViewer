@@ -13,13 +13,14 @@ import javafx.application.Platform;
 
 public class Spine38 extends SuperSpine {
 
-    TwoColorPolygonBatch batch;
-    OrthographicCamera camera;
-    SkeletonRenderer renderer;
-    TextureAtlas atlas;
-    SkeletonData skeletonData;
+    private TwoColorPolygonBatch batch;
+    private OrthographicCamera camera;
+    private SkeletonRenderer renderer;
+    private TextureAtlas atlas;
+    private SkeletonData skeletonData;
     private Skeleton skeleton;
     private AnimationState state;
+    private TrackEntry entry;
 
     private void skins(Array<Skin> skins) {
         for (Skin skin : skins)
@@ -194,9 +195,10 @@ public class Spine38 extends SuperSpine {
         batch.end();
 
         if (state != null) {
-            TrackEntry entry = state.getCurrent(0);
+            entry = state.getCurrent(0);
             if (entry != null) {
                 double percent = entry.getAnimationTime() / entry.getAnimationEnd();
+                duration = entry.getAnimationEnd();
                 Platform.runLater(() -> Controller.progressBar.setProgress(percent));
                 if (percent == 1 && !isLoop.get())
                     isPlay.set(false);
