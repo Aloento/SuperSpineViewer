@@ -45,7 +45,7 @@ public class RecordFX {
             if (waiting > 3 && !exporting) {
                 waiting = 0;
                 exporting = true;
-                new Thread("Saving") {
+                new Thread("RecordFX_Saving") {
                     @Override
                     public void run() {
                         new File(rootPath + "Sequence/").mkdirs();
@@ -182,21 +182,14 @@ public class RecordFX {
             @Override
             protected Void call() {
                 new File(rootPath + "Sequence/").mkdirs();
-                if (!saveSequence) {
-                    System.out.println("用ffmpeg编码");
-                    while (exporting)
-                        Thread.onSpinWait();
-                    while (recordFrames.size() != 0) {
-                        saveToArray(recordFrames.get(0));
-                        recordFrames.remove(0);
-                    }
-                    ffmpegFX();
-                } else {
-                    System.out.println("导出序列");
-                    for (Image recordFrame : recordFrames)
-                        saveToArray(recordFrame);
+                while (exporting)
+                    Thread.onSpinWait();
+                while (recordFrames.size() != 0) {
+                    saveToArray(recordFrames.get(0));
+                    recordFrames.remove(0);
                 }
-                recordFrames.clear();
+                if (!saveSequence)
+                    ffmpegFX();
                 System.gc();
                 return null;
             }

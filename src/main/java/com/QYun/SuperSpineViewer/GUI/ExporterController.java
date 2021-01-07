@@ -52,8 +52,8 @@ public class ExporterController extends Controller implements Initializable {
                     sequence = true;
                 RecordFX recordFX = new RecordFX(Objects.requireNonNull(spineRender));
                 spine.setIsLoop(false);
-                spine.setSpeed(1);
-                recordFX.startRecording(path, spine.getProjectName(), spine.getDuration(), 60f, sequence);
+                spine.setSpeed(0.5f);
+                recordFX.startRecording(path, spine.getProjectName(), spine.getDuration(), 120f, sequence);
                 spine.setIsPlay(true);
             }
         }
