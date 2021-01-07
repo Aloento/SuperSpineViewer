@@ -1,6 +1,10 @@
 package com.QYun.JavaFX;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
@@ -14,19 +18,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 public class RecordFX {
 
+    private static volatile boolean exporting = false;
     private final Node node;
     private final SnapshotParameters parameters = new SnapshotParameters();
-    private final List<Image> recordFrames;
-    private Boolean allowRecording = false;
-    private Boolean saveSequence = true;
+    private final ObservableList<Image> framesList = FXCollections.observableArrayList();
+    private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(framesList);
+    private boolean allowRecording = false;
+    private boolean saveSequence = true;
     private int timer = 0;
     private int counter = 0;
+    private int waiting = 0;
     private float durationS = 0;
     private float FPS = 60f;
     private String rootPath = null;
@@ -34,8 +39,25 @@ public class RecordFX {
 
     public RecordFX(Node node) {
         this.node = node;
-        recordFrames = new LinkedList<>();
         System.out.println("录制实例已创建");
+        recordFrames.addListener((InvalidationListener) observable -> {
+            waiting++;
+            if (waiting > 3 && !exporting) {
+                waiting = 0;
+                exporting = true;
+                new Thread("Saving") {
+                    @Override
+                    public void run() {
+                        new File(rootPath + "Sequence/").mkdirs();
+                        while (recordFrames.size() != 0) {
+                            saveToArray(recordFrames.get(0));
+                            recordFrames.remove(0);
+                        }
+                        exporting = false;
+                    }
+                }.start();
+            }
+        });
     }
 
     private void addFrame(Image... frames) {
@@ -114,10 +136,10 @@ public class RecordFX {
         try {
             ImageIO.write(bufferedImage, "png", video);
             System.out.println("保存序列：" + counter);
+            System.gc();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void ffmpegFX() {
@@ -149,8 +171,6 @@ public class RecordFX {
                 sequence.delete();
                 System.out.println("视频导出成功");
             } else System.out.println("FFMPEG错误，请确保已安装，序列已导出");
-            recordFrames.clear();
-            System.gc();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -164,14 +184,20 @@ public class RecordFX {
                 new File(rootPath + "Sequence/").mkdirs();
                 if (!saveSequence) {
                     System.out.println("用ffmpeg编码");
-                    for (Image recordFrame : recordFrames)
-                        saveToArray(recordFrame);
+                    while (exporting)
+                        Thread.onSpinWait();
+                    while (recordFrames.size() != 0) {
+                        saveToArray(recordFrames.get(0));
+                        recordFrames.remove(0);
+                    }
                     ffmpegFX();
                 } else {
                     System.out.println("导出序列");
                     for (Image recordFrame : recordFrames)
                         saveToArray(recordFrame);
                 }
+                recordFrames.clear();
+                System.gc();
                 return null;
             }
         };
