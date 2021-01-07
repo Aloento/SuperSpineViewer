@@ -326,7 +326,13 @@ public class SpineController extends Controller implements Initializable {
         B_Reload.setOnAction(event -> RuntimesLoader.spineVersion.set(-1));
 
         B_Reset.setOnAction(event -> {
-
+            spine.setScale(1);
+            spine.setX(0);
+            spine.setY(-200f);
+            spine.setSkin(null);
+            spine.setAnimate(null);
+            spine.setSpeed(1);
+            spine.setIsPlay(false);
         });
 
         C_Skins.setOnAction(event -> spine.setSkin(C_Skins.getValue()));
