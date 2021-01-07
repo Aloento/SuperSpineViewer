@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="SuperSpineViewer" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.QYun.SuperSpineViewer.AppLauncher" />
+    <option name="MAIN_CLASS_NAME" value="com.QYun.SuperSpineViewer.Main" />
     <module name="SuperSpineViewer" />
     <method v="2">
       <option name="Make" enabled="true" />

@@ -9,6 +9,6 @@ public class AppLauncher extends Controller {
             arg = args[0];
             System.out.println(arg);
         }
-        Application.launch(Main.class, args);
+
     }
 }
