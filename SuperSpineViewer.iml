@@ -607,8 +607,6 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:15.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:15.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:win:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.jcodec:jcodec:0.2.5" level="project" />
-    <orderEntry type="library" name="Maven: org.jcodec:jcodec-javase:0.2.5" level="project" />
     <orderEntry type="library" name="Maven: com.jfoenix:jfoenix:9.0.10" level="project" />
     <orderEntry type="library" name="Maven: io.datafx:flow:8.0.7" level="project" />
     <orderEntry type="library" name="Maven: io.datafx:core:8.0.7" level="project" />

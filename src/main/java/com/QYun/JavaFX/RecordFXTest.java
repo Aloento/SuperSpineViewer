@@ -63,7 +63,7 @@ public class RecordFXTest extends Application {
             }
 
             if (export.isSelected()) {
-                recordFX.startRecording("C:/CaChe/CaChe/", "Record", 3, 30f, true, false);
+                recordFX.startRecording("C:/CaChe/CaChe/", "Record", 3, 30f, false);
                 anime.playFromStart();
             } else anime.playFromStart();
         });

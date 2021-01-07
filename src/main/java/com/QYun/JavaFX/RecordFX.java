@@ -8,49 +8,34 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import org.jcodec.api.awt.AWTSequenceEncoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 public class RecordFX {
 
     private final Node node;
     private final SnapshotParameters parameters = new SnapshotParameters();
-    private final AtomicBoolean allowRecording = new AtomicBoolean(false);
-    private final AtomicInteger timer = new AtomicInteger(0);
-    private final AtomicReference<Float> FPS = new AtomicReference<>(30f);
+    private final List<Image> recordFrames;
+    private Boolean allowRecording = false;
+    private Boolean saveSequence = true;
+    private int timer = 0;
+    private int counter = 0;
     private float durationS = 0;
-    private final AtomicBoolean transparent = new AtomicBoolean(true);
-    private final AtomicBoolean saveSequence = new AtomicBoolean(true);
-    private final AtomicInteger counter = new AtomicInteger(0);
-    private List<Image> recordFrames;
-    private ArrayList<BufferedImage> imageFrames;
+    private float FPS = 60f;
     private String rootPath = null;
     private String fileName = null;
 
     public RecordFX(Node node) {
         this.node = node;
-        this.initStorages();
-        System.out.println("录制实例已创建");
-    }
-
-    private void initStorages() {
         recordFrames = new LinkedList<>();
-        imageFrames = new ArrayList<>();
-    }
-
-    private void resetStorages() {
-        if (recordFrames != null)
-            recordFrames.clear();
-        if (imageFrames != null)
-            imageFrames.clear();
+        System.out.println("录制实例已创建");
     }
 
     private void addFrame(Image... frames) {
@@ -70,10 +55,10 @@ public class RecordFX {
     }
 
     private void recordingTimer() {
-        timer.getAndIncrement();
-        if (allowRecording.get() && timer.get() >= FPS.get()) {
+        timer++;
+        if (allowRecording && timer >= FPS) {
             durationS--;
-            timer.set(0);
+            timer = 0;
 
             if (durationS <= 0) {
                 durationS = 0;
@@ -90,12 +75,12 @@ public class RecordFX {
                 System.out.println("录制开始");
                 while (durationS > 0) {
                     Platform.runLater(() -> {
-                        if (allowRecording.get() && durationS > 0) {
+                        if (allowRecording && durationS > 0) {
                             addFrame(createFrame());
                         }
                         recordingTimer();
                     });
-                    Thread.sleep((long) (1000 / FPS.get()));
+                    Thread.sleep((long) (1000 / FPS));
                 }
                 return null;
             }
@@ -106,76 +91,33 @@ public class RecordFX {
         recodeThread.start();
     }
 
-    public void startRecording(String rootPath, String fileName, float durationS, Float FPS, boolean transparent, boolean saveSequence) {
+    public void startRecording(String rootPath, String fileName, float durationS, Float FPS, boolean saveSequence) {
         this.rootPath = rootPath;
         this.fileName = fileName;
         this.durationS = durationS;
-        this.FPS.set(FPS);
-        this.transparent.set(transparent);
-        this.saveSequence.set(saveSequence);
+        this.FPS = FPS;
+        this.saveSequence = saveSequence;
 
-        if (transparent)
-            parameters.setFill(Color.TRANSPARENT);
-        if (!allowRecording.get()) {
+        parameters.setFill(Color.TRANSPARENT);
+        if (!allowRecording) {
             System.out.println("请求：开始录制");
-            allowRecording.set(true);
-            resetStorages();
+            allowRecording = true;
+            recordFrames.clear();
             recorderFX();
         }
     }
 
     private void saveToArray(Image image) {
-        counter.getAndIncrement();
+        counter++;
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-
-        if (saveSequence.get()) {
-            new File(rootPath + "Sequence/").mkdirs();
-            File video = new File((rootPath + "Sequence/" + fileName) + "_" + counter + ".png");
-            try {
-                ImageIO.write(bufferedImage, "png", video);
-                System.out.println("保存序列：" + counter);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            imageFrames.add(bufferedImage);
-            System.out.println("缓存：" + counter);
+        File video = new File((rootPath + "Sequence/" + fileName) + "_" + counter + ".png");
+        try {
+            ImageIO.write(bufferedImage, "png", video);
+            System.out.println("保存序列：" + counter);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
 
-    private void saveRecordFX() {
-        Task<Void> saveRecordTask = new Task<>() {
-            @Override
-            protected Void call() {
-                File root = new File(rootPath);
-                File video = new File((rootPath + fileName) + ".mp4");
-                video.delete();
-                recordFrames.clear();
-                try {
-                    root.mkdirs();
-                    AWTSequenceEncoder encoder = AWTSequenceEncoder.createSequenceEncoder(video, FPS.get().intValue());
-                    imageFrames.forEach((image -> {
-                        try {
-                            encoder.encodeImage(image);
-                            System.out.println("编码帧：" + counter.getAndDecrement());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }));
-                    encoder.finish();
-                    System.out.println("保存录像成功");
-                    resetStorages();
-                    System.gc();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
-        Thread saveRecordThread = new Thread(saveRecordTask);
-        saveRecordThread.setName("RecordFX_RecordSaving");
-        saveRecordThread.setDaemon(true);
-        saveRecordThread.start();
     }
 
     private void ffmpegFX() {
@@ -187,30 +129,30 @@ public class RecordFX {
             //                 " -c:v libvpx-vp9 -lossless 1" +
             //                 " -pix_fmt yuva420p -row-mt 1" +
             //                 " " + rootPath + fileName + ".webm");
+
             System.out.println("FFMPEG处理开始，请确保已安装");
             new File((rootPath + fileName) + ".mov").delete();
+
             Process ffmpeg = Runtime.getRuntime().exec(
-                    "ffmpeg -r " + FPS.get() +
+                    "ffmpeg -r " + FPS +
                             " -i " + rootPath + "Sequence/" + fileName + "_%d.png" +
                             " -c:v png" +
                             " -pix_fmt rgba" +
                             " " + rootPath + fileName + ".mov");
 
-            try {
-                int status = ffmpeg.waitFor();
+            int status = ffmpeg.waitFor();
+            if (status == 0) {
                 File sequence = new File(rootPath + "Sequence/");
                 String[] files = sequence.list();
                 for (String file : Objects.requireNonNull(files))
                     new File(sequence, file).delete();
                 sequence.delete();
-                System.out.println("ffmpeg：" + status);
-                resetStorages();
-                System.gc();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                System.out.println("视频导出成功");
+            } else System.out.println("FFMPEG错误，请确保已安装，序列已导出");
+            recordFrames.clear();
+            System.gc();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -219,24 +161,17 @@ public class RecordFX {
         Task<Void> saveVideoTask = new Task<>() {
             @Override
             protected Void call() {
-
-                if (!saveSequence.get() && transparent.get()) {
+                new File(rootPath + "Sequence/").mkdirs();
+                if (!saveSequence) {
                     System.out.println("用ffmpeg编码");
-                    saveSequence.set(true);
                     for (Image recordFrame : recordFrames)
                         saveToArray(recordFrame);
                     ffmpegFX();
-                } else if (!saveSequence.get() && !transparent.get()) {
-                    System.out.println("用jcodec编码");
-                    for (Image recordFrame : recordFrames)
-                        saveToArray(recordFrame);
-                    saveRecordFX();
-                } else if (saveSequence.get()) {
+                } else {
                     System.out.println("导出序列");
                     for (Image recordFrame : recordFrames)
                         saveToArray(recordFrame);
                 }
-
                 return null;
             }
         };
@@ -247,9 +182,9 @@ public class RecordFX {
     }
 
     public void stopRecording() {
-        if (allowRecording.get()) {
+        if (allowRecording) {
             System.out.println("请求：停止录制");
-            allowRecording.set(false);
+            allowRecording = false;
             encodeFX();
         }
     }
