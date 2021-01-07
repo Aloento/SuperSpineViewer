@@ -20,7 +20,6 @@ public class Spine38 extends SuperSpine {
     private SkeletonData skeletonData;
     private Skeleton skeleton;
     private AnimationState state;
-    private TrackEntry entry;
 
     private void skins(Array<Skin> skins) {
         for (Skin skin : skins)
@@ -195,7 +194,7 @@ public class Spine38 extends SuperSpine {
         batch.end();
 
         if (state != null) {
-            entry = state.getCurrent(0);
+            TrackEntry entry = state.getCurrent(0);
             if (entry != null) {
                 double percent = entry.getAnimationTime() / entry.getAnimationEnd();
                 duration = entry.getAnimationEnd();
