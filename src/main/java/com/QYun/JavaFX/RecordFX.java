@@ -156,10 +156,11 @@ public class RecordFX {
             new File((rootPath + fileName) + ".mov").delete();
 
             Process ffmpeg = Runtime.getRuntime().exec(
-                    "ffmpeg -r " + FPS/2 +
+                    "ffmpeg -r " + FPS +
                             " -i " + rootPath + "Sequence/" + fileName + "_%d.png" +
                             " -c:v png" +
                             " -pix_fmt rgba" +
+                            " -filter:v \"setpts=0.5*PTS\"" +
                             " " + rootPath + fileName + ".mov");
 
             int status = ffmpeg.waitFor();
