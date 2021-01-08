@@ -142,7 +142,9 @@ public class SpineController extends Controller implements Initializable {
         JFXTextField T_Scale = new JFXTextField();
         T_Scale.setPromptText("1.0");
         JFXTextField T_Width = new JFXTextField();
+        T_Width.setEditable(false);
         JFXTextField T_Height = new JFXTextField();
+        T_Height.setEditable(false);
         JFXTextField T_X = new JFXTextField();
         T_X.setPromptText("0.0");
         JFXTextField T_Y = new JFXTextField();
@@ -174,10 +176,10 @@ public class SpineController extends Controller implements Initializable {
         VBox controller = new VBox(20);
         controller.setPadding(new Insets(14, 16, 20, 16));
         controller.getChildren().addAll(L_Scale, T_Scale,
-                L_Width, T_Width,
-                L_Height, T_Height,
                 L_X, T_X,
                 L_Y, T_Y,
+                L_Width, T_Width,
+                L_Height, T_Height,
                 L_Speed, S_Speed, set,
                 L_Skins, C_Skins,
                 L_Animate, C_Animate);
@@ -269,27 +271,27 @@ public class SpineController extends Controller implements Initializable {
                     spine.setScale(Float.parseFloat(T_Scale.getText()));
         });
 
-        T_Width.setTextFormatter(new TextFormatter<String>(change -> {
-            if (change.getText().matches("[0-9]*"))
-                return change;
-            return null;
-        }));
-        T_Width.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode().equals(KeyCode.ENTER))
-                if (T_Width.getText().matches("^[1-9]\\d*$"))
-                    width = Integer.parseInt(T_Width.getText());
-        });
-
-        T_Height.setTextFormatter(new TextFormatter<String>(change -> {
-            if (change.getText().matches("[0-9]*"))
-                return change;
-            return null;
-        }));
-        T_Height.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode().equals(KeyCode.ENTER))
-                if (T_Height.getText().matches("^[1-9]\\d*$"))
-                    height = Integer.parseInt(T_Height.getText());
-        });
+        // T_Width.setTextFormatter(new TextFormatter<String>(change -> {
+        //     if (change.getText().matches("[0-9]*"))
+        //         return change;
+        //     return null;
+        // }));
+        // T_Width.setOnKeyPressed(keyEvent -> {
+        //     if (keyEvent.getCode().equals(KeyCode.ENTER))
+        //         if (T_Width.getText().matches("^[1-9]\\d*$"))
+        //             width = Integer.parseInt(T_Width.getText());
+        // });
+        //
+        // T_Height.setTextFormatter(new TextFormatter<String>(change -> {
+        //     if (change.getText().matches("[0-9]*"))
+        //         return change;
+        //     return null;
+        // }));
+        // T_Height.setOnKeyPressed(keyEvent -> {
+        //     if (keyEvent.getCode().equals(KeyCode.ENTER))
+        //         if (T_Height.getText().matches("^[1-9]\\d*$"))
+        //             height = Integer.parseInt(T_Height.getText());
+        // });
 
         T_X.setTextFormatter(new TextFormatter<String>(change -> {
             if (change.getText().matches("[0-9]*|\\.|-"))
