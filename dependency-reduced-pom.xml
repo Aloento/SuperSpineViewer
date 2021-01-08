@@ -4,7 +4,7 @@
   <groupId>com.QYun</groupId>
   <artifactId>SuperSpineViewer</artifactId>
   <name>SuperSpineViewer</name>
-  <version>0.1.5</version>
+  <version>0.1.6</version>
   <url>https://github.com/soarteam/SuperSpineViewer</url>
   <developers>
     <developer>
@@ -34,12 +34,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <compilerArgs>
-            <arg>--add-reads</arg>
-            <arg>javafx.graphics=ALL-UNNAMED</arg>
-            <arg>--add-exports</arg>
-            <arg>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</arg>
-          </compilerArgs>
           <release>15</release>
         </configuration>
       </plugin>

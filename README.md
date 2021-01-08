@@ -1,7 +1,7 @@
 # SuperSpineViewer
 一个拿来加载与导出Spine动画的工具  
 至少需要Java15才能运行  
-当前版本：0.1.5 快照测试版  
+当前版本：0.1.6 测试版  
 
 ## 关于这个工具
 它本质上是我学习Java和OpenJFX的练习作品  
@@ -30,13 +30,15 @@
 调整速度  
 循环播放  
 播放暂停  
+导出透明MOV  
+导出透明PNG  
 
 ### 支持的版本
 Spine 2.1  
 Spine 3.1  
 Spine 3.4  
-Spine 3.5  
-Spine 3.6  
-Spine 3.7  
-Spine 3.8    
+Spine 3.5 √  
+Spine 3.6 √  
+Spine 3.7 √  
+Spine 3.8 √    
 Spine 4.0  

@@ -6,7 +6,7 @@
 
     <groupId>com.QYun</groupId>
     <artifactId>SuperSpineViewer</artifactId>
-    <version>0.1.5</version>
+    <version>0.1.6</version>
     <repositories>
         <repository>
             <id>sonatype</id>
@@ -108,11 +108,6 @@
             <groupId>io.datafx</groupId>
             <artifactId>flow</artifactId>
             <version>8.0.7</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
