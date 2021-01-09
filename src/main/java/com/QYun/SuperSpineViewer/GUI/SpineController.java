@@ -78,7 +78,7 @@ public class SpineController extends Controller implements Initializable {
 
         StackPane header = new StackPane();
         AtomicReference<String> headerColor = new AtomicReference<>(getDefaultColor((int) ((Math.random() * 12) % 22)));
-        header.setStyle("-fx-background-radius: 0 5 0 0;-fx-min-height: 138; -fx-background-color: " + headerColor);
+        header.setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
 
         Label project = new Label("Waiting Loading...");
         project.setStyle("-fx-text-fill: #f1f1f2;");
@@ -218,7 +218,7 @@ public class SpineController extends Controller implements Initializable {
                     spine.setIsPlay(true);
                     playButton.setGraphic(pauseIcon);
                     headerColor.set(getDefaultColor((int) ((Math.random() * 12) % 22)));
-                    header.setStyle("-fx-background-radius: 0 5 0 0; -fx-background-color: " + headerColor);
+                    header.setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
                     playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 20) % 22)));
                     playButton.setRipplerFill(Color.valueOf(headerColor.get()));
                 }

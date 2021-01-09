@@ -17,11 +17,11 @@ import java.nio.file.Files;
 public class RuntimesLoader extends Controller {
 
     public static final SimpleIntegerProperty spineVersion = new SimpleIntegerProperty(0);
-    final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+    private final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
     private final String[] extraSuffixes = {"", ".txt", ".bytes"};
     private final String[] dataSuffixes = {"", ".json", ".skel"};
     private final String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas", "-pma.atlas"};
-    SuperSpine spine = new SuperSpine();
+    private final SuperSpine spine = new SuperSpine();
 
     private boolean binaryVersion(File skelFile) {
         try {
@@ -93,6 +93,7 @@ public class RuntimesLoader extends Controller {
     }
 
     private boolean initLibDGX() {
+        config.samples = 16;
         try {
             switch (spineVersion.get()) {
                 case 40 -> new LwjglFXApplication(new Spine40(), spineRender, config);
