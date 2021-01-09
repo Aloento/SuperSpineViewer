@@ -22,9 +22,10 @@ import java.util.ResourceBundle;
 
 public class ExporterController extends Controller implements Initializable {
 
-    final RuntimesLoader runtimesLoader = new RuntimesLoader();
-    SuperSpine spine = new SuperSpine();
-    boolean sequence = false;
+    private final RecordFX recordFX = new RecordFX(Objects.requireNonNull(spineRender));
+    private final RuntimesLoader runtimesLoader = new RuntimesLoader();
+    private final SuperSpine spine = new SuperSpine();
+    private boolean sequence = false;
     @FXML
     private StackPane Exporter;
     @FXML
@@ -50,11 +51,11 @@ public class ExporterController extends Controller implements Initializable {
             if (isFX && format != 2) {
                 if (format == 3)
                     sequence = true;
-                RecordFX recordFX = new RecordFX(Objects.requireNonNull(spineRender));
+
                 spine.setIsLoop(false);
+                spine.setSpeed(0.5f);
                 recordFX.startRecording(path, spine.getProjectName(), 60f, sequence);
-                Platform.runLater(() -> spine.setSpeed(0.5f));
-                Platform.runLater(() -> spine.setIsPlay(true));
+                spine.setIsPlay(true);
             }
         }
     }

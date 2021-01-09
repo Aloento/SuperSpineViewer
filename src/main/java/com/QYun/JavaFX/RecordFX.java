@@ -28,16 +28,17 @@ public class RecordFX {
     private final ObservableList<Image> framesList = FXCollections.observableArrayList();
     private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(framesList);
     private final SuperSpine spine = new SuperSpine();
-    private boolean allowRecording = false;
+    private boolean recording = false;
     private boolean saveSequence = true;
-    private int timer;
-    private int counter;
+    private int timer = 0;
+    private int counter = 0;
     private float FPS = 60f;
     private String rootPath = null;
     private String fileName = null;
 
     public RecordFX(Node node) {
         this.node = node;
+        parameters.setFill(Color.TRANSPARENT);
         System.out.println("录制实例已创建");
         recordFrames.addListener((InvalidationListener) observable -> {
             if (!exporting) {
@@ -70,10 +71,9 @@ public class RecordFX {
                 System.out.println("录制开始");
                 do {
                     Platform.runLater(() -> {
-                        if (allowRecording && spine.getPercent() <= 1)
+                        if (spine.getPercent() <= 1)
                             addFrame();
-                        timer++;
-                        System.out.println("捕获的帧：" + timer + "\t" + spine.getPercent());
+                        System.out.println("捕获的帧：" + timer++ + "\t" + spine.getPercent());
                     });
                     try {
                         Thread.sleep((long) (1000 / FPS));
@@ -94,35 +94,36 @@ public class RecordFX {
         this.FPS = FPS;
         this.saveSequence = saveSequence;
 
-        parameters.setFill(Color.TRANSPARENT);
-        if (!allowRecording) {
-            System.out.println("请求：开始录制");
-            allowRecording = true;
+        if (!recording) {
             recordFrames.clear();
             recorderFX();
+            recording = true;
+            System.out.println("请求：开始录制");
         }
     }
 
     private void saveToArray(Image image) {
-        counter++;
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        File video = new File((rootPath + "Sequence/" + fileName) + "_" + counter + ".png");
+        File video = new File((rootPath + "Sequence/" + fileName) + "_" + counter++ + ".png");
         try {
             ImageIO.write(bufferedImage, "png", video);
-            System.out.println("保存序列：" + counter);
-            if (!spine.isIsPlay())
-                Controller.progressBar.setProgress(((double) counter / (double) timer));
-            System.gc();
         } catch (IOException e) {
             System.out.println("保存PNG文件失败");
             e.printStackTrace();
         }
+        Platform.runLater(() -> {
+            System.out.println("保存序列：" + counter);
+            if (!spine.isIsPlay())
+                Controller.progressBar.setProgress(((double) counter / (double) timer));
+        });
     }
 
     private void ffmpegFX() {
         try {
-            System.out.println("FFMPEG处理开始，请确保已安装");
-            Platform.runLater(() -> Controller.progressBar.setProgress(-1));
+            Platform.runLater(() -> {
+                System.out.println("FFMPEG处理开始，请确保已安装");
+                Controller.progressBar.setProgress(-1);
+            });
             new File((rootPath + fileName) + ".mov").delete();
 
             Process ffmpeg = Runtime.getRuntime().exec(
@@ -141,7 +142,7 @@ public class RecordFX {
                     new File(sequence, file).delete();
                 sequence.delete();
                 System.out.println("视频导出成功");
-            } else System.out.println("FFMPEG错误，请确保已安装，序列已导出");
+            } else System.out.println("FFMPEG错误，序列已导出");
 
         } catch (Exception ignored) {
         }
@@ -160,7 +161,9 @@ public class RecordFX {
                 }
                 if (!saveSequence)
                     ffmpegFX();
+                spine.setSpeed(1);
                 System.gc();
+                System.out.println("导出结束");
             }
         };
         saveVideoThread.setDaemon(true);
@@ -168,10 +171,10 @@ public class RecordFX {
     }
 
     public void stopRecording() {
-        if (allowRecording) {
-            System.out.println("请求：停止录制");
-            allowRecording = false;
+        if (recording) {
             encodeFX();
+            recording = false;
+            System.out.println("请求：停止录制");
         }
     }
 
