@@ -19,7 +19,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class RecordFX {
@@ -59,17 +58,10 @@ public class RecordFX {
         });
     }
 
-    private void addFrame(Image... frames) {
-        if (frames.length > 1) {
-            recordFrames.addAll(Arrays.asList(frames));
-            System.out.println("添加帧：" + frames.length);
-        } else recordFrames.add(frames[0]);
-    }
-
-    private synchronized Image createFrame() {
+    private void addFrame() {
         WritableImage imgShot = new WritableImage((int) node.getBoundsInParent().getWidth(), (int) node.getBoundsInParent().getHeight());
         node.snapshot(parameters, imgShot);
-        return imgShot;
+        recordFrames.add(imgShot);
     }
 
     private void recorderFX() {
@@ -80,7 +72,7 @@ public class RecordFX {
                 do {
                     Platform.runLater(() -> {
                         if (allowRecording && spine.getPercent() <= 1) {
-                            addFrame(createFrame());
+                            addFrame();
                         }
                         timer++;
                         System.out.println("捕获的帧：" + timer + "\t" + spine.getPercent());
@@ -120,7 +112,8 @@ public class RecordFX {
         try {
             ImageIO.write(bufferedImage, "png", video);
             System.out.println("保存序列：" + counter);
-            Controller.progressBar.setProgress(((double) counter / (double) timer));
+            if (!spine.isIsPlay())
+                Controller.progressBar.setProgress(((double) counter / (double) timer));
             System.gc();
         } catch (IOException e) {
             e.printStackTrace();
