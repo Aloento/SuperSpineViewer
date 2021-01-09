@@ -7,7 +7,6 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -65,27 +64,26 @@ public class RecordFX {
     }
 
     private void recorderFX() {
-        Task<Void> recorderTask = new Task<>() {
+        Thread recodeThread = new Thread("RecordFX_Capturing") {
             @Override
-            protected Void call() throws InterruptedException {
+            public void run() {
                 System.out.println("录制开始");
                 do {
                     Platform.runLater(() -> {
-                        if (allowRecording && spine.getPercent() <= 1) {
+                        if (allowRecording && spine.getPercent() <= 1)
                             addFrame();
-                        }
                         timer++;
                         System.out.println("捕获的帧：" + timer + "\t" + spine.getPercent());
                     });
-                    Thread.sleep((long) (1000 / FPS));
+                    try {
+                        Thread.sleep((long) (1000 / FPS));
+                    } catch (InterruptedException ignored) {
+                    }
                 } while (spine.getPercent() < 1);
                 System.out.println("停止录制");
                 stopRecording();
-                return null;
             }
         };
-        Thread recodeThread = new Thread(recorderTask);
-        recodeThread.setName("RecordFX_Capturing");
         recodeThread.setDaemon(true);
         recodeThread.start();
     }
@@ -116,6 +114,7 @@ public class RecordFX {
                 Controller.progressBar.setProgress(((double) counter / (double) timer));
             System.gc();
         } catch (IOException e) {
+            System.out.println("保存PNG文件失败");
             e.printStackTrace();
         }
     }
@@ -123,6 +122,7 @@ public class RecordFX {
     private void ffmpegFX() {
         try {
             System.out.println("FFMPEG处理开始，请确保已安装");
+            Platform.runLater(() -> Controller.progressBar.setProgress(-1));
             new File((rootPath + fileName) + ".mov").delete();
 
             Process ffmpeg = Runtime.getRuntime().exec(
@@ -143,15 +143,14 @@ public class RecordFX {
                 System.out.println("视频导出成功");
             } else System.out.println("FFMPEG错误，请确保已安装，序列已导出");
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 
     private void encodeFX() {
-        Task<Void> saveVideoTask = new Task<>() {
+        Thread saveVideoThread = new Thread("RecordFX_Encoding") {
             @Override
-            protected Void call() {
+            public void run() {
                 new File(rootPath + "Sequence/").mkdirs();
                 while (exporting)
                     Thread.onSpinWait();
@@ -162,11 +161,8 @@ public class RecordFX {
                 if (!saveSequence)
                     ffmpegFX();
                 System.gc();
-                return null;
             }
         };
-        Thread saveVideoThread = new Thread(saveVideoTask);
-        saveVideoThread.setName("RecordFX_Encoding");
         saveVideoThread.setDaemon(true);
         saveVideoThread.start();
     }
