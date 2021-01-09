@@ -80,14 +80,12 @@ public class SpineController extends Controller implements Initializable {
         AtomicReference<String> headerColor = new AtomicReference<>(getDefaultColor((int) ((Math.random() * 12) % 22)));
         header.setStyle("-fx-background-radius: 0 5 0 0;-fx-min-height: 138; -fx-background-color: " + headerColor);
 
-        HBox hBox = new HBox(8);
-        hBox.setPadding(new Insets(48, 0, 0, 105));
-        hBox.getChildren().addAll(spineLogo);
         Label project = new Label("Waiting Loading...");
         project.setStyle("-fx-text-fill: #f1f1f2;");
         project.getStyleClass().add("normal-label");
         header.setAlignment(Pos.BOTTOM_LEFT);
-        header.getChildren().addAll(hBox, project);
+        header.getChildren().addAll(spineLogo, project);
+        StackPane.setAlignment(spineLogo, Pos.CENTER);
         spine.projectNameProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> project.setText(newValue)));
 
         VBox.setVgrow(header, Priority.NEVER);
