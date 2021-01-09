@@ -72,28 +72,23 @@
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
-                <JFXRadioButton onAction="#RB_MOV" selected="true" text="MOV">
-                    <styleClass>
-                        <String fx:value="custom-jfx-radio-button"/>
-                        <String fx:value="custom-jfx-radio-button-blue"/>
-                    </styleClass>
-                    <toggleGroup>
-                        <ToggleGroup fx:id="Format"/>
-                    </toggleGroup>
-                </JFXRadioButton>
-                <JFXRadioButton layoutX="10.0" layoutY="33.0" onAction="#RB_GIF" text="GIF" toggleGroup="$Format">
-                    <styleClass>
-                        <String fx:value="custom-jfx-radio-button"/>
-                        <String fx:value="custom-jfx-radio-button-red"/>
-                    </styleClass>
-                </JFXRadioButton>
-                <JFXRadioButton layoutX="10.0" layoutY="10.0" onAction="#RB_Sequence" text="Sequence"
-                                toggleGroup="$Format">
-                    <styleClass>
-                        <String fx:value="custom-jfx-radio-button"/>
-                        <String fx:value="custom-jfx-radio-button-green"/>
-                    </styleClass>
-                </JFXRadioButton>
+                <HBox spacing="41">
+                    <JFXRadioButton onAction="#RB_MOV" selected="true" text="MOV">
+                        <styleClass>
+                            <String fx:value="custom-jfx-radio-button"/>
+                            <String fx:value="custom-jfx-radio-button-blue"/>
+                        </styleClass>
+                        <toggleGroup>
+                            <ToggleGroup fx:id="Format"/>
+                        </toggleGroup>
+                    </JFXRadioButton>
+                    <JFXRadioButton onAction="#RB_Sequence" text="Sequence" toggleGroup="$Format">
+                        <styleClass>
+                            <String fx:value="custom-jfx-radio-button"/>
+                            <String fx:value="custom-jfx-radio-button-red"/>
+                        </styleClass>
+                    </JFXRadioButton>
+                </HBox>
             </VBox>
             <VBox layoutX="26.0" layoutY="195.0" spacing="16.0">
                 <padding>

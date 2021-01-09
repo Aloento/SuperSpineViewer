@@ -1,4 +1,4 @@
-package com.QYun.JavaFX;
+package com.QYun.SuperSpineViewer;
 
 import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.GUI.Controller;

@@ -1,6 +1,6 @@
 package com.QYun.SuperSpineViewer.GUI;
 
-import com.QYun.JavaFX.RecordFX;
+import com.QYun.SuperSpineViewer.RecordFX;
 import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.jfoenix.controls.JFXProgressBar;
@@ -48,21 +48,15 @@ public class ExporterController extends Controller implements Initializable {
     @FXML
     void B_Export() {
         if (path != null && spine.getAnimate() != null) {
-            if (isFX && format != 2) {
-                if (format == 3)
-                    sequence = true;
-
+            if (isFX) {
                 spine.setIsLoop(false);
                 spine.setSpeed(0.5f);
                 recordFX.startRecording(path, spine.getProjectName(), 60f, sequence);
                 spine.setIsPlay(true);
+            } else {
+                System.out.println("功能构建中");
             }
         }
-    }
-
-    @FXML
-    public void B_Preview() {
-
     }
 
     @FXML
@@ -98,18 +92,13 @@ public class ExporterController extends Controller implements Initializable {
     }
 
     @FXML
-    void RB_GIF() {
-        format = 2;
-    }
-
-    @FXML
     void RB_LibGDX() {
         isFX = false;
     }
 
     @FXML
     void RB_MOV() {
-        format = 1;
+        sequence = false;
     }
 
     @FXML
@@ -119,7 +108,7 @@ public class ExporterController extends Controller implements Initializable {
 
     @FXML
     void RB_Sequence() {
-        format = 3;
+        sequence = true;
     }
 
     @Override

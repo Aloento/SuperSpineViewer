@@ -10,7 +10,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -25,15 +24,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
@@ -78,36 +70,18 @@ public class SpineController extends Controller implements Initializable {
     @FXML
     private JFXSpinner redSpinner;
 
-    public SpineController() {
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         SuperSpine spine = new SuperSpine();
         ImageView spineLogo = new ImageView();
-        BufferedImageTranscoder transcoder = new BufferedImageTranscoder();
-        try (InputStream file = getClass().getResourceAsStream("/UI/SpineLogo.svg")) {
-            TranscoderInput transIn = new TranscoderInput(file);
-            try {
-                transcoder.transcode(transIn, null);
-                Image svg = SwingFXUtils.toFXImage(transcoder.getBufferedImage(), null);
-                spineLogo.setImage(svg);
-            } catch (TranscoderException ex) {
-                ex.printStackTrace();
-            }
-        } catch (IOException io) {
-            io.printStackTrace();
-        }
-        spineLogo.setFitHeight(138);
-        spineLogo.setPreserveRatio(true);
-        spineLogo.setSmooth(true);
+        spineLogo.setImage(new Image("/UI/SpineLogo.png",138, 0, true, true, false));
 
         StackPane header = new StackPane();
         AtomicReference<String> headerColor = new AtomicReference<>(getDefaultColor((int) ((Math.random() * 12) % 22)));
-        header.setStyle("-fx-background-radius: 0 5 0 0; -fx-background-color: " + headerColor);
+        header.setStyle("-fx-background-radius: 0 5 0 0;-fx-min-height: 138; -fx-background-color: " + headerColor);
 
         HBox hBox = new HBox(8);
-        hBox.setPadding(new Insets(0, 0, 0, 105));
+        hBox.setPadding(new Insets(48, 0, 0, 105));
         hBox.getChildren().addAll(spineLogo);
         Label project = new Label("Waiting Loading...");
         project.setStyle("-fx-text-fill: #f1f1f2;");
@@ -270,28 +244,6 @@ public class SpineController extends Controller implements Initializable {
                 if (T_Scale.getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
                     spine.setScale(Float.parseFloat(T_Scale.getText()));
         });
-
-        // T_Width.setTextFormatter(new TextFormatter<String>(change -> {
-        //     if (change.getText().matches("[0-9]*"))
-        //         return change;
-        //     return null;
-        // }));
-        // T_Width.setOnKeyPressed(keyEvent -> {
-        //     if (keyEvent.getCode().equals(KeyCode.ENTER))
-        //         if (T_Width.getText().matches("^[1-9]\\d*$"))
-        //             width = Integer.parseInt(T_Width.getText());
-        // });
-        //
-        // T_Height.setTextFormatter(new TextFormatter<String>(change -> {
-        //     if (change.getText().matches("[0-9]*"))
-        //         return change;
-        //     return null;
-        // }));
-        // T_Height.setOnKeyPressed(keyEvent -> {
-        //     if (keyEvent.getCode().equals(KeyCode.ENTER))
-        //         if (T_Height.getText().matches("^[1-9]\\d*$"))
-        //             height = Integer.parseInt(T_Height.getText());
-        // });
 
         T_X.setTextFormatter(new TextFormatter<String>(change -> {
             if (change.getText().matches("[0-9]*|\\.|-"))
@@ -467,24 +419,6 @@ public class SpineController extends Controller implements Initializable {
                 break;
         }
         return color;
-    }
-
-    private static class BufferedImageTranscoder extends ImageTranscoder {
-        BufferedImage svg = null;
-
-        @Override
-        public BufferedImage createImage(int width, int height) {
-            return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        }
-
-        @Override
-        public void writeImage(BufferedImage svg, TranscoderOutput to) {
-            this.svg = svg;
-        }
-
-        public BufferedImage getBufferedImage() {
-            return svg;
-        }
     }
 
 }

@@ -1,7 +1,6 @@
 package com.QYun.SuperSpineViewer.GUI;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.StackPane;
@@ -21,19 +20,17 @@ public class AboutController implements Initializable {
     }
 
     @FXML
-    private void handleExitButtonClicked(ActionEvent event) {
+    private void handleExitButtonClicked() {
         Stage aboutStage = (Stage) aboutPane.getScene().getWindow();
         aboutStage.close();
-        event.consume();
     }
 
     @FXML
-    private void handleGitButtonClicked(ActionEvent event) {
+    private void handleGitButtonClicked() {
         new Application() {
             @Override
             public void start(Stage stage) {
             }
         }.getHostServices().showDocument("https://github.com/soarteam/SuperSpineViewer");
-        event.consume();
     }
 }

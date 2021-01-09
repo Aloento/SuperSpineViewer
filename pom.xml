@@ -119,11 +119,6 @@
             <artifactId>ikonli-fontawesome5-pack</artifactId>
             <version>12.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-transcoder</artifactId>
-            <version>1.13</version>
-        </dependency>
     </dependencies>
 
     <build>
