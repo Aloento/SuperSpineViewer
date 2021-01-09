@@ -1,6 +1,7 @@
 package com.QYun.JavaFX;
 
 import com.QYun.Spine.SuperSpine;
+import com.QYun.SuperSpineViewer.GUI.Controller;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleListProperty;
@@ -71,11 +72,6 @@ public class RecordFX {
         return imgShot;
     }
 
-    private void recordingTimer() {
-        timer++;
-        System.out.println("捕获的帧：" + timer + "\t" + spine.getPercent());
-    }
-
     private void recorderFX() {
         Task<Void> recorderTask = new Task<>() {
             @Override
@@ -86,7 +82,8 @@ public class RecordFX {
                         if (allowRecording && spine.getPercent() <= 1) {
                             addFrame(createFrame());
                         }
-                        recordingTimer();
+                        timer++;
+                        System.out.println("捕获的帧：" + timer + "\t" + spine.getPercent());
                     });
                     Thread.sleep((long) (1000 / FPS));
                 } while (spine.getPercent() < 1);
@@ -106,8 +103,6 @@ public class RecordFX {
         this.fileName = fileName;
         this.FPS = FPS;
         this.saveSequence = saveSequence;
-        timer = 0;
-        counter = 0;
 
         parameters.setFill(Color.TRANSPARENT);
         if (!allowRecording) {
@@ -125,6 +120,7 @@ public class RecordFX {
         try {
             ImageIO.write(bufferedImage, "png", video);
             System.out.println("保存序列：" + counter);
+            Controller.progressBar.setProgress(((double) counter / (double) timer));
             System.gc();
         } catch (IOException e) {
             e.printStackTrace();
@@ -133,14 +129,6 @@ public class RecordFX {
 
     private void ffmpegFX() {
         try {
-            // new File((rootPath + fileName) + ".webm").delete();
-            // Process ffmpeg = Runtime.getRuntime().exec(
-            //         "ffmpeg -r " + FPS.get() +
-            //                 " -i " + rootPath + fileName + "_%d.png" +
-            //                 " -c:v libvpx-vp9 -lossless 1" +
-            //                 " -pix_fmt yuva420p -row-mt 1" +
-            //                 " " + rootPath + fileName + ".webm");
-
             System.out.println("FFMPEG处理开始，请确保已安装");
             new File((rootPath + fileName) + ".mov").delete();
 
