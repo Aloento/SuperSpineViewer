@@ -7,12 +7,12 @@ import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
-import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class RuntimesLoader extends Controller {
 
@@ -60,7 +60,7 @@ public class RuntimesLoader extends Controller {
 
     private boolean jsonVersion(File skelFile) {
         try {
-            String json = FileUtils.readFileToString(skelFile, "UTF-8");
+            String json = Files.readString(skelFile.toPath());
 
             if (json.contains("4.0."))
                 spineVersion.set(40);
