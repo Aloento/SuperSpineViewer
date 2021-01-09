@@ -46,15 +46,15 @@ public class ExporterController extends Controller implements Initializable {
 
     @FXML
     void B_Export() {
-        if (path != null && spine.getDuration() > 0) {
+        if (path != null && spine.getAnimate() != null) {
             if (isFX && format != 2) {
                 if (format == 3)
                     sequence = true;
                 RecordFX recordFX = new RecordFX(Objects.requireNonNull(spineRender));
                 spine.setIsLoop(false);
-                spine.setSpeed(0.5f);
-                recordFX.startRecording(path, spine.getProjectName(), spine.getDuration() * 2, 60f, sequence);
-                spine.setIsPlay(true);
+                recordFX.startRecording(path, spine.getProjectName(), 60f, sequence);
+                Platform.runLater(() -> spine.setSpeed(0.5f));
+                Platform.runLater(() -> spine.setIsPlay(true));
             }
         }
     }

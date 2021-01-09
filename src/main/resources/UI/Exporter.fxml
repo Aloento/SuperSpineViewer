@@ -125,12 +125,6 @@
                             <Font name="System Bold" size="14.0"/>
                         </font>
                     </JFXButton>
-                    <JFXButton disable="true" layoutX="10.0" layoutY="10.0" onAction="#B_Preview" text="Preview"
-                               textFill="#5264ae" visible="false">
-                        <font>
-                            <Font name="System Bold" size="14.0"/>
-                        </font>
-                    </JFXButton>
                 </HBox>
                 <JFXProgressBar fx:id="P_Export" maxWidth="250.0"/>
             </VBox>

@@ -1,5 +1,6 @@
 package com.QYun.JavaFX;
 
+import com.QYun.Spine.SuperSpine;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleListProperty;
@@ -27,12 +28,11 @@ public class RecordFX {
     private final SnapshotParameters parameters = new SnapshotParameters();
     private final ObservableList<Image> framesList = FXCollections.observableArrayList();
     private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(framesList);
+    private final SuperSpine spine = new SuperSpine();
     private boolean allowRecording = false;
     private boolean saveSequence = true;
-    private int timer = 0;
-    private int counter = 0;
-    private int waiting = 0;
-    private float durationS = 0;
+    private int timer;
+    private int counter;
     private float FPS = 60f;
     private String rootPath = null;
     private String fileName = null;
@@ -41,9 +41,7 @@ public class RecordFX {
         this.node = node;
         System.out.println("录制实例已创建");
         recordFrames.addListener((InvalidationListener) observable -> {
-            waiting++;
-            if (waiting > 3 && !exporting) {
-                waiting = 0;
+            if (!exporting) {
                 exporting = true;
                 new Thread("RecordFX_Saving") {
                     @Override
@@ -64,10 +62,7 @@ public class RecordFX {
         if (frames.length > 1) {
             recordFrames.addAll(Arrays.asList(frames));
             System.out.println("添加帧：" + frames.length);
-        } else {
-            recordFrames.add(frames[0]);
-            System.out.println("捕获帧");
-        }
+        } else recordFrames.add(frames[0]);
     }
 
     private synchronized Image createFrame() {
@@ -78,16 +73,7 @@ public class RecordFX {
 
     private void recordingTimer() {
         timer++;
-        if (allowRecording && timer >= FPS) {
-            durationS--;
-            timer = 0;
-
-            if (durationS <= 0) {
-                durationS = 0;
-                stopRecording();
-            }
-        }
-        System.out.println("计时器：" + timer + "\t" + durationS);
+        System.out.println("捕获的帧：" + timer + "\t" + spine.getPercent());
     }
 
     private void recorderFX() {
@@ -95,15 +81,17 @@ public class RecordFX {
             @Override
             protected Void call() throws InterruptedException {
                 System.out.println("录制开始");
-                while (durationS > 0) {
+                do {
                     Platform.runLater(() -> {
-                        if (allowRecording && durationS > 0) {
+                        if (allowRecording && spine.getPercent() <= 1) {
                             addFrame(createFrame());
                         }
                         recordingTimer();
                     });
                     Thread.sleep((long) (1000 / FPS));
-                }
+                } while (spine.getPercent() < 1);
+                System.out.println("停止录制");
+                stopRecording();
                 return null;
             }
         };
@@ -113,12 +101,13 @@ public class RecordFX {
         recodeThread.start();
     }
 
-    public void startRecording(String rootPath, String fileName, float durationS, Float FPS, boolean saveSequence) {
+    public void startRecording(String rootPath, String fileName, Float FPS, boolean saveSequence) {
         this.rootPath = rootPath;
         this.fileName = fileName;
-        this.durationS = durationS;
         this.FPS = FPS;
         this.saveSequence = saveSequence;
+        timer = 0;
+        counter = 0;
 
         parameters.setFill(Color.TRANSPARENT);
         if (!allowRecording) {

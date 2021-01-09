@@ -21,7 +21,7 @@ public class SuperSpine extends ApplicationAdapter {
     static final SimpleFloatProperty X = new SimpleFloatProperty(0.0f);
     static final SimpleFloatProperty Y = new SimpleFloatProperty(-200f);
     static final SimpleFloatProperty speed = new SimpleFloatProperty(1);
-    static float duration = -1;
+    static double percent = -1;
     static FileHandle skelFile;
     static FileHandle atlasFile;
     static boolean isBinary = true;
@@ -160,12 +160,12 @@ public class SuperSpine extends ApplicationAdapter {
         return speed;
     }
 
-    public float getDuration() {
-        return duration;
+    public double getPercent() {
+        return percent;
     }
 
-    public void setDuration(float duration) {
-        SuperSpine.duration = duration;
+    public void setPercent(double percent) {
+        SuperSpine.percent = percent;
     }
 
     public FileHandle getSkelFile() {

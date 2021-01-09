@@ -16,8 +16,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.lwjgl.opengl.AMDDebugOutput.glDebugMessageCallbackAMD;
-import static org.lwjgl.opengl.ARBDebugOutput.glDebugMessageCallbackARB;
 import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL30.GL_MAX_SAMPLES;
 
@@ -59,10 +57,10 @@ public class LwjglToJavaFX {
         else
             maxSamples = 1;
 
-        if (caps.GL_ARB_debug_output)
-            glDebugMessageCallbackARB(new ARBDebugOutputCallback());
-        else if (caps.GL_AMD_debug_output)
-            glDebugMessageCallbackAMD(new AMDDebugOutputCallback());
+        // if (caps.GL_ARB_debug_output)
+        //     glDebugMessageCallbackARB(new ARBDebugOutputCallback());
+        // else if (caps.GL_AMD_debug_output)
+        //     glDebugMessageCallbackAMD(new AMDDebugOutputCallback());
 
         this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
         this.renderStream = renderStreamFactory.create(getReadHandler(), 1, transfersToBuffer);
