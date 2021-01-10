@@ -1,5 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
+import com.QYun.SuperSpineViewer.GUI.Controller;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -143,15 +144,11 @@ public class LwjglToJavaFX {
         return new StreamHandler() {
 
             public int getWidth() {
-                if (targetView.getFitWidth() > 0)
-                    return (int) targetView.getFitWidth();
-                else return 0;
+                return Math.max(Controller.width, 0);
             }
 
             public int getHeight() {
-                if (targetView.getFitHeight() > 0)
-                    return (int) targetView.getFitHeight();
-                else return 0;
+                return Math.max(Controller.height, 0);
             }
 
             public void process(final int width, final int height, final ByteBuffer data, final int stride, final Semaphore signal) {

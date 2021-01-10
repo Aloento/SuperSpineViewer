@@ -14,7 +14,7 @@
 
         <center>
             <StackPane fx:id="Viewer">
-                <ImageView fx:id="SpineRender" opacity="0.0" pickOnBounds="true" preserveRatio="true" scaleY="-1.0"/>
+                <ImageView fx:id="SpineRender" opacity="0.0" scaleY="-1.0"/>
 
                 <StackPane fx:id="loadPane">
                     <JFXSpinner fx:id="purpleSpinner" startingAngle="-40"

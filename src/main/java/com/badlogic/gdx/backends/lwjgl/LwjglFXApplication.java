@@ -1,11 +1,11 @@
 package com.badlogic.gdx.backends.lwjgl;
 
+import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import org.lwjgl.LWJGLException;
@@ -28,17 +28,15 @@ public class LwjglFXApplication extends LwjglApplication {
     }
 
     private void resize() {
-        Platform.runLater(() -> Gdx.app.postRunnable(() -> {
-            ImageView target = ((LwjglFXGraphics) graphics).target;
-            int width = (int) target.fitWidthProperty().get();
-            int height = (int) target.fitHeightProperty().get();
+        Gdx.app.postRunnable(() -> {
             graphics.resize = false;
-            graphics.config.width = width;
-            graphics.config.height = height;
-            if (listener != null) listener.resize(width, height);
+            graphics.config.width = Controller.width;
+            graphics.config.height = Controller.height;
+            if (listener != null)
+                listener.resize(Controller.width, Controller.height);
             shouldRender = true;
             graphics.requestRendering();
-        }));
+        });
     }
 
     @Override

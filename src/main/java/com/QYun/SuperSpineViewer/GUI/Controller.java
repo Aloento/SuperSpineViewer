@@ -15,6 +15,8 @@ public class Controller {
     public static Label FPS;
     public static Label Skel;
     public static Label Atlas;
+    public static int width;
+    public static int height;
     public static boolean sequence = false;
     public static boolean isFX = true;
     public static boolean requestReload = false;

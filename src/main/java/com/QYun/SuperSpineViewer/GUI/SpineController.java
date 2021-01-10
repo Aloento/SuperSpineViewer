@@ -20,7 +20,10 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
@@ -74,7 +77,7 @@ public class SpineController extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         SuperSpine spine = new SuperSpine();
         ImageView spineLogo = new ImageView();
-        spineLogo.setImage(new Image("/UI/SpineLogo.png",138, 0, true, true, false));
+        spineLogo.setImage(new Image("/UI/SpineLogo.png", 138, 0, true, true, false));
 
         StackPane header = new StackPane();
         AtomicReference<String> headerColor = new AtomicReference<>(getDefaultColor((int) ((Math.random() * 12) % 22)));
@@ -203,8 +206,14 @@ public class SpineController extends Controller implements Initializable {
             SpineRender.fitHeightProperty().bind(SpineRender.getScene().heightProperty().add(-103));
             SpineRender.fitWidthProperty().bind(SpineRender.getScene().widthProperty().add(-368));
         });
-        SpineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> T_Width.setPromptText(String.valueOf(newValue.intValue())));
-        SpineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> T_Height.setPromptText(String.valueOf(newValue.intValue())));
+        SpineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> {
+            T_Width.setPromptText(String.valueOf(newValue.intValue()));
+            width = newValue.intValue();
+        });
+        SpineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> {
+            T_Height.setPromptText(String.valueOf(newValue.intValue()));
+            height = newValue.intValue();
+        });
 
         C_Skins.setItems(spine.getSkinsList());
         C_Animate.setItems(spine.getAnimatesList());
