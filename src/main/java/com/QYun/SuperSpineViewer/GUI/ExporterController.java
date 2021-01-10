@@ -49,6 +49,7 @@ public class ExporterController extends Controller implements Initializable {
     void B_Export() {
         if (path != null && spine.getAnimate() != null) {
             if (isFX) {
+                spine.setIsPlay(false);
                 spine.setIsLoop(false);
                 spine.setSpeed(0.5f);
                 recordFX.startRecording(path, spine.getProjectName() + "_" + spine.getAnimate(), sequence);

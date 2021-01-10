@@ -176,9 +176,9 @@ public class RecordFX {
                     spine.setSpeed(1);
                     timer = 0;
                     counter = 0;
-                    System.gc();
                     System.out.println("导出结束");
                 });
+                System.gc();
             }
         };
         saveVideoThread.setDaemon(true);
