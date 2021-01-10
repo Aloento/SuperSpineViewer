@@ -145,12 +145,14 @@ public class RecordFX {
                 for (String file : Objects.requireNonNull(files))
                     new File(sequence, file).delete();
                 sequence.delete();
-                Controller.progressBar.setProgress(1);
-                System.out.println("视频导出成功");
-            } else {
-                Controller.progressBar.setProgress(0);
-                System.out.println("FFMPEG错误，序列已导出");
-            }
+                Platform.runLater(() -> {
+                    Controller.progressBar.setProgress(1);
+                    System.out.println("视频导出成功");
+                });
+            } else Platform.runLater(() -> {
+                    Controller.progressBar.setProgress(0);
+                    System.out.println("FFMPEG错误，序列已导出");
+                });
 
         } catch (Exception ignored) {
         }
