@@ -30,8 +30,8 @@ public class RecordFX {
     private final SuperSpine spine = new SuperSpine();
     private boolean recording = false;
     private boolean saveSequence = true;
-    private int timer = 0;
-    private int counter = 0;
+    private int timer;
+    private int counter;
     private float FPS = 60f;
     private String rootPath = null;
     private String fileName = null;
@@ -165,15 +165,21 @@ public class RecordFX {
                 new File(rootPath + "Sequence/").mkdirs();
                 while (exporting)
                     Thread.onSpinWait();
+
                 while (recordFrames.size() != 0) {
                     saveToArray(recordFrames.get(0));
                     recordFrames.remove(0);
                 }
                 if (!saveSequence)
                     ffmpegFX();
-                spine.setSpeed(1);
-                System.gc();
-                System.out.println("导出结束");
+
+                Platform.runLater(() -> {
+                    spine.setSpeed(1);
+                    timer = 0;
+                    counter = 0;
+                    System.gc();
+                    System.out.println("导出结束");
+                });
             }
         };
         saveVideoThread.setDaemon(true);
