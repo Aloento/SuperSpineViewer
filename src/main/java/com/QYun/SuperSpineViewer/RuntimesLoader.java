@@ -23,31 +23,36 @@ public class RuntimesLoader extends Controller {
     private final String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas", "-pma.atlas"};
     private final SuperSpine spine = new SuperSpine();
 
+    private void whichVersion(String skel) {
+        if (skel.contains("4.0."))
+            spineVersion.set(40);
+        else if (skel.contains("3.8."))
+            spineVersion.set(38);
+        else if (skel.contains("3.7."))
+            spineVersion.set(37);
+        else if (skel.contains("3.6."))
+            spineVersion.set(36);
+        else if (skel.contains("3.5."))
+            spineVersion.set(35);
+        else if (skel.contains("3.4."))
+            spineVersion.set(34);
+        else if (skel.contains("3.1."))
+            spineVersion.set(31);
+        else if (skel.contains("2.1."))
+            spineVersion.set(21);
+    }
+
     private boolean binaryVersion(File skelFile) {
         try {
             String fistLine = new BufferedReader(new FileReader(skelFile)).readLine();
             System.out.println(fistLine);
 
-            if (fistLine.contains("4.0."))
-                spineVersion.set(40);
-            else if (fistLine.contains("3.8."))
-                spineVersion.set(38);
-            else if (fistLine.contains("3.7."))
-                spineVersion.set(37);
-            else if (fistLine.contains("3.6."))
-                spineVersion.set(36);
-            else if (fistLine.contains("3.5."))
-                spineVersion.set(35);
-            else if (fistLine.contains("3.4."))
-                spineVersion.set(34);
-            else if (fistLine.contains("3.1."))
-                spineVersion.set(31);
-            else if (fistLine.contains("2.1."))
-                spineVersion.set(21);
-            else {
+            whichVersion(fistLine);
+            if (spineVersion.get() < 20) {
                 System.out.println("Spine二进制版本判断失败");
                 return false;
             }
+
             spine.setIsBinary(true);
             System.out.println("Spine二进制版本：" + spineVersion.get());
         } catch (IOException e) {
@@ -60,28 +65,12 @@ public class RuntimesLoader extends Controller {
 
     private boolean jsonVersion(File skelFile) {
         try {
-            String json = Files.readString(skelFile.toPath());
-
-            if (json.contains("4.0."))
-                spineVersion.set(40);
-            else if (json.contains("3.8."))
-                spineVersion.set(38);
-            else if (json.contains("3.7."))
-                spineVersion.set(37);
-            else if (json.contains("3.6."))
-                spineVersion.set(36);
-            else if (json.contains("3.5."))
-                spineVersion.set(35);
-            else if (json.contains("3.4."))
-                spineVersion.set(34);
-            else if (json.contains("3.1."))
-                spineVersion.set(31);
-            else if (json.contains("2.1."))
-                spineVersion.set(21);
-            else {
+            whichVersion(Files.readString(skelFile.toPath()));
+            if (spineVersion.get() < 20) {
                 System.out.println("SpineJson版本判断失败");
                 return false;
             }
+
             spine.setIsBinary(false);
             System.out.println("SpineJson版本：" + spineVersion.get());
         } catch (IOException e) {

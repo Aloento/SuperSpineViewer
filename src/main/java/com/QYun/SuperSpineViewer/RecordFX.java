@@ -80,8 +80,12 @@ public class RecordFX {
                     } catch (InterruptedException ignored) {
                     }
                 } while (spine.getPercent() < 1);
-                System.out.println("停止录制");
-                stopRecording();
+
+                if (recording) {
+                    encodeFX();
+                    recording = false;
+                    System.out.println("请求：停止录制");
+                }
             }
         };
         recodeThread.setDaemon(true);
@@ -141,8 +145,12 @@ public class RecordFX {
                 for (String file : Objects.requireNonNull(files))
                     new File(sequence, file).delete();
                 sequence.delete();
+                Controller.progressBar.setProgress(1);
                 System.out.println("视频导出成功");
-            } else System.out.println("FFMPEG错误，序列已导出");
+            } else {
+                Controller.progressBar.setProgress(0);
+                System.out.println("FFMPEG错误，序列已导出");
+            }
 
         } catch (Exception ignored) {
         }
@@ -168,14 +176,6 @@ public class RecordFX {
         };
         saveVideoThread.setDaemon(true);
         saveVideoThread.start();
-    }
-
-    public void stopRecording() {
-        if (recording) {
-            encodeFX();
-            recording = false;
-            System.out.println("请求：停止录制");
-        }
     }
 
 }

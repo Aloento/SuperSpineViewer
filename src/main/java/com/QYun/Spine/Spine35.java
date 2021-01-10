@@ -13,11 +13,11 @@ import javafx.application.Platform;
 
 public class Spine35 extends SuperSpine {
 
-    PolygonSpriteBatch batch;
-    OrthographicCamera camera;
-    SkeletonMeshRenderer renderer;
-    TextureAtlas atlas;
-    SkeletonData skeletonData;
+    private PolygonSpriteBatch batch;
+    private OrthographicCamera camera;
+    private SkeletonMeshRenderer renderer;
+    private TextureAtlas atlas;
+    private SkeletonData skeletonData;
     private Skeleton skeleton;
     private AnimationState state;
 
