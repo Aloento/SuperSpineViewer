@@ -28,18 +28,18 @@ public class RecordFX {
     private final ObservableList<Image> framesList = FXCollections.observableArrayList();
     private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(framesList);
     private final SuperSpine spine = new SuperSpine();
+    private final float FPS = 60f;
     private boolean recording = false;
     private boolean saveSequence = true;
     private int timer;
     private int counter;
-    private float FPS = 60f;
     private String rootPath = null;
     private String fileName = null;
 
     public RecordFX(Node node) {
         this.node = node;
         parameters.setFill(Color.TRANSPARENT);
-        System.out.println("录制实例已创建");
+        System.out.println("SuperSpineViewer已启动");
         recordFrames.addListener((InvalidationListener) observable -> {
             if (!exporting) {
                 exporting = true;
@@ -92,10 +92,9 @@ public class RecordFX {
         recodeThread.start();
     }
 
-    public void startRecording(String rootPath, String fileName, Float FPS, boolean saveSequence) {
+    public void startRecording(String rootPath, String fileName, boolean saveSequence) {
         this.rootPath = rootPath;
         this.fileName = fileName;
-        this.FPS = FPS;
         this.saveSequence = saveSequence;
 
         if (!recording) {
@@ -150,9 +149,9 @@ public class RecordFX {
                     System.out.println("视频导出成功");
                 });
             } else Platform.runLater(() -> {
-                    Controller.progressBar.setProgress(0);
-                    System.out.println("FFMPEG错误，序列已导出");
-                });
+                Controller.progressBar.setProgress(0);
+                System.out.println("FFMPEG错误，序列已导出");
+            });
 
         } catch (Exception ignored) {
         }

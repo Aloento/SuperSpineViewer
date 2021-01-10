@@ -51,7 +51,7 @@ public class ExporterController extends Controller implements Initializable {
             if (isFX) {
                 spine.setIsLoop(false);
                 spine.setSpeed(0.5f);
-                recordFX.startRecording(path, spine.getProjectName(), 60f, sequence);
+                recordFX.startRecording(path, spine.getProjectName() + "_" + spine.getAnimate(), sequence);
                 spine.setIsPlay(true);
             } else {
                 System.out.println("功能构建中");
