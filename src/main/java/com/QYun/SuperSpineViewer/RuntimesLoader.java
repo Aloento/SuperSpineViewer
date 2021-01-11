@@ -46,10 +46,7 @@ public class RuntimesLoader extends Controller {
 
     private boolean binaryVersion(File skelFile) {
         try {
-            String fistLine = new BufferedReader(new FileReader(skelFile)).readLine();
-            System.out.println(fistLine);
-
-            whichVersion(fistLine);
+            whichVersion(new BufferedReader(new FileReader(skelFile)).readLine());
             if (spineVersion.get() < 20) {
                 System.out.println("Spine二进制版本判断失败");
                 return false;
@@ -139,8 +136,9 @@ public class RuntimesLoader extends Controller {
                     if (Controller.class.getResource("").getProtocol().equals("jar")) {
                         new Thread(() -> {
                             try {
-                                Runtime.getRuntime().exec("java -jar "
-                                        + System.getProperty("java.class.outPath")
+                                Runtime.getRuntime().exec("cmd /k start "
+                                        + "java -jar "
+                                        + System.getProperty("java.class.path")
                                         + " " + openPath, null, new File(System.getProperty("user.dir")));
                             } catch (IOException ignored) {
                             }
