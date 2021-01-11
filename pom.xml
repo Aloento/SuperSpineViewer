@@ -105,11 +105,6 @@
             <version>9.0.10</version>
         </dependency>
         <dependency>
-            <groupId>io.datafx</groupId>
-            <artifactId>flow</artifactId>
-            <version>8.0.7</version>
-        </dependency>
-        <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
             <version>12.1.0</version>

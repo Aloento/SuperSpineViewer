@@ -1,9 +1,6 @@
 package com.QYun.SuperSpineViewer.GUI;
 
 import com.jfoenix.controls.*;
-import io.datafx.controller.flow.Flow;
-import io.datafx.controller.flow.FlowHandler;
-import io.datafx.controller.flow.context.ViewFlowContext;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -86,13 +83,6 @@ public class PrimaryController extends Controller implements Initializable {
                         -12,
                         15));
 
-        ViewFlowContext context = new ViewFlowContext();
-        Flow innerFlow = new Flow(SpineController.class);
-        final FlowHandler flowHandler = innerFlow.createHandler(context);
-
-        context.register("ContentFlowHandler", flowHandler);
-        context.register("ContentFlow", innerFlow);
-
         Parent Spine = null;
         try {
             FXMLLoader spineLoader = new FXMLLoader(getClass().getResource("/UI/Spine.fxml"));
@@ -102,7 +92,6 @@ public class PrimaryController extends Controller implements Initializable {
             e.printStackTrace();
         }
         mainDrawer.setContent(Spine);
-        context.register("ContentPane", mainDrawer.getContent().get(0));
 
         Parent Exporter = null;
         try {

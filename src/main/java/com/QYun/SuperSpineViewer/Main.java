@@ -2,7 +2,6 @@ package com.QYun.SuperSpineViewer;
 
 import com.jfoenix.assets.JFoenixResources;
 import com.jfoenix.controls.JFXDecorator;
-import io.datafx.controller.flow.context.ViewFlowContext;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -25,9 +24,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
 
         System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
-        ViewFlowContext flowContext = new ViewFlowContext();
-        flowContext.register("Stage", primaryStage);
-
         Parent Main = null;
         try {
             Main = FXMLLoader.load(getClass().getResource("/UI/Primary.fxml"));
