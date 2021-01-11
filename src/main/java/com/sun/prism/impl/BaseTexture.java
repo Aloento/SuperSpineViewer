@@ -344,15 +344,6 @@ public abstract class BaseTexture<T extends ManagedResource> implements Texture 
                             "(contentWidth=" + contentWidth +
                             ", contentHeight=" + contentHeight + ")");
         }
-        // int bytesNeeded =
-        //         (srcx * bytesPerPixel) + (srcy * srcscan) +
-        //                 ((srch - 1) * srcscan) + (srcw * bytesPerPixel);
-        // int elemsNeeded = bytesNeeded / format.getDataType().getSizeInBytes();
-        // if (elemsNeeded > buf.remaining()) {
-        //     System.out.println(
-        //             "Upload requires " + elemsNeeded + " elements, but only " +
-        //                     buf.remaining() + " elements remain in the buffer");
-        // }
     }
 
     @Override
