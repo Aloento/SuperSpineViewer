@@ -43,7 +43,12 @@
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
-                <Label layoutX="18.0" layoutY="10.0" styleClass="side-label" text="Render : "/>
+                <Label layoutX="18.0" layoutY="10.0" text="Render : ">
+                    <styleClass>
+                        <String fx:value="side-label"/>
+                        <String fx:value="BOLD"/>
+                    </styleClass>
+                </Label>
                 <HBox spacing="16.0">
                     <JFXRadioButton onAction="#RB_OpenJFX" selected="true" text="OpenJFX">
                         <toggleGroup>
@@ -115,11 +120,15 @@
                     <padding>
                         <Insets right="10.0"/>
                     </padding>
-                    <JFXButton onAction="#B_Export" text="Export" textFill="#5264ae">
-                        <font>
-                            <Font name="System Bold" size="14.0"/>
-                        </font>
-                    </JFXButton>
+                    <FlowPane hgap="10.0">
+                        <JFXButton onAction="#B_Export" text="Export" textFill="#5264ae">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </JFXButton>
+                        <JFXCheckBox onAction="#PreA" selected="true" styleClass="custom-jfx-check-box"
+                                     text="Pre-Alpha"/>
+                    </FlowPane>
                 </HBox>
                 <JFXProgressBar fx:id="P_Export" maxWidth="250.0"/>
             </VBox>

@@ -184,6 +184,7 @@ public class Spine35 extends SuperSpine {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle("FPS : " + Gdx.graphics.getFramesPerSecond());
+        renderer.setPremultipliedAlpha(Controller.preA);
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);

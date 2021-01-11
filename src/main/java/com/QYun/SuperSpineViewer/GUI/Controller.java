@@ -22,6 +22,7 @@ public class Controller {
     public static boolean sequence = false;
     public static boolean isFX = true;
     public static boolean requestReload = false;
+    public static boolean preA = true;
     public static String outPath = null;
     public static String openPath = null;
 

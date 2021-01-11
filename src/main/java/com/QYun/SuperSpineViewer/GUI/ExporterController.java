@@ -112,6 +112,11 @@ public class ExporterController extends Controller implements Initializable {
         sequence = true;
     }
 
+    @FXML
+    void PreA() {
+        preA = !preA;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
