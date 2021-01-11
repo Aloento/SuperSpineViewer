@@ -32,7 +32,6 @@ public class Spine34 extends SuperSpine {
     }
 
     private boolean loadSkel() {
-
         if (isBinary) {
             SkeletonBinary binary = new SkeletonBinary(atlas);
             binary.setScale(scale.get());
@@ -57,7 +56,6 @@ public class Spine34 extends SuperSpine {
     }
 
     private void listeners() {
-
         skin.addListener((observable, oldValue, newValue) -> {
             if (skeleton != null) {
                 if (newValue == null)
