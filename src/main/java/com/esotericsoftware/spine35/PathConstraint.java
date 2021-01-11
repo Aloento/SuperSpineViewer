@@ -11,7 +11,7 @@ import com.esotericsoftware.spine35.attachments.PathAttachment;
 import com.esotericsoftware.spine35.utils.TrigUtils;
 
 /**
- * Stores the current pose for a path constraint. A path constraint adjusts the rotation, translation, and scale of the
+ * Stores the current pose for a outPath constraint. A outPath constraint adjusts the rotation, translation, and scale of the
  * constrained bones so they follow a {@link PathAttachment}.
  * <p>
  * See <a href="http://esotericsoftware.com/spine-path-constraints">Path constraints</a> in the Spine User Guide.
@@ -404,7 +404,7 @@ public class PathConstraint implements Constraint {
     }
 
     /**
-     * The position along the path.
+     * The position along the outPath.
      */
     public float getPosition() {
         return position;
@@ -448,14 +448,14 @@ public class PathConstraint implements Constraint {
     }
 
     /**
-     * The bones that will be modified by this path constraint.
+     * The bones that will be modified by this outPath constraint.
      */
     public Array<Bone> getBones() {
         return bones;
     }
 
     /**
-     * The slot whose path attachment will be used to constrained the bones.
+     * The slot whose outPath attachment will be used to constrained the bones.
      */
     public Slot getTarget() {
         return target;
@@ -466,7 +466,7 @@ public class PathConstraint implements Constraint {
     }
 
     /**
-     * The path constraint's setup pose data.
+     * The outPath constraint's setup pose data.
      */
     public PathConstraintData getData() {
         return data;

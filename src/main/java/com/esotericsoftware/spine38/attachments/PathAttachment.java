@@ -32,8 +32,8 @@ public class PathAttachment extends VertexAttachment {
     }
 
     /**
-     * If true, additional calculations are performed to make calculating positions along the path more accurate. If false, fewer
-     * calculations are performed but calculating positions along the path is less accurate.
+     * If true, additional calculations are performed to make calculating positions along the outPath more accurate. If false, fewer
+     * calculations are performed but calculating positions along the outPath is less accurate.
      */
     public boolean getConstantSpeed() {
         return constantSpeed;
@@ -44,7 +44,7 @@ public class PathAttachment extends VertexAttachment {
     }
 
     /**
-     * The lengths along the path in the setup pose from the start of the path to the end of each Bezier curve.
+     * The lengths along the outPath in the setup pose from the start of the outPath to the end of each Bezier curve.
      */
     public float[] getLengths() {
         return lengths;
@@ -55,7 +55,7 @@ public class PathAttachment extends VertexAttachment {
     }
 
     /**
-     * The color of the path as it was in Spine. Available only when nonessential data was exported. Paths are not usually
+     * The color of the outPath as it was in Spine. Available only when nonessential data was exported. Paths are not usually
      * rendered at runtime.
      */
     public Color getColor() {

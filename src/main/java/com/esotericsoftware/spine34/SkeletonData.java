@@ -202,7 +202,7 @@ public class SkeletonData {
     }
 
     /**
-     * @return -1 if the path constraint was not found.
+     * @return -1 if the outPath constraint was not found.
      */
     public int findPathConstraintIndex(String pathConstraintName) {
         if (pathConstraintName == null) throw new IllegalArgumentException("pathConstraintName cannot be null.");

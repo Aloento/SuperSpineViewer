@@ -1723,7 +1723,7 @@ public class Animation {
     }
 
     /**
-     * Changes a path constraint's {@link PathConstraint#getPosition()}.
+     * Changes a outPath constraint's {@link PathConstraint#getPosition()}.
      */
     static public class PathConstraintPositionTimeline extends CurveTimeline {
         static public final int ENTRIES = 2;
@@ -1742,7 +1742,7 @@ public class Animation {
         }
 
         /**
-         * The index of the path constraint slot in {@link Skeleton#getPathConstraints()} that will be changed.
+         * The index of the outPath constraint slot in {@link Skeleton#getPathConstraints()} that will be changed.
          */
         public int getPathConstraintIndex() {
             return pathConstraintIndex;
@@ -1754,14 +1754,14 @@ public class Animation {
         }
 
         /**
-         * The time in seconds and path constraint position for each key frame.
+         * The time in seconds and outPath constraint position for each key frame.
          */
         public float[] getFrames() {
             return frames;
         }
 
         /**
-         * Sets the time in seconds and path constraint position for the specified key frame.
+         * Sets the time in seconds and outPath constraint position for the specified key frame.
          */
         public void setFrame(int frameIndex, float time, float position) {
             frameIndex *= ENTRIES;
@@ -1807,7 +1807,7 @@ public class Animation {
     }
 
     /**
-     * Changes a path constraint's {@link PathConstraint#getSpacing()}.
+     * Changes a outPath constraint's {@link PathConstraint#getSpacing()}.
      */
     static public class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
         public PathConstraintSpacingTimeline(int frameCount) {
@@ -1877,7 +1877,7 @@ public class Animation {
         }
 
         /**
-         * The index of the path constraint slot in {@link Skeleton#getPathConstraints()} that will be changed.
+         * The index of the outPath constraint slot in {@link Skeleton#getPathConstraints()} that will be changed.
          */
         public int getPathConstraintIndex() {
             return pathConstraintIndex;

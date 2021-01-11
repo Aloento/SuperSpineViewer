@@ -136,12 +136,12 @@ public class RuntimesLoader extends Controller {
         if (!isLoad.get()) {
             spineVersion.addListener((observable, oldValue, newValue) -> {
                 if (!newValue.equals(oldValue) && isLoad.get()) {
-                    if (AppLauncher.class.getResource("").getProtocol().equals("jar")) {
+                    if (Controller.class.getResource("").getProtocol().equals("jar")) {
                         new Thread(() -> {
                             try {
                                 Runtime.getRuntime().exec("java -jar "
-                                        + System.getProperty("java.class.path")
-                                        + " " + arg, null, new File(System.getProperty("user.dir")));
+                                        + System.getProperty("java.class.outPath")
+                                        + " " + openPath, null, new File(System.getProperty("user.dir")));
                             } catch (IOException ignored) {
                             }
                             System.out.println("重新加载LibGDX");

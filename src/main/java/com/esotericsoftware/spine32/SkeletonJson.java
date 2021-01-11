@@ -202,7 +202,7 @@ public class SkeletonJson {
     private Attachment readAttachment(Skin skin, int slotIndex, String name, JsonValue map) {
         float scale = this.scale;
         name = map.getString("name", name);
-        String path = map.getString("path", name);
+        String path = map.getString("outPath", name);
 
         String type = map.getString("type", AttachmentType.region.name());
         if (type.equals("skinnedmesh")) type = "weightedmesh";

@@ -163,7 +163,7 @@ public class SkeletonJson {
         }
 
         // Path constraints.
-        for (JsonValue constraintMap = root.getChild("path"); constraintMap != null; constraintMap = constraintMap.next) {
+        for (JsonValue constraintMap = root.getChild("outPath"); constraintMap != null; constraintMap = constraintMap.next) {
             PathConstraintData data = new PathConstraintData(constraintMap.getString("name"));
             data.order = constraintMap.getInt("order", 0);
 
@@ -258,7 +258,7 @@ public class SkeletonJson {
 
         switch (AttachmentType.valueOf(type)) {
             case region -> {
-                String path = map.getString("path", name);
+                String path = map.getString("outPath", name);
                 RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
                 if (region == null) return null;
                 region.setPath(path);
@@ -286,7 +286,7 @@ public class SkeletonJson {
                 return box;
             }
             case mesh, linkedmesh -> {
-                String path = map.getString("path", name);
+                String path = map.getString("outPath", name);
                 MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
                 if (mesh == null) return null;
                 mesh.setPath(path);

@@ -1,6 +1,8 @@
 package com.QYun.SuperSpineViewer.GUI;
 
+import com.QYun.SuperSpineViewer.Main;
 import com.jfoenix.controls.JFXProgressBar;
+import javafx.application.Application;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -20,7 +22,14 @@ public class Controller {
     public static boolean sequence = false;
     public static boolean isFX = true;
     public static boolean requestReload = false;
-    public static String path = null;
-    public static String arg = null;
+    public static String outPath = null;
+    public static String openPath = null;
+
+    public static void main(String[] args) {
+        if (args.length > 0) {
+            openPath = args[0];
+        }
+        Application.launch(Main.class, args);
+    }
 
 }

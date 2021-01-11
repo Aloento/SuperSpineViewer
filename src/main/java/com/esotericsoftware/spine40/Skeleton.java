@@ -132,7 +132,7 @@ public class Skeleton {
 
     /**
      * Caches information about bones and constraints. Must be called if the {@link #getSkin()} is modified or if bones,
-     * constraints, or weighted path attachments are added or removed.
+     * constraints, or weighted outPath attachments are added or removed.
      */
     public void updateCache() {
         Array<Updatable> updateCache = this.updateCache;
@@ -644,14 +644,14 @@ public class Skeleton {
     }
 
     /**
-     * The skeleton's path constraints.
+     * The skeleton's outPath constraints.
      */
     public Array<PathConstraint> getPathConstraints() {
         return pathConstraints;
     }
 
     /**
-     * Finds a path constraint by comparing each path constraint's name. It is more efficient to cache the results of this method
+     * Finds a outPath constraint by comparing each outPath constraint's name. It is more efficient to cache the results of this method
      * than to call it repeatedly.
      */
     public @Null

@@ -169,7 +169,7 @@ public class SkeletonJson extends SkeletonLoader {
         }
 
         // Path constraints.
-        for (JsonValue constraintMap = root.getChild("path"); constraintMap != null; constraintMap = constraintMap.next) {
+        for (JsonValue constraintMap = root.getChild("outPath"); constraintMap != null; constraintMap = constraintMap.next) {
             PathConstraintData data = new PathConstraintData(constraintMap.getString("name"));
             data.order = constraintMap.getInt("order", 0);
             data.skinRequired = constraintMap.getBoolean("skin", false);
@@ -219,9 +219,9 @@ public class SkeletonJson extends SkeletonLoader {
                     throw new SerializationException("Skin transform constraint not found: " + entry);
                 skin.constraints.add(constraint);
             }
-            for (JsonValue entry = skinMap.getChild("path"); entry != null; entry = entry.next) {
+            for (JsonValue entry = skinMap.getChild("outPath"); entry != null; entry = entry.next) {
                 PathConstraintData constraint = skeletonData.findPathConstraint(entry.asString());
-                if (constraint == null) throw new SerializationException("Skin path constraint not found: " + entry);
+                if (constraint == null) throw new SerializationException("Skin outPath constraint not found: " + entry);
                 skin.constraints.add(constraint);
             }
             skin.constraints.shrink();
@@ -293,7 +293,7 @@ public class SkeletonJson extends SkeletonLoader {
 
         switch (AttachmentType.valueOf(map.getString("type", AttachmentType.region.name()))) {
             case region -> {
-                String path = map.getString("path", name);
+                String path = map.getString("outPath", name);
                 RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
                 if (region == null) return null;
                 region.setPath(path);
@@ -321,7 +321,7 @@ public class SkeletonJson extends SkeletonLoader {
                 return box;
             }
             case mesh, linkedmesh -> {
-                String path = map.getString("path", name);
+                String path = map.getString("outPath", name);
                 MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
                 if (mesh == null) return null;
                 mesh.setPath(path);
@@ -734,7 +734,7 @@ public class SkeletonJson extends SkeletonLoader {
         }
 
         // Path constraint timelines.
-        for (JsonValue constraintMap = map.getChild("path"); constraintMap != null; constraintMap = constraintMap.next) {
+        for (JsonValue constraintMap = map.getChild("outPath"); constraintMap != null; constraintMap = constraintMap.next) {
             PathConstraintData data = skeletonData.findPathConstraint(constraintMap.name);
             if (data == null) throw new SerializationException("Path constraint not found: " + constraintMap.name);
             int index = skeletonData.pathConstraints.indexOf(data, true);

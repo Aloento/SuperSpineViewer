@@ -21,14 +21,14 @@ public class PathConstraintData extends ConstraintData {
     }
 
     /**
-     * The bones that will be modified by this path constraint.
+     * The bones that will be modified by this outPath constraint.
      */
     public Array<BoneData> getBones() {
         return bones;
     }
 
     /**
-     * The slot whose path attachment will be used to constrained the bones.
+     * The slot whose outPath attachment will be used to constrained the bones.
      */
     public SlotData getTarget() {
         return target;
@@ -40,7 +40,7 @@ public class PathConstraintData extends ConstraintData {
     }
 
     /**
-     * The mode for positioning the first bone on the path.
+     * The mode for positioning the first bone on the outPath.
      */
     public PositionMode getPositionMode() {
         return positionMode;
@@ -52,7 +52,7 @@ public class PathConstraintData extends ConstraintData {
     }
 
     /**
-     * The mode for positioning the bones after the first bone on the path.
+     * The mode for positioning the bones after the first bone on the outPath.
      */
     public SpacingMode getSpacingMode() {
         return spacingMode;
@@ -87,7 +87,7 @@ public class PathConstraintData extends ConstraintData {
     }
 
     /**
-     * The position along the path.
+     * The position along the outPath.
      */
     public float getPosition() {
         return position;
@@ -142,7 +142,7 @@ public class PathConstraintData extends ConstraintData {
     }
 
     /**
-     * Controls how the first bone is positioned along the path.
+     * Controls how the first bone is positioned along the outPath.
      * <p>
      * See <a href="http://esotericsoftware.com/spine-path-constraints#Position-mode">Position mode</a> in the Spine User Guide.
      */
@@ -153,7 +153,7 @@ public class PathConstraintData extends ConstraintData {
     }
 
     /**
-     * Controls how bones after the first bone are positioned along the path.
+     * Controls how bones after the first bone are positioned along the outPath.
      * <p>
      * See <a href="http://esotericsoftware.com/spine-path-constraints#Spacing-mode">Spacing mode</a> in the Spine User Guide.
      */
@@ -164,7 +164,7 @@ public class PathConstraintData extends ConstraintData {
     }
 
     /**
-     * Controls how bones are rotated, translated, and scaled to match the path.
+     * Controls how bones are rotated, translated, and scaled to match the outPath.
      * <p>
      * See <a href="http://esotericsoftware.com/spine-path-constraints#Rotate-mode">Rotate mode</a> in the Spine User Guide.
      */

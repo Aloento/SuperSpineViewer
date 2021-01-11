@@ -47,12 +47,12 @@ public class ExporterController extends Controller implements Initializable {
 
     @FXML
     void B_Export() {
-        if (path != null && spine.getAnimate() != null) {
+        if (outPath != null && spine.getAnimate() != null) {
             if (isFX) {
                 spine.setIsPlay(false);
                 spine.setIsLoop(false);
                 spine.setSpeed(0.5f);
-                recordFX.startRecording(path, spine.getProjectName() + "_" + spine.getAnimate(), sequence);
+                recordFX.startRecording(outPath, spine.getProjectName() + "_" + spine.getAnimate(), sequence);
                 spine.setIsPlay(true);
             } else {
                 System.out.println("功能构建中");
@@ -71,7 +71,7 @@ public class ExporterController extends Controller implements Initializable {
 
         File file = fileChooser.showOpenDialog(new Stage());
         if (file != null) {
-            arg = file.getAbsolutePath();
+            openPath = file.getAbsolutePath();
             if (isLoad.get()) {
                 requestReload = true;
                 if (runtimesLoader.init(file))
@@ -87,8 +87,8 @@ public class ExporterController extends Controller implements Initializable {
             DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle("Sava Location");
             File direc = chooser.showDialog(new Stage());
-            path = direc.getAbsolutePath() + File.separator;
-            T_Path.setText(path);
+            outPath = direc.getAbsolutePath() + File.separator;
+            T_Path.setText(outPath);
         });
     }
 
@@ -121,12 +121,12 @@ public class ExporterController extends Controller implements Initializable {
         progressBar = P_Export;
         spine.spineVersionProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
 
-        if (arg != null) {
+        if (openPath != null) {
             Platform.runLater(() -> {
-                File file = new File(arg);
+                File file = new File(openPath);
                 if (runtimesLoader.init(file)) {
                     System.out.println("初始化成功");
-                    arg = null;
+                    openPath = null;
                 }
             });
         }

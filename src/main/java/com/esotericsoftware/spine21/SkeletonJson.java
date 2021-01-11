@@ -156,7 +156,7 @@ public class SkeletonJson {
     private Attachment readAttachment(Skin skin, String name, JsonValue map) {
         float scale = this.scale;
         name = map.getString("name", name);
-        String path = map.getString("path", name);
+        String path = map.getString("outPath", name);
 
         switch (AttachmentType.valueOf(map.getString("type", AttachmentType.region.name()))) {
             case region -> {

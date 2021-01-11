@@ -214,14 +214,14 @@ public class SkeletonData {
     // --- Path constraints
 
     /**
-     * The skeleton's path constraints.
+     * The skeleton's outPath constraints.
      */
     public Array<PathConstraintData> getPathConstraints() {
         return pathConstraints;
     }
 
     /**
-     * Finds a path constraint by comparing each path constraint's name. It is more efficient to cache the results of this method
+     * Finds a outPath constraint by comparing each outPath constraint's name. It is more efficient to cache the results of this method
      * than to call it multiple times.
      */
     public @Null
@@ -319,7 +319,7 @@ public class SkeletonData {
     }
 
     /**
-     * The path to the images directory as defined in Spine, or null if nonessential data was not exported.
+     * The outPath to the images directory as defined in Spine, or null if nonessential data was not exported.
      */
     public @Null
     String getImagesPath() {
@@ -331,7 +331,7 @@ public class SkeletonData {
     }
 
     /**
-     * The path to the audio directory as defined in Spine, or null if nonessential data was not exported.
+     * The outPath to the audio directory as defined in Spine, or null if nonessential data was not exported.
      */
     public @Null
     String getAudioPath() {

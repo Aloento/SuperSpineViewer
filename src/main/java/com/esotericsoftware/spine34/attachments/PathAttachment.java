@@ -38,7 +38,7 @@ public class PathAttachment extends VertexAttachment {
     }
 
     /**
-     * Returns the length in the setup pose from the start of the path to the end of each curve.
+     * Returns the length in the setup pose from the start of the outPath to the end of each curve.
      */
     public float[] getLengths() {
         return lengths;

@@ -2396,7 +2396,7 @@ public class Animation {
     }
 
     /**
-     * Changes a path constraint's {@link PathConstraint#getPosition()}.
+     * Changes a outPath constraint's {@link PathConstraint#getPosition()}.
      */
     static public class PathConstraintPositionTimeline extends CurveTimeline1 {
         final int pathConstraintIndex;
@@ -2407,7 +2407,7 @@ public class Animation {
         }
 
         /**
-         * The index of the path constraint slot in {@link Skeleton#getPathConstraints()} that will be changed when this timeline
+         * The index of the outPath constraint slot in {@link Skeleton#getPathConstraints()} that will be changed when this timeline
          * is applied.
          */
         public int getPathConstraintIndex() {
@@ -2440,7 +2440,7 @@ public class Animation {
     }
 
     /**
-     * Changes a path constraint's {@link PathConstraint#getSpacing()}.
+     * Changes a outPath constraint's {@link PathConstraint#getSpacing()}.
      */
     static public class PathConstraintSpacingTimeline extends CurveTimeline1 {
         final int pathConstraintIndex;
@@ -2451,7 +2451,7 @@ public class Animation {
         }
 
         /**
-         * The index of the path constraint slot in {@link Skeleton#getPathConstraints()} that will be changed when this timeline
+         * The index of the outPath constraint slot in {@link Skeleton#getPathConstraints()} that will be changed when this timeline
          * is applied.
          */
         public int getPathConstraintIndex() {
@@ -2503,7 +2503,7 @@ public class Animation {
         }
 
         /**
-         * The index of the path constraint slot in {@link Skeleton#getPathConstraints()} that will be changed when this timeline
+         * The index of the outPath constraint slot in {@link Skeleton#getPathConstraints()} that will be changed when this timeline
          * is applied.
          */
         public int getPathConstraintIndex() {

@@ -122,7 +122,7 @@ public class Skeleton {
     }
 
     /**
-     * Caches information about bones and constraints. Must be called if bones, constraints, or weighted path attachments are
+     * Caches information about bones and constraints. Must be called if bones, constraints, or weighted outPath attachments are
      * added or removed.
      */
     public void updateCache() {
