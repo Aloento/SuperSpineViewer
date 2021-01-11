@@ -34,8 +34,10 @@ public class RuntimesLoader extends Controller {
             spineVersion.set(36);
         else if (skel.contains("3.5."))
             spineVersion.set(35);
-        else if (skel.contains("3.4."))
+        else if (skel.contains("3.4.") || skel.contains("3.3."))
             spineVersion.set(34);
+        else if (skel.contains("3.2."))
+            spineVersion.set(32);
         else if (skel.contains("3.1."))
             spineVersion.set(31);
         else if (skel.contains("2.1."))
@@ -91,6 +93,7 @@ public class RuntimesLoader extends Controller {
                 case 36 -> new LwjglFXApplication(new Spine36(), spineRender, config);
                 case 35 -> new LwjglFXApplication(new Spine35(), spineRender, config);
                 case 34 -> new LwjglFXApplication(new Spine34(), spineRender, config);
+                case 32 -> new LwjglFXApplication(new Spine32(), spineRender, config);
                 case 31 -> new LwjglFXApplication(new Spine31(), spineRender, config);
                 case 21 -> new LwjglFXApplication(new Spine21(), spineRender, config);
                 default -> {
