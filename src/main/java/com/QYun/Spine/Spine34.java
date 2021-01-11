@@ -189,6 +189,8 @@ public class Spine34 extends SuperSpine {
             TrackEntry entry = state.getCurrent(0);
             if (entry != null) {
                 percent = entry.getTime() / entry.getEndTime();
+                if (entry.getLoop())
+                    percent %= 1;
                 if (isPlay.get())
                     Platform.runLater(() -> Controller.progressBar.setProgress(percent));
                 if (percent >= 1 && !isLoop.get())
