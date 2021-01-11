@@ -32,15 +32,13 @@ public class Spine40 extends SuperSpine {
     }
 
     private boolean loadSkel() {
-        if (isBinary) {
-            SkeletonBinary binary = new SkeletonBinary(atlas);
-            binary.setScale(scale.get());
-            skeletonData = binary.readSkeletonData(skelFile);
-        } else {
-            SkeletonJson json = new SkeletonJson(atlas);
-            json.setScale(scale.get());
-            skeletonData = json.readSkeletonData(skelFile);
-        }
+        SkeletonLoader loader;
+        if (isBinary)
+            loader = new SkeletonBinary(atlas);
+        else loader = new SkeletonJson(atlas);
+
+        loader.setScale(scale.get());
+        skeletonData = loader.readSkeletonData(skelFile);
         if (skeletonData.getBones().size == 0) {
             System.out.println("骨骼为空");
             return false;
