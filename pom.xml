@@ -6,7 +6,7 @@
 
     <groupId>com.QYun</groupId>
     <artifactId>SuperSpineViewer</artifactId>
-    <version>0.1.11</version>
+    <version>0.1.12</version>
     <repositories>
         <repository>
             <id>sonatype</id>
@@ -50,12 +50,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx</artifactId>
@@ -148,14 +142,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.5</version>
-                <configuration>
-                    <mainClass>com.QYun.SuperSpineViewer.Main</mainClass>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -4,7 +4,7 @@
   <groupId>com.QYun</groupId>
   <artifactId>SuperSpineViewer</artifactId>
   <name>SuperSpineViewer</name>
-  <version>0.1.11</version>
+  <version>0.1.12</version>
   <url>https://github.com/soarteam/SuperSpineViewer</url>
   <developers>
     <developer>
@@ -56,14 +56,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-maven-plugin</artifactId>
-        <version>0.0.5</version>
-        <configuration>
-          <mainClass>com.QYun.SuperSpineViewer.Main</mainClass>
-        </configuration>
       </plugin>
     </plugins>
   </build>

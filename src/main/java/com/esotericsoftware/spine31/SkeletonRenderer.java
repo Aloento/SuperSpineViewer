@@ -41,8 +41,6 @@ public class SkeletonRenderer<T extends Batch> {
                 float oldScaleY = rootBone.getScaleY();
                 float oldRotation = rootBone.getRotation();
                 attachmentSkeleton.setPosition(skeleton.getX() + bone.getWorldX(), skeleton.getY() + bone.getWorldY());
-                // rootBone.setScaleX(1 + bone.getWorldScaleX() - oldScaleX);
-                // rootBone.setScaleY(1 + bone.getWorldScaleY() - oldScaleY);
                 rootBone.setRotation(oldRotation + bone.getWorldRotationX());
                 attachmentSkeleton.updateWorldTransform();
 

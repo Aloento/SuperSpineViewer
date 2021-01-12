@@ -192,7 +192,7 @@ public class SkeletonJson {
     private Attachment readAttachment(Skin skin, int slotIndex, String name, JsonValue map) {
         float scale = this.scale;
         name = map.getString("name", name);
-        String path = map.getString("outPath", name);
+        String path = map.getString("path", name);
 
         String type = map.getString("type", AttachmentType.region.name());
         if (type.equals("skinnedmesh")) type = "weightedmesh";
@@ -299,14 +299,6 @@ public class SkeletonJson {
                 return mesh;
             }
         }
-
-        // RegionSequenceAttachment regionSequenceAttachment = (RegionSequenceAttachment)attachment;
-        //
-        // float fps = map.getFloat("fps");
-        // regionSequenceAttachment.setFrameTime(fps);
-        //
-        // String modeString = map.getString("mode");
-        // regionSequenceAttachment.setMode(modeString == null ? Mode.forward : Mode.valueOf(modeString));
 
         return null;
     }
