@@ -52,8 +52,7 @@ public class SkeletonRendererDebug {
             for (int i = 0, n = bones.size; i < n; i++) {
                 Bone bone = bones.get(i);
                 if (bone.parent == null || !bone.active) continue;
-                float boneWidth = 2;
-                float length = bone.data.length, width = boneWidth;
+                float length = bone.data.length, width = (float) 2;
                 if (length == 0) {
                     length = 8;
                     width /= 2;

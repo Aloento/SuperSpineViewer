@@ -46,26 +46,25 @@ public abstract class BaseTexture<T extends ManagedResource> implements Texture 
     protected BaseTexture(T resource,
                           PixelFormat format, WrapMode wrapMode,
                           int width, int height) {
-        this(resource, format, wrapMode, width, height, 0, 0, width, height, false);
+        this(resource, format, wrapMode, width, height, width, height);
     }
 
     protected BaseTexture(T resource,
                           PixelFormat format, WrapMode wrapMode,
                           int physicalWidth, int physicalHeight,
-                          int contentX, int contentY,
-                          int contentWidth, int contentHeight, boolean useMipmap) {
+                          int contentWidth, int contentHeight) {
         this.resource = resource;
         this.format = format;
         this.wrapMode = wrapMode;
         this.physicalWidth = physicalWidth;
         this.physicalHeight = physicalHeight;
-        this.contentX = contentX;
-        this.contentY = contentY;
+        this.contentX = 0;
+        this.contentY = 0;
         this.contentWidth = contentWidth;
         this.contentHeight = contentHeight;
         this.maxContentWidth = physicalWidth;
         this.maxContentHeight = physicalHeight;
-        this.useMipmap = useMipmap;
+        this.useMipmap = false;
     }
 
     protected BaseTexture(T resource,

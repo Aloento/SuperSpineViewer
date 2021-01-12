@@ -271,7 +271,7 @@ public class SkeletonBinary {
             case mesh -> {
                 String path = input.readString();
                 int color = input.readInt();
-                int hullLength = 0;
+                int hullLength;
                 int verticesLength = input.readInt(true) * 2;
                 float[] uvs = readFloatArray(input, verticesLength, 1);
                 short[] triangles = readShortArray(input);
