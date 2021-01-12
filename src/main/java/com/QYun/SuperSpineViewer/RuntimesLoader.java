@@ -82,27 +82,22 @@ public class RuntimesLoader extends Controller {
 
     private boolean initLibDGX() {
         config.samples = 16;
-        try {
-            switch (spineVersion.get()) {
-                case 40 -> new LwjglFXApplication(new Spine40(), spineRender, config);
-                case 38 -> new LwjglFXApplication(new Spine38(), spineRender, config);
-                case 37 -> new LwjglFXApplication(new Spine37(), spineRender, config);
-                case 36 -> new LwjglFXApplication(new Spine36(), spineRender, config);
-                case 35 -> new LwjglFXApplication(new Spine35(), spineRender, config);
-                case 34 -> new LwjglFXApplication(new Spine34(), spineRender, config);
-                case 32 -> new LwjglFXApplication(new Spine32(), spineRender, config);
-                case 31 -> new LwjglFXApplication(new Spine31(), spineRender, config);
-                case 21 -> new LwjglFXApplication(new Spine21(), spineRender, config);
-                default -> {
-                    return false;
-                }
+        switch (spineVersion.get()) {
+            case 40 -> new LwjglFXApplication(new Spine40(), spineRender, config);
+            case 38 -> new LwjglFXApplication(new Spine38(), spineRender, config);
+            case 37 -> new LwjglFXApplication(new Spine37(), spineRender, config);
+            case 36 -> new LwjglFXApplication(new Spine36(), spineRender, config);
+            case 35 -> new LwjglFXApplication(new Spine35(), spineRender, config);
+            case 34 -> new LwjglFXApplication(new Spine34(), spineRender, config);
+            case 32 -> new LwjglFXApplication(new Spine32(), spineRender, config);
+            case 31 -> new LwjglFXApplication(new Spine31(), spineRender, config);
+            case 21 -> new LwjglFXApplication(new Spine21(), spineRender, config);
+            default -> {
+                return false;
             }
-            isLoad.set(true);
-            return true;
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return false;
         }
+        isLoad.set(true);
+        return true;
     }
 
     private FileHandle atlasFile(FileHandle skelFile, String baseName) {

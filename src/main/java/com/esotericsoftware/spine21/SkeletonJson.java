@@ -156,7 +156,7 @@ public class SkeletonJson {
     private Attachment readAttachment(Skin skin, String name, JsonValue map) {
         float scale = this.scale;
         name = map.getString("name", name);
-        String path = map.getString("outPath", name);
+        String path = map.getString("path", name);
 
         switch (AttachmentType.valueOf(map.getString("type", AttachmentType.region.name()))) {
             case region -> {
@@ -246,14 +246,6 @@ public class SkeletonJson {
                 return mesh;
             }
         }
-
-        // RegionSequenceAttachment regionSequenceAttachment = (RegionSequenceAttachment)attachment;
-        //
-        // float fps = map.getFloat("fps");
-        // regionSequenceAttachment.setFrameTime(fps);
-        //
-        // String modeString = map.getString("mode");
-        // regionSequenceAttachment.setMode(modeString == null ? Mode.forward : Mode.valueOf(modeString));
 
         return null;
     }
