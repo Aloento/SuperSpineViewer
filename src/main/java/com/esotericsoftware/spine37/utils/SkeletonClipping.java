@@ -196,15 +196,12 @@ public class SkeletonClipping {
         }
     }
 
-    /**
-     * Clips the input triangle against the convex, clockwise clipping area. If the triangle lies entirely within the clipping
-     * area, false is returned. The clipping area must duplicate the first vertex at the end of the vertices list.
-     */
+    
     boolean clip(float x1, float y1, float x2, float y2, float x3, float y3, FloatArray clippingArea, FloatArray output) {
         FloatArray originalOutput = output;
         boolean clipped = false;
 
-        // Avoid copy at the end.
+
         FloatArray input;
         if (clippingArea.size % 4 >= 2) {
             input = output;
@@ -237,12 +234,12 @@ public class SkeletonClipping {
                 float inputX2 = inputVertices[ii + 2], inputY2 = inputVertices[ii + 3];
                 boolean side2 = deltaX * (inputY2 - edgeY2) - deltaY * (inputX2 - edgeX2) > 0;
                 if (deltaX * (inputY - edgeY2) - deltaY * (inputX - edgeX2) > 0) {
-                    if (side2) { // v1 inside, v2 inside
+                    if (side2) {
                         output.add(inputX2);
                         output.add(inputY2);
                         continue;
                     }
-                    // v1 inside, v2 outside
+
                     float c0 = inputY2 - inputY, c2 = inputX2 - inputX;
                     float s = c0 * (edgeX2 - edgeX) - c2 * (edgeY2 - edgeY);
                     if (Math.abs(s) > 0.000001f) {
@@ -253,7 +250,7 @@ public class SkeletonClipping {
                         output.add(edgeX);
                         output.add(edgeY);
                     }
-                } else if (side2) { // v1 outside, v2 inside
+                } else if (side2) {
                     float c0 = inputY2 - inputY, c2 = inputX2 - inputX;
                     float s = c0 * (edgeX2 - edgeX) - c2 * (edgeY2 - edgeY);
                     if (Math.abs(s) > 0.000001f) {
@@ -270,7 +267,7 @@ public class SkeletonClipping {
                 clipped = true;
             }
 
-            if (outputStart == output.size) { // All edges outside.
+            if (outputStart == output.size) {
                 originalOutput.clear();
                 return true;
             }
