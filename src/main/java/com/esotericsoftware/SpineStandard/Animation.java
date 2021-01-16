@@ -16,8 +16,7 @@ public class Animation extends CrossSpine {
     final IntSet timelineIDs = new IntSet();
     Array<Timeline> timelines;
     float duration;
-
-    public Animation(String name, Array<Timeline> timelines, float duration) {
+   public Animation(String name, Array<Timeline> timelines, float duration) {
         if (name == null)
             throw new IllegalArgumentException("name cannot be null.");
         this.name = name;
@@ -28,8 +27,7 @@ public class Animation extends CrossSpine {
         if (V.get().equals("38"))
             setTimelines(timelines);
     }
-
-    static int binarySearch(float[] values, float target, int step) {
+   static int binarySearch(float[] values, float target, int step) {
         int low = 0;
         int high = values.length / step - 2;
         if (high == 0) return step;
@@ -43,8 +41,7 @@ public class Animation extends CrossSpine {
             current = (low + high) >>> 1;
         }
     }
-
-    static int binarySearch(float[] values, float target) {
+   static int binarySearch(float[] values, float target) {
         int low = 0;
         int high = values.length - 2;
         if (high == 0) return 1;
@@ -58,38 +55,31 @@ public class Animation extends CrossSpine {
             current = (low + high) >>> 1;
         }
     }
-
-    static int linearSearch(float[] values, float target, int step) {
+   static int linearSearch(float[] values, float target, int step) {
         for (int i = 0, last = values.length - step; i <= last; i += step)
             if (values[i] > target) return i;
         return -1;
     }
-
-    public Array<Timeline> getTimelines() {
+   public Array<Timeline> getTimelines() {
         return timelines;
     }
-
-    public void setTimelines(Array<Timeline> timelines) {
+   public void setTimelines(Array<Timeline> timelines) {
         if (timelines == null) throw new IllegalArgumentException("timelines cannot be null.");
         this.timelines = timelines;
         timelineIDs.clear();
         for (Timeline timeline : timelines)
             timelineIDs.add(timeline.getPropertyId());
     }
-
-    public boolean hasTimeline(int id) {
+   public boolean hasTimeline(int id) {
         return timelineIDs.contains(id);
     }
-
-    public float getDuration() {
+   public float getDuration() {
         return duration;
     }
-
-    public void setDuration(float duration) {
+   public void setDuration(float duration) {
         this.duration = duration;
     }
-
-    public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha,
+   public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha,
                       MixBlend blend, MixDirection direction) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         if (loop && duration != 0) {
@@ -100,24 +90,19 @@ public class Animation extends CrossSpine {
         for (int i = 0, n = timelines.size; i < n; i++)
             timelines.get(i).apply(skeleton, lastTime, time, events, alpha, blend, direction);
     }
-
-    public String getName() {
+   public String getName() {
         return name;
     }
-
-    public String toString() {
+   public String toString() {
         return name;
     }
-
-    public enum MixBlend {
+   public enum MixBlend {
         setup, first, replace, add
     }
-
-    public enum MixDirection {
+   public enum MixDirection {
         in, out
     }
-
-    private enum TimelineType {
+   private enum TimelineType {
         rotate, translate, scale, shear,
         attachment, color, deform,
         event, drawOrder,
@@ -125,49 +110,37 @@ public class Animation extends CrossSpine {
         pathConstraintPosition, pathConstraintSpacing, pathConstraintMix,
         twoColor
     }
-
-    public interface Timeline {
+   public interface Timeline {
         void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                    MixDirection direction);
-
-        int getPropertyId();
+       int getPropertyId();
     }
-
-    public interface BoneTimeline extends Timeline {
+   public interface BoneTimeline extends Timeline {
         int getBoneIndex();
-
-        void setBoneIndex(int index);
+       void setBoneIndex(int index);
     }
-
-    public interface SlotTimeline extends Timeline {
+   public interface SlotTimeline extends Timeline {
         int getSlotIndex();
-
-        void setSlotIndex(int index);
+       void setSlotIndex(int index);
     }
-
-    abstract static public class CurveTimeline implements Timeline {
+   abstract static public class CurveTimeline implements Timeline {
         static public final float LINEAR = 0, STEPPED = 1, BEZIER = 2;
         static private final int BEZIER_SIZE = 10 * 2 - 1;
         private final float[] curves;
-
-        public CurveTimeline(int frameCount) {
+       public CurveTimeline(int frameCount) {
             if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             curves = new float[(frameCount - 1) * BEZIER_SIZE];
         }
-
-        public int getFrameCount() {
+       public int getFrameCount() {
             return curves.length / BEZIER_SIZE + 1;
         }
-
-        public void setLinear(int frameIndex) {
+       public void setLinear(int frameIndex) {
             curves[frameIndex * BEZIER_SIZE] = LINEAR;
         }
-
-        public void setStepped(int frameIndex) {
+       public void setStepped(int frameIndex) {
             curves[frameIndex * BEZIER_SIZE] = STEPPED;
         }
-
-        public float getCurveType(int frameIndex) {
+       public float getCurveType(int frameIndex) {
             int index = frameIndex * BEZIER_SIZE;
             if (index == curves.length) return LINEAR;
             float type = curves[index];
@@ -175,8 +148,7 @@ public class Animation extends CrossSpine {
             if (type == STEPPED) return STEPPED;
             return BEZIER;
         }
-
-        public void setCurve(int frameIndex, float cx1, float cy1, float cx2, float cy2) {
+       public void setCurve(int frameIndex, float cx1, float cy1, float cx2, float cy2) {
             float tmpx = (-cx1 * 2 + cx2) * 0.03f, tmpy = (-cy1 * 2 + cy2) * 0.03f;
             float dddfx = ((cx1 - cx2) * 3 + 1) * 0.006f, dddfy = ((cy1 - cy2) * 3 + 1) * 0.006f;
             float ddfx = tmpx * 2 + dddfx, ddfy = tmpy * 2 + dddfy;
@@ -196,8 +168,7 @@ public class Animation extends CrossSpine {
                 y += dfy;
             }
         }
-
-        public float getCurvePercent(int frameIndex, float percent) {
+       public float getCurvePercent(int frameIndex, float percent) {
             percent = MathUtils.clamp(percent, 0, 1);
             float[] curves = this.curves;
             int i = frameIndex * BEZIER_SIZE;
@@ -218,43 +189,35 @@ public class Animation extends CrossSpine {
             return y + (1 - y) * (percent - x) / (1 - x);
         }
     }
-
-    static public class RotateTimeline extends CurveTimeline implements BoneTimeline {
+   static public class RotateTimeline extends CurveTimeline implements BoneTimeline {
         static public final int ENTRIES = 2;
         static final int PREV_TIME = -2, PREV_ROTATION = -1;
         static final int ROTATION = 1;
         final float[] frames;
         int boneIndex;
-
-        public RotateTimeline(int frameCount) {
+       public RotateTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount << 1];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.rotate.ordinal() << 24) + boneIndex;
         }
-
-        public int getBoneIndex() {
+       public int getBoneIndex() {
             return boneIndex;
         }
-
-        public void setBoneIndex(int index) {
+       public void setBoneIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.boneIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public void setFrame(int frameIndex, float time, float degrees) {
+       public void setFrame(int frameIndex, float time, float degrees) {
             frameIndex <<= 1;
             frames[frameIndex] = time;
             frames[frameIndex + ROTATION] = degrees;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
             if (!bone.active) return;
@@ -305,44 +268,36 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class TranslateTimeline extends CurveTimeline implements BoneTimeline {
+   static public class TranslateTimeline extends CurveTimeline implements BoneTimeline {
         static public final int ENTRIES = 3;
         static final int PREV_TIME = -3, PREV_X = -2, PREV_Y = -1;
         static final int X = 1, Y = 2;
         final float[] frames;
         int boneIndex;
-
-        public TranslateTimeline(int frameCount) {
+       public TranslateTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount * ENTRIES];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.translate.ordinal() << 24) + boneIndex;
         }
-
-        public int getBoneIndex() {
+       public int getBoneIndex() {
             return boneIndex;
         }
-
-        public void setBoneIndex(int index) {
+       public void setBoneIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.boneIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public void setFrame(int frameIndex, float time, float x, float y) {
+       public void setFrame(int frameIndex, float time, float x, float y) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + X] = x;
             frames[frameIndex + Y] = y;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
             if (V.get().equals("38"))
@@ -392,17 +347,14 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class ScaleTimeline extends TranslateTimeline {
+   static public class ScaleTimeline extends TranslateTimeline {
         public ScaleTimeline(int frameCount) {
             super(frameCount);
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.scale.ordinal() << 24) + boneIndex;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
             if (V.get().equals("38"))
@@ -492,17 +444,14 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class ShearTimeline extends TranslateTimeline {
+   static public class ShearTimeline extends TranslateTimeline {
         public ShearTimeline(int frameCount) {
             super(frameCount);
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.shear.ordinal() << 24) + boneIndex;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
             if (V.get().equals("38"))
@@ -552,37 +501,30 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class ColorTimeline extends CurveTimeline implements SlotTimeline {
+   static public class ColorTimeline extends CurveTimeline implements SlotTimeline {
         static public final int ENTRIES = 5;
         static private final int PREV_TIME = -5, PREV_R = -4, PREV_G = -3, PREV_B = -2, PREV_A = -1;
         static private final int R = 1, G = 2, B = 3, A = 4;
         private final float[] frames;
         int slotIndex;
-
-        public ColorTimeline(int frameCount) {
+       public ColorTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount * ENTRIES];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.color.ordinal() << 24) + slotIndex;
         }
-
-        public int getSlotIndex() {
+       public int getSlotIndex() {
             return slotIndex;
         }
-
-        public void setSlotIndex(int index) {
+       public void setSlotIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.slotIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public void setFrame(int frameIndex, float time, float r, float g, float b, float a) {
+       public void setFrame(int frameIndex, float time, float r, float g, float b, float a) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + R] = r;
@@ -590,8 +532,7 @@ public class Animation extends CrossSpine {
             frames[frameIndex + B] = b;
             frames[frameIndex + A] = a;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
             if (V.get().equals("38"))
@@ -641,38 +582,31 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class TwoColorTimeline extends CurveTimeline implements SlotTimeline {
+   static public class TwoColorTimeline extends CurveTimeline implements SlotTimeline {
         static public final int ENTRIES = 8;
         static private final int PREV_TIME = -8, PREV_R = -7, PREV_G = -6, PREV_B = -5, PREV_A = -4;
         static private final int PREV_R2 = -3, PREV_G2 = -2, PREV_B2 = -1;
         static private final int R = 1, G = 2, B = 3, A = 4, R2 = 5, G2 = 6, B2 = 7;
         private final float[] frames;
         int slotIndex;
-
-        public TwoColorTimeline(int frameCount) {
+       public TwoColorTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount * ENTRIES];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.twoColor.ordinal() << 24) + slotIndex;
         }
-
-        public int getSlotIndex() {
+       public int getSlotIndex() {
             return slotIndex;
         }
-
-        public void setSlotIndex(int index) {
+       public void setSlotIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.slotIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public void setFrame(int frameIndex, float time, float r, float g, float b, float a, float r2, float g2, float b2) {
+       public void setFrame(int frameIndex, float time, float r, float g, float b, float a, float r2, float g2, float b2) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + R] = r;
@@ -683,8 +617,7 @@ public class Animation extends CrossSpine {
             frames[frameIndex + G2] = g2;
             frames[frameIndex + B2] = b2;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
             if (V.get().equals("38"))
@@ -750,51 +683,41 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class AttachmentTimeline implements SlotTimeline {
+   static public class AttachmentTimeline implements SlotTimeline {
         final float[] frames;
         final String[] attachmentNames;
         int slotIndex;
-
-        public AttachmentTimeline(int frameCount) {
+       public AttachmentTimeline(int frameCount) {
             if (V.get().equals("38"))
                 if (frameCount <= 0)
                     throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             attachmentNames = new String[frameCount];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.attachment.ordinal() << 24) + slotIndex;
         }
-
-        public int getFrameCount() {
+       public int getFrameCount() {
             return frames.length;
         }
-
-        public int getSlotIndex() {
+       public int getSlotIndex() {
             return slotIndex;
         }
-
-        public void setSlotIndex(int index) {
+       public void setSlotIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.slotIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public String[] getAttachmentNames() {
+       public String[] getAttachmentNames() {
             return attachmentNames;
         }
-
-        public void setFrame(int frameIndex, float time, String attachmentName) {
+       public void setFrame(int frameIndex, float time, String attachmentName) {
             frames[frameIndex] = time;
             attachmentNames[frameIndex] = attachmentName;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
             if (V.get().equals("38")) {
@@ -836,59 +759,47 @@ public class Animation extends CrossSpine {
                 slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
             }
         }
-
-        private void setAttachment(Skeleton skeleton, Slot slot, String attachmentName) {
+       private void setAttachment(Skeleton skeleton, Slot slot, String attachmentName) {
             slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
         }
     }
-
-    static public class DeformTimeline extends CurveTimeline implements SlotTimeline {
+   static public class DeformTimeline extends CurveTimeline implements SlotTimeline {
         private final float[] frames;
         private final float[][] frameVertices;
         int slotIndex;
         VertexAttachment attachment;
-
-        public DeformTimeline(int frameCount) {
+       public DeformTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount];
             frameVertices = new float[frameCount][];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.deform.ordinal() << 27) + attachment.getId() + slotIndex;
         }
-
-        public int getSlotIndex() {
+       public int getSlotIndex() {
             return slotIndex;
         }
-
-        public void setSlotIndex(int index) {
+       public void setSlotIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.slotIndex = index;
         }
-
-        public VertexAttachment getAttachment() {
+       public VertexAttachment getAttachment() {
             return attachment;
         }
-
-        public void setAttachment(VertexAttachment attachment) {
+       public void setAttachment(VertexAttachment attachment) {
             this.attachment = attachment;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public float[][] getVertices() {
+       public float[][] getVertices() {
             return frameVertices;
         }
-
-        public void setFrame(int frameIndex, float time, float[] vertices) {
+       public void setFrame(int frameIndex, float time, float[] vertices) {
             frames[frameIndex] = time;
             frameVertices[frameIndex] = vertices;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
             Attachment slotAttachment = slot.attachment;
@@ -1200,40 +1111,32 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class EventTimeline implements Timeline {
+   static public class EventTimeline implements Timeline {
         private final float[] frames;
         private final Event[] events;
-
-        public EventTimeline(int frameCount) {
+       public EventTimeline(int frameCount) {
             if (V.get().equals("38"))
                 if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             events = new Event[frameCount];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return TimelineType.event.ordinal() << 24;
         }
-
-        public int getFrameCount() {
+       public int getFrameCount() {
             return frames.length;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public Event[] getEvents() {
+       public Event[] getEvents() {
             return events;
         }
-
-        public void setFrame(int frameIndex, Event event) {
+       public void setFrame(int frameIndex, Event event) {
             frames[frameIndex] = event.time;
             events[frameIndex] = event;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha, MixBlend blend,
                           MixDirection direction) {
             if (firedEvents == null) return;
             float[] frames = this.frames;
@@ -1259,40 +1162,32 @@ public class Animation extends CrossSpine {
                 firedEvents.add(events[frame]);
         }
     }
-
-    static public class DrawOrderTimeline implements Timeline {
+   static public class DrawOrderTimeline implements Timeline {
         private final float[] frames;
         private final int[][] drawOrders;
-
-        public DrawOrderTimeline(int frameCount) {
+       public DrawOrderTimeline(int frameCount) {
             if (V.get().equals("38"))
                 if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             drawOrders = new int[frameCount][];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return TimelineType.drawOrder.ordinal() << 24;
         }
-
-        public int getFrameCount() {
+       public int getFrameCount() {
             return frames.length;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public int[][] getDrawOrders() {
+       public int[][] getDrawOrders() {
             return drawOrders;
         }
-
-        public void setFrame(int frameIndex, float time, int[] drawOrder) {
+       public void setFrame(int frameIndex, float time, int[] drawOrder) {
             frames[frameIndex] = time;
             drawOrders[frameIndex] = drawOrder;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Array<Slot> drawOrder = skeleton.drawOrder;
             Array<Slot> slots = skeleton.slots;
@@ -1335,15 +1230,13 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class IkConstraintTimeline extends CurveTimeline {
+   static public class IkConstraintTimeline extends CurveTimeline {
         static public final int ENTRIES;
         static private final int PREV_TIME, PREV_MIX, PREV_SOFTNESS, PREV_BEND_DIRECTION, PREV_COMPRESS, PREV_STRETCH;
         static private final int MIX, SOFTNESS, BEND_DIRECTION, COMPRESS, STRETCH;
         private final float[] frames;
         int ikConstraintIndex;
-
-        public IkConstraintTimeline(int frameCount) {
+       public IkConstraintTimeline(int frameCount) {
             super(frameCount);
             if (V.get().equals("38")) {
                 ENTRIES = 6;
@@ -1372,31 +1265,25 @@ public class Animation extends CrossSpine {
             }
             frames = new float[frameCount * ENTRIES];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.ikConstraint.ordinal() << 24) + ikConstraintIndex;
         }
-
-        public int getIkConstraintIndex() {
+       public int getIkConstraintIndex() {
             return ikConstraintIndex;
         }
-
-        public void setIkConstraintIndex(int index) {
+       public void setIkConstraintIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.ikConstraintIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public void setFrame(int frameIndex, float time, float mix, float softness, int bendDirection, boolean compress,
+       public void setFrame(int frameIndex, float time, float mix, float softness, int bendDirection, boolean compress,
                              boolean stretch) {
             frames[frameIndex + SOFTNESS] = softness;
             this.setFrame(frameIndex, time, mix, bendDirection, compress, stretch);
         }
-
-        public void setFrame(int frameIndex, float time, float mix, int bendDirection, boolean compress, boolean stretch) {
+       public void setFrame(int frameIndex, float time, float mix, int bendDirection, boolean compress, boolean stretch) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + MIX] = mix;
@@ -1404,8 +1291,7 @@ public class Animation extends CrossSpine {
             frames[frameIndex + COMPRESS] = compress ? 1 : 0;
             frames[frameIndex + STRETCH] = stretch ? 1 : 0;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             IkConstraint constraint = skeleton.ikConstraints.get(ikConstraintIndex);
             if (V.get().equals("38"))
@@ -1489,37 +1375,30 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class TransformConstraintTimeline extends CurveTimeline {
+   static public class TransformConstraintTimeline extends CurveTimeline {
         static public final int ENTRIES = 5;
         static private final int PREV_TIME = -5, PREV_ROTATE = -4, PREV_TRANSLATE = -3, PREV_SCALE = -2, PREV_SHEAR = -1;
         static private final int ROTATE = 1, TRANSLATE = 2, SCALE = 3, SHEAR = 4;
         private final float[] frames;
         int transformConstraintIndex;
-
-        public TransformConstraintTimeline(int frameCount) {
+       public TransformConstraintTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount * ENTRIES];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.transformConstraint.ordinal() << 24) + transformConstraintIndex;
         }
-
-        public int getTransformConstraintIndex() {
+       public int getTransformConstraintIndex() {
             return transformConstraintIndex;
         }
-
-        public void setTransformConstraintIndex(int index) {
+       public void setTransformConstraintIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.transformConstraintIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public void setFrame(int frameIndex, float time, float rotateMix, float translateMix, float scaleMix, float shearMix) {
+       public void setFrame(int frameIndex, float time, float rotateMix, float translateMix, float scaleMix, float shearMix) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + ROTATE] = rotateMix;
@@ -1527,8 +1406,7 @@ public class Animation extends CrossSpine {
             frames[frameIndex + SCALE] = scaleMix;
             frames[frameIndex + SHEAR] = shearMix;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             TransformConstraint constraint = skeleton.transformConstraints.get(transformConstraintIndex);
             if (V.get().equals("38"))
@@ -1588,43 +1466,35 @@ public class Animation extends CrossSpine {
             }
         }
     }
-
-    static public class PathConstraintPositionTimeline extends CurveTimeline {
+   static public class PathConstraintPositionTimeline extends CurveTimeline {
         static public final int ENTRIES = 2;
         static final int PREV_TIME = -2, PREV_VALUE = -1;
         static final int VALUE = 1;
         final float[] frames;
         int pathConstraintIndex;
-
-        public PathConstraintPositionTimeline(int frameCount) {
+       public PathConstraintPositionTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount * ENTRIES];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.pathConstraintPosition.ordinal() << 24) + pathConstraintIndex;
         }
-
-        public int getPathConstraintIndex() {
+       public int getPathConstraintIndex() {
             return pathConstraintIndex;
         }
-
-        public void setPathConstraintIndex(int index) {
+       public void setPathConstraintIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.pathConstraintIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public void setFrame(int frameIndex, float time, float position) {
+       public void setFrame(int frameIndex, float time, float position) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + VALUE] = position;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
             if (V.get().equals("38"))
@@ -1657,17 +1527,14 @@ public class Animation extends CrossSpine {
                 constraint.position += (position - constraint.position) * alpha;
         }
     }
-
-    static public class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
+   static public class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
         public PathConstraintSpacingTimeline(int frameCount) {
             super(frameCount);
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.pathConstraintSpacing.ordinal() << 24) + pathConstraintIndex;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
             if (V.get().equals("38"))
@@ -1700,44 +1567,36 @@ public class Animation extends CrossSpine {
                 constraint.spacing += (spacing - constraint.spacing) * alpha;
         }
     }
-
-    static public class PathConstraintMixTimeline extends CurveTimeline {
+   static public class PathConstraintMixTimeline extends CurveTimeline {
         static public final int ENTRIES = 3;
         static private final int PREV_TIME = -3, PREV_ROTATE = -2, PREV_TRANSLATE = -1;
         static private final int ROTATE = 1, TRANSLATE = 2;
         private final float[] frames;
         int pathConstraintIndex;
-
-        public PathConstraintMixTimeline(int frameCount) {
+       public PathConstraintMixTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount * ENTRIES];
         }
-
-        public int getPropertyId() {
+       public int getPropertyId() {
             return (TimelineType.pathConstraintMix.ordinal() << 24) + pathConstraintIndex;
         }
-
-        public int getPathConstraintIndex() {
+       public int getPathConstraintIndex() {
             return pathConstraintIndex;
         }
-
-        public void setPathConstraintIndex(int index) {
+       public void setPathConstraintIndex(int index) {
             if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
             this.pathConstraintIndex = index;
         }
-
-        public float[] getFrames() {
+       public float[] getFrames() {
             return frames;
         }
-
-        public void setFrame(int frameIndex, float time, float rotateMix, float translateMix) {
+       public void setFrame(int frameIndex, float time, float rotateMix, float translateMix) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + ROTATE] = rotateMix;
             frames[frameIndex + TRANSLATE] = translateMix;
         }
-
-        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+       public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
             if (V.get().equals("38"))
