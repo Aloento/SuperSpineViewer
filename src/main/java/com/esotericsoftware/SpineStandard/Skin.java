@@ -1,22 +1,40 @@
 package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.OrderedMap;
+import com.badlogic.gdx.utils.Pool;
+import com.esotericsoftware.CrossSpine;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
-import com.esotericsoftware.SpineStandard.attachments.MeshAttachment;
 
-
-public class Skin {
+public class Skin extends CrossSpine {
     final String name;
-    final OrderedMap<SkinEntry, SkinEntry> attachments = new OrderedMap();
-    final Array<BoneData> bones = new Array();
-    final Array<ConstraintData> constraints = new Array();
+    final OrderedMap<SkinEntry, SkinEntry> attachments = new OrderedMap<>();
+    final ObjectMap<Key, Attachment> O_attachments = new ObjectMap<>();
+    final Array<BoneData> bones = new Array<>();
+    final Array<ConstraintData> constraints = new Array<>();
+    final Pool<Key> keyPool = new Pool(64) {
+        protected Object newObject() {
+            return new Key();
+        }
+    };
     private final SkinEntry lookup = new SkinEntry();
+    private final Key O_lookup = new Key();
 
     public Skin(String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
         this.name = name;
-        this.attachments.orderedKeys().ordered = false;
+        if (V.get().equals("38"))
+            this.attachments.orderedKeys().ordered = false;
+    }
+
+    public void addAttachment(int slotIndex, String name, Attachment attachment) {
+        if (attachment == null) throw new IllegalArgumentException("attachment cannot be null.");
+        if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
+        Key key = keyPool.obtain();
+        key.set(slotIndex, name);
+        O_attachments.put(key, attachment);
     }
 
     public void setAttachment(int slotIndex, String name, Attachment attachment) {
@@ -29,58 +47,35 @@ public class Skin {
         }
     }
 
-    public void addSkin(Skin skin) {
-        if (skin == null) throw new IllegalArgumentException("skin cannot be null.");
-        for (BoneData data : skin.bones)
-            if (!bones.contains(data, true)) bones.add(data);
-        for (ConstraintData data : skin.constraints)
-            if (!constraints.contains(data, true)) constraints.add(data);
-        for (SkinEntry entry : skin.attachments.keys())
-            setAttachment(entry.slotIndex, entry.name, entry.attachment);
-    }
-
-    public void copySkin(Skin skin) {
-        if (skin == null) throw new IllegalArgumentException("skin cannot be null.");
-        for (BoneData data : skin.bones)
-            if (!bones.contains(data, true)) bones.add(data);
-        for (ConstraintData data : skin.constraints)
-            if (!constraints.contains(data, true)) constraints.add(data);
-        for (SkinEntry entry : skin.attachments.keys()) {
-            if (entry.attachment instanceof MeshAttachment)
-                setAttachment(entry.slotIndex, entry.name, ((MeshAttachment) entry.attachment).newLinkedMesh());
-            else
-                setAttachment(entry.slotIndex, entry.name, entry.attachment != null ? entry.attachment.copy() : null);
-        }
-    }
-
     public Attachment getAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
-        lookup.set(slotIndex, name);
-        SkinEntry entry = attachments.get(lookup);
-        return entry != null ? entry.attachment : null;
-    }
-
-    public void removeAttachment(int slotIndex, String name) {
-        if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
-        lookup.set(slotIndex, name);
-        attachments.remove(lookup);
+        if (V.get().equals("38")) {
+            lookup.set(slotIndex, name);
+            SkinEntry entry = attachments.get(lookup);
+            return entry != null ? entry.attachment : null;
+        } else if (V.get().equals("37")) {
+            lookup.set(slotIndex, name);
+            return O_attachments.get(O_lookup);
+        }
+        return null;
     }
 
     public Array<SkinEntry> getAttachments() {
         return attachments.orderedKeys();
     }
 
-    public void getAttachments(int slotIndex, Array<SkinEntry> attachments) {
-        if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
-        if (attachments == null) throw new IllegalArgumentException("attachments cannot be null.");
-        for (SkinEntry entry : this.attachments.keys())
-            if (entry.slotIndex == slotIndex) attachments.add(entry);
+    public void clear() {
+        if (V.get().equals("38")) {
+            bones.clear();
+            constraints.clear();
+        } else if (V.get().equals("37"))
+            for (Key key : O_attachments.keys())
+                keyPool.free(key);
+        attachments.clear(1024);
     }
 
-    public void clear() {
-        attachments.clear(1024);
-        bones.clear();
-        constraints.clear();
+    public int size() {
+        return O_attachments.size;
     }
 
     public Array<BoneData> getBones() {
@@ -100,12 +95,23 @@ public class Skin {
     }
 
     void attachAll(Skeleton skeleton, Skin oldSkin) {
-        for (SkinEntry entry : oldSkin.attachments.keys()) {
-            int slotIndex = entry.slotIndex;
-            Slot slot = skeleton.slots.get(slotIndex);
-            if (slot.attachment == entry.attachment) {
-                Attachment attachment = getAttachment(slotIndex, entry.name);
-                if (attachment != null) slot.setAttachment(attachment);
+        if (V.get().equals("38")) {
+            for (SkinEntry entry : oldSkin.attachments.keys()) {
+                int slotIndex = entry.slotIndex;
+                Slot slot = skeleton.slots.get(slotIndex);
+                if (slot.attachment == entry.attachment) {
+                    Attachment attachment = getAttachment(slotIndex, entry.name);
+                    if (attachment != null) slot.setAttachment(attachment);
+                }
+            }
+        } else if (V.get().equals("37")) {
+            for (Entry<Key, Attachment> entry : oldSkin.O_attachments.entries()) {
+                int slotIndex = entry.key.slotIndex;
+                Slot slot = skeleton.slots.get(slotIndex);
+                if (slot.attachment == entry.value) {
+                    Attachment attachment = getAttachment(slotIndex, entry.key.name);
+                    if (attachment != null) slot.setAttachment(attachment);
+                }
             }
         }
     }
@@ -159,4 +165,33 @@ public class Skin {
             return slotIndex + ":" + name;
         }
     }
+
+    static class Key {
+        int slotIndex;
+        String name;
+        int hashCode;
+
+        public void set(int slotIndex, String name) {
+            if (name == null) throw new IllegalArgumentException("name cannot be null.");
+            this.slotIndex = slotIndex;
+            this.name = name;
+            hashCode = name.hashCode() + slotIndex * 37;
+        }
+
+        public int hashCode() {
+            return hashCode;
+        }
+
+        public boolean equals(Object object) {
+            if (object == null) return false;
+            Key other = (Key) object;
+            if (slotIndex != other.slotIndex) return false;
+            return name.equals(other.name);
+        }
+
+        public String toString() {
+            return slotIndex + ":" + name;
+        }
+    }
+
 }

@@ -6,12 +6,6 @@ import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
 import com.esotericsoftware.spine37.attachments.Attachment;
 
-/**
- * Stores attachments by slot index and attachment name.
- * <p>
- * See SkeletonData {@link SkeletonData#defaultSkin}, Skeleton {@link Skeleton#skin}, and
- * <a href="http://esotericsoftware.com/spine-runtime-skins">Runtime skins</a> in the Spine Runtimes Guide.
- */
 public class Skin {
     final String name;
     final ObjectMap<Key, Attachment> attachments = new ObjectMap();
@@ -27,9 +21,7 @@ public class Skin {
         this.name = name;
     }
 
-    /**
-     * Adds an attachment to the skin for the specified slot index and name.
-     */
+    
     public void addAttachment(int slotIndex, String name, Attachment attachment) {
         if (attachment == null) throw new IllegalArgumentException("attachment cannot be null.");
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
@@ -38,26 +30,20 @@ public class Skin {
         attachments.put(key, attachment);
     }
 
-    /**
-     * Adds all attachments from the specified skin to this skin.
-     */
+    
     public void addAttachments(Skin skin) {
         for (Entry<Key, Attachment> entry : skin.attachments.entries())
             addAttachment(entry.key.slotIndex, entry.key.name, entry.value);
     }
 
-    /**
-     * Returns the attachment for the specified slot index and name, or null.
-     */
+    
     public Attachment getAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
         lookup.set(slotIndex, name);
         return attachments.get(lookup);
     }
 
-    /**
-     * Removes the attachment in the skin for the specified slot index and name, if any.
-     */
+    
     public void removeAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
         Key key = keyPool.obtain();
@@ -96,9 +82,7 @@ public class Skin {
         return attachments.size;
     }
 
-    /**
-     * The skin's name, which is unique within the skeleton.
-     */
+    
     public String getName() {
         return name;
     }
@@ -107,9 +91,7 @@ public class Skin {
         return name;
     }
 
-    /**
-     * Attach each attachment in this skin if the corresponding attachment in the old skin is currently attached.
-     */
+    
     void attachAll(Skeleton skeleton, Skin oldSkin) {
         for (Entry<Key, Attachment> entry : oldSkin.attachments.entries()) {
             int slotIndex = entry.key.slotIndex;
