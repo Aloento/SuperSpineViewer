@@ -2,9 +2,10 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.FloatArray;
+import com.esotericsoftware.CrossSpine;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
 
-public class Slot {
+public class Slot extends CrossSpine {
     final SlotData data;
     final Bone bone;
     final Color color = new Color(), darkColor;
@@ -31,7 +32,8 @@ public class Slot {
         darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
         attachment = slot.attachment;
         attachmentTime = slot.attachmentTime;
-        deform.addAll(slot.deform);
+        if (V.get().equals("38"))
+            deform.addAll(slot.deform);
     }
 
     public SlotData getData() {
@@ -78,7 +80,7 @@ public class Slot {
     }
 
     public void setDeform(FloatArray deform) {
-        if (deform == null) throw new IllegalArgumentException("deform cannot be null.");
+        if (deform == null) throw new IllegalArgumentException("deform(attachmentVertices) cannot be null.");
         this.deform = deform;
     }
 
