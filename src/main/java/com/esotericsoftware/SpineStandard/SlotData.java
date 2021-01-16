@@ -2,7 +2,6 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.graphics.Color;
 
-
 public class SlotData {
     final int index;
     final String name;
