@@ -3,13 +3,12 @@ package com.esotericsoftware.SpineStandard;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool;
-import attachments.Attachment;
-import attachments.BoundingBoxAttachment;
-
+import com.esotericsoftware.SpineStandard.attachments.Attachment;
+import com.esotericsoftware.SpineStandard.attachments.BoundingBoxAttachment;
 
 public class SkeletonBounds {
-    private final Array<BoundingBoxAttachment> boundingBoxes = new Array();
-    private final Array<FloatArray> polygons = new Array();
+    private final Array<BoundingBoxAttachment> boundingBoxes = new Array<>();
+    private final Array<FloatArray> polygons = new Array<>();
     private final Pool<FloatArray> polygonPool = new Pool() {
         protected Object newObject() {
             return new FloatArray();
