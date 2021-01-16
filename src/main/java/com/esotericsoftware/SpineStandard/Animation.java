@@ -6,11 +6,15 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntSet;
 import com.esotericsoftware.CrossSpine;
-import attachments.Attachment;
+import com.esotericsoftware.SpineStandard.attachments.Attachment;
+import com.esotericsoftware.SpineStandard.attachments.VertexAttachment;
+
+import java.util.Objects;
 
 import static com.esotericsoftware.SpineStandard.Animation.MixBlend.*;
 import static com.esotericsoftware.SpineStandard.Animation.MixDirection.in;
 import static com.esotericsoftware.SpineStandard.Animation.MixDirection.out;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class Animation extends CrossSpine {
     final String name;
@@ -893,35 +897,39 @@ public class Animation extends CrossSpine {
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
             Attachment slotAttachment = slot.attachment;
+            FloatArray deformArray = null;
+            FloatArray verticesArray = null;
             if (V.get().equals("38")) {
                 if (!slot.bone.active) return;
                 if (!(slotAttachment instanceof VertexAttachment)
                         || ((VertexAttachment) slotAttachment).getDeformAttachment() != attachment) return;
-                FloatArray deformArray = slot.getDeform();
+                deformArray = slot.getDeform();
                 if (deformArray.size == 0) blend = setup;
             } else if (V.get().equals("37")) {
                 if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
                     return;
-                FloatArray verticesArray = slot.getAttachmentVertices();
+                verticesArray = slot.getAttachmentVertices();
                 if (verticesArray.size == 0) blend = setup;
             }
             float[][] frameVertices = this.frameVertices;
             int vertexCount = frameVertices[0].length;
             float[] frames = this.frames;
+            float[] deform = null;
+            float[] vertices = null;
             if (V.get().equals("38")) {
                 if (time < frames[0]) {
                     VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
                     switch (blend) {
                         case setup -> {
-                            deformArray.clear();
+                            Objects.requireNonNull(deformArray).clear();
                             return;
                         }
                         case first -> {
                             if (alpha == 1) {
-                                deformArray.clear();
+                                Objects.requireNonNull(deformArray).clear();
                                 return;
                             }
-                            float[] deform = deformArray.setSize(vertexCount);
+                            deform = Objects.requireNonNull(deformArray).setSize(vertexCount);
                             if (vertexAttachment.getBones() == null) {
                                 float[] setupVertices = vertexAttachment.getVertices();
                                 for (int i = 0; i < vertexCount; i++)
@@ -935,7 +943,7 @@ public class Animation extends CrossSpine {
                     }
                     return;
                 }
-                float[] deform = deformArray.setSize(vertexCount);
+                deform = Objects.requireNonNull(deformArray).setSize(vertexCount);
                 if (time >= frames[frames.length - 1]) {
                     float[] lastVertices = frameVertices[frames.length - 1];
                     if (alpha == 1) {
@@ -992,15 +1000,15 @@ public class Animation extends CrossSpine {
                     VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
                     switch (blend) {
                         case setup -> {
-                            verticesArray.clear();
+                            Objects.requireNonNull(verticesArray).clear();
                             return;
                         }
                         case first -> {
                             if (alpha == 1) {
-                                verticesArray.clear();
+                                Objects.requireNonNull(verticesArray).clear();
                                 return;
                             }
-                            float[] vertices = verticesArray.setSize(vertexCount);
+                            vertices = Objects.requireNonNull(verticesArray).setSize(vertexCount);
                             if (vertexAttachment.getBones() == null) {
                                 float[] setupVertices = vertexAttachment.getVertices();
                                 for (int i = 0; i < vertexCount; i++)
@@ -1014,7 +1022,7 @@ public class Animation extends CrossSpine {
                     }
                     return;
                 }
-                float[] vertices = verticesArray.setSize(vertexCount);
+                vertices = Objects.requireNonNull(verticesArray).setSize(vertexCount);
                 if (time >= frames[frames.length - 1]) {
                     float[] lastVertices = frameVertices[frames.length - 1];
                     if (alpha == 1) {
@@ -1080,18 +1088,18 @@ public class Animation extends CrossSpine {
                             float[] setupVertices = vertexAttachment.getVertices();
                             for (int i = 0; i < vertexCount; i++) {
                                 float prev = prevVertices[i];
-                                deform[i] += prev + (nextVertices[i] - prev) * percent - setupVertices[i];
+                                Objects.requireNonNull(deform)[i] += prev + (nextVertices[i] - prev) * percent - setupVertices[i];
                             }
                         } else {
                             for (int i = 0; i < vertexCount; i++) {
                                 float prev = prevVertices[i];
-                                deform[i] += prev + (nextVertices[i] - prev) * percent;
+                                Objects.requireNonNull(deform)[i] += prev + (nextVertices[i] - prev) * percent;
                             }
                         }
                     } else {
                         for (int i = 0; i < vertexCount; i++) {
                             float prev = prevVertices[i];
-                            deform[i] = prev + (nextVertices[i] - prev) * percent;
+                            Objects.requireNonNull(deform)[i] = prev + (nextVertices[i] - prev) * percent;
                         }
                     }
                 } else {
@@ -1102,12 +1110,12 @@ public class Animation extends CrossSpine {
                                 float[] setupVertices = vertexAttachment.getVertices();
                                 for (int i = 0; i < vertexCount; i++) {
                                     float prev = prevVertices[i], setup = setupVertices[i];
-                                    deform[i] = setup + (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
+                                    Objects.requireNonNull(deform)[i] = setup + (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
                                 }
                             } else {
                                 for (int i = 0; i < vertexCount; i++) {
                                     float prev = prevVertices[i];
-                                    deform[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
+                                    Objects.requireNonNull(deform)[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
                                 }
                             }
                             break;
@@ -1116,7 +1124,7 @@ public class Animation extends CrossSpine {
                         case replace:
                             for (int i = 0; i < vertexCount; i++) {
                                 float prev = prevVertices[i];
-                                deform[i] += (prev + (nextVertices[i] - prev) * percent - deform[i]) * alpha;
+                                Objects.requireNonNull(deform)[i] += (prev + (nextVertices[i] - prev) * percent - deform[i]) * alpha;
                             }
                             break;
                         case add:
@@ -1125,12 +1133,12 @@ public class Animation extends CrossSpine {
                                 float[] setupVertices = vertexAttachment.getVertices();
                                 for (int i = 0; i < vertexCount; i++) {
                                     float prev = prevVertices[i];
-                                    deform[i] += (prev + (nextVertices[i] - prev) * percent - setupVertices[i]) * alpha;
+                                    Objects.requireNonNull(deform)[i] += (prev + (nextVertices[i] - prev) * percent - setupVertices[i]) * alpha;
                                 }
                             } else {
                                 for (int i = 0; i < vertexCount; i++) {
                                     float prev = prevVertices[i];
-                                    deform[i] += (prev + (nextVertices[i] - prev) * percent) * alpha;
+                                    Objects.requireNonNull(deform)[i] += (prev + (nextVertices[i] - prev) * percent) * alpha;
                                 }
                             }
                     }
@@ -1143,18 +1151,18 @@ public class Animation extends CrossSpine {
                             float[] setupVertices = vertexAttachment.getVertices();
                             for (int i = 0; i < vertexCount; i++) {
                                 float prev = prevVertices[i];
-                                vertices[i] += prev + (nextVertices[i] - prev) * percent - setupVertices[i];
+                                Objects.requireNonNull(vertices)[i] += prev + (nextVertices[i] - prev) * percent - setupVertices[i];
                             }
                         } else {
                             for (int i = 0; i < vertexCount; i++) {
                                 float prev = prevVertices[i];
-                                vertices[i] += prev + (nextVertices[i] - prev) * percent;
+                                Objects.requireNonNull(vertices)[i] += prev + (nextVertices[i] - prev) * percent;
                             }
                         }
                     } else {
                         for (int i = 0; i < vertexCount; i++) {
                             float prev = prevVertices[i];
-                            vertices[i] = prev + (nextVertices[i] - prev) * percent;
+                            Objects.requireNonNull(vertices)[i] = prev + (nextVertices[i] - prev) * percent;
                         }
                     }
                 } else {
@@ -1165,12 +1173,12 @@ public class Animation extends CrossSpine {
                                 float[] setupVertices = vertexAttachment.getVertices();
                                 for (int i = 0; i < vertexCount; i++) {
                                     float prev = prevVertices[i], setup = setupVertices[i];
-                                    vertices[i] = setup + (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
+                                    Objects.requireNonNull(vertices)[i] = setup + (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
                                 }
                             } else {
                                 for (int i = 0; i < vertexCount; i++) {
                                     float prev = prevVertices[i];
-                                    vertices[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
+                                    Objects.requireNonNull(vertices)[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
                                 }
                             }
                             break;
@@ -1179,7 +1187,7 @@ public class Animation extends CrossSpine {
                         case replace:
                             for (int i = 0; i < vertexCount; i++) {
                                 float prev = prevVertices[i];
-                                vertices[i] += (prev + (nextVertices[i] - prev) * percent - vertices[i]) * alpha;
+                                Objects.requireNonNull(vertices)[i] += (prev + (nextVertices[i] - prev) * percent - vertices[i]) * alpha;
                             }
                             break;
                         case add:
@@ -1188,12 +1196,12 @@ public class Animation extends CrossSpine {
                                 float[] setupVertices = vertexAttachment.getVertices();
                                 for (int i = 0; i < vertexCount; i++) {
                                     float prev = prevVertices[i];
-                                    vertices[i] += (prev + (nextVertices[i] - prev) * percent - setupVertices[i]) * alpha;
+                                    Objects.requireNonNull(vertices)[i] += (prev + (nextVertices[i] - prev) * percent - setupVertices[i]) * alpha;
                                 }
                             } else {
                                 for (int i = 0; i < vertexCount; i++) {
                                     float prev = prevVertices[i];
-                                    vertices[i] += (prev + (nextVertices[i] - prev) * percent) * alpha;
+                                    Objects.requireNonNull(vertices)[i] += (prev + (nextVertices[i] - prev) * percent) * alpha;
                                 }
                             }
                     }
@@ -1338,9 +1346,9 @@ public class Animation extends CrossSpine {
     }
 
     static public class IkConstraintTimeline extends CurveTimeline {
-        static public final int ENTRIES;
-        static private final int PREV_TIME, PREV_MIX, PREV_SOFTNESS, PREV_BEND_DIRECTION, PREV_COMPRESS, PREV_STRETCH;
-        static private final int MIX, SOFTNESS, BEND_DIRECTION, COMPRESS, STRETCH;
+        static public int ENTRIES;
+        static private int PREV_TIME, PREV_MIX, PREV_SOFTNESS, PREV_BEND_DIRECTION, PREV_COMPRESS, PREV_STRETCH;
+        static private int MIX, SOFTNESS, BEND_DIRECTION, COMPRESS, STRETCH;
         private final float[] frames;
         int ikConstraintIndex;
 

@@ -16,7 +16,7 @@ public class AnimationState extends CrossSpine {
     static private final int HOLD = 2;
     static private final int HOLD_SUBSEQUENT = 2;
     static private final int HOLD_FIRST = 3;
-    static private final int HOLD_MIX;
+    static private int HOLD_MIX;
     static private final int SETUP = 1, CURRENT = 2;
     final Array<TrackEntry> tracks = new Array<>();
     final Array<AnimationStateListener> listeners = new Array<>();
@@ -143,8 +143,7 @@ public class AnimationState extends CrossSpine {
                         else
                             ((Timeline) timeline).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
                     } else if (V.get().equals("37")) {
-                        for (int ii = 0; ii < timelineCount; ii++)
-                            ((Timeline) timelines[ii]).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                        ((Timeline) timelines[ii]).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
                     }
                 }
             } else {
@@ -219,7 +218,7 @@ public class AnimationState extends CrossSpine {
             for (int i = 0; i < timelineCount; i++) {
                 Timeline timeline = (Timeline) timelines[i];
                 MixDirection direction = MixDirection.out;
-                MixBlend timelineBlend;
+                MixBlend timelineBlend = null;
                 float alpha;
                 switch (timelineMode[i]) {
                     case SUBSEQUENT -> {

@@ -5,7 +5,7 @@ import com.esotericsoftware.CrossSpine;
 
 public class AnimationStateData extends CrossSpine {
     final SkeletonData skeletonData;
-    final ObjectFloatMap<Key> animationToMixTime;
+    ObjectFloatMap<Key> animationToMixTime;
     final Key tempKey = new Key();
     float defaultMix;
 

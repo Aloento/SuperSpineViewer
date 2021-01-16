@@ -1,11 +1,11 @@
 package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.Array;
+import com.esotericsoftware.CrossSpine;
 
-import static utils.SpineUtils.*;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
-
-public class IkConstraint implements Updatable {
+public class IkConstraint extends CrossSpine implements Constraint {
     final IkConstraintData data;
     final Array<Bone> bones;
     Bone target;
@@ -23,7 +23,7 @@ public class IkConstraint implements Updatable {
         bendDirection = data.bendDirection;
         compress = data.compress;
         stretch = data.stretch;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findBone(data.target.name);
@@ -33,7 +33,7 @@ public class IkConstraint implements Updatable {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.bones.get(constraint.target.data.index);
@@ -49,27 +49,38 @@ public class IkConstraint implements Updatable {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
         if (!bone.appliedValid) bone.updateAppliedTransform();
         Bone p = bone.parent;
-        float pa = p.a, pb = p.b, pc = p.c, pd = p.d;
-        float rotationIK = -bone.ashearX - bone.arotation, tx, ty;
-        switch (bone.data.transformMode) {
-            case onlyTranslation:
-                tx = targetX - bone.worldX;
-                ty = targetY - bone.worldY;
-                break;
-            case noRotationOrReflection:
-                float s = Math.abs(pa * pd - pb * pc) / (pa * pa + pc * pc);
-                float sa = pa / bone.skeleton.scaleX;
-                float sc = pc / bone.skeleton.scaleY;
-                pb = -sc * s * bone.skeleton.scaleX;
-                pd = sa * s * bone.skeleton.scaleY;
-                rotationIK += atan2(sc, sa) * radDeg;
-            default:
-                float x = targetX - p.worldX, y = targetY - p.worldY;
-                float d = pa * pd - pb * pc;
-                tx = (x * pd - y * pb) / d - bone.ax;
-                ty = (y * pa - x * pc) / d - bone.ay;
+
+        float rotationIK = 0, tx = 0, ty = 0;
+        if (V.get().equals("38")) {
+            float pa = p.a, pb = p.b, pc = p.c, pd = p.d;
+            rotationIK = -bone.ashearX - bone.arotation;
+            switch (bone.data.transformMode) {
+                case onlyTranslation:
+                    tx = targetX - bone.worldX;
+                    ty = targetY - bone.worldY;
+                    break;
+                case noRotationOrReflection:
+                    float s = Math.abs(pa * pd - pb * pc) / (pa * pa + pc * pc);
+                    float sa = pa / bone.skeleton.scaleX;
+                    float sc = pc / bone.skeleton.scaleY;
+                    pb = -sc * s * bone.skeleton.scaleX;
+                    pd = sa * s * bone.skeleton.scaleY;
+                    rotationIK += atan2(sc, sa) * radDeg;
+                default:
+                    float x = targetX - p.worldX, y = targetY - p.worldY;
+                    float d = pa * pd - pb * pc;
+                    tx = (x * pd - y * pb) / d - bone.ax;
+                    ty = (y * pa - x * pc) / d - bone.ay;
+            }
+            rotationIK += atan2(ty, tx) * radDeg;
+        } else if (V.get().equals("37")) {
+            float id = 1 / (p.a * p.d - p.b * p.c);
+            float x = targetX - p.worldX, y = targetY - p.worldY;
+            tx = (x * p.d - y * p.b) * id - bone.ax;
+            ty = (y * p.a - x * p.c) * id - bone.ay;
+            rotationIK = atan2(ty, tx) * radDeg - bone.ashearX - bone.arotation;
         }
-        rotationIK += atan2(ty, tx) * radDeg;
+
         if (bone.ascaleX < 0) rotationIK += 180;
         if (rotationIK > 180)
             rotationIK -= 360;
@@ -77,10 +88,12 @@ public class IkConstraint implements Updatable {
             rotationIK += 360;
         float sx = bone.ascaleX, sy = bone.ascaleY;
         if (compress || stretch) {
-            switch (bone.data.transformMode) {
-                case noScale, noScaleOrReflection -> {
-                    tx = targetX - bone.worldX;
-                    ty = targetY - bone.worldY;
+            if (V.get().equals("38")) {
+                switch (bone.data.transformMode) {
+                    case noScale, noScaleOrReflection -> {
+                        tx = targetX - bone.worldX;
+                        ty = targetY - bone.worldY;
+                    }
                 }
             }
             float b = bone.data.length * sx, dd = (float) Math.sqrt(tx * tx + ty * ty);
@@ -95,8 +108,10 @@ public class IkConstraint implements Updatable {
 
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float softness,
                              float alpha) {
-        if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
-        if (child == null) throw new IllegalArgumentException("child cannot be null.");
+        if (V.get().equals("38")) {
+            if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
+            if (child == null) throw new IllegalArgumentException("child cannot be null.");
+        }
         if (alpha == 0) {
             child.updateWorldTransform();
             return;
@@ -138,27 +153,41 @@ public class IkConstraint implements Updatable {
         b = pp.b;
         c = pp.c;
         d = pp.d;
-        float id = 1 / (a * d - b * c), x = cwx - pp.worldX, y = cwy - pp.worldY;
+        float id = 1 / (a * d - b * c), x = 0, y = 0;
+        float tx = 0, ty = 0, dd = 0;
+        if (V.get().equals("38")) {
+            x = cwx - pp.worldX;
+            y = cwy - pp.worldY;
+        } else if (V.get().equals("37")) {
+            x = targetX - pp.worldX;
+            y = targetY - pp.worldY;
+            tx = (x * d - y * b) * id - px;
+            ty = (y * a - x * c) * id - py;
+            dd = tx * tx + ty * ty;
+        }
         float dx = (x * d - y * b) * id - px, dy = (y * a - x * c) * id - py;
         float l1 = (float) Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1, a2;
-        if (l1 < 0.0001f) {
-            apply(parent, targetX, targetY, false, stretch, false, alpha);
-            child.updateWorldTransform(cx, cy, 0, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
-            return;
-        }
-        x = targetX - pp.worldX;
-        y = targetY - pp.worldY;
-        float tx = (x * d - y * b) * id - px, ty = (y * a - x * c) * id - py;
-        float dd = tx * tx + ty * ty;
-        if (softness != 0) {
-            softness *= psx * (csx + 1) / 2;
-            float td = (float) Math.sqrt(dd), sd = td - l1 - l2 * psx + softness;
-            if (sd > 0) {
-                float p = Math.min(1, sd / (softness * 2)) - 1;
-                p = (sd - softness * (1 - p * p)) / td;
-                tx -= p * tx;
-                ty -= p * ty;
-                dd = tx * tx + ty * ty;
+        if (V.get().equals("38")) {
+            if (l1 < 0.0001f) {
+                apply(parent, targetX, targetY, false, stretch, false, alpha);
+                child.updateWorldTransform(cx, cy, 0, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
+                return;
+            }
+            x = targetX - pp.worldX;
+            y = targetY - pp.worldY;
+            tx = (x * d - y * b) * id - px;
+            ty = (y * a - x * c) * id - py;
+            dd = tx * tx + ty * ty;
+            if (softness != 0) {
+                softness *= psx * (csx + 1) / 2;
+                float td = (float) Math.sqrt(dd), sd = td - l1 - l2 * psx + softness;
+                if (sd > 0) {
+                    float p = Math.min(1, sd / (softness * 2)) - 1;
+                    p = (sd - softness * (1 - p * p)) / td;
+                    tx -= p * tx;
+                    ty -= p * ty;
+                    dd = tx * tx + ty * ty;
+                }
             }
         }
         outer:
@@ -169,7 +198,11 @@ public class IkConstraint implements Updatable {
                 cos = -1;
             else if (cos > 1) {
                 cos = 1;
-                if (stretch) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
+                if (V.get().equals("38")) {
+                    if (stretch) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
+                } else if (V.get().equals("37")) {
+                    if (stretch && l1 + l2 > 0.0001f) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
+                }
             }
             a2 = (float) Math.acos(cos) * bendDir;
             a = l1 + l2 * cos;
@@ -239,6 +272,10 @@ public class IkConstraint implements Updatable {
         child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
     }
 
+    public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float alpha) {
+        apply(parent, child, targetX, targetY, bendDir, stretch, 0f, alpha);
+    }
+
     public void apply() {
         update();
     }
@@ -246,10 +283,21 @@ public class IkConstraint implements Updatable {
     public void update() {
         Bone target = this.target;
         Array<Bone> bones = this.bones;
-        switch (bones.size) {
-            case 1 -> apply(bones.first(), target.worldX, target.worldY, compress, stretch, data.uniform, mix);
-            case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, stretch, softness, mix);
+        if (V.get().equals("38")) {
+            switch (bones.size) {
+                case 1 -> apply(bones.first(), target.worldX, target.worldY, compress, stretch, data.uniform, mix);
+                case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, stretch, softness, mix);
+            }
+        } else if (V.get().equals("37")) {
+            switch (bones.size) {
+                case 1 -> apply(bones.first(), target.worldX, target.worldY, compress, stretch, data.uniform, mix);
+                case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, stretch, mix);
+            }
         }
+    }
+
+    public int getOrder() {
+        return data.order;
     }
 
     public Array<Bone> getBones() {
@@ -261,7 +309,8 @@ public class IkConstraint implements Updatable {
     }
 
     public void setTarget(Bone target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
+        if (target == null && V.get().equals("38"))
+            throw new IllegalArgumentException("target cannot be null.");
         this.target = target;
     }
 
