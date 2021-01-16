@@ -3,8 +3,8 @@ package com.esotericsoftware.SpineStandard.vertexeffects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.esotericsoftware.spine38.Skeleton;
-import com.esotericsoftware.spine38.SkeletonRenderer.VertexEffect;
+import com.esotericsoftware.SpineStandard.Skeleton;
+import com.esotericsoftware.SpineStandard.SkeletonRenderer.VertexEffect;
 
 public class JitterEffect implements VertexEffect {
     private float x, y;
