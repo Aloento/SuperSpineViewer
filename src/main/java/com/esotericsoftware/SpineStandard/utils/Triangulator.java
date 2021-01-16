@@ -3,8 +3,8 @@ package com.esotericsoftware.SpineStandard.utils;
 import com.badlogic.gdx.utils.*;
 
 class Triangulator {
-    private final Array<FloatArray> convexPolygons = new Array();
-    private final Array<ShortArray> convexPolygonsIndices = new Array();
+    private final Array<FloatArray> convexPolygons = new Array<>();
+    private final Array<ShortArray> convexPolygonsIndices = new Array<>();
 
     private final ShortArray indicesArray = new ShortArray();
     private final BooleanArray isConcaveArray = new BooleanArray();
@@ -59,7 +59,6 @@ class Triangulator {
         triangles.ensureCapacity(Math.max(0, vertexCount - 2) << 2);
 
         while (vertexCount > 3) {
-            // Find ear tip.
             int previous = vertexCount - 1, i = 0, next = 1;
             while (true) {
                 outer:
@@ -94,7 +93,7 @@ class Triangulator {
                 next = (next + 1) % vertexCount;
             }
 
-            // Cut ear tip.
+
             triangles.add(indices[(vertexCount + i - 1) % vertexCount]);
             triangles.add(indices[i]);
             triangles.add(indices[(i + 1) % vertexCount]);
@@ -134,7 +133,7 @@ class Triangulator {
         FloatArray polygon = polygonPool.obtain();
         polygon.clear();
 
-        // Merge subsequent triangles if they form a triangle fan.
+
         int fanBaseIndex = -1, lastWinding = 0;
         short[] trianglesItems = triangles.items;
         for (int i = 0, n = triangles.size; i < n; i += 3) {
@@ -143,7 +142,6 @@ class Triangulator {
             float x2 = vertices[t2], y2 = vertices[t2 + 1];
             float x3 = vertices[t3], y3 = vertices[t3 + 1];
 
-            // If the base of the last triangle is the same as this triangle, check if they form a convex polygon (triangle fan).
             boolean merged = false;
             if (fanBaseIndex == t1) {
                 int o = polygon.size - 4;
@@ -158,7 +156,6 @@ class Triangulator {
                 }
             }
 
-            // Otherwise make this triangle the new base.
             if (!merged) {
                 if (polygon.size > 0) {
                     convexPolygons.add(polygon);
@@ -190,7 +187,6 @@ class Triangulator {
             convexPolygonsIndices.add(polygonIndices);
         }
 
-        // Go through the list of polygons and try to merge the remaining triangles with the found triangle fans.
         for (int i = 0, n = convexPolygons.size; i < n; i++) {
             polygonIndices = convexPolygonsIndices.get(i);
             if (polygonIndices.size == 0) continue;
@@ -235,7 +231,6 @@ class Triangulator {
             }
         }
 
-        // Remove empty polygons that resulted from the merge step above.
         for (int i = convexPolygons.size - 1; i >= 0; i--) {
             polygon = convexPolygons.get(i);
             if (polygon.size == 0) {
@@ -245,7 +240,6 @@ class Triangulator {
                 polygonIndicesPool.free(polygonIndices);
             }
         }
-
         return convexPolygons;
     }
 }
