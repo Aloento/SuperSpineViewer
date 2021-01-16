@@ -27,9 +27,7 @@ public class Slot {
         setToSetupPose();
     }
 
-    /**
-     * Copy constructor.
-     */
+
     public Slot(Slot slot, Bone bone) {
         if (slot == null) throw new IllegalArgumentException("slot cannot be null.");
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
@@ -56,18 +54,12 @@ public class Slot {
         return color;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Attachment getAttachment() {
         return attachment;
     }
 
-    /**
-     * Sets the attachment, resets {@link #getAttachmentTime()}, and clears {@link #getAttachmentVertices()}.
-     *
-     * @param attachment May be null.
-     */
+
     public void setAttachment(Attachment attachment) {
         if (this.attachment == attachment) return;
         this.attachment = attachment;
@@ -75,9 +67,7 @@ public class Slot {
         attachmentVertices.clear();
     }
 
-    /**
-     * Returns the time since the attachment was set.
-     */
+
     public float getAttachmentTime() {
         return bone.skeleton.time - attachmentTime;
     }

@@ -39,9 +39,7 @@ public class SkeletonBinary {
         return scale;
     }
 
-    /**
-     * Scales the bones, images, and animations as they are loaded.
-     */
+
     public void setScale(float scale) {
         this.scale = scale;
     }
@@ -69,7 +67,7 @@ public class SkeletonBinary {
                 if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
             }
 
-            // Bones.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 String name = input.readString();
                 BoneData parent = null;
@@ -90,7 +88,7 @@ public class SkeletonBinary {
                 skeletonData.bones.add(boneData);
             }
 
-            // IK constraints.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 IkConstraintData ikConstraintData = new IkConstraintData(input.readString());
                 for (int ii = 0, nn = input.readInt(true); ii < nn; ii++)
@@ -101,7 +99,7 @@ public class SkeletonBinary {
                 skeletonData.ikConstraints.add(ikConstraintData);
             }
 
-            // Slots.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 String slotName = input.readString();
                 BoneData boneData = skeletonData.bones.get(input.readInt(true));
@@ -112,18 +110,18 @@ public class SkeletonBinary {
                 skeletonData.slots.add(slotData);
             }
 
-            // Default skin.
+
             Skin defaultSkin = readSkin(input, "default", nonessential);
             if (defaultSkin != null) {
                 skeletonData.defaultSkin = defaultSkin;
                 skeletonData.skins.add(defaultSkin);
             }
 
-            // Skins.
+
             for (int i = 0, n = input.readInt(true); i < n; i++)
                 skeletonData.skins.add(readSkin(input, input.readString(), nonessential));
 
-            // Events.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 EventData eventData = new EventData(input.readString());
                 eventData.intValue = input.readInt(false);
@@ -132,7 +130,7 @@ public class SkeletonBinary {
                 skeletonData.events.add(eventData);
             }
 
-            // Animations.
+
             for (int i = 0, n = input.readInt(true); i < n; i++)
                 readAnimation(input.readString(), input, skeletonData);
 
@@ -149,9 +147,7 @@ public class SkeletonBinary {
         return skeletonData;
     }
 
-    /**
-     * @return May be null.
-     */
+
     private Skin readSkin(DataInput input, String skinName, boolean nonessential) throws IOException {
         int slotCount = input.readInt(true);
         if (slotCount == 0) return null;
@@ -293,7 +289,7 @@ public class SkeletonBinary {
         float duration = 0;
 
         try {
-            // Slot timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 int slotIndex = input.readInt(true);
                 for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
@@ -324,7 +320,7 @@ public class SkeletonBinary {
                 }
             }
 
-            // Bone timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 int boneIndex = input.readInt(true);
                 for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
@@ -372,7 +368,7 @@ public class SkeletonBinary {
                 }
             }
 
-            // IK timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 IkConstraintData ikConstraint = skeletonData.ikConstraints.get(input.readInt(true));
                 int frameCount = input.readInt(true);
@@ -386,7 +382,7 @@ public class SkeletonBinary {
                 duration = Math.max(duration, timeline.getFrames()[frameCount * 3 - 3]);
             }
 
-            // FFD timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 Skin skin = skeletonData.skins.get(input.readInt(true));
                 for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
@@ -440,7 +436,7 @@ public class SkeletonBinary {
                 }
             }
 
-            // Draw order timeline.
+
             int drawOrderCount = input.readInt(true);
             if (drawOrderCount > 0) {
                 DrawOrderTimeline timeline = new DrawOrderTimeline(drawOrderCount);
@@ -454,16 +450,16 @@ public class SkeletonBinary {
                     int originalIndex = 0, unchangedIndex = 0;
                     for (int ii = 0; ii < offsetCount; ii++) {
                         int slotIndex = input.readInt(true);
-                        // Collect unchanged items.
+
                         while (originalIndex != slotIndex)
                             unchanged[unchangedIndex++] = originalIndex++;
-                        // Set changed items.
+
                         drawOrder[originalIndex + input.readInt(true)] = originalIndex++;
                     }
-                    // Collect remaining unchanged items.
+
                     while (originalIndex < slotCount)
                         unchanged[unchangedIndex++] = originalIndex++;
-                    // Fill in unchanged items.
+
                     for (int ii = slotCount - 1; ii >= 0; ii--)
                         if (drawOrder[ii] == -1) drawOrder[ii] = unchanged[--unchangedIndex];
                     timeline.setFrame(i, input.readFloat(), drawOrder);
@@ -472,7 +468,7 @@ public class SkeletonBinary {
                 duration = Math.max(duration, timeline.getFrames()[drawOrderCount - 1]);
             }
 
-            // Event timeline.
+
             int eventCount = input.readInt(true);
             if (eventCount > 0) {
                 EventTimeline timeline = new EventTimeline(eventCount);

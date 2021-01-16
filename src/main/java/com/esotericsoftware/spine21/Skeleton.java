@@ -49,9 +49,7 @@ public class Skeleton {
         updateCache();
     }
 
-    /**
-     * Copy constructor.
-     */
+
     public Skeleton(Skeleton skeleton) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = skeleton.data;
@@ -90,9 +88,7 @@ public class Skeleton {
         updateCache();
     }
 
-    /**
-     * Caches information about bones and IK constraints. Must be called if bones or IK constraints are added or removed.
-     */
+
     public void updateCache() {
         Array<Bone> bones = this.bones;
         Array<Array<Bone>> boneCache = this.boneCache;
@@ -132,9 +128,7 @@ public class Skeleton {
         }
     }
 
-    /**
-     * Updates the world transform for each bone and applies IK constraints.
-     */
+
     public void updateWorldTransform() {
         Array<Bone> bones = this.bones;
         for (int i = 0, nn = bones.size; i < nn; i++) {
@@ -154,9 +148,7 @@ public class Skeleton {
         }
     }
 
-    /**
-     * Sets the bones and slots to their setup pose values.
-     */
+
     public void setToSetupPose() {
         setBonesToSetupPose();
         setSlotsToSetupPose();
@@ -190,17 +182,13 @@ public class Skeleton {
         return bones;
     }
 
-    /**
-     * @return May return null.
-     */
+
     public Bone getRootBone() {
         if (bones.size == 0) return null;
         return bones.first();
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Bone findBone(String boneName) {
         if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
         Array<Bone> bones = this.bones;
@@ -211,9 +199,7 @@ public class Skeleton {
         return null;
     }
 
-    /**
-     * @return -1 if the bone was not found.
-     */
+
     public int findBoneIndex(String boneName) {
         if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
         Array<Bone> bones = this.bones;
@@ -226,9 +212,7 @@ public class Skeleton {
         return slots;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Slot findSlot(String slotName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
         Array<Slot> slots = this.slots;
@@ -239,9 +223,7 @@ public class Skeleton {
         return null;
     }
 
-    /**
-     * @return -1 if the bone was not found.
-     */
+
     public int findSlotIndex(String slotName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
         Array<Slot> slots = this.slots;
@@ -250,45 +232,29 @@ public class Skeleton {
         return -1;
     }
 
-    /**
-     * Returns the slots in the order they will be drawn. The returned array may be modified to change the draw order.
-     */
+
     public Array<Slot> getDrawOrder() {
         return drawOrder;
     }
 
-    /**
-     * Sets the slots and the order they will be drawn.
-     */
+
     public void setDrawOrder(Array<Slot> drawOrder) {
         this.drawOrder = drawOrder;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Skin getSkin() {
         return skin;
     }
 
-    /**
-     * Sets a skin by name.
-     *
-     * @see #setSkin(Skin)
-     */
+
     public void setSkin(String skinName) {
         Skin skin = data.findSkin(skinName);
         if (skin == null) throw new IllegalArgumentException("Skin not found: " + skinName);
         setSkin(skin);
     }
 
-    /**
-     * Sets the skin used to look up attachments before looking in the {@link SkeletonData#getDefaultSkin() default skin}.
-     * Attachments from the new skin are attached if the corresponding attachment from the old skin was attached. If there was no
-     * old skin, each slot's setup mode attachment is attached from the new skin.
-     *
-     * @param newSkin May be null.
-     */
+
     public void setSkin(Skin newSkin) {
         if (newSkin != null) {
             if (skin != null)
@@ -308,16 +274,12 @@ public class Skeleton {
         skin = newSkin;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Attachment getAttachment(String slotName, String attachmentName) {
         return getAttachment(data.findSlotIndex(slotName), attachmentName);
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Attachment getAttachment(int slotIndex, String attachmentName) {
         if (attachmentName == null) throw new IllegalArgumentException("attachmentName cannot be null.");
         if (skin != null) {
@@ -328,9 +290,7 @@ public class Skeleton {
         return null;
     }
 
-    /**
-     * @param attachmentName May be null.
-     */
+
     public void setAttachment(String slotName, String attachmentName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
         Array<Slot> slots = this.slots;
@@ -354,9 +314,7 @@ public class Skeleton {
         return ikConstraints;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public IkConstraint findIkConstraint(String ikConstraintName) {
         if (ikConstraintName == null) throw new IllegalArgumentException("ikConstraintName cannot be null.");
         Array<IkConstraint> ikConstraints = this.ikConstraints;
@@ -367,12 +325,7 @@ public class Skeleton {
         return null;
     }
 
-    /**
-     * Returns the axis aligned bounding box (AABB) of the region, mesh, and skinned mesh attachments for the current pose.
-     *
-     * @param offset The distance from the skeleton origin to the bottom left corner of the AABB.
-     * @param size   The width and height of the AABB.
-     */
+
     public void getBounds(Vector2 offset, Vector2 size) {
         Array<Slot> drawOrder = this.drawOrder;
         float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
@@ -413,9 +366,7 @@ public class Skeleton {
         return color;
     }
 
-    /**
-     * A convenience method for setting the skeleton color. The color can also be set by modifying {@link #getColor()}.
-     */
+
     public void setColor(Color color) {
         this.color.set(color);
     }

@@ -9,9 +9,7 @@ import com.esotericsoftware.spine21.Bone;
 import com.esotericsoftware.spine21.Skeleton;
 import com.esotericsoftware.spine21.Slot;
 
-/**
- * Attachment that displays a texture region.
- */
+
 public class SkinnedMeshAttachment extends Attachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -22,7 +20,7 @@ public class SkinnedMeshAttachment extends Attachment {
     private float[] worldVertices;
     private int hullLength;
 
-    // Nonessential.
+
     private int[] edges;
     private float width, height;
 
@@ -77,10 +75,10 @@ public class SkinnedMeshAttachment extends Attachment {
         Color regionColor = color;
         float a = skeletonColor.a * meshColor.a * regionColor.a * 255;
         float multiplier = premultipliedAlpha ? a : 255;
-        float color = NumberUtils.intToFloatColor( //
-                ((int) a << 24) //
-                        | ((int) (skeletonColor.b * meshColor.b * regionColor.b * multiplier) << 16) //
-                        | ((int) (skeletonColor.g * meshColor.g * regionColor.g * multiplier) << 8) //
+        float color = NumberUtils.intToFloatColor(
+                ((int) a << 24)
+                        | ((int) (skeletonColor.b * meshColor.b * regionColor.b * multiplier) << 16)
+                        | ((int) (skeletonColor.g * meshColor.g * regionColor.g * multiplier) << 8)
                         | (int) (skeletonColor.r * meshColor.r * regionColor.r * multiplier));
 
         float[] worldVertices = this.worldVertices;
@@ -130,9 +128,7 @@ public class SkinnedMeshAttachment extends Attachment {
         return bones;
     }
 
-    /**
-     * For each vertex, the number of bones affecting the vertex followed by that many bone indices. Ie: count, boneIndex, ...
-     */
+
     public void setBones(int[] bones) {
         this.bones = bones;
     }
@@ -141,10 +137,7 @@ public class SkinnedMeshAttachment extends Attachment {
         return weights;
     }
 
-    /**
-     * For each bone affecting the vertex, the vertex position in the bone's coordinate system and the weight for the bone's
-     * influence. Ie: x, y, weight, ...
-     */
+
     public void setWeights(float[] weights) {
         this.weights = weights;
     }
@@ -153,9 +146,7 @@ public class SkinnedMeshAttachment extends Attachment {
         return triangles;
     }
 
-    /**
-     * Vertex number triplets which describe the mesh's triangulation.
-     */
+
     public void setTriangles(short[] triangles) {
         this.triangles = triangles;
     }
@@ -164,9 +155,7 @@ public class SkinnedMeshAttachment extends Attachment {
         return regionUVs;
     }
 
-    /**
-     * For each vertex, a texure coordinate pair. Ie: u, v, ...
-     */
+
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;
     }

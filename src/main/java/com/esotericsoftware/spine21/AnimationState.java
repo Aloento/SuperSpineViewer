@@ -4,9 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-/**
- * Stores state for an animation and automatically mixes between animations.
- */
+
 public class AnimationState {
     private final AnimationStateData data;
     private final Array<TrackEntry> tracks = new Array();
@@ -42,7 +40,7 @@ public class AnimationState {
                 next.time = current.lastTime - next.delay;
                 if (next.time >= 0) setCurrent(i, next);
             } else {
-                // End non-looping animation when it reaches its end time and there is no next entry.
+
                 if (!current.loop && current.lastTime >= current.endTime) clearTrack(i);
             }
         }
@@ -88,7 +86,7 @@ public class AnimationState {
                     listeners.get(iii).event(i, event);
             }
 
-            // Check if completed the animation or a loop iteration.
+
             if (loop ? (lastTime % endTime > time % endTime) : (lastTime < endTime && time >= endTime)) {
                 int count = (int) (time / endTime);
                 if (current.listener != null) current.listener.complete(i, count);
@@ -149,7 +147,7 @@ public class AnimationState {
             entry.mixDuration = data.getMix(current.animation, entry.animation);
             if (entry.mixDuration > 0) {
                 entry.mixTime = 0;
-                // If a mix is in progress, mix from the closest animation.
+
                 if (previous != null && current.mixTime / current.mixDuration < 0.5f) {
                     entry.previous = previous;
                     previous = current;
@@ -168,18 +166,14 @@ public class AnimationState {
             listeners.get(i).start(index);
     }
 
-    /**
-     * @see #setAnimation(int, Animation, boolean)
-     */
+
     public TrackEntry setAnimation(int trackIndex, String animationName, boolean loop) {
         Animation animation = data.getSkeletonData().findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return setAnimation(trackIndex, animation, loop);
     }
 
-    /**
-     * Set the current animation. Any queued animations are cleared.
-     */
+
     public TrackEntry setAnimation(int trackIndex, Animation animation, boolean loop) {
         TrackEntry current = expandToIndex(trackIndex);
         if (current != null) freeAll(current.next);
@@ -192,20 +186,14 @@ public class AnimationState {
         return entry;
     }
 
-    /**
-     * {@link #addAnimation(int, Animation, boolean, float)}
-     */
+
     public TrackEntry addAnimation(int trackIndex, String animationName, boolean loop, float delay) {
         Animation animation = data.getSkeletonData().findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return addAnimation(trackIndex, animation, loop, delay);
     }
 
-    /**
-     * Adds an animation to be played delay seconds after the current or last queued animation.
-     *
-     * @param delay May be <= 0 to use duration of previous animation minus any mix duration plus the negative delay.
-     */
+
     public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
         TrackEntry entry = trackEntryPool.obtain();
         entry.animation = animation;
@@ -231,25 +219,19 @@ public class AnimationState {
         return entry;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public TrackEntry getCurrent(int trackIndex) {
         if (trackIndex >= tracks.size) return null;
         return tracks.get(trackIndex);
     }
 
-    /**
-     * Adds a listener to receive events for all animations.
-     */
+
     public void addListener(AnimationStateListener listener) {
         if (listener == null) throw new IllegalArgumentException("listener cannot be null.");
         listeners.add(listener);
     }
 
-    /**
-     * Removes the listener added with {@link #addListener(AnimationStateListener)}.
-     */
+
     public void removeListener(AnimationStateListener listener) {
         listeners.removeValue(listener, true);
     }
@@ -266,9 +248,7 @@ public class AnimationState {
         return data;
     }
 
-    /**
-     * Returns the list of tracks that have animations, which may contain nulls.
-     */
+
     public Array<TrackEntry> getTracks() {
         return tracks;
     }
@@ -286,26 +266,16 @@ public class AnimationState {
     }
 
     public interface AnimationStateListener {
-        /**
-         * Invoked when the current animation triggers an event.
-         */
+
         void event(int trackIndex, Event event);
 
-        /**
-         * Invoked when the current animation has completed.
-         *
-         * @param loopCount The number of times the animation reached the end.
-         */
+
         void complete(int trackIndex, int loopCount);
 
-        /**
-         * Invoked just after the current animation is set.
-         */
+
         void start(int trackIndex);
 
-        /**
-         * Invoked just before the current animation is replaced.
-         */
+
         void end(int trackIndex);
     }
 
@@ -324,7 +294,7 @@ public class AnimationState {
             animation = null;
             listener = null;
             timeScale = 1;
-            lastTime = -1; // Trigger events on frame zero.
+            lastTime = -1;
             time = 0;
         }
 
@@ -408,9 +378,7 @@ public class AnimationState {
             this.next = next;
         }
 
-        /**
-         * Returns true if the current time is greater than the end time, regardless of looping.
-         */
+
         public boolean isComplete() {
             return time >= endTime;
         }

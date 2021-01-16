@@ -2,9 +2,7 @@ package com.esotericsoftware.spine21;
 
 import com.badlogic.gdx.utils.ObjectFloatMap;
 
-/**
- * Stores mixing times between animations.
- */
+
 public class AnimationStateData {
     final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap();
     final Key tempKey = new Key();

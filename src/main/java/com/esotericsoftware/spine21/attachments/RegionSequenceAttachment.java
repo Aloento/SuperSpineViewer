@@ -4,9 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.spine21.Slot;
 
-/**
- * Attachment that displays various texture regions over time.
- */
+
 public class RegionSequenceAttachment extends RegionAttachment {
     private Mode mode;
     private float frameTime;
@@ -48,9 +46,7 @@ public class RegionSequenceAttachment extends RegionAttachment {
         this.regions = regions;
     }
 
-    /**
-     * Sets the time in seconds each frame is shown.
-     */
+
     public void setFrameTime(float frameTime) {
         this.frameTime = frameTime;
     }

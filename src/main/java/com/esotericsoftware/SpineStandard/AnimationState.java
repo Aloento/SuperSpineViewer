@@ -2,29 +2,30 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import com.esotericsoftware.spine38.Animation.*;
+import com.esotericsoftware.CrossSpine;
+import com.esotericsoftware.SpineStandard.Animation.*;
 
 import java.lang.StringBuilder;
 
-import static com.esotericsoftware.spine38.Animation.RotateTimeline.*;
+import static com.esotericsoftware.SpineStandard.Animation.RotateTimeline.*;
 
-
-public class AnimationState {
-    static private final com.esotericsoftware.spine38.Animation emptyAnimation = new com.esotericsoftware.spine38.Animation("<empty>", new Array(0), 0);
+public class AnimationState extends CrossSpine {
+    static private final Animation emptyAnimation = new Animation("<empty>", new Array<>(0), 0);
     static private final int SUBSEQUENT = 0;
     static private final int FIRST = 1;
+    static private final int HOLD = 2;
     static private final int HOLD_SUBSEQUENT = 2;
     static private final int HOLD_FIRST = 3;
-    static private final int HOLD_MIX = 4;
+    static private final int HOLD_MIX;
     static private final int SETUP = 1, CURRENT = 2;
-    final Array<TrackEntry> tracks = new Array();
-    final Array<AnimationStateListener> listeners = new Array();
+    final Array<TrackEntry> tracks = new Array<>();
+    final Array<AnimationStateListener> listeners = new Array<>();
     final Pool<TrackEntry> trackEntryPool = new Pool() {
         protected Object newObject() {
             return new TrackEntry();
         }
     };
-    private final Array<Event> events = new Array();
+    private final Array<Event> events = new Array<>();
     private final EventQueue queue = new EventQueue();
     private final IntSet propertyIDs = new IntSet();
     boolean animationsChanged;
@@ -38,6 +39,10 @@ public class AnimationState {
     public AnimationState(AnimationStateData data) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         this.data = data;
+        if (V.get().equals("38"))
+            HOLD_MIX = 4;
+        else if (V.get().equals("37"))
+            HOLD_MIX = 3;
     }
 
     public void update(float delta) {
@@ -59,7 +64,10 @@ public class AnimationState {
                 float nextTime = current.trackLast - next.delay;
                 if (nextTime >= 0) {
                     next.delay = 0;
-                    next.trackTime += current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
+                    if (V.get().equals("38"))
+                        next.trackTime += current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
+                    else if (V.get().equals("37"))
+                        next.trackTime = current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
                     current.trackTime += currentDelta;
                     setCurrent(i, next, true);
                     while (next.mixingFrom != null) {
@@ -128,11 +136,16 @@ public class AnimationState {
             Object[] timelines = current.animation.timelines.items;
             if ((i == 0 && mix == 1) || blend == MixBlend.add) {
                 for (int ii = 0; ii < timelineCount; ii++) {
-                    Object timeline = timelines[ii];
-                    if (timeline instanceof AttachmentTimeline)
-                        applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
-                    else
-                        ((Timeline) timeline).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                    if (V.get().equals("38")) {
+                        Object timeline = timelines[ii];
+                        if (timeline instanceof AttachmentTimeline)
+                            applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
+                        else
+                            ((Timeline) timeline).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                    } else if (V.get().equals("37")) {
+                        for (int ii = 0; ii < timelineCount; ii++)
+                            ((Timeline) timelines[ii]).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                    }
                 }
             } else {
                 int[] timelineMode = current.timelineMode.items;
@@ -145,7 +158,7 @@ public class AnimationState {
                     if (timeline instanceof RotateTimeline) {
                         applyRotateTimeline((RotateTimeline) timeline, skeleton, animationTime, mix, timelineBlend, timelinesRotation,
                                 ii << 1, firstFrame);
-                    } else if (timeline instanceof AttachmentTimeline)
+                    } else if (timeline instanceof AttachmentTimeline && V.get().equals("38"))
                         applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
                     else
                         timeline.apply(skeleton, animationLast, animationTime, events, mix, timelineBlend, MixDirection.in);
@@ -156,16 +169,20 @@ public class AnimationState {
             current.nextAnimationLast = animationTime;
             current.nextTrackLast = current.trackTime;
         }
-        int setupState = unkeyedState + SETUP;
-        Object[] slots = skeleton.slots.items;
-        for (int i = 0, n = skeleton.slots.size; i < n; i++) {
-            Slot slot = (Slot) slots[i];
-            if (slot.attachmentState == setupState) {
-                String attachmentName = slot.data.attachmentName;
-                slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slot.data.index, attachmentName));
+
+        if (V.get().equals("38")) {
+            int setupState = unkeyedState + SETUP;
+            Object[] slots = skeleton.slots.items;
+            for (int i = 0, n = skeleton.slots.size; i < n; i++) {
+                Slot slot = (Slot) slots[i];
+                if (slot.attachmentState == setupState) {
+                    String attachmentName = slot.data.attachmentName;
+                    slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slot.data.index, attachmentName));
+                }
             }
+            unkeyedState += 2;
         }
-        unkeyedState += 2;
+
         queue.drain();
         return applied;
     }
@@ -206,6 +223,7 @@ public class AnimationState {
                 float alpha;
                 switch (timelineMode[i]) {
                     case SUBSEQUENT -> {
+                        if (!attachments && timeline instanceof AttachmentTimeline && V.get().equals("37")) continue;
                         if (!drawOrder && timeline instanceof DrawOrderTimeline) continue;
                         timelineBlend = blend;
                         alpha = alphaMix;
@@ -215,7 +233,10 @@ public class AnimationState {
                         alpha = alphaMix;
                     }
                     case HOLD_SUBSEQUENT -> {
-                        timelineBlend = blend;
+                        if (V.get().equals("38"))
+                            timelineBlend = blend;
+                        else if (V.get().equals("37"))
+                            timelineBlend = MixBlend.setup;
                         alpha = alphaHold;
                     }
                     case HOLD_FIRST -> {
@@ -235,9 +256,20 @@ public class AnimationState {
                 } else if (timeline instanceof AttachmentTimeline)
                     applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, timelineBlend, attachments);
                 else {
-                    if (drawOrder && timeline instanceof DrawOrderTimeline && timelineBlend == MixBlend.setup)
-                        direction = MixDirection.in;
-                    timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
+                    if (V.get().equals("38")) {
+                        if (drawOrder && timeline instanceof DrawOrderTimeline && timelineBlend == MixBlend.setup)
+                            direction = MixDirection.in;
+                        timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
+                    } else if (V.get().equals("37")) {
+                        if (timelineBlend == MixBlend.setup) {
+                            if (timeline instanceof AttachmentTimeline) {
+                                if (attachments) direction = MixDirection.in;
+                            } else if (timeline instanceof DrawOrderTimeline) {
+                                if (drawOrder) direction = MixDirection.in;
+                            }
+                        }
+                        timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
+                    }
                 }
             }
         }
@@ -280,7 +312,8 @@ public class AnimationState {
             return;
         }
         Bone bone = skeleton.bones.get(timeline.boneIndex);
-        if (!bone.active) return;
+        if (V.get().equals("38"))
+            if (!bone.active) return;
         float[] frames = timeline.frames;
         float r1, r2;
         if (time < frames[0]) {
@@ -298,7 +331,7 @@ public class AnimationState {
             if (time >= frames[frames.length - ENTRIES])
                 r2 = bone.data.rotation + frames[frames.length + PREV_ROTATION];
             else {
-                int frame = com.esotericsoftware.spine38.Animation.binarySearch(frames, time, ENTRIES);
+                int frame = Animation.binarySearch(frames, time, ENTRIES);
                 float prevRotation = frames[frame + PREV_ROTATION];
                 float frameTime = frames[frame];
                 float percent = timeline.getCurvePercent((frame >> 1) - 1,
@@ -372,7 +405,8 @@ public class AnimationState {
     }
 
     public void clearTrack(int trackIndex) {
-        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
+        if (trackIndex < 0 && V.get().equals("38"))
+            throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (trackIndex >= tracks.size) return;
         TrackEntry current = tracks.get(trackIndex);
         if (current == null) return;
@@ -407,13 +441,14 @@ public class AnimationState {
     }
 
     public TrackEntry setAnimation(int trackIndex, String animationName, boolean loop) {
-        com.esotericsoftware.spine38.Animation animation = data.skeletonData.findAnimation(animationName);
+        Animation animation = data.skeletonData.findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return setAnimation(trackIndex, animation, loop);
     }
 
-    public TrackEntry setAnimation(int trackIndex, com.esotericsoftware.spine38.Animation animation, boolean loop) {
-        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
+    public TrackEntry setAnimation(int trackIndex, Animation animation, boolean loop) {
+        if (trackIndex < 0 && V.get().equals("38"))
+            throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
         boolean interrupt = true;
         TrackEntry current = expandToIndex(trackIndex);
@@ -435,13 +470,14 @@ public class AnimationState {
     }
 
     public TrackEntry addAnimation(int trackIndex, String animationName, boolean loop, float delay) {
-        com.esotericsoftware.spine38.Animation animation = data.skeletonData.findAnimation(animationName);
+        Animation animation = data.skeletonData.findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return addAnimation(trackIndex, animation, loop, delay);
     }
 
-    public TrackEntry addAnimation(int trackIndex, com.esotericsoftware.spine38.Animation animation, boolean loop, float delay) {
-        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
+    public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
+        if (trackIndex < 0 && V.get().equals("38"))
+            throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
         TrackEntry last = expandToIndex(trackIndex);
         if (last != null) {
@@ -503,7 +539,7 @@ public class AnimationState {
         return null;
     }
 
-    private TrackEntry trackEntry(int trackIndex, com.esotericsoftware.spine38.Animation animation, boolean loop, TrackEntry last) {
+    private TrackEntry trackEntry(int trackIndex, Animation animation, boolean loop, TrackEntry last) {
         TrackEntry entry = trackEntryPool.obtain();
         entry.trackIndex = trackIndex;
         entry.animation = animation;
@@ -547,10 +583,19 @@ public class AnimationState {
             while (entry.mixingFrom != null)
                 entry = entry.mixingFrom;
             do {
-                if (entry.mixingTo == null || entry.mixBlend != MixBlend.add) computeHold(entry);
+                if (V.get().equals("38")) {
+                    if (entry.mixingTo == null || entry.mixBlend != MixBlend.add) computeHold(entry);
+                } else if (V.get().equals("37")) {
+                    if (entry.mixingTo == null || entry.mixBlend != MixBlend.add) setTimelineModes(entry);
+                }
                 entry = entry.mixingTo;
-            } while (entry != null);
+            }
+            while (entry != null);
         }
+    }
+
+    private void setTimelineModes(TrackEntry entry) {
+        this.computeHold(entry);
     }
 
     private void computeHold(TrackEntry entry) {
@@ -562,36 +607,71 @@ public class AnimationState {
         Object[] timelineHoldMix = entry.timelineHoldMix.setSize(timelinesCount);
         IntSet propertyIDs = this.propertyIDs;
         if (to != null && to.holdPrevious) {
-            for (int i = 0; i < timelinesCount; i++)
-                timelineMode[i] = propertyIDs.add(((Timeline) timelines[i]).getPropertyId()) ? HOLD_FIRST : HOLD_SUBSEQUENT;
+            if (V.get().equals("38")) {
+                for (int i = 0; i < timelinesCount; i++)
+                    timelineMode[i] = propertyIDs.add(((Timeline) timelines[i]).getPropertyId()) ? HOLD_FIRST : HOLD_SUBSEQUENT;
+            } else if (V.get().equals("37")) {
+                for (int i = 0; i < timelinesCount; i++) {
+                    propertyIDs.add(((Timeline) timelines[i]).getPropertyId());
+                    timelineMode[i] = HOLD;
+                }
+            }
             return;
         }
         outer:
         for (int i = 0; i < timelinesCount; i++) {
-            Timeline timeline = (Timeline) timelines[i];
-            int id = timeline.getPropertyId();
-            if (!propertyIDs.add(id))
-                timelineMode[i] = SUBSEQUENT;
-            else if (to == null || timeline instanceof AttachmentTimeline || timeline instanceof DrawOrderTimeline
-                    || timeline instanceof EventTimeline || !to.animation.hasTimeline(id)) {
-                timelineMode[i] = FIRST;
-            } else {
-                for (TrackEntry next = to.mixingTo; next != null; next = next.mixingTo) {
-                    if (next.animation.hasTimeline(id)) continue;
-                    if (next.mixDuration > 0) {
-                        timelineMode[i] = HOLD_MIX;
-                        timelineHoldMix[i] = next;
-                        continue outer;
+            if (V.get().equals("38")) {
+                Timeline timeline = (Timeline) timelines[i];
+                int id = timeline.getPropertyId();
+                if (!propertyIDs.add(id))
+                    timelineMode[i] = SUBSEQUENT;
+                else if (to == null || timeline instanceof AttachmentTimeline || timeline instanceof DrawOrderTimeline
+                        || timeline instanceof EventTimeline || !to.animation.hasTimeline(id)) {
+                    timelineMode[i] = FIRST;
+                } else {
+                    for (TrackEntry next = to.mixingTo; next != null; next = next.mixingTo) {
+                        if (next.animation.hasTimeline(id)) continue;
+                        if (next.mixDuration > 0) {
+                            timelineMode[i] = HOLD_MIX;
+                            timelineHoldMix[i] = next;
+                            continue outer;
+                        }
+                        break;
                     }
-                    break;
+                    timelineMode[i] = HOLD_FIRST;
                 }
-                timelineMode[i] = HOLD_FIRST;
+            } else if (V.get().equals("37")) {
+                int id = ((Timeline) timelines[i]).getPropertyId();
+                if (!propertyIDs.add(id))
+                    timelineMode[i] = SUBSEQUENT;
+                else if (to == null || !hasTimeline(to, id))
+                    timelineMode[i] = FIRST;
+                else {
+                    for (TrackEntry next = to.mixingTo; next != null; next = next.mixingTo) {
+                        if (hasTimeline(next, id)) continue;
+                        if (next.mixDuration > 0) {
+                            timelineMode[i] = HOLD_MIX;
+                            timelineHoldMix[i] = next;
+                            continue outer;
+                        }
+                        break;
+                    }
+                    timelineMode[i] = HOLD;
+                }
             }
         }
     }
 
+    private boolean hasTimeline(TrackEntry entry, int id) {
+        Object[] timelines = entry.animation.timelines.items;
+        for (int i = 0, n = entry.animation.timelines.size; i < n; i++)
+            if (((Timeline) timelines[i]).getPropertyId() == id) return true;
+        return false;
+    }
+
     public TrackEntry getCurrent(int trackIndex) {
-        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
+        if (trackIndex < 0 && V.get().equals("38"))
+            throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (trackIndex >= tracks.size) return null;
         return tracks.get(trackIndex);
     }
@@ -668,7 +748,7 @@ public class AnimationState {
         final IntArray timelineMode = new IntArray();
         final Array<TrackEntry> timelineHoldMix = new Array();
         final FloatArray timelinesRotation = new FloatArray();
-        com.esotericsoftware.spine38.Animation animation;
+        Animation animation;
         TrackEntry next, mixingFrom, mixingTo;
         AnimationStateListener listener;
         int trackIndex;
@@ -694,12 +774,13 @@ public class AnimationState {
             return trackIndex;
         }
 
-        public com.esotericsoftware.spine38.Animation getAnimation() {
+        public Animation getAnimation() {
             return animation;
         }
 
-        public void setAnimation(com.esotericsoftware.spine38.Animation animation) {
-            if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
+        public void setAnimation(Animation animation) {
+            if (animation == null && V.get().equals("38"))
+                throw new IllegalArgumentException("animation cannot be null.");
             this.animation = animation;
         }
 
@@ -846,7 +927,8 @@ public class AnimationState {
         }
 
         public void setMixBlend(MixBlend mixBlend) {
-            if (mixBlend == null) throw new IllegalArgumentException("mixBlend cannot be null.");
+            if (mixBlend == null && V.get().equals("38"))
+                throw new IllegalArgumentException("mixBlend cannot be null.");
             this.mixBlend = mixBlend;
         }
 
@@ -899,40 +981,40 @@ public class AnimationState {
         private final Array objects = new Array();
         boolean drainDisabled;
 
-        void start(TrackEntry entry) {
+        public void start(TrackEntry entry) {
             objects.add(EventType.start);
             objects.add(entry);
             animationsChanged = true;
         }
 
-        void interrupt(TrackEntry entry) {
+        public void interrupt(TrackEntry entry) {
             objects.add(EventType.interrupt);
             objects.add(entry);
         }
 
-        void end(TrackEntry entry) {
+        public void end(TrackEntry entry) {
             objects.add(EventType.end);
             objects.add(entry);
             animationsChanged = true;
         }
 
-        void dispose(TrackEntry entry) {
+        public void dispose(TrackEntry entry) {
             objects.add(EventType.dispose);
             objects.add(entry);
         }
 
-        void complete(TrackEntry entry) {
+        public void complete(TrackEntry entry) {
             objects.add(EventType.complete);
             objects.add(entry);
         }
 
-        void event(TrackEntry entry, Event event) {
+        public void event(TrackEntry entry, Event event) {
             objects.add(EventType.event);
             objects.add(entry);
             objects.add(event);
         }
 
-        void drain() {
+        public void drain() {
             if (drainDisabled) return;
             drainDisabled = true;
             Array objects = this.objects;
@@ -978,7 +1060,7 @@ public class AnimationState {
             drainDisabled = false;
         }
 
-        void clear() {
+        public void clear() {
             objects.clear();
         }
     }

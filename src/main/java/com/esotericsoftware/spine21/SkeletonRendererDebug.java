@@ -109,9 +109,9 @@ public class SkeletonRendererDebug {
                     shapes.setColor(triangleLineColor);
                     for (int ii = 0, nn = triangles.length; ii < nn; ii += 3) {
                         int v1 = triangles[ii] * 5, v2 = triangles[ii + 1] * 5, v3 = triangles[ii + 2] * 5;
-                        shapes.triangle(vertices[v1], vertices[v1 + 1], //
-                                vertices[v2], vertices[v2 + 1], //
-                                vertices[v3], vertices[v3 + 1] //
+                        shapes.triangle(vertices[v1], vertices[v1 + 1],
+                                vertices[v2], vertices[v2 + 1],
+                                vertices[v3], vertices[v3 + 1]
                         );
                     }
                 }

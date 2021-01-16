@@ -27,9 +27,7 @@ public class IkConstraint {
         }
     }
 
-    /**
-     * Copy constructor.
-     */
+
     public IkConstraint(IkConstraint ikConstraint, Array<Bone> bones, Bone target) {
         data = ikConstraint.data;
         this.bones = bones;
@@ -38,10 +36,7 @@ public class IkConstraint {
         bendDirection = ikConstraint.bendDirection;
     }
 
-    /**
-     * Adjusts the bone rotation so the tip is as close to the target position as possible. The target is specified in the world
-     * coordinate system.
-     */
+
     static public void apply(Bone bone, float targetX, float targetY, float alpha) {
         float parentRotation = (!bone.data.inheritRotation || bone.parent == null) ? 0 : bone.parent.worldRotation;
         float rotation = bone.rotation;
@@ -49,12 +44,7 @@ public class IkConstraint {
         bone.rotationIK = rotation + (rotationIK - rotation) * alpha;
     }
 
-    /**
-     * Adjusts the parent and child bone rotations so the tip of the child is as close to the target position as possible. The
-     * target is specified in the world coordinate system.
-     *
-     * @param child Any descendant bone of the parent.
-     */
+
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDirection, float alpha) {
         float childRotation = child.rotation, parentRotation = parent.rotation;
         if (alpha == 0) {
@@ -79,7 +69,7 @@ public class IkConstraint {
         float childX = position.x * parent.worldScaleX, childY = position.y * parent.worldScaleY;
         float offset = (float) Math.atan2(childY, childX);
         float len1 = (float) Math.sqrt(childX * childX + childY * childY), len2 = child.data.length * child.worldScaleX;
-        // Based on code by Ryan Juckett with permission: Copyright (c) 2008-2009 Ryan Juckett, http://www.ryanjuckett.com/
+
         float cosDenom = 2 * len1 * len2;
         if (cosDenom < 0.0001f) {
             child.rotationIK = childRotation + ((float) Math.atan2(targetY, targetX) * radDeg - parentRotation - childRotation)
@@ -93,13 +83,13 @@ public class IkConstraint {
         float rotation = (parentAngle - offset) * radDeg - parentRotation;
         if (rotation > 180)
             rotation -= 360;
-        else if (rotation < -180) //
+        else if (rotation < -180)
             rotation += 360;
         parent.rotationIK = parentRotation + rotation * alpha;
         rotation = (childAngle + offset) * radDeg - childRotation;
         if (rotation > 180)
             rotation -= 360;
-        else if (rotation < -180) //
+        else if (rotation < -180)
             rotation += 360;
         child.rotationIK = childRotation + (rotation + parent.worldRotation - child.parent.worldRotation) * alpha;
     }

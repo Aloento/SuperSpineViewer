@@ -15,8 +15,8 @@ public class Bone {
     float scaleX, scaleY;
     boolean flipX, flipY;
 
-    float m00, m01, worldX; // a b x
-    float m10, m11, worldY; // c d y
+    float m00, m01, worldX;
+    float m10, m11, worldY;
     float worldRotation;
     float worldScaleX, worldScaleY;
     boolean worldFlipX, worldFlipY;
@@ -27,9 +27,7 @@ public class Bone {
         skeleton = null;
     }
 
-    /**
-     * @param parent May be null.
-     */
+
     public Bone(BoneData data, Skeleton skeleton, Bone parent) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -39,11 +37,7 @@ public class Bone {
         setToSetupPose();
     }
 
-    /**
-     * Copy constructor.
-     *
-     * @param parent May be null.
-     */
+
     public Bone(Bone bone, Skeleton skeleton, Bone parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
         this.skeleton = skeleton;
@@ -59,9 +53,7 @@ public class Bone {
         flipY = bone.flipY;
     }
 
-    /**
-     * Computes the world SRT using the parent bone and the local SRT.
-     */
+
     public void updateWorldTransform() {
         Skeleton skeleton = this.skeleton;
         Bone parent = this.parent;
@@ -152,9 +144,7 @@ public class Bone {
         this.y = y;
     }
 
-    /**
-     * Returns the forward kinetics rotation.
-     */
+
     public float getRotation() {
         return rotation;
     }
@@ -163,9 +153,7 @@ public class Bone {
         this.rotation = rotation;
     }
 
-    /**
-     * Returns the inverse kinetics rotation, as calculated by any IK constraints.
-     */
+
     public float getRotationIK() {
         return rotationIK;
     }

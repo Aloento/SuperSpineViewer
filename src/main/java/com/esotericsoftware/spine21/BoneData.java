@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 public class BoneData {
     final BoneData parent;
     final String name;
-    // Nonessential.
+
     final Color color = new Color(0.61f, 0.61f, 0.61f, 1);
     float length;
     float x, y;
@@ -14,20 +14,14 @@ public class BoneData {
     boolean flipX, flipY;
     boolean inheritScale = true, inheritRotation = true;
 
-    /**
-     * @param parent May be null.
-     */
+
     public BoneData(String name, BoneData parent) {
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
         this.name = name;
         this.parent = parent;
     }
 
-    /**
-     * Copy constructor.
-     *
-     * @param parent May be null.
-     */
+
     public BoneData(BoneData bone, BoneData parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
         this.parent = parent;
@@ -42,9 +36,7 @@ public class BoneData {
         flipY = bone.flipY;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public BoneData getParent() {
         return parent;
     }

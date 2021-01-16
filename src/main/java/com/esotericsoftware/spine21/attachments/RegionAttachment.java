@@ -11,9 +11,7 @@ import com.esotericsoftware.spine21.Slot;
 
 import static com.badlogic.gdx.graphics.g2d.Batch.*;
 
-/**
- * Attachment that displays a texture region.
- */
+
 public class RegionAttachment extends Attachment {
     static public final int BLX = 0;
     static public final int BLY = 1;
@@ -122,10 +120,10 @@ public class RegionAttachment extends Attachment {
         Color regionColor = color;
         float a = skeletonColor.a * slotColor.a * regionColor.a * 255;
         float multiplier = premultipliedAlpha ? a : 255;
-        float color = NumberUtils.intToFloatColor( //
-                ((int) a << 24) //
-                        | ((int) (skeletonColor.b * slotColor.b * regionColor.b * multiplier) << 16) //
-                        | ((int) (skeletonColor.g * slotColor.g * regionColor.g * multiplier) << 8) //
+        float color = NumberUtils.intToFloatColor(
+                ((int) a << 24)
+                        | ((int) (skeletonColor.b * slotColor.b * regionColor.b * multiplier) << 16)
+                        | ((int) (skeletonColor.g * slotColor.g * regionColor.g * multiplier) << 8)
                         | (int) (skeletonColor.r * slotColor.r * regionColor.r * multiplier));
 
         float[] vertices = this.vertices;
@@ -137,25 +135,25 @@ public class RegionAttachment extends Attachment {
 
         offsetX = offset[BRX];
         offsetY = offset[BRY];
-        vertices[X1] = offsetX * m00 + offsetY * m01 + x; // br
+        vertices[X1] = offsetX * m00 + offsetY * m01 + x;
         vertices[Y1] = offsetX * m10 + offsetY * m11 + y;
         vertices[C1] = color;
 
         offsetX = offset[BLX];
         offsetY = offset[BLY];
-        vertices[X2] = offsetX * m00 + offsetY * m01 + x; // bl
+        vertices[X2] = offsetX * m00 + offsetY * m01 + x;
         vertices[Y2] = offsetX * m10 + offsetY * m11 + y;
         vertices[C2] = color;
 
         offsetX = offset[ULX];
         offsetY = offset[ULY];
-        vertices[X3] = offsetX * m00 + offsetY * m01 + x; // ul
+        vertices[X3] = offsetX * m00 + offsetY * m01 + x;
         vertices[Y3] = offsetX * m10 + offsetY * m11 + y;
         vertices[C3] = color;
 
         offsetX = offset[URX];
         offsetY = offset[URY];
-        vertices[X4] = offsetX * m00 + offsetY * m01 + x; // ur
+        vertices[X4] = offsetX * m00 + offsetY * m01 + x;
         vertices[Y4] = offsetX * m10 + offsetY * m11 + y;
         vertices[C4] = color;
     }
