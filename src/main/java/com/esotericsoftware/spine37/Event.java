@@ -1,16 +1,5 @@
 package com.esotericsoftware.spine37;
 
-import com.esotericsoftware.spine37.Animation.Timeline;
-import com.esotericsoftware.spine37.AnimationState.AnimationStateListener;
-
-/**
- * Stores the current pose values for an {@link Event}.
- * <p>
- * See Timeline
- * {@link Timeline#apply(Skeleton, float, float, com.badlogic.gdx.utils.Array, float, com.esotericsoftware.spine37.Animation.MixBlend, com.esotericsoftware.spine37.Animation.MixDirection)},
- * AnimationStateListener {@link AnimationStateListener#event(com.esotericsoftware.spine37.AnimationState.TrackEntry, Event)}, and
- * <a href="http://esotericsoftware.com/spine-events">Events</a> in the Spine User Guide.
- */
 public class Event {
     final float time;
     final private EventData data;
@@ -65,16 +54,12 @@ public class Event {
         this.balance = balance;
     }
 
-    /**
-     * The animation time this event was keyed.
-     */
+    
     public float getTime() {
         return time;
     }
 
-    /**
-     * The events's setup pose data.
-     */
+    
     public EventData getData() {
         return data;
     }
