@@ -360,12 +360,10 @@ public class Animation {
             this.boneIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float x, float y) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
@@ -1281,7 +1279,6 @@ public class Animation {
         public float[] getFrames() {
             return frames;
         }
-
         
         public void setFrame(int frameIndex, float time, float mix, int bendDirection, boolean compress, boolean stretch) {
             frameIndex *= ENTRIES;

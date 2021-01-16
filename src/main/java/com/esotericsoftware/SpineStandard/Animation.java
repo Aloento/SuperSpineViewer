@@ -262,7 +262,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active) return;
+            if (!bone.active && V.get().equals("38")) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
