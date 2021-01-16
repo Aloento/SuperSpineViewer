@@ -137,7 +137,6 @@ public class MeshAttachment extends VertexAttachment {
         this.regionUVs = regionUVs;
     }
 
-
     public float[] getUVs() {
         return uvs;
     }
@@ -146,11 +145,9 @@ public class MeshAttachment extends VertexAttachment {
         this.uvs = uvs;
     }
 
-
     public Color getColor() {
         return color;
     }
-
 
     public String getPath() {
         return path;
@@ -160,7 +157,6 @@ public class MeshAttachment extends VertexAttachment {
         this.path = path;
     }
 
-
     public int getHullLength() {
         return hullLength;
     }
@@ -168,7 +164,6 @@ public class MeshAttachment extends VertexAttachment {
     public void setHullLength(int hullLength) {
         this.hullLength = hullLength;
     }
-
 
     public short[] getEdges() {
         return edges;
@@ -178,7 +173,6 @@ public class MeshAttachment extends VertexAttachment {
         this.edges = edges;
     }
 
-
     public float getWidth() {
         return width;
     }
@@ -186,7 +180,6 @@ public class MeshAttachment extends VertexAttachment {
     public void setWidth(float width) {
         this.width = width;
     }
-
 
     public float getHeight() {
         return height;
@@ -196,11 +189,9 @@ public class MeshAttachment extends VertexAttachment {
         this.height = height;
     }
 
-
     public MeshAttachment getParentMesh() {
         return parentMesh;
     }
-
 
     public void setParentMesh(MeshAttachment parentMesh) {
         this.parentMesh = parentMesh;
@@ -233,7 +224,6 @@ public class MeshAttachment extends VertexAttachment {
         copy.triangles = new short[triangles.length];
         arraycopy(triangles, 0, copy.triangles, 0, triangles.length);
         copy.hullLength = hullLength;
-
 
         if (edges != null) {
             copy.edges = new short[edges.length];
