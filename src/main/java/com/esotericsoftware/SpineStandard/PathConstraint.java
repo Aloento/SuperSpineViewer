@@ -9,7 +9,7 @@ import com.esotericsoftware.SpineStandard.attachments.Attachment;
 import com.esotericsoftware.SpineStandard.attachments.PathAttachment;
 import com.esotericsoftware.SpineStandard.utils.SpineUtils;
 
-public class PathConstraint implements Updatable {
+public class PathConstraint implements Constraint {
     static private final int NONE = -1, BEFORE = -2, AFTER = -3;
     static private final float epsilon = 0.00001f;
     final PathConstraintData data;
@@ -391,6 +391,10 @@ public class PathConstraint implements Updatable {
             else
                 out[o + 2] = (float) Math.atan2(y - (y1 * uu + cy1 * ut * 2 + cy2 * tt), x - (x1 * uu + cx1 * ut * 2 + cx2 * tt));
         }
+    }
+
+    public int getOrder() {
+        return data.order;
     }
 
     public float getPosition() {
