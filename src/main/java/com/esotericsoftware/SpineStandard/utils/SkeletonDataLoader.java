@@ -10,27 +10,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.SpineStandard.attachments.AtlasAttachmentLoader;
 import com.esotericsoftware.SpineStandard.attachments.AttachmentLoader;
-import com.esotericsoftware.spine38.SkeletonBinary;
-import com.esotericsoftware.spine38.SkeletonData;
-import com.esotericsoftware.spine38.SkeletonJson;
+import com.esotericsoftware.SpineStandard.SkeletonBinary;
+import com.esotericsoftware.SpineStandard.SkeletonData;
+import com.esotericsoftware.SpineStandard.SkeletonJson;
 
-/**
- * An asset loader to create and load skeleton data. The data file is assumed to be binary if it ends with <code>.skel</code>,
- * otherwise JSON is assumed. The {@link SkeletonDataParameter} can provide a texture atlas name or an {@link AttachmentLoader}.
- * If neither is provided, a texture atlas name based on the skeleton file name with an <code>.atlas</code> extension is used.
- * When a texture atlas name is used, the texture atlas is loaded by the asset manager as a dependency.
- * <p>
- * Example:
- *
- * <pre>
- * // Load skeleton.json and skeleton.atlas:
- * assetManager.load("skeleton.json", SkeletonData.class);
- * // Or specify the atlas/AttachmentLoader and scale:
- * assetManager.setLoader(SkeletonData.class, new SkeletonDataLoader(new InternalFileHandleResolver()));
- * SkeletonDataParameter parameter = new SkeletonDataParameter("skeleton2x.atlas", 2);
- * assetManager.load("skeleton.json", SkeletonData.class, parameter);
- * </pre>
- */
 public class SkeletonDataLoader extends AsynchronousAssetLoader<SkeletonData, SkeletonDataLoader.SkeletonDataParameter> {
     private SkeletonData skeletonData;
 
@@ -38,9 +21,6 @@ public class SkeletonDataLoader extends AsynchronousAssetLoader<SkeletonData, Sk
         super(resolver);
     }
 
-    /**
-     * @param parameter May be null.
-     */
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SkeletonDataParameter parameter) {
         float scale = 1;
         AttachmentLoader attachmentLoader = null;
@@ -64,23 +44,17 @@ public class SkeletonDataLoader extends AsynchronousAssetLoader<SkeletonData, Sk
             skeletonData = skeletonJson.readSkeletonData(file);
         }
     }
-
-    /**
-     * @param parameter May be null.
-     */
+    
     public SkeletonData loadSync(AssetManager manager, String fileName, FileHandle file, SkeletonDataParameter parameter) {
         SkeletonData skeletonData = this.skeletonData;
         this.skeletonData = null;
         return skeletonData;
     }
 
-    /**
-     * @param parameter May be null.
-     */
     public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, SkeletonDataParameter parameter) {
         if (parameter == null) return null;
         if (parameter.attachmentLoader != null) return null;
-        Array<AssetDescriptor> dependencies = new Array();
+        Array<AssetDescriptor> dependencies = new Array<>();
         dependencies.add(new AssetDescriptor(parameter.atlasName, TextureAtlas.class));
         return dependencies;
     }
