@@ -2,9 +2,8 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.Array;
 
-
 public class PathConstraintData extends ConstraintData {
-    final Array<BoneData> bones = new Array();
+    final Array<BoneData> bones = new Array<>();
     SlotData target;
     PositionMode positionMode;
     SpacingMode spacingMode;
