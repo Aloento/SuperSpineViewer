@@ -54,9 +54,7 @@ public class SkeletonActorPool extends Pool<SkeletonActor> {
         };
     }
 
-    /**
-     * Each obtained skeleton actor that is no longer playing an animation is removed from the stage and returned to the pool.
-     */
+    
     public void freeComplete() {
         Array<SkeletonActor> obtained = this.obtained;
         outer:
@@ -75,10 +73,7 @@ public class SkeletonActorPool extends Pool<SkeletonActor> {
         return actor;
     }
 
-    /**
-     * This pool keeps a reference to the obtained instance, so it should be returned to the pool via {@link #free(SkeletonActor)}
-     * , {@link #freeAll(Array)} or {@link #freeComplete()} to avoid leaking memory.
-     */
+    
     public SkeletonActor obtain() {
         SkeletonActor actor = super.obtain();
         actor.setSkeleton(skeletonPool.obtain());
