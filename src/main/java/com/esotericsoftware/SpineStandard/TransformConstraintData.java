@@ -2,9 +2,8 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.Array;
 
-
 public class TransformConstraintData extends ConstraintData {
-    final Array<BoneData> bones = new Array();
+    final Array<BoneData> bones = new Array<>();
     BoneData target;
     float rotateMix, translateMix, scaleMix, shearMix;
     float offsetRotation, offsetX, offsetY, offsetScaleX, offsetScaleY, offsetShearY;
