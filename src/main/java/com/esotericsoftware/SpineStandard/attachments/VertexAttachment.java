@@ -7,10 +7,6 @@ import com.esotericsoftware.SpineStandard.Slot;
 
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
-/**
- * Base class for an attachment with vertices that are transformed by one or more bones and can be deformed by a slot's
- * {@link Slot#getDeform()}.
- */
 abstract public class VertexAttachment extends Attachment {
     static private int nextID;
 
@@ -28,20 +24,6 @@ abstract public class VertexAttachment extends Attachment {
         return nextID++;
     }
 
-    /**
-     * Transforms the attachment's local {@link #getVertices()} to world coordinates. If the slot's {@link Slot#getDeform()} is
-     * not empty, it is used to deform the vertices.
-     * <p>
-     * See <a href="http://esotericsoftware.com/spine-runtime-skeletons#World-transforms">World transforms</a> in the Spine
-     * Runtimes Guide.
-     *
-     * @param start         The index of the first {@link #getVertices()} value to transform. Each vertex has 2 values, x and y.
-     * @param count         The number of world vertex values to output. Must be <= {@link #getWorldVerticesLength()} - <code>start</code>.
-     * @param worldVertices The output world vertices. Must have a length >= <code>offset</code> + <code>count</code> *
-     *                      <code>stride</code> / 2.
-     * @param offset        The <code>worldVertices</code> index to begin writing values.
-     * @param stride        The number of <code>worldVertices</code> entries between the value pairs written.
-     */
     public void computeWorldVertices(Slot slot, int start, int count, float[] worldVertices, int offset, int stride) {
         count = offset + (count >> 1) * stride;
         Skeleton skeleton = slot.getSkeleton();
@@ -99,43 +81,26 @@ abstract public class VertexAttachment extends Attachment {
         }
     }
 
-    /**
-     * Deform keys for the deform attachment are also applied to this attachment.
-     *
-     * @return May be null if no deform keys should be applied.
-     */
+    public boolean applyDeform(VertexAttachment sourceAttachment) {
+        return this == sourceAttachment;
+    }
+
     public VertexAttachment getDeformAttachment() {
         return deformAttachment;
     }
 
-    /**
-     * @param deformAttachment May be null if no deform keys should be applied.
-     */
     public void setDeformAttachment(VertexAttachment deformAttachment) {
         this.deformAttachment = deformAttachment;
     }
 
-    /**
-     * The bones which affect the {@link #getVertices()}. The array entries are, for each vertex, the number of bones affecting
-     * the vertex followed by that many bone indices, which is the index of the bone in {@link Skeleton#getBones()}. Will be null
-     * if this attachment has no weights.
-     */
     public int[] getBones() {
         return bones;
     }
-
-    /**
-     * @param bones May be null if this attachment has no weights.
-     */
+    
     public void setBones(int[] bones) {
         this.bones = bones;
     }
-
-    /**
-     * The vertex positions in the bone's coordinate system. For a non-weighted attachment, the values are <code>x,y</code>
-     * entries for each vertex. For a weighted attachment, the values are <code>x,y,weight</code> entries for each bone affecting
-     * each vertex.
-     */
+    
     public float[] getVertices() {
         return vertices;
     }
@@ -143,11 +108,7 @@ abstract public class VertexAttachment extends Attachment {
     public void setVertices(float[] vertices) {
         this.vertices = vertices;
     }
-
-    /**
-     * The maximum number of world vertex values that can be output by
-     * {@link #computeWorldVertices(Slot, int, int, float[], int, int)} using the <code>count</code> parameter.
-     */
+    
     public int getWorldVerticesLength() {
         return worldVerticesLength;
     }
@@ -156,16 +117,10 @@ abstract public class VertexAttachment extends Attachment {
         this.worldVerticesLength = worldVerticesLength;
     }
 
-    /**
-     * Returns a unique ID for this attachment.
-     */
     public int getId() {
         return id;
     }
 
-    /**
-     * Does not copy id (generated) or name (set on construction).
-     **/
     void copyTo(VertexAttachment attachment) {
         if (bones != null) {
             attachment.bones = new int[bones.length];
