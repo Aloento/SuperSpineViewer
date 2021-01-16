@@ -3,17 +3,19 @@ package com.esotericsoftware.SpineStandard;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import BoneData.TransformMode;
+import com.esotericsoftware.CrossSpine;
+import com.esotericsoftware.SpineStandard.BoneData.TransformMode;
+
+import java.util.Objects;
 
 import static com.badlogic.gdx.math.Matrix3.*;
-import static utils.SpineUtils.*;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
-
-public class Bone implements Updatable {
+public class Bone extends CrossSpine implements Updatable {
     final BoneData data;
     final Skeleton skeleton;
     final Bone parent;
-    final Array<Bone> children = new Array();
+    final Array<Bone> children = new Array<>();
     float x, y, rotation, scaleX, scaleY, shearX, shearY;
     float ax, ay, arotation, ascaleX, ascaleY, ashearX, ashearY;
     boolean appliedValid;
@@ -67,8 +69,13 @@ public class Bone implements Updatable {
             Skeleton skeleton = this.skeleton;
             float rotationY = rotation + 90 + shearY, sx = skeleton.scaleX, sy = skeleton.scaleY;
             a = cosDeg(rotation + shearX) * scaleX * sx;
-            b = cosDeg(rotationY) * scaleY * sx;
-            c = sinDeg(rotation + shearX) * scaleX * sy;
+            if (V.get().equals("38")) {
+                b = cosDeg(rotationY) * scaleY * sx;
+                c = sinDeg(rotation + shearX) * scaleX * sy;
+            } else if (V.get().equals("37")) {
+                b = cosDeg(rotationY) * scaleY * sy;
+                c = sinDeg(rotation + shearX) * scaleX * sx;
+            }
             d = sinDeg(rotationY) * scaleY * sy;
             worldX = x * sx + skeleton.x;
             worldY = y * sy + skeleton.y;
@@ -439,17 +446,19 @@ public class Bone implements Updatable {
     }
 
     public Vector2 worldToLocal(Vector2 world) {
-        if (world == null) throw new IllegalArgumentException("world cannot be null.");
+        if (world == null && V.get().equals("38"))
+            throw new IllegalArgumentException("world cannot be null.");
         float invDet = 1 / (a * d - b * c);
-        float x = world.x - worldX, y = world.y - worldY;
+        float x = Objects.requireNonNull(world).x - worldX, y = world.y - worldY;
         world.x = x * d * invDet - y * b * invDet;
         world.y = y * a * invDet - x * c * invDet;
         return world;
     }
 
     public Vector2 localToWorld(Vector2 local) {
-        if (local == null) throw new IllegalArgumentException("local cannot be null.");
-        float x = local.x, y = local.y;
+        if (local == null && V.get().equals("38"))
+            throw new IllegalArgumentException("local cannot be null.");
+        float x = Objects.requireNonNull(local).x, y = local.y;
         local.x = x * a + y * b + worldX;
         local.y = x * c + y * d + worldY;
         return local;
