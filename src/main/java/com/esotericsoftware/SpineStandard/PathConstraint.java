@@ -2,13 +2,12 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import PathConstraintData.PositionMode;
-import PathConstraintData.RotateMode;
-import PathConstraintData.SpacingMode;
-import attachments.Attachment;
-import attachments.PathAttachment;
-import utils.SpineUtils;
-
+import com.esotericsoftware.SpineStandard.PathConstraintData.PositionMode;
+import com.esotericsoftware.SpineStandard.PathConstraintData.RotateMode;
+import com.esotericsoftware.SpineStandard.PathConstraintData.SpacingMode;
+import com.esotericsoftware.SpineStandard.attachments.Attachment;
+import com.esotericsoftware.SpineStandard.attachments.PathAttachment;
+import com.esotericsoftware.SpineStandard.utils.SpineUtils;
 
 public class PathConstraint implements Updatable {
     static private final int NONE = -1, BEFORE = -2, AFTER = -3;
@@ -26,7 +25,7 @@ public class PathConstraint implements Updatable {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         this.data = data;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findSlot(data.target.name);
@@ -40,7 +39,7 @@ public class PathConstraint implements Updatable {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.slots.get(constraint.target.data.index);

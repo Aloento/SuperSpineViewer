@@ -1,11 +1,11 @@
 package com.esotericsoftware.SpineStandard.attachments;
 
 import com.badlogic.gdx.utils.FloatArray;
-import Bone;
-import Skeleton;
-import Slot;
+import com.esotericsoftware.SpineStandard.Bone;
+import com.esotericsoftware.SpineStandard.Skeleton;
+import com.esotericsoftware.SpineStandard.Slot;
 
-import static utils.SpineUtils.arraycopy;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 /**
  * Base class for an attachment with vertices that are transformed by one or more bones and can be deformed by a slot's

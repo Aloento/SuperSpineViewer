@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.FloatArray;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
 
-
 public class Slot {
     final SlotData data;
     final Bone bone;
