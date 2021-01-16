@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.ShortArray;
 import com.esotericsoftware.SpineStandard.attachments.ClippingAttachment;
-import com.esotericsoftware.spine38.Slot;
+import com.esotericsoftware.SpineStandard.Slot;
 
 public class SkeletonClipping {
     private final Triangulator triangulator = new Triangulator();

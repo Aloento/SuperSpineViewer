@@ -26,15 +26,7 @@ public class SkeletonRenderer {
     private boolean premultipliedAlpha;
     private VertexEffect vertexEffect;
 
-    /**
-     * Renders the specified skeleton. If the batch is a PolygonSpriteBatch, {@link #draw(PolygonSpriteBatch, Skeleton)} is
-     * called. If the batch is a TwoColorPolygonBatch, {@link #draw(TwoColorPolygonBatch, Skeleton)} is called. Otherwise the
-     * skeleton is rendered without two color tinting and any mesh attachments will throw an exception.
-     * <p>
-     * This method may change the batch's {@link Batch#setBlendFunctionSeparate(int, int, int, int) blending function}. The
-     * previous blend function is not restored, since that could result in unnecessary flushes, depending on what is rendered
-     * next.
-     */
+    
     public void draw(Batch batch, Skeleton skeleton) {
         if (batch instanceof TwoColorPolygonBatch) {
             draw((TwoColorPolygonBatch) batch, skeleton);
@@ -73,9 +65,9 @@ public class SkeletonRenderer {
                     batch.setBlendFunction(blendMode.getSource(premultipliedAlpha), blendMode.getDest());
                 }
 
-                float c = NumberUtils.intToFloatColor(((int) alpha << 24) //
-                        | ((int) (b * slotColor.b * color.b * multiplier) << 16) //
-                        | ((int) (g * slotColor.g * color.g * multiplier) << 8) //
+                float c = NumberUtils.intToFloatColor(((int) alpha << 24)
+                        | ((int) (b * slotColor.b * color.b * multiplier) << 16)
+                        | ((int) (g * slotColor.g * color.g * multiplier) << 8)
                         | (int) (r * slotColor.r * color.r * multiplier));
                 float[] uvs = region.getUVs();
                 for (int u = 0, v = 2; u < 8; u += 2, v += 5) {
@@ -107,13 +99,7 @@ public class SkeletonRenderer {
         if (vertexEffect != null) vertexEffect.end();
     }
 
-    /**
-     * Renders the specified skeleton, including meshes, but without two color tinting.
-     * <p>
-     * This method may change the batch's {@link Batch#setBlendFunctionSeparate(int, int, int, int) blending function}. The
-     * previous blend function is not restored, since that could result in unnecessary flushes, depending on what is rendered
-     * next.
-     */
+    
     @SuppressWarnings("null")
     public void draw(PolygonSpriteBatch batch, Skeleton skeleton) {
         Vector2 tempPos = this.temp;
@@ -184,9 +170,9 @@ public class SkeletonRenderer {
                     batch.setBlendFunction(blendMode.getSource(premultipliedAlpha), blendMode.getDest());
                 }
 
-                float c = NumberUtils.intToFloatColor(((int) alpha << 24) //
-                        | ((int) (b * slotColor.b * color.b * multiplier) << 16) //
-                        | ((int) (g * slotColor.g * color.g * multiplier) << 8) //
+                float c = NumberUtils.intToFloatColor(((int) alpha << 24)
+                        | ((int) (b * slotColor.b * color.b * multiplier) << 16)
+                        | ((int) (g * slotColor.g * color.g * multiplier) << 8)
                         | (int) (r * slotColor.r * color.r * multiplier));
 
                 if (clipper.isClipping()) {
@@ -231,13 +217,7 @@ public class SkeletonRenderer {
         if (vertexEffect != null) vertexEffect.end();
     }
 
-    /**
-     * Renders the specified skeleton, including meshes and two color tinting.
-     * <p>
-     * This method may change the batch's {@link Batch#setBlendFunctionSeparate(int, int, int, int) blending function}. The
-     * previous blend function is not restored, since that could result in unnecessary flushes, depending on what is rendered
-     * next.
-     */
+    
     @SuppressWarnings("null")
     public void draw(TwoColorPolygonBatch batch, Skeleton skeleton) {
         Vector2 tempPos = this.temp;
@@ -312,14 +292,14 @@ public class SkeletonRenderer {
                 float red = r * color.r * multiplier;
                 float green = g * color.g * multiplier;
                 float blue = b * color.b * multiplier;
-                float light = NumberUtils.intToFloatColor(((int) alpha << 24) //
-                        | ((int) (blue * lightColor.b) << 16) //
-                        | ((int) (green * lightColor.g) << 8) //
+                float light = NumberUtils.intToFloatColor(((int) alpha << 24)
+                        | ((int) (blue * lightColor.b) << 16)
+                        | ((int) (green * lightColor.g) << 8)
                         | (int) (red * lightColor.r));
                 Color darkColor = slot.getDarkColor();
                 float dark = darkColor == null ? 0
-                        : NumberUtils.intToFloatColor((int) (blue * darkColor.b) << 16 //
-                        | (int) (green * darkColor.g) << 8 //
+                        : NumberUtils.intToFloatColor((int) (blue * darkColor.b) << 16
+                        | (int) (green * darkColor.g) << 8
                         | (int) (red * darkColor.r));
 
                 if (clipper.isClipping()) {

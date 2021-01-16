@@ -1,10 +1,7 @@
 package com.esotericsoftware.SpineStandard.attachments;
 
-import Skeleton;
+import com.esotericsoftware.SpineStandard.Skeleton;
 
-/**
- * Attachment that displays a skeleton.
- */
 public class SkeletonAttachment extends Attachment {
     private Skeleton skeleton;
 
@@ -12,16 +9,10 @@ public class SkeletonAttachment extends Attachment {
         super(name);
     }
 
-    /**
-     * @return May return null.
-     */
     public Skeleton getSkeleton() {
         return skeleton;
     }
 
-    /**
-     * @param skeleton May be null.
-     */
     public void setSkeleton(Skeleton skeleton) {
         this.skeleton = skeleton;
     }
