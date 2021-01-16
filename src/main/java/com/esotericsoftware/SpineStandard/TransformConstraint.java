@@ -2,11 +2,11 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.esotericsoftware.spine37.Constraint;
 
-import static utils.SpineUtils.*;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
-
-public class TransformConstraint implements Updatable {
+public class TransformConstraint implements Constraint {
     final TransformConstraintData data;
     final Array<Bone> bones;
     final Vector2 temp = new Vector2();
@@ -22,7 +22,7 @@ public class TransformConstraint implements Updatable {
         translateMix = data.translateMix;
         scaleMix = data.scaleMix;
         shearMix = data.shearMix;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findBone(data.target.name);
@@ -32,7 +32,7 @@ public class TransformConstraint implements Updatable {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.bones.get(constraint.target.data.index);
@@ -233,6 +233,10 @@ public class TransformConstraint implements Updatable {
             if (shearMix != 0) shearY += (target.ashearY + data.offsetShearY) * shearMix;
             bone.updateWorldTransform(x, y, rotation, scaleX, scaleY, bone.ashearX, shearY);
         }
+    }
+
+    public int getOrder() {
+        return data.order;
     }
 
     public Array<Bone> getBones() {
