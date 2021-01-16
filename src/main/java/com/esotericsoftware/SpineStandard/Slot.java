@@ -2,7 +2,7 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.spine38.attachments.Attachment;
+import attachments.Attachment;
 
 
 public class Slot {

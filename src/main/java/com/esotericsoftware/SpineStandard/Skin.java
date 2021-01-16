@@ -2,8 +2,8 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.esotericsoftware.spine38.attachments.Attachment;
-import com.esotericsoftware.spine38.attachments.MeshAttachment;
+import attachments.Attachment;
+import attachments.MeshAttachment;
 
 
 public class Skin {

@@ -4,13 +4,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.spine38.Skin.SkinEntry;
-import com.esotericsoftware.spine38.attachments.Attachment;
-import com.esotericsoftware.spine38.attachments.MeshAttachment;
-import com.esotericsoftware.spine38.attachments.PathAttachment;
-import com.esotericsoftware.spine38.attachments.RegionAttachment;
+import Skin.SkinEntry;
+import attachments.Attachment;
+import attachments.MeshAttachment;
+import attachments.PathAttachment;
+import attachments.RegionAttachment;
 
-import static com.esotericsoftware.spine38.utils.SpineUtils.*;
+import static utils.SpineUtils.*;
 
 
 public class Skeleton {

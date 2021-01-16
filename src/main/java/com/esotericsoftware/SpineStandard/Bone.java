@@ -3,10 +3,10 @@ package com.esotericsoftware.SpineStandard;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.spine38.BoneData.TransformMode;
+import BoneData.TransformMode;
 
 import static com.badlogic.gdx.math.Matrix3.*;
-import static com.esotericsoftware.spine38.utils.SpineUtils.*;
+import static utils.SpineUtils.*;
 
 
 public class Bone implements Updatable {

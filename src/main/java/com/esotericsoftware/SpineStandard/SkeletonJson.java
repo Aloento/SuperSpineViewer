@@ -4,15 +4,15 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.*;
-import com.esotericsoftware.spine38.Animation;
-import com.esotericsoftware.spine38.Animation.*;
-import com.esotericsoftware.spine38.BoneData.TransformMode;
-import com.esotericsoftware.spine38.PathConstraintData.PositionMode;
-import com.esotericsoftware.spine38.PathConstraintData.RotateMode;
-import com.esotericsoftware.spine38.PathConstraintData.SpacingMode;
-import com.esotericsoftware.spine38.attachments.*;
+import Animation;
+import Animation.*;
+import BoneData.TransformMode;
+import PathConstraintData.PositionMode;
+import PathConstraintData.RotateMode;
+import PathConstraintData.SpacingMode;
+import attachments.*;
 
-import static com.esotericsoftware.spine38.utils.SpineUtils.arraycopy;
+import static utils.SpineUtils.arraycopy;
 
 
 public class SkeletonJson {

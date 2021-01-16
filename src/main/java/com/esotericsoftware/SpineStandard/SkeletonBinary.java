@@ -4,14 +4,14 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.*;
-import com.esotericsoftware.spine38.Animation;
-import com.esotericsoftware.spine38.Animation.*;
-import com.esotericsoftware.spine38.BoneData.TransformMode;
-import com.esotericsoftware.spine38.PathConstraintData.PositionMode;
-import com.esotericsoftware.spine38.PathConstraintData.RotateMode;
-import com.esotericsoftware.spine38.PathConstraintData.SpacingMode;
-import com.esotericsoftware.spine38.SkeletonJson.LinkedMesh;
-import com.esotericsoftware.spine38.attachments.*;
+import Animation;
+import Animation.*;
+import BoneData.TransformMode;
+import PathConstraintData.PositionMode;
+import PathConstraintData.RotateMode;
+import PathConstraintData.SpacingMode;
+import SkeletonJson.LinkedMesh;
+import attachments.*;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -450,7 +450,7 @@ public class SkeletonBinary {
         return array;
     }
 
-    private com.esotericsoftware.spine38.Animation readAnimation(SkeletonInput input, String name, SkeletonData skeletonData) {
+    private Animation readAnimation(SkeletonInput input, String name, SkeletonData skeletonData) {
         Array<Timeline> timelines = new Array(32);
         float scale = this.scale;
         float duration = 0;

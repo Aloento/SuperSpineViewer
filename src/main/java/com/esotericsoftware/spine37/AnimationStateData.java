@@ -1,11 +1,7 @@
 package com.esotericsoftware.spine37;
 
 import com.badlogic.gdx.utils.ObjectFloatMap;
-import com.esotericsoftware.spine37.AnimationState.TrackEntry;
 
-/**
- * Stores mix (crossfade) durations to be applied when {@link AnimationState} animations are changed.
- */
 public class AnimationStateData {
     final SkeletonData skeletonData;
     final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap();
@@ -17,18 +13,10 @@ public class AnimationStateData {
         this.skeletonData = skeletonData;
     }
 
-    /**
-     * The SkeletonData to look up animations when they are specified by name.
-     */
     public SkeletonData getSkeletonData() {
         return skeletonData;
     }
 
-    /**
-     * Sets a mix duration by animation name.
-     * <p>
-     * See {@link #setMix(Animation, Animation, float)}.
-     */
     public void setMix(String fromName, String toName, float duration) {
         Animation from = skeletonData.findAnimation(fromName);
         if (from == null) throw new IllegalArgumentException("Animation not found: " + fromName);
@@ -37,11 +25,6 @@ public class AnimationStateData {
         setMix(from, to, duration);
     }
 
-    /**
-     * Sets the mix duration when changing from the specified animation to the other.
-     * <p>
-     * See {@link TrackEntry#mixDuration}.
-     */
     public void setMix(Animation from, Animation to, float duration) {
         if (from == null) throw new IllegalArgumentException("from cannot be null.");
         if (to == null) throw new IllegalArgumentException("to cannot be null.");
@@ -51,10 +34,6 @@ public class AnimationStateData {
         animationToMixTime.put(key, duration);
     }
 
-    /**
-     * Returns the mix duration to use when changing from the specified animation to the other, or the {@link #getDefaultMix()} if
-     * no mix duration has been set.
-     */
     public float getMix(Animation from, Animation to) {
         if (from == null) throw new IllegalArgumentException("from cannot be null.");
         if (to == null) throw new IllegalArgumentException("to cannot be null.");
@@ -63,9 +42,6 @@ public class AnimationStateData {
         return animationToMixTime.get(tempKey, defaultMix);
     }
 
-    /**
-     * The mix duration to use when no mix duration has been defined between two animations.
-     */
     public float getDefaultMix() {
         return defaultMix;
     }

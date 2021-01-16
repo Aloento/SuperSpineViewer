@@ -1,18 +1,21 @@
 package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.ObjectFloatMap;
-import com.esotericsoftware.spine38.Animation;
+import com.esotericsoftware.CrossSpine;
 
-
-public class AnimationStateData {
+public class AnimationStateData extends CrossSpine {
     final SkeletonData skeletonData;
-    final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap(51, 0.8f);
+    final ObjectFloatMap<Key> animationToMixTime;
     final Key tempKey = new Key();
     float defaultMix;
 
     public AnimationStateData(SkeletonData skeletonData) {
         if (skeletonData == null) throw new IllegalArgumentException("skeletonData cannot be null.");
         this.skeletonData = skeletonData;
+        if (V.get().equals("38"))
+            animationToMixTime = new ObjectFloatMap<>(51, 0.8f);
+        else if (V.get().equals("37"))
+            animationToMixTime = new ObjectFloatMap<>();
     }
 
     public SkeletonData getSkeletonData() {
@@ -20,14 +23,14 @@ public class AnimationStateData {
     }
 
     public void setMix(String fromName, String toName, float duration) {
-        com.esotericsoftware.spine38.Animation from = skeletonData.findAnimation(fromName);
+        Animation from = skeletonData.findAnimation(fromName);
         if (from == null) throw new IllegalArgumentException("Animation not found: " + fromName);
-        com.esotericsoftware.spine38.Animation to = skeletonData.findAnimation(toName);
+        Animation to = skeletonData.findAnimation(toName);
         if (to == null) throw new IllegalArgumentException("Animation not found: " + toName);
         setMix(from, to, duration);
     }
 
-    public void setMix(com.esotericsoftware.spine38.Animation from, com.esotericsoftware.spine38.Animation to, float duration) {
+    public void setMix(Animation from, Animation to, float duration) {
         if (from == null) throw new IllegalArgumentException("from cannot be null.");
         if (to == null) throw new IllegalArgumentException("to cannot be null.");
         Key key = new Key();
@@ -36,7 +39,7 @@ public class AnimationStateData {
         animationToMixTime.put(key, duration);
     }
 
-    public float getMix(com.esotericsoftware.spine38.Animation from, com.esotericsoftware.spine38.Animation to) {
+    public float getMix(Animation from, Animation to) {
         if (from == null) throw new IllegalArgumentException("from cannot be null.");
         if (to == null) throw new IllegalArgumentException("to cannot be null.");
         tempKey.a1 = from;

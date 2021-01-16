@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.ShortArray;
-import com.esotericsoftware.spine38.attachments.*;
-import com.esotericsoftware.spine38.utils.SkeletonClipping;
-import com.esotericsoftware.spine38.utils.TwoColorPolygonBatch;
+import attachments.*;
+import utils.SkeletonClipping;
+import utils.TwoColorPolygonBatch;
 
 public class SkeletonRenderer {
     static private final short[] quadTriangles = {0, 1, 2, 2, 3, 0};

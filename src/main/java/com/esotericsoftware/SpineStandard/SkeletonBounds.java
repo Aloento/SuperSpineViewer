@@ -3,8 +3,8 @@ package com.esotericsoftware.SpineStandard;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.spine38.attachments.Attachment;
-import com.esotericsoftware.spine38.attachments.BoundingBoxAttachment;
+import attachments.Attachment;
+import attachments.BoundingBoxAttachment;
 
 
 public class SkeletonBounds {

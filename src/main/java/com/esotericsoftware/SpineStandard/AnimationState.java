@@ -293,7 +293,7 @@ public class AnimationState extends CrossSpine {
             if (time >= frames[frames.length - 1])
                 frameIndex = frames.length - 1;
             else
-                frameIndex = com.esotericsoftware.spine38.Animation.binarySearch(frames, time) - 1;
+                frameIndex = Animation.binarySearch(frames, time) - 1;
             setAttachment(skeleton, slot, timeline.attachmentNames[frameIndex], attachments);
         }
         if (slot.attachmentState <= unkeyedState) slot.attachmentState = unkeyedState + SETUP;

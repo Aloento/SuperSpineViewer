@@ -1,7 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.spine38.Animation;
 
 
 public class SkeletonData {
@@ -9,7 +8,7 @@ public class SkeletonData {
     final Array<SlotData> slots = new Array();
     final Array<Skin> skins = new Array();
     final Array<EventData> events = new Array();
-    final Array<com.esotericsoftware.spine38.Animation> animations = new Array();
+    final Array<Animation> animations = new Array();
     final Array<IkConstraintData> ikConstraints = new Array();
     final Array<TransformConstraintData> transformConstraints = new Array();
     final Array<PathConstraintData> pathConstraints = new Array();
@@ -78,13 +77,13 @@ public class SkeletonData {
         return events;
     }
 
-    public Array<com.esotericsoftware.spine38.Animation> getAnimations() {
+    public Array<Animation> getAnimations() {
         return animations;
     }
 
-    public com.esotericsoftware.spine38.Animation findAnimation(String animationName) {
+    public Animation findAnimation(String animationName) {
         if (animationName == null) throw new IllegalArgumentException("animationName cannot be null.");
-        Array<com.esotericsoftware.spine38.Animation> animations = this.animations;
+        Array<Animation> animations = this.animations;
         for (int i = 0, n = animations.size; i < n; i++) {
             Animation animation = animations.get(i);
             if (animation.name.equals(animationName)) return animation;

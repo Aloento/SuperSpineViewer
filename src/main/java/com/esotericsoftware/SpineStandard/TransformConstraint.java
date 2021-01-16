@@ -3,7 +3,7 @@ package com.esotericsoftware.SpineStandard;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import static com.esotericsoftware.spine38.utils.SpineUtils.*;
+import static utils.SpineUtils.*;
 
 
 public class TransformConstraint implements Updatable {

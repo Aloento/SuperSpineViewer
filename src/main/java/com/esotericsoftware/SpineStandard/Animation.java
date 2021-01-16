@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntSet;
 import com.esotericsoftware.CrossSpine;
-import com.esotericsoftware.spine38.attachments.Attachment;
+import attachments.Attachment;
 
 import static com.esotericsoftware.SpineStandard.Animation.MixBlend.*;
 import static com.esotericsoftware.SpineStandard.Animation.MixDirection.in;

@@ -2,12 +2,12 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.spine38.PathConstraintData.PositionMode;
-import com.esotericsoftware.spine38.PathConstraintData.RotateMode;
-import com.esotericsoftware.spine38.PathConstraintData.SpacingMode;
-import com.esotericsoftware.spine38.attachments.Attachment;
-import com.esotericsoftware.spine38.attachments.PathAttachment;
-import com.esotericsoftware.spine38.utils.SpineUtils;
+import PathConstraintData.PositionMode;
+import PathConstraintData.RotateMode;
+import PathConstraintData.SpacingMode;
+import attachments.Attachment;
+import attachments.PathAttachment;
+import utils.SpineUtils;
 
 
 public class PathConstraint implements Updatable {
