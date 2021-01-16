@@ -7,18 +7,14 @@ import com.esotericsoftware.spine37.AnimationState;
 import com.esotericsoftware.spine37.Skeleton;
 import com.esotericsoftware.spine37.SkeletonRenderer;
 
-/**
- * A scene2d actor that draws a skeleton.
- */
+
 public class SkeletonActor extends Actor {
     AnimationState state;
     private SkeletonRenderer renderer;
     private Skeleton skeleton;
     private boolean resetBlendFunction = true;
 
-    /**
-     * Creates an uninitialized SkeletonActor. The renderer, skeleton, and animation state must be set before use.
-     */
+    
     public SkeletonActor() {
     }
 
@@ -79,10 +75,7 @@ public class SkeletonActor extends Actor {
         return resetBlendFunction;
     }
 
-    /**
-     * If false, the blend function will be left as whatever {@link SkeletonRenderer#draw(Batch, Skeleton)} set. This can reduce
-     * batch flushes in some cases, but means other rendering may need to first set the blend function. Default is true.
-     */
+    
     public void setResetBlendFunction(boolean resetBlendFunction) {
         this.resetBlendFunction = resetBlendFunction;
     }
