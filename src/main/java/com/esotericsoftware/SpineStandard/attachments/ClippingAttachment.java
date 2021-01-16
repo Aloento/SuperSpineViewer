@@ -4,8 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.esotericsoftware.SpineStandard.SlotData;
 
 public class ClippingAttachment extends VertexAttachment {
-    // Nonessential.
-    final Color color = new Color(0.2275f, 0.2275f, 0.8078f, 1); // ce3a3aff
+    final Color color = new Color(0.2275f, 0.2275f, 0.8078f, 1);
     SlotData endSlot;
 
     public ClippingAttachment(String name) {
