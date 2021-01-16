@@ -1,7 +1,8 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.esotericsoftware.CrossSpine;
 
-public class EventData {
+public class EventData extends CrossSpine {
     final String name;
     int intValue;
     float floatValue;
@@ -34,7 +35,8 @@ public class EventData {
     }
 
     public void setString(String stringValue) {
-        if (stringValue == null) throw new IllegalArgumentException("stringValue cannot be null.");
+        if (stringValue == null && V.get().equals("38"))
+            throw new IllegalArgumentException("stringValue cannot be null.");
         this.stringValue = stringValue;
     }
 
@@ -43,7 +45,8 @@ public class EventData {
     }
 
     public void setAudioPath(String audioPath) {
-        if (audioPath == null) throw new IllegalArgumentException("audioPath cannot be null.");
+        if (audioPath == null && V.get().equals("38"))
+            throw new IllegalArgumentException("audioPath cannot be null.");
         this.audioPath = audioPath;
     }
 
