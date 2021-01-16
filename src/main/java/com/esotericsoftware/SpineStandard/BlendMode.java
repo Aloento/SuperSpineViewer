@@ -2,7 +2,6 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.graphics.GL20;
 
-
 public enum BlendMode {
     normal(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA),
     additive(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE),
