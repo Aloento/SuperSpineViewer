@@ -1,33 +1,34 @@
-package com.esotericsoftware.spine38;
+package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntSet;
-import com.esotericsoftware.spine38.attachments.Attachment;
-import com.esotericsoftware.spine38.attachments.VertexAttachment;
+import com.esotericsoftware.CrossSpine;
 
-import static com.esotericsoftware.spine38.Animation.MixBlend.*;
-import static com.esotericsoftware.spine38.Animation.MixDirection.in;
-import static com.esotericsoftware.spine38.Animation.MixDirection.out;
-import static com.esotericsoftware.spine38.utils.SpineUtils.arraycopy;
+import static com.esotericsoftware.SpineStandard.Animation.MixBlend.*;
+import static com.esotericsoftware.SpineStandard.Animation.MixDirection.in;
+import static com.esotericsoftware.SpineStandard.Animation.MixDirection.out;
 
-
-public class Animation {
+public class Animation extends CrossSpine {
     final String name;
     final IntSet timelineIDs = new IntSet();
     Array<Timeline> timelines;
     float duration;
 
     public Animation(String name, Array<Timeline> timelines, float duration) {
-        if (name == null) throw new IllegalArgumentException("name cannot be null.");
+        if (name == null)
+            throw new IllegalArgumentException("name cannot be null.");
         this.name = name;
         this.duration = duration;
-        setTimelines(timelines);
+        if (V.get().equals("37"))
+            if (timelines == null)
+                throw new IllegalArgumentException("timelines cannot be null.");
+        if (V.get().equals("38"))
+            setTimelines(timelines);
     }
 
-    
     static int binarySearch(float[] values, float target, int step) {
         int low = 0;
         int high = values.length / step - 2;
@@ -43,7 +44,6 @@ public class Animation {
         }
     }
 
-    
     static int binarySearch(float[] values, float target) {
         int low = 0;
         int high = values.length - 2;
@@ -65,7 +65,6 @@ public class Animation {
         return -1;
     }
 
-    
     public Array<Timeline> getTimelines() {
         return timelines;
     }
@@ -73,18 +72,15 @@ public class Animation {
     public void setTimelines(Array<Timeline> timelines) {
         if (timelines == null) throw new IllegalArgumentException("timelines cannot be null.");
         this.timelines = timelines;
-
         timelineIDs.clear();
         for (Timeline timeline : timelines)
             timelineIDs.add(timeline.getPropertyId());
     }
 
-    
     public boolean hasTimeline(int id) {
         return timelineIDs.contains(id);
     }
 
-    
     public float getDuration() {
         return duration;
     }
@@ -93,22 +89,18 @@ public class Animation {
         this.duration = duration;
     }
 
-    
     public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha,
                       MixBlend blend, MixDirection direction) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-
         if (loop && duration != 0) {
             time %= duration;
             if (lastTime > 0) lastTime %= duration;
         }
-
         Array<Timeline> timelines = this.timelines;
         for (int i = 0, n = timelines.size; i < n; i++)
             timelines.get(i).apply(skeleton, lastTime, time, events, alpha, blend, direction);
     }
 
-    
     public String getName() {
         return name;
     }
@@ -117,19 +109,10 @@ public class Animation {
         return name;
     }
 
-    
     public enum MixBlend {
-        
-        setup,
-        
-        first,
-        
-        replace,
-        
-        add
+        setup, first, replace, add
     }
 
-    
     public enum MixDirection {
         in, out
     }
@@ -143,37 +126,28 @@ public class Animation {
         twoColor
     }
 
-    
     public interface Timeline {
-        
         void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                    MixDirection direction);
 
-        
         int getPropertyId();
     }
 
-    
     public interface BoneTimeline extends Timeline {
-        
         int getBoneIndex();
 
         void setBoneIndex(int index);
     }
 
-    
     public interface SlotTimeline extends Timeline {
-        
         int getSlotIndex();
 
         void setSlotIndex(int index);
     }
 
-    
     abstract static public class CurveTimeline implements Timeline {
         static public final float LINEAR = 0, STEPPED = 1, BEZIER = 2;
         static private final int BEZIER_SIZE = 10 * 2 - 1;
-
         private final float[] curves;
 
         public CurveTimeline(int frameCount) {
@@ -181,22 +155,18 @@ public class Animation {
             curves = new float[(frameCount - 1) * BEZIER_SIZE];
         }
 
-        
         public int getFrameCount() {
             return curves.length / BEZIER_SIZE + 1;
         }
 
-        
         public void setLinear(int frameIndex) {
             curves[frameIndex * BEZIER_SIZE] = LINEAR;
         }
 
-        
         public void setStepped(int frameIndex) {
             curves[frameIndex * BEZIER_SIZE] = STEPPED;
         }
 
-        
         public float getCurveType(int frameIndex) {
             int index = frameIndex * BEZIER_SIZE;
             if (index == curves.length) return LINEAR;
@@ -206,17 +176,14 @@ public class Animation {
             return BEZIER;
         }
 
-        
         public void setCurve(int frameIndex, float cx1, float cy1, float cx2, float cy2) {
             float tmpx = (-cx1 * 2 + cx2) * 0.03f, tmpy = (-cy1 * 2 + cy2) * 0.03f;
             float dddfx = ((cx1 - cx2) * 3 + 1) * 0.006f, dddfy = ((cy1 - cy2) * 3 + 1) * 0.006f;
             float ddfx = tmpx * 2 + dddfx, ddfy = tmpy * 2 + dddfy;
             float dfx = cx1 * 0.3f + tmpx + dddfx * 0.16666667f, dfy = cy1 * 0.3f + tmpy + dddfy * 0.16666667f;
-
             int i = frameIndex * BEZIER_SIZE;
             float[] curves = this.curves;
             curves[i++] = BEZIER;
-
             float x = dfx, y = dfy;
             for (int n = i + BEZIER_SIZE - 1; i < n; i += 2) {
                 curves[i] = x;
@@ -230,7 +197,6 @@ public class Animation {
             }
         }
 
-        
         public float getCurvePercent(int frameIndex, float percent) {
             percent = MathUtils.clamp(percent, 0, 1);
             float[] curves = this.curves;
@@ -253,7 +219,6 @@ public class Animation {
         }
     }
 
-    
     static public class RotateTimeline extends CurveTimeline implements BoneTimeline {
         static public final int ENTRIES = 2;
         static final int PREV_TIME = -2, PREV_ROTATION = -1;
@@ -270,7 +235,6 @@ public class Animation {
             return (TimelineType.rotate.ordinal() << 24) + boneIndex;
         }
 
-        
         public int getBoneIndex() {
             return boneIndex;
         }
@@ -280,12 +244,10 @@ public class Animation {
             this.boneIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float degrees) {
             frameIndex <<= 1;
             frames[frameIndex] = time;
@@ -294,7 +256,6 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Bone bone = skeleton.bones.get(boneIndex);
             if (!bone.active) return;
             float[] frames = this.frames;
@@ -311,7 +272,6 @@ public class Animation {
                 }
                 return;
             }
-
             if (time >= frames[frames.length - ENTRIES]) {
                 float r = frames[frames.length + PREV_ROTATION];
                 switch (blend) {
@@ -322,19 +282,15 @@ public class Animation {
                     case replace:
                         r += bone.data.rotation - bone.rotation;
                         r -= (16384 - (int) (16384.499999999996 - r / 360)) * 360;
-
                     case add:
                         bone.rotation += r * alpha;
                 }
                 return;
             }
-
-
             int frame = binarySearch(frames, time, ENTRIES);
             float prevRotation = frames[frame + PREV_ROTATION];
             float frameTime = frames[frame];
             float percent = getCurvePercent((frame >> 1) - 1, 1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
             float r = frames[frame + ROTATION] - prevRotation;
             r = prevRotation + (r - (16384 - (int) (16384.499999999996 - r / 360)) * 360) * percent;
             switch (blend) {
@@ -344,14 +300,12 @@ public class Animation {
                 case first:
                 case replace:
                     r += bone.data.rotation - bone.rotation;
-
                 case add:
                     bone.rotation += (r - (16384 - (int) (16384.499999999996 - r / 360)) * 360) * alpha;
             }
         }
     }
 
-    
     static public class TranslateTimeline extends CurveTimeline implements BoneTimeline {
         static public final int ENTRIES = 3;
         static final int PREV_TIME = -3, PREV_X = -2, PREV_Y = -1;
@@ -368,7 +322,6 @@ public class Animation {
             return (TimelineType.translate.ordinal() << 24) + boneIndex;
         }
 
-        
         public int getBoneIndex() {
             return boneIndex;
         }
@@ -378,12 +331,10 @@ public class Animation {
             this.boneIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float x, float y) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
@@ -393,9 +344,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active) return;
+            if (V.get().equals("38"))
+                if (!bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -411,20 +362,17 @@ public class Animation {
                 }
                 return;
             }
-
             float x, y;
             if (time >= frames[frames.length - ENTRIES]) {
                 x = frames[frames.length + PREV_X];
                 y = frames[frames.length + PREV_Y];
             } else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 x = frames[frame + PREV_X];
                 y = frames[frame + PREV_Y];
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 x += (frames[frame + X] - x) * percent;
                 y += (frames[frame + Y] - y) * percent;
             }
@@ -445,7 +393,6 @@ public class Animation {
         }
     }
 
-    
     static public class ScaleTimeline extends TranslateTimeline {
         public ScaleTimeline(int frameCount) {
             super(frameCount);
@@ -457,9 +404,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active) return;
+            if (V.get().equals("38"))
+                if (!bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -475,20 +422,17 @@ public class Animation {
                 }
                 return;
             }
-
             float x, y;
             if (time >= frames[frames.length - ENTRIES]) {
                 x = frames[frames.length + PREV_X] * bone.data.scaleX;
                 y = frames[frames.length + PREV_Y] * bone.data.scaleY;
             } else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 x = frames[frame + PREV_X];
                 y = frames[frame + PREV_Y];
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 x = (x + (frames[frame + X] - x) * percent) * bone.data.scaleX;
                 y = (y + (frames[frame + Y] - y) * percent) * bone.data.scaleY;
             }
@@ -501,7 +445,6 @@ public class Animation {
                     bone.scaleY = y;
                 }
             } else {
-
                 float bx, by;
                 if (direction == out) {
                     switch (blend) {
@@ -550,7 +493,6 @@ public class Animation {
         }
     }
 
-    
     static public class ShearTimeline extends TranslateTimeline {
         public ShearTimeline(int frameCount) {
             super(frameCount);
@@ -562,9 +504,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active) return;
+            if (V.get().equals("38"))
+                if (!bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -580,20 +522,17 @@ public class Animation {
                 }
                 return;
             }
-
             float x, y;
             if (time >= frames[frames.length - ENTRIES]) {
                 x = frames[frames.length + PREV_X];
                 y = frames[frames.length + PREV_Y];
             } else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 x = frames[frame + PREV_X];
                 y = frames[frame + PREV_Y];
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 x = x + (frames[frame + X] - x) * percent;
                 y = y + (frames[frame + Y] - y) * percent;
             }
@@ -614,7 +553,6 @@ public class Animation {
         }
     }
 
-    
     static public class ColorTimeline extends CurveTimeline implements SlotTimeline {
         static public final int ENTRIES = 5;
         static private final int PREV_TIME = -5, PREV_R = -4, PREV_G = -3, PREV_B = -2, PREV_A = -1;
@@ -631,7 +569,6 @@ public class Animation {
             return (TimelineType.color.ordinal() << 24) + slotIndex;
         }
 
-        
         public int getSlotIndex() {
             return slotIndex;
         }
@@ -641,12 +578,10 @@ public class Animation {
             this.slotIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float r, float g, float b, float a) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
@@ -658,9 +593,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Slot slot = skeleton.slots.get(slotIndex);
-            if (!slot.bone.active) return;
+            if (V.get().equals("38"))
+                if (!slot.bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -676,7 +611,6 @@ public class Animation {
                 }
                 return;
             }
-
             float r, g, b, a;
             if (time >= frames[frames.length - ENTRIES]) {
                 int i = frames.length;
@@ -685,7 +619,6 @@ public class Animation {
                 b = frames[i + PREV_B];
                 a = frames[i + PREV_A];
             } else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 r = frames[frame + PREV_R];
                 g = frames[frame + PREV_G];
@@ -694,7 +627,6 @@ public class Animation {
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 r += (frames[frame + R] - r) * percent;
                 g += (frames[frame + G] - g) * percent;
                 b += (frames[frame + B] - b) * percent;
@@ -710,7 +642,6 @@ public class Animation {
         }
     }
 
-    
     static public class TwoColorTimeline extends CurveTimeline implements SlotTimeline {
         static public final int ENTRIES = 8;
         static private final int PREV_TIME = -8, PREV_R = -7, PREV_G = -6, PREV_B = -5, PREV_A = -4;
@@ -728,7 +659,6 @@ public class Animation {
             return (TimelineType.twoColor.ordinal() << 24) + slotIndex;
         }
 
-        
         public int getSlotIndex() {
             return slotIndex;
         }
@@ -738,12 +668,10 @@ public class Animation {
             this.slotIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float r, float g, float b, float a, float r2, float g2, float b2) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
@@ -758,9 +686,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Slot slot = skeleton.slots.get(slotIndex);
-            if (!slot.bone.active) return;
+            if (V.get().equals("38"))
+                if (!slot.bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -778,7 +706,6 @@ public class Animation {
                 }
                 return;
             }
-
             float r, g, b, a, r2, g2, b2;
             if (time >= frames[frames.length - ENTRIES]) {
                 int i = frames.length;
@@ -790,7 +717,6 @@ public class Animation {
                 g2 = frames[i + PREV_G2];
                 b2 = frames[i + PREV_B2];
             } else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 r = frames[frame + PREV_R];
                 g = frames[frame + PREV_G];
@@ -802,7 +728,6 @@ public class Animation {
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 r += (frames[frame + R] - r) * percent;
                 g += (frames[frame + G] - g) * percent;
                 b += (frames[frame + B] - b) * percent;
@@ -826,14 +751,15 @@ public class Animation {
         }
     }
 
-    
     static public class AttachmentTimeline implements SlotTimeline {
         final float[] frames;
         final String[] attachmentNames;
         int slotIndex;
 
         public AttachmentTimeline(int frameCount) {
-            if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
+            if (V.get().equals("38"))
+                if (frameCount <= 0)
+                    throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             attachmentNames = new String[frameCount];
         }
@@ -842,12 +768,10 @@ public class Animation {
             return (TimelineType.attachment.ordinal() << 24) + slotIndex;
         }
 
-        
         public int getFrameCount() {
             return frames.length;
         }
 
-        
         public int getSlotIndex() {
             return slotIndex;
         }
@@ -857,17 +781,14 @@ public class Animation {
             this.slotIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public String[] getAttachmentNames() {
             return attachmentNames;
         }
 
-        
         public void setFrame(int frameIndex, float time, String attachmentName) {
             frames[frameIndex] = time;
             attachmentNames[frameIndex] = attachmentName;
@@ -875,27 +796,45 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Slot slot = skeleton.slots.get(slotIndex);
-            if (!slot.bone.active) return;
-            if (direction == out) {
-                if (blend == setup) setAttachment(skeleton, slot, slot.data.attachmentName);
-                return;
+            if (V.get().equals("38")) {
+                if (!slot.bone.active) return;
+                if (direction == out) {
+                    if (blend == setup)
+                        setAttachment(skeleton, slot, slot.data.attachmentName);
+                    return;
+                }
+            } else if (V.get().equals("37")) {
+                if (direction == out && blend == setup) {
+                    String attachmentName = slot.data.attachmentName;
+                    slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
+                    return;
+                }
             }
-
             float[] frames = this.frames;
             if (time < frames[0]) {
-                if (blend == setup || blend == first) setAttachment(skeleton, slot, slot.data.attachmentName);
-                return;
+                if (V.get().equals("38")) {
+                    if (blend == setup || blend == first) setAttachment(skeleton, slot, slot.data.attachmentName);
+                    return;
+                } else if (V.get().equals("37")) {
+                    if (blend == setup || blend == first) {
+                        String attachmentName = slot.data.attachmentName;
+                        slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
+                    }
+                    return;
+                }
             }
-
             int frameIndex;
             if (time >= frames[frames.length - 1])
                 frameIndex = frames.length - 1;
             else
                 frameIndex = binarySearch(frames, time) - 1;
-
-            setAttachment(skeleton, slot, attachmentNames[frameIndex]);
+            if (V.get().equals("38")) {
+                setAttachment(skeleton, slot, attachmentNames[frameIndex]);
+            } else if (V.get().equals("37")) {
+                String attachmentName = attachmentNames[frameIndex];
+                slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
+            }
         }
 
         private void setAttachment(Skeleton skeleton, Slot slot, String attachmentName) {
@@ -903,7 +842,6 @@ public class Animation {
         }
     }
 
-    
     static public class DeformTimeline extends CurveTimeline implements SlotTimeline {
         private final float[] frames;
         private final float[][] frameVertices;
@@ -920,7 +858,6 @@ public class Animation {
             return (TimelineType.deform.ordinal() << 27) + attachment.getId() + slotIndex;
         }
 
-        
         public int getSlotIndex() {
             return slotIndex;
         }
@@ -930,7 +867,6 @@ public class Animation {
             this.slotIndex = index;
         }
 
-        
         public VertexAttachment getAttachment() {
             return attachment;
         }
@@ -939,17 +875,14 @@ public class Animation {
             this.attachment = attachment;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public float[][] getVertices() {
             return frameVertices;
         }
 
-        
         public void setFrame(int frameIndex, float time, float[] vertices) {
             frames[frameIndex] = time;
             frameVertices[frameIndex] = vertices;
@@ -957,198 +890,324 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Slot slot = skeleton.slots.get(slotIndex);
-            if (!slot.bone.active) return;
             Attachment slotAttachment = slot.attachment;
-            if (!(slotAttachment instanceof VertexAttachment)
-                    || ((VertexAttachment) slotAttachment).getDeformAttachment() != attachment) return;
-
-            FloatArray deformArray = slot.getDeform();
-            if (deformArray.size == 0) blend = setup;
-
+            if (V.get().equals("38")) {
+                if (!slot.bone.active) return;
+                if (!(slotAttachment instanceof VertexAttachment)
+                        || ((VertexAttachment) slotAttachment).getDeformAttachment() != attachment) return;
+                FloatArray deformArray = slot.getDeform();
+                if (deformArray.size == 0) blend = setup;
+            } else if (V.get().equals("37")) {
+                if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
+                    return;
+                FloatArray verticesArray = slot.getAttachmentVertices();
+                if (verticesArray.size == 0) blend = setup;
+            }
             float[][] frameVertices = this.frameVertices;
             int vertexCount = frameVertices[0].length;
-
             float[] frames = this.frames;
-            if (time < frames[0]) {
-                VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
-                switch (blend) {
-                    case setup -> {
-                        deformArray.clear();
-                        return;
-                    }
-                    case first -> {
-                        if (alpha == 1) {
+            if (V.get().equals("38")) {
+                if (time < frames[0]) {
+                    VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                    switch (blend) {
+                        case setup -> {
                             deformArray.clear();
                             return;
                         }
-                        float[] deform = deformArray.setSize(vertexCount);
-                        if (vertexAttachment.getBones() == null) {
-
-                            float[] setupVertices = vertexAttachment.getVertices();
-                            for (int i = 0; i < vertexCount; i++)
-                                deform[i] += (setupVertices[i] - deform[i]) * alpha;
-                        } else {
-
-                            alpha = 1 - alpha;
-                            for (int i = 0; i < vertexCount; i++)
-                                deform[i] *= alpha;
+                        case first -> {
+                            if (alpha == 1) {
+                                deformArray.clear();
+                                return;
+                            }
+                            float[] deform = deformArray.setSize(vertexCount);
+                            if (vertexAttachment.getBones() == null) {
+                                float[] setupVertices = vertexAttachment.getVertices();
+                                for (int i = 0; i < vertexCount; i++)
+                                    deform[i] += (setupVertices[i] - deform[i]) * alpha;
+                            } else {
+                                alpha = 1 - alpha;
+                                for (int i = 0; i < vertexCount; i++)
+                                    deform[i] *= alpha;
+                            }
                         }
                     }
+                    return;
                 }
-                return;
+                float[] deform = deformArray.setSize(vertexCount);
+                if (time >= frames[frames.length - 1]) {
+                    float[] lastVertices = frameVertices[frames.length - 1];
+                    if (alpha == 1) {
+                        if (blend == add) {
+                            VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                            if (vertexAttachment.getBones() == null) {
+                                float[] setupVertices = vertexAttachment.getVertices();
+                                for (int i = 0; i < vertexCount; i++)
+                                    deform[i] += lastVertices[i] - setupVertices[i];
+                            } else {
+                                for (int i = 0; i < vertexCount; i++)
+                                    deform[i] += lastVertices[i];
+                            }
+                        } else {
+                            arraycopy(lastVertices, 0, deform, 0, vertexCount);
+                        }
+                    } else {
+                        switch (blend) {
+                            case setup: {
+                                VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                                if (vertexAttachment.getBones() == null) {
+                                    float[] setupVertices = vertexAttachment.getVertices();
+                                    for (int i = 0; i < vertexCount; i++) {
+                                        float setup = setupVertices[i];
+                                        deform[i] = setup + (lastVertices[i] - setup) * alpha;
+                                    }
+                                } else {
+                                    for (int i = 0; i < vertexCount; i++)
+                                        deform[i] = lastVertices[i] * alpha;
+                                }
+                                break;
+                            }
+                            case first:
+                            case replace:
+                                for (int i = 0; i < vertexCount; i++)
+                                    deform[i] += (lastVertices[i] - deform[i]) * alpha;
+                                break;
+                            case add:
+                                VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                                if (vertexAttachment.getBones() == null) {
+                                    float[] setupVertices = vertexAttachment.getVertices();
+                                    for (int i = 0; i < vertexCount; i++)
+                                        deform[i] += (lastVertices[i] - setupVertices[i]) * alpha;
+                                } else {
+                                    for (int i = 0; i < vertexCount; i++)
+                                        deform[i] += lastVertices[i] * alpha;
+                                }
+                        }
+                    }
+                    return;
+                }
+            } else if (V.get().equals("37")) {
+                if (time < frames[0]) {
+                    VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                    switch (blend) {
+                        case setup -> {
+                            verticesArray.clear();
+                            return;
+                        }
+                        case first -> {
+                            if (alpha == 1) {
+                                verticesArray.clear();
+                                return;
+                            }
+                            float[] vertices = verticesArray.setSize(vertexCount);
+                            if (vertexAttachment.getBones() == null) {
+                                float[] setupVertices = vertexAttachment.getVertices();
+                                for (int i = 0; i < vertexCount; i++)
+                                    vertices[i] += (setupVertices[i] - vertices[i]) * alpha;
+                            } else {
+                                alpha = 1 - alpha;
+                                for (int i = 0; i < vertexCount; i++)
+                                    vertices[i] *= alpha;
+                            }
+                        }
+                    }
+                    return;
+                }
+                float[] vertices = verticesArray.setSize(vertexCount);
+                if (time >= frames[frames.length - 1]) {
+                    float[] lastVertices = frameVertices[frames.length - 1];
+                    if (alpha == 1) {
+                        if (blend == add) {
+                            VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                            if (vertexAttachment.getBones() == null) {
+                                float[] setupVertices = vertexAttachment.getVertices();
+                                for (int i = 0; i < vertexCount; i++)
+                                    vertices[i] += lastVertices[i] - setupVertices[i];
+                            } else {
+                                for (int i = 0; i < vertexCount; i++)
+                                    vertices[i] += lastVertices[i];
+                            }
+                        } else {
+                            System.arraycopy(lastVertices, 0, vertices, 0, vertexCount);
+                        }
+                    } else {
+                        switch (blend) {
+                            case setup: {
+                                VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                                if (vertexAttachment.getBones() == null) {
+                                    float[] setupVertices = vertexAttachment.getVertices();
+                                    for (int i = 0; i < vertexCount; i++) {
+                                        float setup = setupVertices[i];
+                                        vertices[i] = setup + (lastVertices[i] - setup) * alpha;
+                                    }
+                                } else {
+                                    for (int i = 0; i < vertexCount; i++)
+                                        vertices[i] = lastVertices[i] * alpha;
+                                }
+                                break;
+                            }
+                            case first:
+                            case replace:
+                                for (int i = 0; i < vertexCount; i++)
+                                    vertices[i] += (lastVertices[i] - vertices[i]) * alpha;
+                                break;
+                            case add:
+                                VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                                if (vertexAttachment.getBones() == null) {
+                                    float[] setupVertices = vertexAttachment.getVertices();
+                                    for (int i = 0; i < vertexCount; i++)
+                                        vertices[i] += (lastVertices[i] - setupVertices[i]) * alpha;
+                                } else {
+                                    for (int i = 0; i < vertexCount; i++)
+                                        vertices[i] += lastVertices[i] * alpha;
+                                }
+                        }
+                    }
+                    return;
+                }
             }
-
-            float[] deform = deformArray.setSize(vertexCount);
-
-            if (time >= frames[frames.length - 1]) {
-                float[] lastVertices = frameVertices[frames.length - 1];
+            int frame = binarySearch(frames, time);
+            float[] prevVertices = frameVertices[frame - 1];
+            float[] nextVertices = frameVertices[frame];
+            float frameTime = frames[frame];
+            float percent = getCurvePercent(frame - 1, 1 - (time - frameTime) / (frames[frame - 1] - frameTime));
+            if (V.get().equals("38")) {
                 if (alpha == 1) {
                     if (blend == add) {
                         VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
                         if (vertexAttachment.getBones() == null) {
-
                             float[] setupVertices = vertexAttachment.getVertices();
-                            for (int i = 0; i < vertexCount; i++)
-                                deform[i] += lastVertices[i] - setupVertices[i];
+                            for (int i = 0; i < vertexCount; i++) {
+                                float prev = prevVertices[i];
+                                deform[i] += prev + (nextVertices[i] - prev) * percent - setupVertices[i];
+                            }
                         } else {
-
-                            for (int i = 0; i < vertexCount; i++)
-                                deform[i] += lastVertices[i];
+                            for (int i = 0; i < vertexCount; i++) {
+                                float prev = prevVertices[i];
+                                deform[i] += prev + (nextVertices[i] - prev) * percent;
+                            }
                         }
                     } else {
-
-                        arraycopy(lastVertices, 0, deform, 0, vertexCount);
+                        for (int i = 0; i < vertexCount; i++) {
+                            float prev = prevVertices[i];
+                            deform[i] = prev + (nextVertices[i] - prev) * percent;
+                        }
                     }
                 } else {
                     switch (blend) {
                         case setup: {
                             VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
                             if (vertexAttachment.getBones() == null) {
-
                                 float[] setupVertices = vertexAttachment.getVertices();
                                 for (int i = 0; i < vertexCount; i++) {
-                                    float setup = setupVertices[i];
-                                    deform[i] = setup + (lastVertices[i] - setup) * alpha;
+                                    float prev = prevVertices[i], setup = setupVertices[i];
+                                    deform[i] = setup + (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
                                 }
                             } else {
-
-                                for (int i = 0; i < vertexCount; i++)
-                                    deform[i] = lastVertices[i] * alpha;
+                                for (int i = 0; i < vertexCount; i++) {
+                                    float prev = prevVertices[i];
+                                    deform[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
+                                }
                             }
                             break;
                         }
                         case first:
                         case replace:
-
-                            for (int i = 0; i < vertexCount; i++)
-                                deform[i] += (lastVertices[i] - deform[i]) * alpha;
+                            for (int i = 0; i < vertexCount; i++) {
+                                float prev = prevVertices[i];
+                                deform[i] += (prev + (nextVertices[i] - prev) * percent - deform[i]) * alpha;
+                            }
                             break;
                         case add:
                             VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
                             if (vertexAttachment.getBones() == null) {
-
                                 float[] setupVertices = vertexAttachment.getVertices();
-                                for (int i = 0; i < vertexCount; i++)
-                                    deform[i] += (lastVertices[i] - setupVertices[i]) * alpha;
+                                for (int i = 0; i < vertexCount; i++) {
+                                    float prev = prevVertices[i];
+                                    deform[i] += (prev + (nextVertices[i] - prev) * percent - setupVertices[i]) * alpha;
+                                }
                             } else {
-
-                                for (int i = 0; i < vertexCount; i++)
-                                    deform[i] += lastVertices[i] * alpha;
+                                for (int i = 0; i < vertexCount; i++) {
+                                    float prev = prevVertices[i];
+                                    deform[i] += (prev + (nextVertices[i] - prev) * percent) * alpha;
+                                }
                             }
                     }
                 }
-                return;
-            }
-
-
-            int frame = binarySearch(frames, time);
-            float[] prevVertices = frameVertices[frame - 1];
-            float[] nextVertices = frameVertices[frame];
-            float frameTime = frames[frame];
-            float percent = getCurvePercent(frame - 1, 1 - (time - frameTime) / (frames[frame - 1] - frameTime));
-
-            if (alpha == 1) {
-                if (blend == add) {
-                    VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
-                    if (vertexAttachment.getBones() == null) {
-
-                        float[] setupVertices = vertexAttachment.getVertices();
-                        for (int i = 0; i < vertexCount; i++) {
-                            float prev = prevVertices[i];
-                            deform[i] += prev + (nextVertices[i] - prev) * percent - setupVertices[i];
+            } else if (V.get().equals("37")) {
+                if (alpha == 1) {
+                    if (blend == add) {
+                        VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                        if (vertexAttachment.getBones() == null) {
+                            float[] setupVertices = vertexAttachment.getVertices();
+                            for (int i = 0; i < vertexCount; i++) {
+                                float prev = prevVertices[i];
+                                vertices[i] += prev + (nextVertices[i] - prev) * percent - setupVertices[i];
+                            }
+                        } else {
+                            for (int i = 0; i < vertexCount; i++) {
+                                float prev = prevVertices[i];
+                                vertices[i] += prev + (nextVertices[i] - prev) * percent;
+                            }
                         }
                     } else {
-
                         for (int i = 0; i < vertexCount; i++) {
                             float prev = prevVertices[i];
-                            deform[i] += prev + (nextVertices[i] - prev) * percent;
+                            vertices[i] = prev + (nextVertices[i] - prev) * percent;
                         }
                     }
                 } else {
-
-                    for (int i = 0; i < vertexCount; i++) {
-                        float prev = prevVertices[i];
-                        deform[i] = prev + (nextVertices[i] - prev) * percent;
+                    switch (blend) {
+                        case setup: {
+                            VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                            if (vertexAttachment.getBones() == null) {
+                                float[] setupVertices = vertexAttachment.getVertices();
+                                for (int i = 0; i < vertexCount; i++) {
+                                    float prev = prevVertices[i], setup = setupVertices[i];
+                                    vertices[i] = setup + (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
+                                }
+                            } else {
+                                for (int i = 0; i < vertexCount; i++) {
+                                    float prev = prevVertices[i];
+                                    vertices[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
+                                }
+                            }
+                            break;
+                        }
+                        case first:
+                        case replace:
+                            for (int i = 0; i < vertexCount; i++) {
+                                float prev = prevVertices[i];
+                                vertices[i] += (prev + (nextVertices[i] - prev) * percent - vertices[i]) * alpha;
+                            }
+                            break;
+                        case add:
+                            VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                            if (vertexAttachment.getBones() == null) {
+                                float[] setupVertices = vertexAttachment.getVertices();
+                                for (int i = 0; i < vertexCount; i++) {
+                                    float prev = prevVertices[i];
+                                    vertices[i] += (prev + (nextVertices[i] - prev) * percent - setupVertices[i]) * alpha;
+                                }
+                            } else {
+                                for (int i = 0; i < vertexCount; i++) {
+                                    float prev = prevVertices[i];
+                                    vertices[i] += (prev + (nextVertices[i] - prev) * percent) * alpha;
+                                }
+                            }
                     }
-                }
-            } else {
-                switch (blend) {
-                    case setup: {
-                        VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
-                        if (vertexAttachment.getBones() == null) {
-
-                            float[] setupVertices = vertexAttachment.getVertices();
-                            for (int i = 0; i < vertexCount; i++) {
-                                float prev = prevVertices[i], setup = setupVertices[i];
-                                deform[i] = setup + (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
-                            }
-                        } else {
-
-                            for (int i = 0; i < vertexCount; i++) {
-                                float prev = prevVertices[i];
-                                deform[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
-                            }
-                        }
-                        break;
-                    }
-                    case first:
-                    case replace:
-
-                        for (int i = 0; i < vertexCount; i++) {
-                            float prev = prevVertices[i];
-                            deform[i] += (prev + (nextVertices[i] - prev) * percent - deform[i]) * alpha;
-                        }
-                        break;
-                    case add:
-                        VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
-                        if (vertexAttachment.getBones() == null) {
-
-                            float[] setupVertices = vertexAttachment.getVertices();
-                            for (int i = 0; i < vertexCount; i++) {
-                                float prev = prevVertices[i];
-                                deform[i] += (prev + (nextVertices[i] - prev) * percent - setupVertices[i]) * alpha;
-                            }
-                        } else {
-
-                            for (int i = 0; i < vertexCount; i++) {
-                                float prev = prevVertices[i];
-                                deform[i] += (prev + (nextVertices[i] - prev) * percent) * alpha;
-                            }
-                        }
                 }
             }
         }
     }
 
-    
     static public class EventTimeline implements Timeline {
         private final float[] frames;
         private final Event[] events;
 
         public EventTimeline(int frameCount) {
-            if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
+            if (V.get().equals("38"))
+                if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             events = new Event[frameCount];
         }
@@ -1157,42 +1216,34 @@ public class Animation {
             return TimelineType.event.ordinal() << 24;
         }
 
-        
         public int getFrameCount() {
             return frames.length;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public Event[] getEvents() {
             return events;
         }
 
-        
         public void setFrame(int frameIndex, Event event) {
             frames[frameIndex] = event.time;
             events[frameIndex] = event;
         }
 
-        
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             if (firedEvents == null) return;
             float[] frames = this.frames;
             int frameCount = frames.length;
-
             if (lastTime > time) {
                 apply(skeleton, lastTime, Integer.MAX_VALUE, firedEvents, alpha, blend, direction);
                 lastTime = -1f;
             } else if (lastTime >= frames[frameCount - 1])
                 return;
             if (time < frames[0]) return;
-
             int frame;
             if (lastTime < frames[0])
                 frame = 0;
@@ -1209,13 +1260,13 @@ public class Animation {
         }
     }
 
-    
     static public class DrawOrderTimeline implements Timeline {
         private final float[] frames;
         private final int[][] drawOrders;
 
         public DrawOrderTimeline(int frameCount) {
-            if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
+            if (V.get().equals("38"))
+                if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             drawOrders = new int[frameCount][];
         }
@@ -1224,22 +1275,18 @@ public class Animation {
             return TimelineType.drawOrder.ordinal() << 24;
         }
 
-        
         public int getFrameCount() {
             return frames.length;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public int[][] getDrawOrders() {
             return drawOrders;
         }
 
-        
         public void setFrame(int frameIndex, float time, int[] drawOrder) {
             frames[frameIndex] = time;
             drawOrders[frameIndex] = drawOrder;
@@ -1247,47 +1294,82 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             Array<Slot> drawOrder = skeleton.drawOrder;
             Array<Slot> slots = skeleton.slots;
-            if (direction == out) {
-                if (blend == setup) arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
-                return;
+            if (V.get().equals("38")) {
+                if (direction == out) {
+                    if (blend == setup) arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+                    return;
+                }
+            } else if (V.get().equals("37")) {
+                if (direction == out && blend == setup) {
+                    System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+                    return;
+                }
             }
-
             float[] frames = this.frames;
             if (time < frames[0]) {
-                if (blend == setup || blend == first) arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
-                return;
+                if (V.get().equals("38")) {
+                    if (blend == setup || blend == first) arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+                    return;
+                } else if (V.get().equals("37")) {
+                    if (blend == setup || blend == first)
+                        System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+                    return;
+                }
             }
-
             int frame;
             if (time >= frames[frames.length - 1])
                 frame = frames.length - 1;
             else
                 frame = binarySearch(frames, time) - 1;
-
             int[] drawOrderToSetupIndex = drawOrders[frame];
-            if (drawOrderToSetupIndex == null)
-                arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
-            else {
+            if (drawOrderToSetupIndex == null) {
+                if (V.get().equals("38"))
+                    arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+                else if (V.get().equals("37"))
+                    System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+            } else {
                 for (int i = 0, n = drawOrderToSetupIndex.length; i < n; i++)
                     drawOrder.set(i, slots.get(drawOrderToSetupIndex[i]));
             }
         }
     }
 
-    
     static public class IkConstraintTimeline extends CurveTimeline {
-        static public final int ENTRIES = 6;
-        static private final int PREV_TIME = -6, PREV_MIX = -5, PREV_SOFTNESS = -4, PREV_BEND_DIRECTION = -3, PREV_COMPRESS = -2,
-                PREV_STRETCH = -1;
-        static private final int MIX = 1, SOFTNESS = 2, BEND_DIRECTION = 3, COMPRESS = 4, STRETCH = 5;
+        static public final int ENTRIES;
+        static private final int PREV_TIME, PREV_MIX, PREV_SOFTNESS, PREV_BEND_DIRECTION, PREV_COMPRESS, PREV_STRETCH;
+        static private final int MIX, SOFTNESS, BEND_DIRECTION, COMPRESS, STRETCH;
         private final float[] frames;
         int ikConstraintIndex;
 
         public IkConstraintTimeline(int frameCount) {
             super(frameCount);
+            if (V.get().equals("38")) {
+                ENTRIES = 6;
+                PREV_TIME = -6;
+                PREV_MIX = -5;
+                PREV_SOFTNESS = -4;
+                PREV_BEND_DIRECTION = -3;
+                PREV_COMPRESS = -2;
+                PREV_STRETCH = -1;
+                MIX = 1;
+                SOFTNESS = 2;
+                BEND_DIRECTION = 3;
+                COMPRESS = 4;
+                STRETCH = 5;
+            } else if (V.get().equals("37")) {
+                ENTRIES = 5;
+                PREV_TIME = -5;
+                PREV_MIX = -4;
+                PREV_BEND_DIRECTION = -3;
+                PREV_COMPRESS = -2;
+                PREV_STRETCH = -1;
+                MIX = 1;
+                BEND_DIRECTION = 2;
+                COMPRESS = 3;
+                STRETCH = 4;
+            }
             frames = new float[frameCount * ENTRIES];
         }
 
@@ -1295,7 +1377,6 @@ public class Animation {
             return (TimelineType.ikConstraint.ordinal() << 24) + ikConstraintIndex;
         }
 
-        
         public int getIkConstraintIndex() {
             return ikConstraintIndex;
         }
@@ -1305,18 +1386,20 @@ public class Animation {
             this.ikConstraintIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float mix, float softness, int bendDirection, boolean compress,
                              boolean stretch) {
+            frames[frameIndex + SOFTNESS] = softness;
+            this.setFrame(frameIndex, time, mix, bendDirection, compress, stretch);
+        }
+
+        public void setFrame(int frameIndex, float time, float mix, int bendDirection, boolean compress, boolean stretch) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + MIX] = mix;
-            frames[frameIndex + SOFTNESS] = softness;
             frames[frameIndex + BEND_DIRECTION] = bendDirection;
             frames[frameIndex + COMPRESS] = compress ? 1 : 0;
             frames[frameIndex + STRETCH] = stretch ? 1 : 0;
@@ -1324,15 +1407,16 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             IkConstraint constraint = skeleton.ikConstraints.get(ikConstraintIndex);
-            if (!constraint.active) return;
+            if (V.get().equals("38"))
+                if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
                     case setup -> {
                         constraint.mix = constraint.data.mix;
-                        constraint.softness = constraint.data.softness;
+                        if (V.get().equals("38"))
+                            constraint.softness = constraint.data.softness;
                         constraint.bendDirection = constraint.data.bendDirection;
                         constraint.compress = constraint.data.compress;
                         constraint.stretch = constraint.data.stretch;
@@ -1340,7 +1424,8 @@ public class Animation {
                     }
                     case first -> {
                         constraint.mix += (constraint.data.mix - constraint.mix) * alpha;
-                        constraint.softness += (constraint.data.softness - constraint.softness) * alpha;
+                        if (V.get().equals("38"))
+                            constraint.softness += (constraint.data.softness - constraint.softness) * alpha;
                         constraint.bendDirection = constraint.data.bendDirection;
                         constraint.compress = constraint.data.compress;
                         constraint.stretch = constraint.data.stretch;
@@ -1348,12 +1433,11 @@ public class Animation {
                 }
                 return;
             }
-
             if (time >= frames[frames.length - ENTRIES]) {
                 if (blend == setup) {
                     constraint.mix = constraint.data.mix + (frames[frames.length + PREV_MIX] - constraint.data.mix) * alpha;
-                    constraint.softness = constraint.data.softness
-                            + (frames[frames.length + PREV_SOFTNESS] - constraint.data.softness) * alpha;
+                    if (V.get().equals("38"))
+                        constraint.softness = constraint.data.softness + (frames[frames.length + PREV_SOFTNESS] - constraint.data.softness) * alpha;
                     if (direction == out) {
                         constraint.bendDirection = constraint.data.bendDirection;
                         constraint.compress = constraint.data.compress;
@@ -1365,7 +1449,8 @@ public class Animation {
                     }
                 } else {
                     constraint.mix += (frames[frames.length + PREV_MIX] - constraint.mix) * alpha;
-                    constraint.softness += (frames[frames.length + PREV_SOFTNESS] - constraint.softness) * alpha;
+                    if (V.get().equals("38"))
+                        constraint.softness += (frames[frames.length + PREV_SOFTNESS] - constraint.softness) * alpha;
                     if (direction == in) {
                         constraint.bendDirection = (int) frames[frames.length + PREV_BEND_DIRECTION];
                         constraint.compress = frames[frames.length + PREV_COMPRESS] != 0;
@@ -1374,18 +1459,15 @@ public class Animation {
                 }
                 return;
             }
-
-
             int frame = binarySearch(frames, time, ENTRIES);
             float mix = frames[frame + PREV_MIX];
             float softness = frames[frame + PREV_SOFTNESS];
             float frameTime = frames[frame];
             float percent = getCurvePercent(frame / ENTRIES - 1, 1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
             if (blend == setup) {
                 constraint.mix = constraint.data.mix + (mix + (frames[frame + MIX] - mix) * percent - constraint.data.mix) * alpha;
-                constraint.softness = constraint.data.softness
-                        + (softness + (frames[frame + SOFTNESS] - softness) * percent - constraint.data.softness) * alpha;
+                if (V.get().equals("38"))
+                    constraint.softness = constraint.data.softness + (softness + (frames[frame + SOFTNESS] - softness) * percent - constraint.data.softness) * alpha;
                 if (direction == out) {
                     constraint.bendDirection = constraint.data.bendDirection;
                     constraint.compress = constraint.data.compress;
@@ -1397,7 +1479,8 @@ public class Animation {
                 }
             } else {
                 constraint.mix += (mix + (frames[frame + MIX] - mix) * percent - constraint.mix) * alpha;
-                constraint.softness += (softness + (frames[frame + SOFTNESS] - softness) * percent - constraint.softness) * alpha;
+                if (V.get().equals("38"))
+                    constraint.softness += (softness + (frames[frame + SOFTNESS] - softness) * percent - constraint.softness) * alpha;
                 if (direction == in) {
                     constraint.bendDirection = (int) frames[frame + PREV_BEND_DIRECTION];
                     constraint.compress = frames[frame + PREV_COMPRESS] != 0;
@@ -1407,7 +1490,6 @@ public class Animation {
         }
     }
 
-    
     static public class TransformConstraintTimeline extends CurveTimeline {
         static public final int ENTRIES = 5;
         static private final int PREV_TIME = -5, PREV_ROTATE = -4, PREV_TRANSLATE = -3, PREV_SCALE = -2, PREV_SHEAR = -1;
@@ -1424,7 +1506,6 @@ public class Animation {
             return (TimelineType.transformConstraint.ordinal() << 24) + transformConstraintIndex;
         }
 
-        
         public int getTransformConstraintIndex() {
             return transformConstraintIndex;
         }
@@ -1434,12 +1515,10 @@ public class Animation {
             this.transformConstraintIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float rotateMix, float translateMix, float scaleMix, float shearMix) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
@@ -1451,9 +1530,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             TransformConstraint constraint = skeleton.transformConstraints.get(transformConstraintIndex);
-            if (!constraint.active) return;
+            if (V.get().equals("38"))
+                if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 TransformConstraintData data = constraint.data;
@@ -1474,7 +1553,6 @@ public class Animation {
                 }
                 return;
             }
-
             float rotate, translate, scale, shear;
             if (time >= frames[frames.length - ENTRIES]) {
                 int i = frames.length;
@@ -1483,7 +1561,6 @@ public class Animation {
                 scale = frames[i + PREV_SCALE];
                 shear = frames[i + PREV_SHEAR];
             } else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 rotate = frames[frame + PREV_ROTATE];
                 translate = frames[frame + PREV_TRANSLATE];
@@ -1492,7 +1569,6 @@ public class Animation {
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 rotate += (frames[frame + ROTATE] - rotate) * percent;
                 translate += (frames[frame + TRANSLATE] - translate) * percent;
                 scale += (frames[frame + SCALE] - scale) * percent;
@@ -1513,7 +1589,6 @@ public class Animation {
         }
     }
 
-    
     static public class PathConstraintPositionTimeline extends CurveTimeline {
         static public final int ENTRIES = 2;
         static final int PREV_TIME = -2, PREV_VALUE = -1;
@@ -1530,7 +1605,6 @@ public class Animation {
             return (TimelineType.pathConstraintPosition.ordinal() << 24) + pathConstraintIndex;
         }
 
-        
         public int getPathConstraintIndex() {
             return pathConstraintIndex;
         }
@@ -1540,12 +1614,10 @@ public class Animation {
             this.pathConstraintIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float position) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
@@ -1554,9 +1626,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (!constraint.active) return;
+            if (V.get().equals("38"))
+                if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -1568,18 +1640,15 @@ public class Animation {
                 }
                 return;
             }
-
             float position;
             if (time >= frames[frames.length - ENTRIES])
                 position = frames[frames.length + PREV_VALUE];
             else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 position = frames[frame + PREV_VALUE];
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 position += (frames[frame + VALUE] - position) * percent;
             }
             if (blend == setup)
@@ -1589,7 +1658,6 @@ public class Animation {
         }
     }
 
-    
     static public class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
         public PathConstraintSpacingTimeline(int frameCount) {
             super(frameCount);
@@ -1601,9 +1669,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (!constraint.active) return;
+            if (V.get().equals("38"))
+                if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -1615,21 +1683,17 @@ public class Animation {
                 }
                 return;
             }
-
             float spacing;
             if (time >= frames[frames.length - ENTRIES])
                 spacing = frames[frames.length + PREV_VALUE];
             else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 spacing = frames[frame + PREV_VALUE];
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 spacing += (frames[frame + VALUE] - spacing) * percent;
             }
-
             if (blend == setup)
                 constraint.spacing = constraint.data.spacing + (spacing - constraint.data.spacing) * alpha;
             else
@@ -1637,7 +1701,6 @@ public class Animation {
         }
     }
 
-    
     static public class PathConstraintMixTimeline extends CurveTimeline {
         static public final int ENTRIES = 3;
         static private final int PREV_TIME = -3, PREV_ROTATE = -2, PREV_TRANSLATE = -1;
@@ -1654,7 +1717,6 @@ public class Animation {
             return (TimelineType.pathConstraintMix.ordinal() << 24) + pathConstraintIndex;
         }
 
-        
         public int getPathConstraintIndex() {
             return pathConstraintIndex;
         }
@@ -1664,12 +1726,10 @@ public class Animation {
             this.pathConstraintIndex = index;
         }
 
-        
         public float[] getFrames() {
             return frames;
         }
 
-        
         public void setFrame(int frameIndex, float time, float rotateMix, float translateMix) {
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
@@ -1679,9 +1739,9 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (!constraint.active) return;
+            if (V.get().equals("38"))
+                if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -1697,24 +1757,20 @@ public class Animation {
                 }
                 return;
             }
-
             float rotate, translate;
             if (time >= frames[frames.length - ENTRIES]) {
                 rotate = frames[frames.length + PREV_ROTATE];
                 translate = frames[frames.length + PREV_TRANSLATE];
             } else {
-
                 int frame = binarySearch(frames, time, ENTRIES);
                 rotate = frames[frame + PREV_ROTATE];
                 translate = frames[frame + PREV_TRANSLATE];
                 float frameTime = frames[frame];
                 float percent = getCurvePercent(frame / ENTRIES - 1,
                         1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-
                 rotate += (frames[frame + ROTATE] - rotate) * percent;
                 translate += (frames[frame + TRANSLATE] - translate) * percent;
             }
-
             if (blend == setup) {
                 constraint.rotateMix = constraint.data.rotateMix + (rotate - constraint.data.rotateMix) * alpha;
                 constraint.translateMix = constraint.data.translateMix + (translate - constraint.data.translateMix) * alpha;
