@@ -6,19 +6,14 @@ import com.esotericsoftware.spine37.AnimationState;
 import com.esotericsoftware.spine37.Skeleton;
 import com.esotericsoftware.spine37.SkeletonRenderer;
 
-/**
- * A scene2d drawable that draws a skeleton. The animation state and skeleton must be updated each frame, or
- * {@link #update(float)} called each frame.
- */
+
 public class SkeletonDrawable extends BaseDrawable {
     AnimationState state;
     private SkeletonRenderer renderer;
     private Skeleton skeleton;
     private boolean resetBlendFunction = true;
 
-    /**
-     * Creates an uninitialized SkeletonDrawable. The renderer, skeleton, and animation state must be set before use.
-     */
+    
     public SkeletonDrawable() {
     }
 
@@ -72,10 +67,7 @@ public class SkeletonDrawable extends BaseDrawable {
         return resetBlendFunction;
     }
 
-    /**
-     * If false, the blend function will be left as whatever {@link SkeletonRenderer#draw(Batch, Skeleton)} set. This can reduce
-     * batch flushes in some cases, but means other rendering may need to first set the blend function. Default is true.
-     */
+    
     public void setResetBlendFunction(boolean resetBlendFunction) {
         this.resetBlendFunction = resetBlendFunction;
     }
