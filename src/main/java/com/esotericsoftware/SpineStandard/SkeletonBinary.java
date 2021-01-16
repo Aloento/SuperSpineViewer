@@ -580,7 +580,7 @@ public class SkeletonBinary extends CrossSpine {
                 if (V.get().equals("38")) {
                     linkedMeshes.add(new LinkedMesh(mesh, skinName, slotIndex, parent, inheritDeform));
                 } else if (V.get().equals("37")) {
-                    linkedMeshes.add(new LinkedMesh(mesh, skinName, slotIndex, parent, parent));
+                    linkedMeshes.add(new LinkedMesh(mesh, skinName, slotIndex, parent));
                 }
                 return mesh;
             }
