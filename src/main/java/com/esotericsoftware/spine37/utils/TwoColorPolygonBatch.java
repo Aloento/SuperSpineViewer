@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.PolygonBatch;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,14 +13,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.NumberUtils;
 
-/**
- * A batch that renders polygons and performs tinting using a light and dark color.
- * <p>
- * Because an additional vertex attribute is used, the {@link Batch} and {@link PolygonBatch} methods that accept float[] vertex
- * data do not perform two color tinting. {@link #drawTwoColor(Texture, float[], int, int)} and
- * {@link #drawTwoColor(Texture, float[], int, int, short[], int, int)} are provided to accept float[] vertex data that contains
- * two colors per vertex.
- */
 public class TwoColorPolygonBatch implements PolygonBatch {
     static final int VERTEX_SIZE = 2 + 1 + 1 + 2;
     static final int SPRITE_SIZE = 4 * VERTEX_SIZE;
@@ -35,9 +26,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private final ShaderProgram defaultShader;
     private final Color light = new Color(1, 1, 1, 1);
     private final Color dark = new Color(0, 0, 0, 1);
-    /**
-     * Number of rendering calls, ever. Will not be reset unless set manually.
-     **/
+
     public int totalRenderCalls = 0;
     private boolean blendingDisabled;
     private ShaderProgram shader;
@@ -62,16 +51,16 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     }
 
     public TwoColorPolygonBatch(int maxVertices, int maxTriangles) {
-        // 32767 is max vertex index.
+
         if (maxVertices > 32767)
             throw new IllegalArgumentException("Can't have more than 32767 vertices per batch: " + maxTriangles);
 
         Mesh.VertexDataType vertexDataType = Mesh.VertexDataType.VertexArray;
         if (Gdx.gl30 != null) vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
-        mesh = new Mesh(vertexDataType, false, maxVertices, maxTriangles * 3, //
-                new VertexAttribute(Usage.Position, 2, "a_position"), //
-                new VertexAttribute(Usage.ColorPacked, 4, "a_light"), //
-                new VertexAttribute(Usage.ColorPacked, 4, "a_dark"), // Dark alpha is unused, but colors are packed as 4 byte floats.
+        mesh = new Mesh(vertexDataType, false, maxVertices, maxTriangles * 3,
+                new VertexAttribute(Usage.Position, 2, "a_position"),
+                new VertexAttribute(Usage.ColorPacked, 4, "a_light"),
+                new VertexAttribute(Usage.ColorPacked, 4, "a_dark"),
                 new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoord0"));
 
         vertices = new float[maxVertices * 6];
@@ -153,9 +142,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.darkPacked = packedColor;
     }
 
-    /**
-     * Draws a polygon region with the bottom left corner at x,y having the width and height of the region.
-     */
+
     public void draw(PolygonRegion region, float x, float y) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
 
@@ -195,9 +182,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.vertexIndex = vertexIndex;
     }
 
-    /**
-     * Draws a polygon region with the bottom left corner at x,y and stretching the region to cover the given width and height.
-     */
+
     public void draw(PolygonRegion region, float x, float y, float width, float height) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
 
@@ -240,12 +225,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.vertexIndex = vertexIndex;
     }
 
-    /**
-     * Draws the polygon region with the bottom left corner at x,y and stretching the region to cover the given width and height.
-     * The polygon region is offset by originX, originY relative to the origin. Scale specifies the scaling factor by which the
-     * polygon region should be scaled around originX, originY. Rotation specifies the angle of counter clockwise rotation of the
-     * rectangle around originX, originY.
-     */
+
     public void draw(PolygonRegion region, float x, float y, float originX, float originY, float width, float height,
                      float scaleX, float scaleY, float rotation) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
@@ -307,7 +287,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -320,7 +300,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         triangles[triangleIndex++] = (short) startVertex;
         this.triangleIndex = triangleIndex;
 
-        // bottom left and top right corner points relative to origin
+
         final float worldOriginX = x + originX;
         final float worldOriginY = y + originY;
         float fx = -originX;
@@ -328,7 +308,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float fx2 = width - originX;
         float fy2 = height - originY;
 
-        // scale
+
         if (scaleX != 1 || scaleY != 1) {
             fx *= scaleX;
             fy *= scaleY;
@@ -336,7 +316,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
             fy2 *= scaleY;
         }
 
-        // construct corner points, start from top left and go counter clockwise
+
         final float p1x = fx;
         final float p1y = fy;
         final float p2x = fx;
@@ -355,7 +335,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float x4;
         float y4;
 
-        // rotate
+
         if (rotation != 0) {
             final float cos = MathUtils.cosDeg(rotation);
             final float sin = MathUtils.sinDeg(rotation);
@@ -454,7 +434,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -528,7 +508,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -590,7 +570,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -653,7 +633,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -706,11 +686,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.vertexIndex = idx;
     }
 
-    /**
-     * Draws polygons using the given vertices and triangles. There must be 4 vertices, each made up of 6 elements in this order:
-     * x, y, lightColor, darkColor, u, v. The {@link #getColor()} and {@link #getDarkColor()} from the TwoColorPolygonBatch is not
-     * applied.
-     */
+
     public void drawTwoColor(Texture texture, float[] polygonVertices, int verticesOffset, int verticesCount,
                              short[] polygonTriangles, int trianglesOffset, int trianglesCount) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
@@ -720,7 +696,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
         if (texture != lastTexture) {
             switchTexture(texture);
-        } else if (triangleIndex + trianglesCount > triangles.length || vertexIndex + verticesCount > vertices.length) //
+        } else if (triangleIndex + trianglesCount > triangles.length || vertexIndex + verticesCount > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -735,11 +711,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.vertexIndex += verticesCount;
     }
 
-    /**
-     * Draws polygons using the given vertices and triangles in the {@link PolygonBatch} format. There must be 4 vertices, each
-     * made up of 5 elements in this order: x, y, color, u, v. The {@link #getColor()} and {@link #getDarkColor()} from the
-     * TwoColorPolygonBatch is not applied.
-     */
+
     public void draw(Texture texture, float[] polygonVertices, int verticesOffset, int verticesCount, short[] polygonTriangles,
                      int trianglesOffset, int trianglesCount) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
@@ -749,7 +721,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
         if (texture != lastTexture) {
             switchTexture(texture);
-        } else if (triangleIndex + trianglesCount > triangles.length || vertexIndex + verticesCount / 5 * 6 > vertices.length) //
+        } else if (triangleIndex + trianglesCount > triangles.length || vertexIndex + verticesCount / 5 * 6 > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -765,18 +737,14 @@ public class TwoColorPolygonBatch implements PolygonBatch {
             vertices[idx++] = polygonVertices[i];
             vertices[idx++] = polygonVertices[i + 1];
             vertices[idx++] = polygonVertices[i + 2];
-            vertices[idx++] = 0; // dark
+            vertices[idx++] = 0;
             vertices[idx++] = polygonVertices[i + 3];
             vertices[idx++] = polygonVertices[i + 4];
         }
         this.vertexIndex = idx;
     }
 
-    /**
-     * Draws rectangles using the given vertices. There must be 4 vertices, each made up of 6 elements in this order: x, y,
-     * lightColor, darkColor, u, v. The {@link #getColor()} and {@link #getDarkColor()} from the TwoColorPolygonBatch is not
-     * applied.
-     */
+
     public void drawTwoColor(Texture texture, float[] spriteVertices, int offset, int count) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
 
@@ -786,7 +754,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         final int triangleCount = count / SPRITE_SIZE * 6;
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + triangleCount > triangles.length || vertexIndex + count > vertices.length) //
+        else if (triangleIndex + triangleCount > triangles.length || vertexIndex + count > vertices.length)
             flush();
 
         final int vertexIndex = this.vertexIndex;
@@ -806,11 +774,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.vertexIndex += count;
     }
 
-    /**
-     * Draws rectangles using the given vertices in the {@link Batch} format. There must be 4 vertices, each made up of 5 elements
-     * in this order: x, y, color, u, v. The {@link #getColor()} and {@link #getDarkColor()} from the TwoColorPolygonBatch is not
-     * applied.
-     */
+
     @Override
     public void draw(Texture texture, float[] spriteVertices, int offset, int count) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
@@ -821,7 +785,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         final int triangleCount = count / 20 * 6;
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + triangleCount > triangles.length || vertexIndex + count / 5 * 6 > vertices.length) //
+        else if (triangleIndex + triangleCount > triangles.length || vertexIndex + count / 5 * 6 > vertices.length)
             flush();
 
         final int vertexIndex = this.vertexIndex;
@@ -842,7 +806,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
             vertices[idx++] = spriteVertices[i];
             vertices[idx++] = spriteVertices[i + 1];
             vertices[idx++] = spriteVertices[i + 2];
-            vertices[idx++] = 0; // dark
+            vertices[idx++] = 0;
             vertices[idx++] = spriteVertices[i + 3];
             vertices[idx++] = spriteVertices[i + 4];
         }
@@ -864,7 +828,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         Texture texture = region.getTexture();
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -928,7 +892,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         Texture texture = region.getTexture();
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -941,7 +905,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         triangles[triangleIndex++] = (short) startVertex;
         this.triangleIndex = triangleIndex;
 
-        // bottom left and top right corner points relative to origin
+
         final float worldOriginX = x + originX;
         final float worldOriginY = y + originY;
         float fx = -originX;
@@ -949,7 +913,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float fx2 = width - originX;
         float fy2 = height - originY;
 
-        // scale
+
         if (scaleX != 1 || scaleY != 1) {
             fx *= scaleX;
             fy *= scaleY;
@@ -957,7 +921,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
             fy2 *= scaleY;
         }
 
-        // construct corner points, start from top left and go counter clockwise
+
         final float p1x = fx;
         final float p1y = fy;
         final float p2x = fx;
@@ -976,7 +940,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float x4;
         float y4;
 
-        // rotate
+
         if (rotation != 0) {
             final float cos = MathUtils.cosDeg(rotation);
             final float sin = MathUtils.sinDeg(rotation);
@@ -1064,7 +1028,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         Texture texture = region.getTexture();
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -1077,7 +1041,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         triangles[triangleIndex++] = (short) startVertex;
         this.triangleIndex = triangleIndex;
 
-        // bottom left and top right corner points relative to origin
+
         final float worldOriginX = x + originX;
         final float worldOriginY = y + originY;
         float fx = -originX;
@@ -1085,7 +1049,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float fx2 = width - originX;
         float fy2 = height - originY;
 
-        // scale
+
         if (scaleX != 1 || scaleY != 1) {
             fx *= scaleX;
             fy *= scaleY;
@@ -1093,7 +1057,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
             fy2 *= scaleY;
         }
 
-        // construct corner points, start from top left and go counter clockwise
+
         final float p1x = fx;
         final float p1y = fy;
         final float p2x = fx;
@@ -1112,7 +1076,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float x4;
         float y4;
 
-        // rotate
+
         if (rotation != 0) {
             final float cos = MathUtils.cosDeg(rotation);
             final float sin = MathUtils.sinDeg(rotation);
@@ -1215,7 +1179,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         Texture texture = region.getTexture();
         if (texture != lastTexture)
             switchTexture(texture);
-        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length) //
+        else if (triangleIndex + 6 > triangles.length || vertexIndex + SPRITE_SIZE > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
@@ -1228,7 +1192,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         triangles[triangleIndex++] = (short) startVertex;
         this.triangleIndex = triangleIndex;
 
-        // construct corner points
+
         float x1 = transform.m02;
         float y1 = transform.m12;
         float x2 = transform.m01 * height + transform.m02;
@@ -1318,9 +1282,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         return projectionMatrix;
     }
 
-    /**
-     * Flushes the batch.
-     */
+
     @Override
     public void setProjectionMatrix(Matrix4 projection) {
         if (drawing) flush();
@@ -1333,9 +1295,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         return transformMatrix;
     }
 
-    /**
-     * Flushes the batch.
-     */
+
     @Override
     public void setTransformMatrix(Matrix4 transform) {
         if (drawing) flush();
@@ -1343,10 +1303,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         if (drawing) setupMatrices();
     }
 
-    /**
-     * Specifies whether the texture colors have premultiplied alpha. Required for correct dark color tinting. Does not change the
-     * blending function. Flushes the batch if the setting was changed.
-     */
+
     public void setPremultipliedAlpha(boolean premultipliedAlpha) {
         if (this.premultipliedAlpha == premultipliedAlpha) return;
         if (drawing) flush();
@@ -1373,9 +1330,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         return shader;
     }
 
-    /**
-     * Flushes the batch if the shader was changed.
-     */
+
     @Override
     public void setShader(ShaderProgram newShader) {
         if (shader == newShader) return;
@@ -1400,17 +1355,13 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         return drawing;
     }
 
-    /**
-     * Flushes the batch if the blend function was changed.
-     */
+
     @Override
     public void setBlendFunction(int srcFunc, int dstFunc) {
         setBlendFunctionSeparate(srcFunc, dstFunc, srcFunc, dstFunc);
     }
 
-    /**
-     * Flushes the batch if the blend function was changed.
-     */
+
     @Override
     public void setBlendFunctionSeparate(int srcFuncColor, int dstFuncColor, int srcFuncAlpha, int dstFuncAlpha) {
         if (blendSrcFunc == srcFuncColor && blendDstFunc == dstFuncColor && blendSrcFuncAlpha == srcFuncAlpha
@@ -1443,22 +1394,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     }
 
     private ShaderProgram createDefaultShader() {
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
+
         String vertexShader = """
                 attribute vec4 a_position;
                 attribute vec4 a_light;
@@ -1471,29 +1407,15 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
                 void main()
                 {
-                   v_light = a_light;
-                   v_light.a = v_light.a * (255.0/254.0);
-                   v_dark = a_dark;
-                   v_texCoords = a_texCoord0;
-                   gl_Position =  u_projTrans * a_position;
+                  v_light = a_light;
+                  v_light.a = v_light.a * (255.0/254.0);
+                  v_dark = a_dark;
+                  v_texCoords = a_texCoord0;
+                  gl_Position = u_projTrans * a_position;
                 }
                 """;
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
+
+
         String fragmentShader = """
                 #ifdef GL_ES
                 #define LOWP lowp
