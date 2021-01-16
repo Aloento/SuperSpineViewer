@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import attachments.*;
+import com.esotericsoftware.SpineStandard.attachments.*;
 
 public class SkeletonRendererDebug {
     static private final Color boneLineColor = Color.RED;

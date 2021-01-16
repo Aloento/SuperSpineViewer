@@ -2,20 +2,12 @@ package com.esotericsoftware.SpineStandard.attachments;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import Bone;
+import com.esotericsoftware.SpineStandard.Bone;
 
 import static com.badlogic.gdx.math.MathUtils.*;
 
-/**
- * An attachment which is a single point and a rotation. This can be used to spawn projectiles, particles, etc. A bone can be
- * used in similar ways, but a PointAttachment is slightly less expensive to compute and can be hidden, shown, and placed in a
- * skin.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-point-attachments">Point Attachments</a> in the Spine User Guide.
- */
 public class PointAttachment extends Attachment {
-    // Nonessential.
-    final Color color = new Color(0.9451f, 0.9451f, 0, 1); // f1f100ff
+    final Color color = new Color(0.9451f, 0.9451f, 0, 1);
     float x, y, rotation;
 
     public PointAttachment(String name) {
@@ -46,10 +38,6 @@ public class PointAttachment extends Attachment {
         this.rotation = rotation;
     }
 
-    /**
-     * The color of the point attachment as it was in Spine. Available only when nonessential data was exported. Point attachments
-     * are not usually rendered at runtime.
-     */
     public Color getColor() {
         return color;
     }
