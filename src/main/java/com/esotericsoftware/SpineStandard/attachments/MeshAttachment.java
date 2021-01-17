@@ -37,10 +37,8 @@ public class MeshAttachment extends VertexAttachment {
         float[] regionUVs = this.regionUVs;
         if (this.uvs == null || this.uvs.length != regionUVs.length) this.uvs = new float[regionUVs.length];
         float[] uvs = this.uvs;
+        float u = region.getU(), v = region.getV(), width, height;
         int n = uvs.length;
-        float u, v, width, height;
-        u = region.getU();
-        v = region.getV();
         if (region instanceof AtlasRegion) {
             AtlasRegion region = (AtlasRegion) this.region;
             float textureWidth = region.getTexture().getWidth(), textureHeight = region.getTexture().getHeight();
@@ -126,11 +124,9 @@ public class MeshAttachment extends VertexAttachment {
         this.triangles = triangles;
     }
 
-
     public float[] getRegionUVs() {
         return regionUVs;
     }
-
 
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;

@@ -5,7 +5,6 @@ import com.esotericsoftware.spine37.Bone;
 import com.esotericsoftware.spine37.Skeleton;
 import com.esotericsoftware.spine37.Slot;
 
-
 public class VertexAttachment extends Attachment {
     static private int nextID;
 
@@ -21,7 +20,6 @@ public class VertexAttachment extends Attachment {
     static private synchronized int nextID() {
         return nextID++;
     }
-
     
     public void computeWorldVertices(Slot slot, int start, int count, float[] worldVertices, int offset, int stride) {
         count = offset + (count >> 1) * stride;

@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-
 public class MeshAttachment extends VertexAttachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -14,8 +13,6 @@ public class MeshAttachment extends VertexAttachment {
     private int hullLength;
     private MeshAttachment parentMesh;
     private boolean inheritDeform;
-
-
     private short[] edges;
     private float width, height;
 
@@ -33,7 +30,6 @@ public class MeshAttachment extends VertexAttachment {
         this.region = region;
     }
 
-    
     public void updateUVs() {
         float[] regionUVs = this.regionUVs;
         if (this.uvs == null || this.uvs.length != regionUVs.length) this.uvs = new float[regionUVs.length];
@@ -71,13 +67,11 @@ public class MeshAttachment extends VertexAttachment {
             uvs[i + 1] = v + regionUVs[i + 1] * height;
         }
     }
-
     
     public boolean applyDeform(VertexAttachment sourceAttachment) {
         return this == sourceAttachment || (inheritDeform && parentMesh == sourceAttachment);
     }
 
-    
     public short[] getTriangles() {
         return triangles;
     }
@@ -85,17 +79,14 @@ public class MeshAttachment extends VertexAttachment {
     public void setTriangles(short[] triangles) {
         this.triangles = triangles;
     }
-
     
     public float[] getRegionUVs() {
         return regionUVs;
     }
-
     
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;
     }
-
     
     public float[] getUVs() {
         return uvs;
@@ -104,12 +95,10 @@ public class MeshAttachment extends VertexAttachment {
     public void setUVs(float[] uvs) {
         this.uvs = uvs;
     }
-
     
     public Color getColor() {
         return color;
     }
-
     
     public String getPath() {
         return path;
@@ -118,7 +107,6 @@ public class MeshAttachment extends VertexAttachment {
     public void setPath(String path) {
         this.path = path;
     }
-
     
     public int getHullLength() {
         return hullLength;
@@ -128,7 +116,6 @@ public class MeshAttachment extends VertexAttachment {
         this.hullLength = hullLength;
     }
 
-    
     public short[] getEdges() {
         return edges;
     }
@@ -136,7 +123,6 @@ public class MeshAttachment extends VertexAttachment {
     public void setEdges(short[] edges) {
         this.edges = edges;
     }
-
     
     public float getWidth() {
         return width;
@@ -146,7 +132,6 @@ public class MeshAttachment extends VertexAttachment {
         this.width = width;
     }
 
-    
     public float getHeight() {
         return height;
     }
@@ -155,12 +140,10 @@ public class MeshAttachment extends VertexAttachment {
         this.height = height;
     }
 
-    
     public MeshAttachment getParentMesh() {
         return parentMesh;
     }
 
-    
     public void setParentMesh(MeshAttachment parentMesh) {
         this.parentMesh = parentMesh;
         if (parentMesh != null) {

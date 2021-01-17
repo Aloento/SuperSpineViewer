@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.spine37.Bone;
 
-
 public class RegionAttachment extends Attachment {
     static public final int BLX = 0;
     static public final int BLY = 1;
@@ -27,7 +26,6 @@ public class RegionAttachment extends Attachment {
         super(name);
     }
 
-    
     public void updateOffset() {
         float width = getWidth();
         float height = getHeight();
