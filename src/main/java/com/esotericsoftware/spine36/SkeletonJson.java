@@ -11,16 +11,10 @@ import com.esotericsoftware.spine36.PathConstraintData.RotateMode;
 import com.esotericsoftware.spine36.PathConstraintData.SpacingMode;
 import com.esotericsoftware.spine36.attachments.*;
 
-/**
- * Loads skeleton data in the Spine JSON format.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-json-format">Spine JSON format</a> and
- * <a href="http://esotericsoftware.com/spine-loading-skeleton-data#JSON-and-binary-data">JSON and binary data</a> in the Spine
- * Runtimes Guide.
- */
+
 public class SkeletonJson {
     private final AttachmentLoader attachmentLoader;
-    private final Array<LinkedMesh> linkedMeshes = new Array();
+    private final Array<LinkedMesh> linkedMeshes = new Array<>();
     private float scale = 1;
 
     public SkeletonJson(TextureAtlas atlas) {
@@ -32,12 +26,7 @@ public class SkeletonJson {
         this.attachmentLoader = attachmentLoader;
     }
 
-    /**
-     * Scales bone positions, image sizes, and translations as they are loaded. This allows different size images to be used at
-     * runtime than were used in Spine.
-     * <p>
-     * See <a href="http://esotericsoftware.com/spine-loading-skeleton-data#Scaling">Scaling</a> in the Spine Runtimes Guide.
-     */
+    
     public float getScale() {
         return scale;
     }
@@ -56,7 +45,7 @@ public class SkeletonJson {
 
         JsonValue root = new JsonReader().parse(file);
 
-        // Skeleton.
+
         JsonValue skeletonMap = root.get("skeleton");
         if (skeletonMap != null) {
             skeletonData.hash = skeletonMap.getString("hash", null);
@@ -67,7 +56,7 @@ public class SkeletonJson {
             skeletonData.imagesPath = skeletonMap.getString("images", null);
         }
 
-        // Bones.
+
         for (JsonValue boneMap = root.getChild("bones"); boneMap != null; boneMap = boneMap.next) {
             BoneData parent = null;
             String parentName = boneMap.getString("parent", null);
@@ -92,7 +81,7 @@ public class SkeletonJson {
             skeletonData.bones.add(data);
         }
 
-        // Slots.
+
         for (JsonValue slotMap = root.getChild("slots"); slotMap != null; slotMap = slotMap.next) {
             String slotName = slotMap.getString("name");
             String boneName = slotMap.getString("bone");
@@ -111,7 +100,7 @@ public class SkeletonJson {
             skeletonData.slots.add(data);
         }
 
-        // IK constraints.
+
         for (JsonValue constraintMap = root.getChild("ik"); constraintMap != null; constraintMap = constraintMap.next) {
             IkConstraintData data = new IkConstraintData(constraintMap.getString("name"));
             data.order = constraintMap.getInt("order", 0);
@@ -127,13 +116,13 @@ public class SkeletonJson {
             data.target = skeletonData.findBone(targetName);
             if (data.target == null) throw new SerializationException("IK target bone not found: " + targetName);
 
-            data.bendDirection = constraintMap.getBoolean("bendPositive", true) ? 1 : -1;
             data.mix = constraintMap.getFloat("mix", 1);
+            data.bendDirection = constraintMap.getBoolean("bendPositive", true) ? 1 : -1;
 
             skeletonData.ikConstraints.add(data);
         }
 
-        // Transform constraints.
+
         for (JsonValue constraintMap = root.getChild("transform"); constraintMap != null; constraintMap = constraintMap.next) {
             TransformConstraintData data = new TransformConstraintData(constraintMap.getString("name"));
             data.order = constraintMap.getInt("order", 0);
@@ -168,7 +157,7 @@ public class SkeletonJson {
             skeletonData.transformConstraints.add(data);
         }
 
-        // Path constraints.
+
         for (JsonValue constraintMap = root.getChild("outPath"); constraintMap != null; constraintMap = constraintMap.next) {
             PathConstraintData data = new PathConstraintData(constraintMap.getString("name"));
             data.order = constraintMap.getInt("order", 0);
@@ -198,7 +187,7 @@ public class SkeletonJson {
             skeletonData.pathConstraints.add(data);
         }
 
-        // Skins.
+
         for (JsonValue skinMap = root.getChild("skins"); skinMap != null; skinMap = skinMap.next) {
             Skin skin = new Skin(skinMap.name);
             for (JsonValue slotEntry = skinMap.child; slotEntry != null; slotEntry = slotEntry.next) {
@@ -208,7 +197,7 @@ public class SkeletonJson {
                     try {
                         Attachment attachment = readAttachment(entry, skin, slot.index, entry.name, skeletonData);
                         if (attachment != null) skin.addAttachment(slot.index, entry.name, attachment);
-                    } catch (Exception ex) {
+                    } catch (Throwable ex) {
                         throw new SerializationException("Error reading attachment: " + entry.name + ", skin: " + skin, ex);
                     }
                 }
@@ -217,7 +206,7 @@ public class SkeletonJson {
             if (skin.name.equals("default")) skeletonData.defaultSkin = skin;
         }
 
-        // Linked meshes.
+
         for (int i = 0, n = linkedMeshes.size; i < n; i++) {
             LinkedMesh linkedMesh = linkedMeshes.get(i);
             Skin skin = linkedMesh.skin == null ? skeletonData.getDefaultSkin() : skeletonData.findSkin(linkedMesh.skin);
@@ -229,7 +218,7 @@ public class SkeletonJson {
         }
         linkedMeshes.clear();
 
-        // Events.
+
         for (JsonValue eventMap = root.getChild("events"); eventMap != null; eventMap = eventMap.next) {
             EventData data = new EventData(eventMap.name);
             data.intValue = eventMap.getInt("int", 0);
@@ -238,11 +227,11 @@ public class SkeletonJson {
             skeletonData.events.add(data);
         }
 
-        // Animations.
+
         for (JsonValue animationMap = root.getChild("animations"); animationMap != null; animationMap = animationMap.next) {
             try {
                 readAnimation(animationMap, animationMap.name, skeletonData);
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 throw new SerializationException("Error reading animation: " + animationMap.name, ex);
             }
         }
@@ -400,10 +389,10 @@ public class SkeletonJson {
 
     private void readAnimation(JsonValue map, String name, SkeletonData skeletonData) {
         float scale = this.scale;
-        Array<Timeline> timelines = new Array();
+        Array<Timeline> timelines = new Array<>();
         float duration = 0;
 
-        // Slot timelines.
+
         for (JsonValue slotMap = map.getChild("slots"); slotMap != null; slotMap = slotMap.next) {
             SlotData slot = skeletonData.findSlot(slotMap.name);
             if (slot == null) throw new SerializationException("Slot not found: " + slotMap.name);
@@ -458,7 +447,7 @@ public class SkeletonJson {
             }
         }
 
-        // Bone timelines.
+
         for (JsonValue boneMap = map.getChild("bones"); boneMap != null; boneMap = boneMap.next) {
             BoneData bone = skeletonData.findBone(boneMap.name);
             if (bone == null) throw new SerializationException("Bone not found: " + boneMap.name);
@@ -505,7 +494,7 @@ public class SkeletonJson {
             }
         }
 
-        // IK constraint timelines.
+
         for (JsonValue constraintMap = map.getChild("ik"); constraintMap != null; constraintMap = constraintMap.next) {
             IkConstraintData constraint = skeletonData.findIkConstraint(constraintMap.name);
             IkConstraintTimeline timeline = new IkConstraintTimeline(constraintMap.size);
@@ -521,7 +510,7 @@ public class SkeletonJson {
             duration = Math.max(duration, timeline.getFrames()[(timeline.getFrameCount() - 1) * IkConstraintTimeline.ENTRIES]);
         }
 
-        // Transform constraint timelines.
+
         for (JsonValue constraintMap = map.getChild("transform"); constraintMap != null; constraintMap = constraintMap.next) {
             TransformConstraintData constraint = skeletonData.findTransformConstraint(constraintMap.name);
             TransformConstraintTimeline timeline = new TransformConstraintTimeline(constraintMap.size);
@@ -538,7 +527,7 @@ public class SkeletonJson {
                     timeline.getFrames()[(timeline.getFrameCount() - 1) * TransformConstraintTimeline.ENTRIES]);
         }
 
-        // Path constraint timelines.
+
         for (JsonValue constraintMap = map.getChild("paths"); constraintMap != null; constraintMap = constraintMap.next) {
             PathConstraintData data = skeletonData.findPathConstraint(constraintMap.name);
             if (data == null) throw new SerializationException("Path constraint not found: " + constraintMap.name);
@@ -583,7 +572,7 @@ public class SkeletonJson {
             }
         }
 
-        // Deform timelines.
+
         for (JsonValue deformMap = map.getChild("deform"); deformMap != null; deformMap = deformMap.next) {
             Skin skin = skeletonData.findSkin(deformMap.name);
             if (skin == null) throw new SerializationException("Skin not found: " + deformMap.name);
@@ -632,7 +621,7 @@ public class SkeletonJson {
             }
         }
 
-        // Draw order timeline.
+
         JsonValue drawOrdersMap = map.get("drawOrder");
         if (drawOrdersMap == null) drawOrdersMap = map.get("draworder");
         if (drawOrdersMap != null) {
@@ -652,16 +641,16 @@ public class SkeletonJson {
                         SlotData slot = skeletonData.findSlot(offsetMap.getString("slot"));
                         if (slot == null)
                             throw new SerializationException("Slot not found: " + offsetMap.getString("slot"));
-                        // Collect unchanged items.
+
                         while (originalIndex != slot.index)
                             unchanged[unchangedIndex++] = originalIndex++;
-                        // Set changed items.
+
                         drawOrder[originalIndex + offsetMap.getInt("offset")] = originalIndex++;
                     }
-                    // Collect remaining unchanged items.
+
                     while (originalIndex < slotCount)
                         unchanged[unchangedIndex++] = originalIndex++;
-                    // Fill in unchanged items.
+
                     for (int i = slotCount - 1; i >= 0; i--)
                         if (drawOrder[i] == -1) drawOrder[i] = unchanged[--unchangedIndex];
                 }
@@ -671,7 +660,7 @@ public class SkeletonJson {
             duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
         }
 
-        // Event timeline.
+
         JsonValue eventsMap = map.get("events");
         if (eventsMap != null) {
             EventTimeline timeline = new EventTimeline(eventsMap.size);
@@ -699,9 +688,8 @@ public class SkeletonJson {
         if (curve == null) return;
         if (curve.isString() && curve.asString().equals("stepped"))
             timeline.setStepped(frameIndex);
-        else if (curve.isArray()) {
+        else if (curve.isArray())
             timeline.setCurve(frameIndex, curve.getFloat(0), curve.getFloat(1), curve.getFloat(2), curve.getFloat(3));
-        }
     }
 
     static class LinkedMesh {
