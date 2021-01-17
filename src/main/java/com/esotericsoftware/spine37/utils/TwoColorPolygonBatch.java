@@ -83,7 +83,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     public void end() {
         if (!drawing) throw new IllegalStateException("begin must be called before end.");
         if (vertexIndex > 0) flush();
-        shader.end();
         Gdx.gl.glDepthMask(true);
         if (isBlendingEnabled()) Gdx.gl.glDisable(GL20.GL_BLEND);
 
@@ -142,7 +141,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.darkPacked = packedColor;
     }
 
-
     public void draw(PolygonRegion region, float x, float y) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
 
@@ -181,7 +179,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         }
         this.vertexIndex = vertexIndex;
     }
-
 
     public void draw(PolygonRegion region, float x, float y, float width, float height) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
@@ -224,7 +221,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         }
         this.vertexIndex = vertexIndex;
     }
-
 
     public void draw(PolygonRegion region, float x, float y, float originX, float originY, float width, float height,
                      float scaleX, float scaleY, float rotation) {
@@ -300,7 +296,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         triangles[triangleIndex++] = (short) startVertex;
         this.triangleIndex = triangleIndex;
 
-
         final float worldOriginX = x + originX;
         final float worldOriginY = y + originY;
         float fx = -originX;
@@ -308,14 +303,12 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float fx2 = width - originX;
         float fy2 = height - originY;
 
-
         if (scaleX != 1 || scaleY != 1) {
             fx *= scaleX;
             fy *= scaleY;
             fx2 *= scaleX;
             fy2 *= scaleY;
         }
-
 
         final float p1x = fx;
         final float p1y = fy;
@@ -334,7 +327,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float y3;
         float x4;
         float y4;
-
 
         if (rotation != 0) {
             final float cos = MathUtils.cosDeg(rotation);
@@ -686,7 +678,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.vertexIndex = idx;
     }
 
-
     public void drawTwoColor(Texture texture, float[] polygonVertices, int verticesOffset, int verticesCount,
                              short[] polygonTriangles, int trianglesOffset, int trianglesCount) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
@@ -710,7 +701,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         System.arraycopy(polygonVertices, verticesOffset, vertices, vertexIndex, verticesCount);
         this.vertexIndex += verticesCount;
     }
-
 
     public void draw(Texture texture, float[] polygonVertices, int verticesOffset, int verticesCount, short[] polygonTriangles,
                      int trianglesOffset, int trianglesCount) {
@@ -744,7 +734,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.vertexIndex = idx;
     }
 
-
     public void drawTwoColor(Texture texture, float[] spriteVertices, int offset, int count) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
 
@@ -773,7 +762,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         System.arraycopy(spriteVertices, offset, vertices, vertexIndex, count);
         this.vertexIndex += count;
     }
-
 
     @Override
     public void draw(Texture texture, float[] spriteVertices, int offset, int count) {
@@ -905,7 +893,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         triangles[triangleIndex++] = (short) startVertex;
         this.triangleIndex = triangleIndex;
 
-
         final float worldOriginX = x + originX;
         final float worldOriginY = y + originY;
         float fx = -originX;
@@ -920,7 +907,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
             fx2 *= scaleX;
             fy2 *= scaleY;
         }
-
 
         final float p1x = fx;
         final float p1y = fy;
@@ -939,7 +925,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float y3;
         float x4;
         float y4;
-
 
         if (rotation != 0) {
             final float cos = MathUtils.cosDeg(rotation);
@@ -1041,7 +1026,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         triangles[triangleIndex++] = (short) startVertex;
         this.triangleIndex = triangleIndex;
 
-
         final float worldOriginX = x + originX;
         final float worldOriginY = y + originY;
         float fx = -originX;
@@ -1049,14 +1033,12 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float fx2 = width - originX;
         float fy2 = height - originY;
 
-
         if (scaleX != 1 || scaleY != 1) {
             fx *= scaleX;
             fy *= scaleY;
             fx2 *= scaleX;
             fy2 *= scaleY;
         }
-
 
         final float p1x = fx;
         final float p1y = fy;
@@ -1075,7 +1057,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         float y3;
         float x4;
         float y4;
-
 
         if (rotation != 0) {
             final float cos = MathUtils.cosDeg(rotation);
@@ -1192,7 +1173,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         triangles[triangleIndex++] = (short) startVertex;
         this.triangleIndex = triangleIndex;
 
-
         float x1 = transform.m02;
         float y1 = transform.m12;
         float x2 = transform.m01 * height + transform.m02;
@@ -1282,7 +1262,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         return projectionMatrix;
     }
 
-
     @Override
     public void setProjectionMatrix(Matrix4 projection) {
         if (drawing) flush();
@@ -1295,14 +1274,12 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         return transformMatrix;
     }
 
-
     @Override
     public void setTransformMatrix(Matrix4 transform) {
         if (drawing) flush();
         transformMatrix.set(transform);
         if (drawing) setupMatrices();
     }
-
 
     public void setPremultipliedAlpha(boolean premultipliedAlpha) {
         if (this.premultipliedAlpha == premultipliedAlpha) return;
@@ -1330,14 +1307,12 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         return shader;
     }
 
-
     @Override
     public void setShader(ShaderProgram newShader) {
         if (shader == newShader) return;
-        if (drawing) {
+        if (drawing)
             flush();
-            shader.end();
-        }
+
         shader = newShader == null ? defaultShader : newShader;
         if (drawing) {
             shader.bind();
@@ -1355,12 +1330,10 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         return drawing;
     }
 
-
     @Override
     public void setBlendFunction(int srcFunc, int dstFunc) {
         setBlendFunctionSeparate(srcFunc, dstFunc, srcFunc, dstFunc);
     }
-
 
     @Override
     public void setBlendFunctionSeparate(int srcFuncColor, int dstFuncColor, int srcFuncAlpha, int dstFuncAlpha) {
@@ -1394,7 +1367,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     }
 
     private ShaderProgram createDefaultShader() {
-
         String vertexShader = """
                 attribute vec4 a_position;
                 attribute vec4 a_light;
@@ -1414,7 +1386,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
                   gl_Position = u_projTrans * a_position;
                 }
                 """;
-
 
         String fragmentShader = """
                 #ifdef GL_ES
