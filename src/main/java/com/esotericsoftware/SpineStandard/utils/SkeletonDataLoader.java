@@ -8,11 +8,11 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.SpineStandard.attachments.AtlasAttachmentLoader;
-import com.esotericsoftware.SpineStandard.attachments.AttachmentLoader;
 import com.esotericsoftware.SpineStandard.SkeletonBinary;
 import com.esotericsoftware.SpineStandard.SkeletonData;
 import com.esotericsoftware.SpineStandard.SkeletonJson;
+import com.esotericsoftware.SpineStandard.attachments.AtlasAttachmentLoader;
+import com.esotericsoftware.SpineStandard.attachments.AttachmentLoader;
 
 public class SkeletonDataLoader extends AsynchronousAssetLoader<SkeletonData, SkeletonDataLoader.SkeletonDataParameter> {
     private SkeletonData skeletonData;
@@ -44,7 +44,7 @@ public class SkeletonDataLoader extends AsynchronousAssetLoader<SkeletonData, Sk
             skeletonData = skeletonJson.readSkeletonData(file);
         }
     }
-    
+
     public SkeletonData loadSync(AssetManager manager, String fileName, FileHandle file, SkeletonDataParameter parameter) {
         SkeletonData skeletonData = this.skeletonData;
         this.skeletonData = null;

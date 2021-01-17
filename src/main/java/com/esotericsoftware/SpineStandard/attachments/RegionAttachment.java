@@ -144,7 +144,7 @@ public class RegionAttachment extends Attachment {
     public float[] getUVs() {
         return uvs;
     }
-    
+
     public float getX() {
         return x;
     }
@@ -152,7 +152,7 @@ public class RegionAttachment extends Attachment {
     public void setX(float x) {
         this.x = x;
     }
-    
+
     public float getY() {
         return y;
     }
@@ -160,7 +160,7 @@ public class RegionAttachment extends Attachment {
     public void setY(float y) {
         this.y = y;
     }
-    
+
     public float getScaleX() {
         return scaleX;
     }
@@ -176,7 +176,7 @@ public class RegionAttachment extends Attachment {
     public void setScaleY(float scaleY) {
         this.scaleY = scaleY;
     }
-    
+
     public float getRotation() {
         return rotation;
     }
@@ -184,7 +184,7 @@ public class RegionAttachment extends Attachment {
     public void setRotation(float rotation) {
         this.rotation = rotation;
     }
-    
+
     public float getWidth() {
         return width;
     }
@@ -192,7 +192,7 @@ public class RegionAttachment extends Attachment {
     public void setWidth(float width) {
         this.width = width;
     }
-    
+
     public float getHeight() {
         return height;
     }

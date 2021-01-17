@@ -26,7 +26,7 @@ public class SkeletonActorPool extends Pool<SkeletonActor> {
         this.skeletonData = skeletonData;
         this.stateData = stateData;
 
-        obtained = new Array(false, initialCapacity);
+        obtained = new Array<>(false, initialCapacity);
 
         skeletonPool = new Pool<>(initialCapacity, max) {
             protected Skeleton newObject() {
@@ -53,7 +53,7 @@ public class SkeletonActorPool extends Pool<SkeletonActor> {
             }
         };
     }
-    
+
     public void freeComplete() {
         Array<SkeletonActor> obtained = this.obtained;
         outer:

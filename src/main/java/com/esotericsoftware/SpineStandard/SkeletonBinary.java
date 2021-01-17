@@ -82,7 +82,7 @@ public class SkeletonBinary extends CrossSpine {
                 }
                 int n;
                 Object[] o;
-                input.strings = new Array(n = input.readInt(true));
+                input.strings = new Array<>(n = input.readInt(true));
                 o = input.strings.setSize(n);
                 for (int i = 0; i < n; i++)
                     o[i] = input.readString();

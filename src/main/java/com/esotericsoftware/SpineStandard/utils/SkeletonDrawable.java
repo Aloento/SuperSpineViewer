@@ -11,7 +11,7 @@ public class SkeletonDrawable extends BaseDrawable {
     private SkeletonRenderer renderer;
     private Skeleton skeleton;
     private boolean resetBlendFunction = true;
-    
+
     public SkeletonDrawable() {
     }
 
@@ -65,7 +65,7 @@ public class SkeletonDrawable extends BaseDrawable {
         return resetBlendFunction;
     }
 
-    
+
     public void setResetBlendFunction(boolean resetBlendFunction) {
         this.resetBlendFunction = resetBlendFunction;
     }

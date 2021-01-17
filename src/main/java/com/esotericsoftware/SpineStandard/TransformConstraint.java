@@ -2,7 +2,6 @@ package com.esotericsoftware.SpineStandard;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.spine37.Constraint;
 
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 

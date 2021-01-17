@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.esotericsoftware.CrossSpine;
+import com.esotericsoftware.SpineStandard.Skin.Key;
 import com.esotericsoftware.SpineStandard.Skin.SkinEntry;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
 import com.esotericsoftware.SpineStandard.attachments.MeshAttachment;
@@ -281,7 +283,7 @@ public class Skeleton extends CrossSpine {
             for (SkinEntry entry : skin.attachments.keys())
                 if (entry.getSlotIndex() == slotIndex) sortPathConstraintAttachment(entry.getAttachment(), slotBone);
         } else if (V.get().equals("37")) {
-            for (Entry<Key, Attachment> entry : skin.attachments.entries())
+            for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
                 if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
         }
     }

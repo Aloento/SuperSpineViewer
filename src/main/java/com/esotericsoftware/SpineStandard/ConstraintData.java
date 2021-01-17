@@ -1,7 +1,7 @@
 package com.esotericsoftware.SpineStandard;
 
 
-abstract public class ConstraintData{
+abstract public class ConstraintData {
     final String name;
     int order;
     boolean skinRequired;

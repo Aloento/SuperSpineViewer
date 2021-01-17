@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.esotericsoftware.SpineStandard.utils.SpineUtils;
 import com.esotericsoftware.SpineStandard.Skeleton;
 import com.esotericsoftware.SpineStandard.SkeletonRenderer.VertexEffect;
+import com.esotericsoftware.SpineStandard.utils.SpineUtils;
 
 public class SwirlEffect implements VertexEffect {
     private float worldX, worldY, radius, angle;

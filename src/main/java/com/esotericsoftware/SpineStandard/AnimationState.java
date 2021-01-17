@@ -16,8 +16,8 @@ public class AnimationState extends CrossSpine {
     static private final int HOLD = 2;
     static private final int HOLD_SUBSEQUENT = 2;
     static private final int HOLD_FIRST = 3;
-    static private int HOLD_MIX;
     static private final int SETUP = 1, CURRENT = 2;
+    static private int HOLD_MIX;
     final Array<TrackEntry> tracks = new Array<>();
     final Array<AnimationStateListener> listeners = new Array<>();
     final Pool<TrackEntry> trackEntryPool = new Pool() {
@@ -745,7 +745,7 @@ public class AnimationState extends CrossSpine {
 
     static public class TrackEntry implements Poolable {
         final IntArray timelineMode = new IntArray();
-        final Array<TrackEntry> timelineHoldMix = new Array();
+        final Array<TrackEntry> timelineHoldMix = new Array<>();
         final FloatArray timelinesRotation = new FloatArray();
         Animation animation;
         TrackEntry next, mixingFrom, mixingTo;
@@ -977,7 +977,7 @@ public class AnimationState extends CrossSpine {
     }
 
     class EventQueue {
-        private final Array objects = new Array();
+        private final Array objects = new Array<>();
         boolean drainDisabled;
 
         public void start(TrackEntry entry) {

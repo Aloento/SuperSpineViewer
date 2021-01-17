@@ -96,11 +96,11 @@ abstract public class VertexAttachment extends Attachment {
     public int[] getBones() {
         return bones;
     }
-    
+
     public void setBones(int[] bones) {
         this.bones = bones;
     }
-    
+
     public float[] getVertices() {
         return vertices;
     }
@@ -108,7 +108,7 @@ abstract public class VertexAttachment extends Attachment {
     public void setVertices(float[] vertices) {
         this.vertices = vertices;
     }
-    
+
     public int getWorldVerticesLength() {
         return worldVerticesLength;
     }
