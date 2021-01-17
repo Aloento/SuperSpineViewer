@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.esotericsoftware.SpineStandard.PathConstraintData.PositionMode;
@@ -167,8 +168,16 @@ public class PathConstraint implements Constraint {
             float pathLength = lengths[curveCount];
             if (percentPosition) position *= pathLength;
             if (percentSpacing) {
-                for (int i = 1; i < spacesCount; i++)
-                    spaces[i] *= pathLength;
+                switch (RuntimesLoader.spineVersion.get()) {
+                    case 38, 37 -> {
+                        for (int i = 1; i < spacesCount; i++)
+                            spaces[i] *= pathLength;
+                    }
+                    case 36 -> {
+                        for (int i = 0; i < spacesCount; i++)
+                            spaces[i] *= pathLength;
+                    }
+                }
             }
             world = this.world.setSize(8);
             for (int i = 0, o = 0, curve = 0; i < spacesCount; i++, o += 3) {
@@ -266,13 +275,19 @@ public class PathConstraint implements Constraint {
             x1 = x2;
             y1 = y2;
         }
-        if (percentPosition)
-            position *= pathLength;
-        else
-            position *= pathLength / path.getLengths()[curveCount - 1];
+        if (percentPosition) position *= pathLength;
+        else position *= pathLength / path.getLengths()[curveCount - 1];
         if (percentSpacing) {
-            for (int i = 1; i < spacesCount; i++)
-                spaces[i] *= pathLength;
+            switch (RuntimesLoader.spineVersion.get()) {
+                case 38, 37 -> {
+                    for (int i = 1; i < spacesCount; i++)
+                        spaces[i] *= pathLength;
+                }
+                case 36 -> {
+                    for (int i = 0; i < spacesCount; i++)
+                        spaces[i] *= pathLength;
+                }
+            }
         }
         float[] segments = this.segments;
         float curveLength = 0;
@@ -375,10 +390,15 @@ public class PathConstraint implements Constraint {
     private void addCurvePosition(float p, float x1, float y1, float cx1, float cy1, float cx2, float cy2, float x2, float y2,
                                   float[] out, int o, boolean tangents) {
         if (p < epsilon || Float.isNaN(p)) {
-            out[o] = x1;
-            out[o + 1] = y1;
-            out[o + 2] = (float) Math.atan2(cy1 - y1, cx1 - x1);
-            return;
+            switch (RuntimesLoader.spineVersion.get()) {
+                case 38, 37 -> {
+                    out[o] = x1;
+                    out[o + 1] = y1;
+                    out[o + 2] = (float) Math.atan2(cy1 - y1, cx1 - x1);
+                    return;
+                }
+                case 36 -> p = epsilon;
+            }
         }
         float tt = p * p, ttt = tt * p, u = 1 - p, uu = u * u, uuu = uu * u;
         float ut = u * p, ut3 = ut * 3, uut3 = u * ut3, utt3 = ut3 * p;
@@ -386,10 +406,8 @@ public class PathConstraint implements Constraint {
         out[o] = x;
         out[o + 1] = y;
         if (tangents) {
-            if (p < 0.001f)
-                out[o + 2] = (float) Math.atan2(cy1 - y1, cx1 - x1);
-            else
-                out[o + 2] = (float) Math.atan2(y - (y1 * uu + cy1 * ut * 2 + cy2 * tt), x - (x1 * uu + cx1 * ut * 2 + cx2 * tt));
+            if (p < 0.001f) out[o + 2] = (float) Math.atan2(cy1 - y1, cx1 - x1);
+            else out[o + 2] = (float) Math.atan2(y - (y1 * uu + cy1 * ut * 2 + cy2 * tt), x - (x1 * uu + cx1 * ut * 2 + cx2 * tt));
         }
     }
 
