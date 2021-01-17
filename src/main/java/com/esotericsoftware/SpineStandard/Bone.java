@@ -1,9 +1,9 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.CrossSpine;
 import com.esotericsoftware.SpineStandard.BoneData.TransformMode;
 
 import java.util.Objects;
@@ -11,7 +11,7 @@ import java.util.Objects;
 import static com.badlogic.gdx.math.Matrix3.*;
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
-public class Bone extends CrossSpine implements Updatable {
+public class Bone implements Updatable {
     final BoneData data;
     final Skeleton skeleton;
     final Bone parent;
@@ -69,10 +69,10 @@ public class Bone extends CrossSpine implements Updatable {
             Skeleton skeleton = this.skeleton;
             float rotationY = rotation + 90 + shearY, sx = skeleton.scaleX, sy = skeleton.scaleY;
             a = cosDeg(rotation + shearX) * scaleX * sx;
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 b = cosDeg(rotationY) * scaleY * sx;
                 c = sinDeg(rotation + shearX) * scaleX * sy;
-            } else if (V.get().equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 b = cosDeg(rotationY) * scaleY * sy;
                 c = sinDeg(rotation + shearX) * scaleX * sx;
             }
@@ -446,7 +446,7 @@ public class Bone extends CrossSpine implements Updatable {
     }
 
     public Vector2 worldToLocal(Vector2 world) {
-        if (world == null && V.get().equals("38"))
+        if (world == null && RuntimesLoader.spineVersion.get() == 38)
             throw new IllegalArgumentException("world cannot be null.");
         float invDet = 1 / (a * d - b * c);
         float x = Objects.requireNonNull(world).x - worldX, y = world.y - worldY;
@@ -456,7 +456,7 @@ public class Bone extends CrossSpine implements Updatable {
     }
 
     public Vector2 localToWorld(Vector2 local) {
-        if (local == null && V.get().equals("38"))
+        if (local == null && RuntimesLoader.spineVersion.get() == 38)
             throw new IllegalArgumentException("local cannot be null.");
         float x = Objects.requireNonNull(local).x, y = local.y;
         local.x = x * a + y * b + worldX;

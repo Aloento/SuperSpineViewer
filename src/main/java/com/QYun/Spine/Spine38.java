@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.spine38.*;
-import com.esotericsoftware.spine38.AnimationState.TrackEntry;
-import com.esotericsoftware.spine38.utils.TwoColorPolygonBatch;
+import com.esotericsoftware.SpineStandard.*;
+import com.esotericsoftware.SpineStandard.AnimationState.TrackEntry;
+import com.esotericsoftware.SpineStandard.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 
 public class Spine38 extends SuperSpine {

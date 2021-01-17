@@ -1,15 +1,14 @@
 package com.esotericsoftware.SpineStandard.attachments;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.esotericsoftware.CrossSpine;
 
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class MeshAttachment extends VertexAttachment {
     private final Color color = new Color(1, 1, 1, 1);
-    private final String V = CrossSpine.V.get();
     private TextureRegion region;
     private String path;
     private float[] regionUVs, uvs;
@@ -45,7 +44,7 @@ public class MeshAttachment extends VertexAttachment {
         if (region instanceof AtlasRegion) {
             AtlasRegion region = (AtlasRegion) this.region;
             float textureWidth = region.getTexture().getWidth(), textureHeight = region.getTexture().getHeight();
-            if (V.equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 switch (region.degrees) {
                     case 90 -> {
                         u -= (region.originalHeight - region.offsetY - region.packedWidth) / textureWidth;
@@ -83,7 +82,7 @@ public class MeshAttachment extends VertexAttachment {
                 }
                 u -= region.offsetX / textureWidth;
                 v -= (region.originalHeight - region.offsetY - region.packedHeight) / textureHeight;
-            } else if (V.equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 if (region.rotate) {
                     u = region.getU() - (region.originalHeight - region.offsetY - region.packedWidth) / textureWidth;
                     v = region.getV() - (region.originalWidth - region.offsetX - region.packedHeight) / textureHeight;

@@ -1,11 +1,11 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
-import com.esotericsoftware.CrossSpine;
 import com.esotericsoftware.SpineStandard.Skin.Key;
 import com.esotericsoftware.SpineStandard.Skin.SkinEntry;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
-public class Skeleton extends CrossSpine {
+public class Skeleton {
     final SkeletonData data;
     final Array<Bone> bones;
     final Array<Slot> slots;
@@ -114,7 +114,7 @@ public class Skeleton extends CrossSpine {
         updateCache.clear();
         updateCacheReset.clear();
 
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             int boneCount = bones.size;
             Object[] bones = this.bones.items;
             for (int i = 0; i < boneCount; i++) {
@@ -164,7 +164,7 @@ public class Skeleton extends CrossSpine {
             }
             for (int i = 0; i < boneCount; i++)
                 sortBone((Bone) bones[i]);
-        } else if (V.get().equals("37")) {
+        } else if (RuntimesLoader.spineVersion.get() == 37) {
             Array<Bone> bones = this.bones;
             for (int i = 0, n = bones.size; i < n; i++)
                 bones.get(i).sorted = false;
@@ -205,7 +205,7 @@ public class Skeleton extends CrossSpine {
     }
 
     private void sortIkConstraint(IkConstraint constraint) {
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             constraint.active = constraint.target.active &&
                     (!constraint.data.skinRequired || (skin != null && skin.constraints.contains(constraint.data, true)));
             if (!constraint.active) return;
@@ -226,7 +226,7 @@ public class Skeleton extends CrossSpine {
     }
 
     private void sortPathConstraint(PathConstraint constraint) {
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             constraint.active = constraint.target.bone.active &&
                     (!constraint.data.skinRequired || (skin != null && skin.constraints.contains(constraint.data, true)));
             if (!constraint.active) return;
@@ -252,7 +252,7 @@ public class Skeleton extends CrossSpine {
     }
 
     private void sortTransformConstraint(TransformConstraint constraint) {
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             constraint.active = constraint.target.active &&
                     (!constraint.data.skinRequired || (skin != null && skin.constraints.contains(constraint.data, true)));
             if (!constraint.active) return;
@@ -279,10 +279,10 @@ public class Skeleton extends CrossSpine {
     }
 
     private void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             for (SkinEntry entry : skin.attachments.keys())
                 if (entry.getSlotIndex() == slotIndex) sortPathConstraintAttachment(entry.getAttachment(), slotBone);
-        } else if (V.get().equals("37")) {
+        } else if (RuntimesLoader.spineVersion.get() == 37) {
             for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
                 if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
         }
@@ -315,7 +315,7 @@ public class Skeleton extends CrossSpine {
     private void sortReset(Array<Bone> bones) {
         for (int i = 0, n = bones.size; i < n; i++) {
             Bone bone = bones.get(i);
-            if (!bone.active && V.get().equals("38")) continue;
+            if (!bone.active && RuntimesLoader.spineVersion.get() == 38) continue;
             if (bone.sorted) sortReset(bone.children);
             bone.sorted = false;
         }
@@ -340,7 +340,7 @@ public class Skeleton extends CrossSpine {
     }
 
     public void updateWorldTransform(Bone parent) {
-        if (parent == null && V.get().equals("38"))
+        if (parent == null && RuntimesLoader.spineVersion.get() == 38)
             throw new IllegalArgumentException("parent cannot be null.");
         Array<Bone> updateCacheReset = this.updateCacheReset;
         for (int i = 0, n = updateCacheReset.size; i < n; i++) {
@@ -387,7 +387,7 @@ public class Skeleton extends CrossSpine {
         for (int i = 0, n = ikConstraints.size; i < n; i++) {
             IkConstraint constraint = ikConstraints.get(i);
             constraint.mix = constraint.data.mix;
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 constraint.softness = constraint.data.softness;
             constraint.bendDirection = constraint.data.bendDirection;
             constraint.compress = constraint.data.compress;
@@ -498,7 +498,7 @@ public class Skeleton extends CrossSpine {
             }
         }
         skin = newSkin;
-        if (V.get().equals("38"))
+        if (RuntimesLoader.spineVersion.get() == 38)
             updateCache();
     }
 
@@ -576,13 +576,13 @@ public class Skeleton extends CrossSpine {
     public void getBounds(Vector2 offset, Vector2 size, FloatArray temp) {
         if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
         if (size == null) throw new IllegalArgumentException("size cannot be null.");
-        if (temp == null && V.get().equals("38"))
+        if (temp == null && RuntimesLoader.spineVersion.get() == 38)
             throw new IllegalArgumentException("temp cannot be null.");
         Array<Slot> drawOrder = this.drawOrder;
         float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
-            if (!slot.bone.active && V.get().equals("38")) continue;
+            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) continue;
             int verticesLength = 0;
             float[] vertices = null;
             Attachment attachment = slot.attachment;

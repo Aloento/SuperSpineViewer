@@ -1,11 +1,11 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.CrossSpine;
 
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
-public class IkConstraint extends CrossSpine implements Constraint {
+public class IkConstraint implements Constraint {
     final IkConstraintData data;
     final Array<Bone> bones;
     Bone target;
@@ -51,7 +51,7 @@ public class IkConstraint extends CrossSpine implements Constraint {
         Bone p = bone.parent;
 
         float rotationIK = 0, tx = 0, ty = 0;
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             float pa = p.a, pb = p.b, pc = p.c, pd = p.d;
             rotationIK = -bone.ashearX - bone.arotation;
             switch (bone.data.transformMode) {
@@ -73,7 +73,7 @@ public class IkConstraint extends CrossSpine implements Constraint {
                     ty = (y * pa - x * pc) / d - bone.ay;
             }
             rotationIK += atan2(ty, tx) * radDeg;
-        } else if (V.get().equals("37")) {
+        } else if (RuntimesLoader.spineVersion.get() == 37) {
             float id = 1 / (p.a * p.d - p.b * p.c);
             float x = targetX - p.worldX, y = targetY - p.worldY;
             tx = (x * p.d - y * p.b) * id - bone.ax;
@@ -88,7 +88,7 @@ public class IkConstraint extends CrossSpine implements Constraint {
             rotationIK += 360;
         float sx = bone.ascaleX, sy = bone.ascaleY;
         if (compress || stretch) {
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 switch (bone.data.transformMode) {
                     case noScale, noScaleOrReflection -> {
                         tx = targetX - bone.worldX;
@@ -108,7 +108,7 @@ public class IkConstraint extends CrossSpine implements Constraint {
 
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float softness,
                              float alpha) {
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
             if (child == null) throw new IllegalArgumentException("child cannot be null.");
         }
@@ -155,10 +155,10 @@ public class IkConstraint extends CrossSpine implements Constraint {
         d = pp.d;
         float id = 1 / (a * d - b * c), x = 0, y = 0;
         float tx = 0, ty = 0, dd = 0;
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             x = cwx - pp.worldX;
             y = cwy - pp.worldY;
-        } else if (V.get().equals("37")) {
+        } else if (RuntimesLoader.spineVersion.get() == 37) {
             x = targetX - pp.worldX;
             y = targetY - pp.worldY;
             tx = (x * d - y * b) * id - px;
@@ -167,7 +167,7 @@ public class IkConstraint extends CrossSpine implements Constraint {
         }
         float dx = (x * d - y * b) * id - px, dy = (y * a - x * c) * id - py;
         float l1 = (float) Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1, a2;
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             if (l1 < 0.0001f) {
                 apply(parent, targetX, targetY, false, stretch, false, alpha);
                 child.updateWorldTransform(cx, cy, 0, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
@@ -198,9 +198,9 @@ public class IkConstraint extends CrossSpine implements Constraint {
                 cos = -1;
             else if (cos > 1) {
                 cos = 1;
-                if (V.get().equals("38")) {
+                if (RuntimesLoader.spineVersion.get() == 38) {
                     if (stretch) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
-                } else if (V.get().equals("37")) {
+                } else if (RuntimesLoader.spineVersion.get() == 37) {
                     if (stretch && l1 + l2 > 0.0001f) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
                 }
             }
@@ -283,12 +283,12 @@ public class IkConstraint extends CrossSpine implements Constraint {
     public void update() {
         Bone target = this.target;
         Array<Bone> bones = this.bones;
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             switch (bones.size) {
                 case 1 -> apply(bones.first(), target.worldX, target.worldY, compress, stretch, data.uniform, mix);
                 case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, stretch, softness, mix);
             }
-        } else if (V.get().equals("37")) {
+        } else if (RuntimesLoader.spineVersion.get() == 37) {
             switch (bones.size) {
                 case 1 -> apply(bones.first(), target.worldX, target.worldY, compress, stretch, data.uniform, mix);
                 case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, stretch, mix);
@@ -309,7 +309,7 @@ public class IkConstraint extends CrossSpine implements Constraint {
     }
 
     public void setTarget(Bone target) {
-        if (target == null && V.get().equals("38"))
+        if (target == null && RuntimesLoader.spineVersion.get() == 38)
             throw new IllegalArgumentException("target cannot be null.");
         this.target = target;
     }

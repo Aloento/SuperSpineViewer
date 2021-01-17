@@ -1,11 +1,11 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.CrossSpine;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
 
-public class Slot extends CrossSpine {
+public class Slot {
     final SlotData data;
     final Bone bone;
     final Color color = new Color(), darkColor;
@@ -32,7 +32,7 @@ public class Slot extends CrossSpine {
         darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
         attachment = slot.attachment;
         attachmentTime = slot.attachmentTime;
-        if (V.get().equals("38"))
+        if (RuntimesLoader.spineVersion.get() == 38)
             deform.addAll(slot.deform);
     }
 

@@ -1,11 +1,11 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntSet;
-import com.esotericsoftware.CrossSpine;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
 import com.esotericsoftware.SpineStandard.attachments.VertexAttachment;
 
@@ -16,7 +16,7 @@ import static com.esotericsoftware.SpineStandard.Animation.MixDirection.in;
 import static com.esotericsoftware.SpineStandard.Animation.MixDirection.out;
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
-public class Animation extends CrossSpine {
+public class Animation {
     final String name;
     final IntSet timelineIDs = new IntSet();
     Array<Timeline> timelines;
@@ -27,10 +27,10 @@ public class Animation extends CrossSpine {
             throw new IllegalArgumentException("name cannot be null.");
         this.name = name;
         this.duration = duration;
-        if (V.get().equals("37"))
+        if (RuntimesLoader.spineVersion.get() == 37)
             if (timelines == null)
                 throw new IllegalArgumentException("timelines cannot be null.");
-        if (V.get().equals("38"))
+        if (RuntimesLoader.spineVersion.get() == 38)
             setTimelines(timelines);
     }
 
@@ -262,7 +262,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active && V.get().equals("38")) return;
+            if (!bone.active && RuntimesLoader.spineVersion.get() == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -350,7 +350,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
@@ -410,7 +410,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
@@ -510,7 +510,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
@@ -599,7 +599,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!slot.bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
@@ -692,7 +692,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!slot.bone.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
@@ -762,7 +762,7 @@ public class Animation extends CrossSpine {
         int slotIndex;
 
         public AttachmentTimeline(int frameCount) {
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (frameCount <= 0)
                     throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
@@ -802,14 +802,14 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 if (!slot.bone.active) return;
                 if (direction == out) {
                     if (blend == setup)
                         setAttachment(skeleton, slot, slot.data.attachmentName);
                     return;
                 }
-            } else if (V.get().equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 if (direction == out && blend == setup) {
                     String attachmentName = slot.data.attachmentName;
                     slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
@@ -818,10 +818,10 @@ public class Animation extends CrossSpine {
             }
             float[] frames = this.frames;
             if (time < frames[0]) {
-                if (V.get().equals("38")) {
+                if (RuntimesLoader.spineVersion.get() == 38) {
                     if (blend == setup || blend == first) setAttachment(skeleton, slot, slot.data.attachmentName);
                     return;
-                } else if (V.get().equals("37")) {
+                } else if (RuntimesLoader.spineVersion.get() == 37) {
                     if (blend == setup || blend == first) {
                         String attachmentName = slot.data.attachmentName;
                         slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
@@ -834,9 +834,9 @@ public class Animation extends CrossSpine {
                 frameIndex = frames.length - 1;
             else
                 frameIndex = binarySearch(frames, time) - 1;
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 setAttachment(skeleton, slot, attachmentNames[frameIndex]);
-            } else if (V.get().equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 String attachmentName = attachmentNames[frameIndex];
                 slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
             }
@@ -899,13 +899,13 @@ public class Animation extends CrossSpine {
             Attachment slotAttachment = slot.attachment;
             FloatArray deformArray = null;
             FloatArray verticesArray = null;
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 if (!slot.bone.active) return;
                 if (!(slotAttachment instanceof VertexAttachment)
                         || ((VertexAttachment) slotAttachment).getDeformAttachment() != attachment) return;
                 deformArray = slot.getDeform();
                 if (deformArray.size == 0) blend = setup;
-            } else if (V.get().equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
                     return;
                 verticesArray = slot.getAttachmentVertices();
@@ -916,7 +916,7 @@ public class Animation extends CrossSpine {
             float[] frames = this.frames;
             float[] deform = null;
             float[] vertices = null;
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 if (time < frames[0]) {
                     VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
                     switch (blend) {
@@ -995,7 +995,7 @@ public class Animation extends CrossSpine {
                     }
                     return;
                 }
-            } else if (V.get().equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 if (time < frames[0]) {
                     VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
                     switch (blend) {
@@ -1080,7 +1080,7 @@ public class Animation extends CrossSpine {
             float[] nextVertices = frameVertices[frame];
             float frameTime = frames[frame];
             float percent = getCurvePercent(frame - 1, 1 - (time - frameTime) / (frames[frame - 1] - frameTime));
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 if (alpha == 1) {
                     if (blend == add) {
                         VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
@@ -1143,7 +1143,7 @@ public class Animation extends CrossSpine {
                             }
                     }
                 }
-            } else if (V.get().equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 if (alpha == 1) {
                     if (blend == add) {
                         VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
@@ -1215,7 +1215,7 @@ public class Animation extends CrossSpine {
         private final Event[] events;
 
         public EventTimeline(int frameCount) {
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             events = new Event[frameCount];
@@ -1274,7 +1274,7 @@ public class Animation extends CrossSpine {
         private final int[][] drawOrders;
 
         public DrawOrderTimeline(int frameCount) {
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             drawOrders = new int[frameCount][];
@@ -1305,12 +1305,12 @@ public class Animation extends CrossSpine {
                           MixDirection direction) {
             Array<Slot> drawOrder = skeleton.drawOrder;
             Array<Slot> slots = skeleton.slots;
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 if (direction == out) {
                     if (blend == setup) arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
                     return;
                 }
-            } else if (V.get().equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 if (direction == out && blend == setup) {
                     System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
                     return;
@@ -1318,10 +1318,10 @@ public class Animation extends CrossSpine {
             }
             float[] frames = this.frames;
             if (time < frames[0]) {
-                if (V.get().equals("38")) {
+                if (RuntimesLoader.spineVersion.get() == 38) {
                     if (blend == setup || blend == first) arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
                     return;
-                } else if (V.get().equals("37")) {
+                } else if (RuntimesLoader.spineVersion.get() == 37) {
                     if (blend == setup || blend == first)
                         System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
                     return;
@@ -1334,9 +1334,9 @@ public class Animation extends CrossSpine {
                 frame = binarySearch(frames, time) - 1;
             int[] drawOrderToSetupIndex = drawOrders[frame];
             if (drawOrderToSetupIndex == null) {
-                if (V.get().equals("38"))
+                if (RuntimesLoader.spineVersion.get() == 38)
                     arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
-                else if (V.get().equals("37"))
+                else if (RuntimesLoader.spineVersion.get() == 37)
                     System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
             } else {
                 for (int i = 0, n = drawOrderToSetupIndex.length; i < n; i++)
@@ -1354,7 +1354,7 @@ public class Animation extends CrossSpine {
 
         public IkConstraintTimeline(int frameCount) {
             super(frameCount);
-            if (V.get().equals("38")) {
+            if (RuntimesLoader.spineVersion.get() == 38) {
                 ENTRIES = 6;
                 PREV_TIME = -6;
                 PREV_MIX = -5;
@@ -1367,7 +1367,7 @@ public class Animation extends CrossSpine {
                 BEND_DIRECTION = 3;
                 COMPRESS = 4;
                 STRETCH = 5;
-            } else if (V.get().equals("37")) {
+            } else if (RuntimesLoader.spineVersion.get() == 37) {
                 ENTRIES = 5;
                 PREV_TIME = -5;
                 PREV_MIX = -4;
@@ -1417,14 +1417,14 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             IkConstraint constraint = skeleton.ikConstraints.get(ikConstraintIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
                     case setup -> {
                         constraint.mix = constraint.data.mix;
-                        if (V.get().equals("38"))
+                        if (RuntimesLoader.spineVersion.get() == 38)
                             constraint.softness = constraint.data.softness;
                         constraint.bendDirection = constraint.data.bendDirection;
                         constraint.compress = constraint.data.compress;
@@ -1433,7 +1433,7 @@ public class Animation extends CrossSpine {
                     }
                     case first -> {
                         constraint.mix += (constraint.data.mix - constraint.mix) * alpha;
-                        if (V.get().equals("38"))
+                        if (RuntimesLoader.spineVersion.get() == 38)
                             constraint.softness += (constraint.data.softness - constraint.softness) * alpha;
                         constraint.bendDirection = constraint.data.bendDirection;
                         constraint.compress = constraint.data.compress;
@@ -1445,7 +1445,7 @@ public class Animation extends CrossSpine {
             if (time >= frames[frames.length - ENTRIES]) {
                 if (blend == setup) {
                     constraint.mix = constraint.data.mix + (frames[frames.length + PREV_MIX] - constraint.data.mix) * alpha;
-                    if (V.get().equals("38"))
+                    if (RuntimesLoader.spineVersion.get() == 38)
                         constraint.softness = constraint.data.softness + (frames[frames.length + PREV_SOFTNESS] - constraint.data.softness) * alpha;
                     if (direction == out) {
                         constraint.bendDirection = constraint.data.bendDirection;
@@ -1458,7 +1458,7 @@ public class Animation extends CrossSpine {
                     }
                 } else {
                     constraint.mix += (frames[frames.length + PREV_MIX] - constraint.mix) * alpha;
-                    if (V.get().equals("38"))
+                    if (RuntimesLoader.spineVersion.get() == 38)
                         constraint.softness += (frames[frames.length + PREV_SOFTNESS] - constraint.softness) * alpha;
                     if (direction == in) {
                         constraint.bendDirection = (int) frames[frames.length + PREV_BEND_DIRECTION];
@@ -1475,7 +1475,7 @@ public class Animation extends CrossSpine {
             float percent = getCurvePercent(frame / ENTRIES - 1, 1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
             if (blend == setup) {
                 constraint.mix = constraint.data.mix + (mix + (frames[frame + MIX] - mix) * percent - constraint.data.mix) * alpha;
-                if (V.get().equals("38"))
+                if (RuntimesLoader.spineVersion.get() == 38)
                     constraint.softness = constraint.data.softness + (softness + (frames[frame + SOFTNESS] - softness) * percent - constraint.data.softness) * alpha;
                 if (direction == out) {
                     constraint.bendDirection = constraint.data.bendDirection;
@@ -1488,7 +1488,7 @@ public class Animation extends CrossSpine {
                 }
             } else {
                 constraint.mix += (mix + (frames[frame + MIX] - mix) * percent - constraint.mix) * alpha;
-                if (V.get().equals("38"))
+                if (RuntimesLoader.spineVersion.get() == 38)
                     constraint.softness += (softness + (frames[frame + SOFTNESS] - softness) * percent - constraint.softness) * alpha;
                 if (direction == in) {
                     constraint.bendDirection = (int) frames[frame + PREV_BEND_DIRECTION];
@@ -1540,7 +1540,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             TransformConstraint constraint = skeleton.transformConstraints.get(transformConstraintIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
@@ -1636,7 +1636,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
@@ -1679,7 +1679,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
@@ -1749,7 +1749,7 @@ public class Animation extends CrossSpine {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (V.get().equals("38"))
+            if (RuntimesLoader.spineVersion.get() == 38)
                 if (!constraint.active) return;
             float[] frames = this.frames;
             if (time < frames[0]) {

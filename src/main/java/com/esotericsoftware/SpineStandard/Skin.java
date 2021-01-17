@@ -1,14 +1,14 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.CrossSpine;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
 
-public class Skin extends CrossSpine {
+public class Skin {
     final String name;
     final OrderedMap<SkinEntry, SkinEntry> attachments = new OrderedMap<>();
     final ObjectMap<Key, Attachment> O_attachments = new ObjectMap<>();
@@ -25,7 +25,7 @@ public class Skin extends CrossSpine {
     public Skin(String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
         this.name = name;
-        if (V.get().equals("38"))
+        if (RuntimesLoader.spineVersion.get() == 38)
             this.attachments.orderedKeys().ordered = false;
     }
 
@@ -49,11 +49,11 @@ public class Skin extends CrossSpine {
 
     public Attachment getAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             lookup.set(slotIndex, name);
             SkinEntry entry = attachments.get(lookup);
             return entry != null ? entry.attachment : null;
-        } else if (V.get().equals("37")) {
+        } else if (RuntimesLoader.spineVersion.get() == 37) {
             lookup.set(slotIndex, name);
             return O_attachments.get(O_lookup);
         }
@@ -65,10 +65,10 @@ public class Skin extends CrossSpine {
     }
 
     public void clear() {
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             bones.clear();
             constraints.clear();
-        } else if (V.get().equals("37"))
+        } else if (RuntimesLoader.spineVersion.get() == 37)
             for (Key key : O_attachments.keys())
                 keyPool.free(key);
         attachments.clear(1024);
@@ -95,7 +95,7 @@ public class Skin extends CrossSpine {
     }
 
     void attachAll(Skeleton skeleton, Skin oldSkin) {
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             for (SkinEntry entry : oldSkin.attachments.keys()) {
                 int slotIndex = entry.slotIndex;
                 Slot slot = skeleton.slots.get(slotIndex);
@@ -104,7 +104,7 @@ public class Skin extends CrossSpine {
                     if (attachment != null) slot.setAttachment(attachment);
                 }
             }
-        } else if (V.get().equals("37")) {
+        } else if (RuntimesLoader.spineVersion.get() == 37) {
             for (Entry<Key, Attachment> entry : oldSkin.O_attachments.entries()) {
                 int slotIndex = entry.key.slotIndex;
                 Slot slot = skeleton.slots.get(slotIndex);

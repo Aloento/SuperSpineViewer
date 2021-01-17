@@ -1,10 +1,10 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.*;
-import com.esotericsoftware.CrossSpine;
 import com.esotericsoftware.SpineStandard.Animation.*;
 import com.esotericsoftware.SpineStandard.BoneData.TransformMode;
 import com.esotericsoftware.SpineStandard.PathConstraintData.PositionMode;
@@ -17,7 +17,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.Objects;
 
-public class SkeletonBinary extends CrossSpine {
+public class SkeletonBinary {
     static public final int BONE_ROTATE = 0;
     static public final int BONE_TRANSLATE = 1;
     static public final int BONE_SCALE = 2;
@@ -60,7 +60,7 @@ public class SkeletonBinary extends CrossSpine {
         SkeletonData skeletonData = new SkeletonData();
         skeletonData.name = file.nameWithoutExtension();
 
-        if (V.get().equals("38")) {
+        if (RuntimesLoader.spineVersion.get() == 38) {
             try (SkeletonInput input = new SkeletonInput(file)) {
                 skeletonData.hash = input.readString();
                 if (skeletonData.hash.isEmpty()) skeletonData.hash = null;
@@ -220,7 +220,7 @@ public class SkeletonBinary extends CrossSpine {
             } catch (IOException ex) {
                 throw new SerializationException("Error reading skeleton file.", ex);
             }
-        } else if (V.get().equals("37")) {
+        } else if (RuntimesLoader.spineVersion.get() == 37) {
             try (DataInput input = new DataInput(file.read(512)) {
                 private char[] chars = new char[32];
 
@@ -469,7 +469,7 @@ public class SkeletonBinary extends CrossSpine {
                                       String attachmentName, boolean nonessential) throws IOException {
         float scale = this.scale;
         String name = input.readStringRef();
-        if (V.get().equals("37"))
+        if (RuntimesLoader.spineVersion.get() == 37)
             name = input.readString();
 
         if (name == null) name = attachmentName;
@@ -514,7 +514,7 @@ public class SkeletonBinary extends CrossSpine {
             }
             case mesh -> {
                 String path = input.readStringRef();
-                if (V.get().equals("37"))
+                if (RuntimesLoader.spineVersion.get() == 37)
                     name = input.readString();
 
                 int color = input.readInt();
@@ -554,7 +554,7 @@ public class SkeletonBinary extends CrossSpine {
                 int color = input.readInt();
                 String skinName = input.readStringRef();
                 String parent = input.readStringRef();
-                if (V.get().equals("37")) {
+                if (RuntimesLoader.spineVersion.get() == 37) {
                     name = input.readString();
                     skinName = input.readString();
                     parent = input.readString();
@@ -571,15 +571,15 @@ public class SkeletonBinary extends CrossSpine {
                 if (mesh == null) return null;
                 mesh.setPath(path);
                 Color.rgba8888ToColor(mesh.getColor(), color);
-                if (V.get().equals("37"))
+                if (RuntimesLoader.spineVersion.get() == 37)
                     mesh.setInheritDeform(inheritDeform);
                 if (nonessential) {
                     mesh.setWidth(width * scale);
                     mesh.setHeight(height * scale);
                 }
-                if (V.get().equals("38")) {
+                if (RuntimesLoader.spineVersion.get() == 38) {
                     linkedMeshes.add(new LinkedMesh(mesh, skinName, slotIndex, parent, inheritDeform));
-                } else if (V.get().equals("37")) {
+                } else if (RuntimesLoader.spineVersion.get() == 37) {
                     linkedMeshes.add(new LinkedMesh(mesh, skinName, slotIndex, parent));
                 }
                 return mesh;
@@ -685,9 +685,9 @@ public class SkeletonBinary extends CrossSpine {
 
     private Animation readAnimation(SkeletonInput input, String name, SkeletonData skeletonData) {
         Array<Timeline> timelines = null;
-        if (V.get().equals("38"))
+        if (RuntimesLoader.spineVersion.get() == 38)
             timelines = new Array<>(32);
-        else if (V.get().equals("37"))
+        else if (RuntimesLoader.spineVersion.get() == 37)
             timelines = new Array<>();
 
         float scale = this.scale;
@@ -703,9 +703,9 @@ public class SkeletonBinary extends CrossSpine {
                             AttachmentTimeline timeline = new AttachmentTimeline(frameCount);
                             timeline.slotIndex = slotIndex;
                             for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-                                if (V.get().equals("38"))
+                                if (RuntimesLoader.spineVersion.get() == 38)
                                     timeline.setFrame(frameIndex, input.readFloat(), input.readStringRef());
-                                else if (V.get().equals("37"))
+                                else if (RuntimesLoader.spineVersion.get() == 37)
                                     timeline.setFrame(frameIndex, input.readFloat(), input.readString());
                             }
                             Objects.requireNonNull(timelines).add(timeline);
@@ -785,10 +785,10 @@ public class SkeletonBinary extends CrossSpine {
                 IkConstraintTimeline timeline = new IkConstraintTimeline(frameCount);
                 timeline.ikConstraintIndex = index;
                 for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-                    if (V.get().equals("38")) {
+                    if (RuntimesLoader.spineVersion.get() == 38) {
                         timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readFloat() * scale, input.readByte(),
                                 input.readBoolean(), input.readBoolean());
-                    } else if (V.get().equals("37")) {
+                    } else if (RuntimesLoader.spineVersion.get() == 37) {
                         timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte(), input.readBoolean(),
                                 input.readBoolean());
                     }
@@ -855,7 +855,7 @@ public class SkeletonBinary extends CrossSpine {
                     int slotIndex = input.readInt(true);
                     for (int iii = 0, nnn = input.readInt(true); iii < nnn; iii++) {
                         VertexAttachment attachment = (VertexAttachment) skin.getAttachment(slotIndex, input.readStringRef());
-                        if (V.get().equals("37"))
+                        if (RuntimesLoader.spineVersion.get() == 37)
                             attachment = (VertexAttachment) skin.getAttachment(slotIndex, input.readString());
                         boolean weighted = attachment.getBones() != null;
                         float[] vertices = attachment.getVertices();
@@ -944,7 +944,7 @@ public class SkeletonBinary extends CrossSpine {
             throw new SerializationException("Error reading skeleton file.", ex);
         }
         Objects.requireNonNull(timelines).shrink();
-        if (V.get().equals("37"))
+        if (RuntimesLoader.spineVersion.get() == 37)
             skeletonData.animations.add(new Animation(name, timelines, duration));
         return new Animation(name, timelines, duration);
     }

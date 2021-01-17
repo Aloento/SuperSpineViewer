@@ -1,9 +1,9 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.ObjectFloatMap;
-import com.esotericsoftware.CrossSpine;
 
-public class AnimationStateData extends CrossSpine {
+public class AnimationStateData {
     final SkeletonData skeletonData;
     final Key tempKey = new Key();
     ObjectFloatMap<Key> animationToMixTime;
@@ -12,9 +12,9 @@ public class AnimationStateData extends CrossSpine {
     public AnimationStateData(SkeletonData skeletonData) {
         if (skeletonData == null) throw new IllegalArgumentException("skeletonData cannot be null.");
         this.skeletonData = skeletonData;
-        if (V.get().equals("38"))
+        if (RuntimesLoader.spineVersion.get() == 38)
             animationToMixTime = new ObjectFloatMap<>(51, 0.8f);
-        else if (V.get().equals("37"))
+        else if (RuntimesLoader.spineVersion.get() == 37)
             animationToMixTime = new ObjectFloatMap<>();
     }
 

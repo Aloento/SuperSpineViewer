@@ -1,8 +1,8 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.esotericsoftware.CrossSpine;
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 
-public class Event extends CrossSpine {
+public class Event {
     final float time;
     final private EventData data;
     int intValue;
@@ -37,7 +37,7 @@ public class Event extends CrossSpine {
     }
 
     public void setString(String stringValue) {
-        if (stringValue == null && V.get().equals("38"))
+        if (stringValue == null && RuntimesLoader.spineVersion.get() == 38)
             throw new IllegalArgumentException("stringValue cannot be null.");
         this.stringValue = stringValue;
     }
