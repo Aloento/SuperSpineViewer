@@ -6,8 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.SpineStandard.BoneData.TransformMode;
 
-import java.util.Objects;
-
 import static com.badlogic.gdx.math.Matrix3.*;
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
@@ -65,21 +63,52 @@ public class Bone implements Updatable {
         ashearY = shearY;
         appliedValid = true;
         Bone parent = this.parent;
-        if (parent == null) {
-            Skeleton skeleton = this.skeleton;
-            float rotationY = rotation + 90 + shearY, sx = skeleton.scaleX, sy = skeleton.scaleY;
-            a = cosDeg(rotation + shearX) * scaleX * sx;
-            if (RuntimesLoader.spineVersion.get() == 38) {
-                b = cosDeg(rotationY) * scaleY * sx;
-                c = sinDeg(rotation + shearX) * scaleX * sy;
-            } else if (RuntimesLoader.spineVersion.get() == 37) {
-                b = cosDeg(rotationY) * scaleY * sy;
-                c = sinDeg(rotation + shearX) * scaleX * sx;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {
+                if (parent == null) {
+                    Skeleton skeleton = this.skeleton;
+                    float rotationY = rotation + 90 + shearY, sx = skeleton.scaleX, sy = skeleton.scaleY;
+                    a = cosDeg(rotation + shearX) * scaleX * sx;
+                    if (RuntimesLoader.spineVersion.get() == 38) {
+                        b = cosDeg(rotationY) * scaleY * sx;
+                        c = sinDeg(rotation + shearX) * scaleX * sy;
+                    } else if (RuntimesLoader.spineVersion.get() == 37) {
+                        b = cosDeg(rotationY) * scaleY * sy;
+                        c = sinDeg(rotation + shearX) * scaleX * sx;
+                    }
+                    d = sinDeg(rotationY) * scaleY * sy;
+                    worldX = x * sx + skeleton.x;
+                    worldY = y * sy + skeleton.y;
+                    return;
+                }
             }
-            d = sinDeg(rotationY) * scaleY * sy;
-            worldX = x * sx + skeleton.x;
-            worldY = y * sy + skeleton.y;
-            return;
+            case 36 -> {
+                if (parent == null) {
+                    float rotationY = rotation + 90 + shearY;
+                    float la = cosDeg(rotation + shearX) * scaleX;
+                    float lb = cosDeg(rotationY) * scaleY;
+                    float lc = sinDeg(rotation + shearX) * scaleX;
+                    float ld = sinDeg(rotationY) * scaleY;
+                    Skeleton skeleton = this.skeleton;
+                    if (skeleton.flipX) {
+                        x = -x;
+                        la = -la;
+                        lb = -lb;
+                    }
+                    if (skeleton.flipY) {
+                        y = -y;
+                        lc = -lc;
+                        ld = -ld;
+                    }
+                    a = la;
+                    b = lb;
+                    c = lc;
+                    d = ld;
+                    worldX = x + skeleton.x;
+                    worldY = y + skeleton.y;
+                    return;
+                }
+            }
         }
         float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
         worldX = pa * x + pb * y + parent.worldX;
@@ -108,8 +137,12 @@ public class Bone implements Updatable {
                 float s = pa * pa + pc * pc, prx;
                 if (s > 0.0001f) {
                     s = Math.abs(pa * pd - pb * pc) / s;
-                    pa /= skeleton.scaleX;
-                    pc /= skeleton.scaleY;
+                    switch (RuntimesLoader.spineVersion.get()) {
+                        case 38, 37 -> {
+                            pa /= skeleton.scaleX;
+                            pc /= skeleton.scaleY;
+                        }
+                    }
                     pb = pc * s;
                     pd = pa * s;
                     prx = atan2(pc, pa) * radDeg;
@@ -131,15 +164,29 @@ public class Bone implements Updatable {
             }
             case noScale, noScaleOrReflection -> {
                 float cos = cosDeg(rotation), sin = sinDeg(rotation);
-                float za = (pa * cos + pb * sin) / skeleton.scaleX;
-                float zc = (pc * cos + pd * sin) / skeleton.scaleY;
+                float za = 0;
+                float zc = 0;
+                switch (RuntimesLoader.spineVersion.get()) {
+                    case 38, 37 -> {
+                        za = (pa * cos + pb * sin) / skeleton.scaleX;
+                        zc = (pc * cos + pd * sin) / skeleton.scaleY;
+                    }
+                    case 36 -> {
+                        za = pa * cos + pb * sin;
+                        zc = pc * cos + pd * sin;
+                    }
+                }
                 float s = (float) Math.sqrt(za * za + zc * zc);
                 if (s > 0.00001f) s = 1 / s;
                 za *= s;
                 zc *= s;
                 s = (float) Math.sqrt(za * za + zc * zc);
-                if (data.transformMode == TransformMode.noScale
-                        && (pa * pd - pb * pc < 0) == (skeleton.scaleX < 0 == skeleton.scaleY < 0)) s = -s;
+                switch (RuntimesLoader.spineVersion.get()) {
+                    case 38, 37 -> {
+                        if (data.transformMode == TransformMode.noScale && (pa * pd - pb * pc < 0) == (skeleton.scaleX < 0 == skeleton.scaleY < 0))
+                            s = -s;
+                    }
+                }
                 float r = PI / 2 + atan2(zc, za);
                 float zb = cos(r) * s;
                 float zd = sin(r) * s;
@@ -147,16 +194,38 @@ public class Bone implements Updatable {
                 float lb = cosDeg(90 + shearY) * scaleY;
                 float lc = sinDeg(shearX) * scaleX;
                 float ld = sinDeg(90 + shearY) * scaleY;
+                switch (RuntimesLoader.spineVersion.get()) {
+                    case 36 -> {
+                        if (data.transformMode != TransformMode.noScaleOrReflection ? pa * pd - pb * pc < 0 : skeleton.flipX != skeleton.flipY) {
+                            zb = -zb;
+                            zd = -zd;
+                        }
+                    }
+                }
                 a = za * la + zb * lc;
                 b = za * lb + zb * ld;
                 c = zc * la + zd * lc;
                 d = zc * lb + zd * ld;
             }
         }
-        a *= skeleton.scaleX;
-        b *= skeleton.scaleX;
-        c *= skeleton.scaleY;
-        d *= skeleton.scaleY;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {
+                a *= skeleton.scaleX;
+                b *= skeleton.scaleX;
+                c *= skeleton.scaleY;
+                d *= skeleton.scaleY;
+            }
+            case 36 -> {
+                if (skeleton.flipX) {
+                    a = -a;
+                    b = -b;
+                }
+                if (skeleton.flipY) {
+                    c = -c;
+                    d = -d;
+                }
+            }
+        }
     }
 
     public void setToSetupPose() {
@@ -446,19 +515,17 @@ public class Bone implements Updatable {
     }
 
     public Vector2 worldToLocal(Vector2 world) {
-        if (world == null && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("world cannot be null.");
+        if (world == null) throw new IllegalArgumentException("world cannot be null.");
         float invDet = 1 / (a * d - b * c);
-        float x = Objects.requireNonNull(world).x - worldX, y = world.y - worldY;
+        float x = world.x - worldX, y = world.y - worldY;
         world.x = x * d * invDet - y * b * invDet;
         world.y = y * a * invDet - x * c * invDet;
         return world;
     }
 
     public Vector2 localToWorld(Vector2 local) {
-        if (local == null && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("local cannot be null.");
-        float x = Objects.requireNonNull(local).x, y = local.y;
+        if (local == null) throw new IllegalArgumentException("local cannot be null.");
+        float x = local.x, y = local.y;
         local.x = x * a + y * b + worldX;
         local.y = x * c + y * d + worldY;
         return local;
@@ -466,11 +533,17 @@ public class Bone implements Updatable {
 
     public float worldToLocalRotation(float worldRotation) {
         float sin = sinDeg(worldRotation), cos = cosDeg(worldRotation);
-        return atan2(a * sin - c * cos, d * cos - b * sin) * radDeg + rotation - shearX;
+        return switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> atan2(a * sin - c * cos, d * cos - b * sin) * radDeg + rotation - shearX;
+            case 36 -> atan2(a * sin - c * cos, d * cos - b * sin) * radDeg;
+            default -> throw new IllegalStateException("Unexpected value: " + RuntimesLoader.spineVersion.get());
+        };
     }
 
     public float localToWorldRotation(float localRotation) {
-        localRotation -= rotation - shearX;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> localRotation -= rotation - shearX;
+        }
         float sin = sinDeg(localRotation), cos = cosDeg(localRotation);
         return atan2(cos * c + sin * d, cos * a + sin * b) * radDeg;
     }
