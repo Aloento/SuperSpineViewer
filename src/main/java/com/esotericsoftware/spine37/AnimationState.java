@@ -9,19 +9,19 @@ import java.lang.StringBuilder;
 import static com.esotericsoftware.spine37.Animation.RotateTimeline.*;
 
 public class AnimationState {
-    static private final Animation emptyAnimation = new Animation("<empty>", new Array(0), 0);
+    static private final Animation emptyAnimation = new Animation("<empty>", new Array<>(0), 0);
     static private final int SUBSEQUENT = 0;
     static private final int FIRST = 1;
     static private final int HOLD = 2;
     static private final int HOLD_MIX = 3;
-    final Array<TrackEntry> tracks = new Array();
-    final Array<AnimationStateListener> listeners = new Array();
+    final Array<TrackEntry> tracks = new Array<>();
+    final Array<AnimationStateListener> listeners = new Array<>();
     final Pool<TrackEntry> trackEntryPool = new Pool() {
         protected Object newObject() {
             return new TrackEntry();
         }
     };
-    private final Array<Event> events = new Array();
+    private final Array<Event> events = new Array<>();
     private final EventQueue queue = new EventQueue();
     private final IntSet propertyIDs = new IntSet();
     boolean animationsChanged;

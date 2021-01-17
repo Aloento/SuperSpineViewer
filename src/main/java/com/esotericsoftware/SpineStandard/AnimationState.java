@@ -624,8 +624,7 @@ public class AnimationState {
     }
 
     public TrackEntry setAnimation(int trackIndex, Animation animation, boolean loop) {
-        if (trackIndex < 0 && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("trackIndex must be >= 0.");
+        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
         boolean interrupt = true;
         TrackEntry current = expandToIndex(trackIndex);
@@ -653,8 +652,7 @@ public class AnimationState {
     }
 
     public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
-        if (trackIndex < 0 && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("trackIndex must be >= 0.");
+        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
         TrackEntry last = expandToIndex(trackIndex);
         if (last != null) {
@@ -857,8 +855,7 @@ public class AnimationState {
     }
 
     public TrackEntry getCurrent(int trackIndex) {
-        if (trackIndex < 0 && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("trackIndex must be >= 0.");
+        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (trackIndex >= tracks.size) return null;
         return tracks.get(trackIndex);
     }
@@ -952,8 +949,10 @@ public class AnimationState {
             mixingTo = null;
             animation = null;
             listener = null;
-            timelineData.clear();
-            timelineDipMix.clear();
+            if (RuntimesLoader.spineVersion.get() == 38) {
+                timelineData.clear();
+                timelineDipMix.clear();
+            }
             timelineMode.clear();
             timelineHoldMix.clear();
             timelinesRotation.clear();
@@ -1159,8 +1158,7 @@ public class AnimationState {
         }
 
         public void setMixBlend(MixBlend mixBlend) {
-            if (mixBlend == null && RuntimesLoader.spineVersion.get() == 38)
-                throw new IllegalArgumentException("mixBlend cannot be null.");
+            if (mixBlend == null) throw new IllegalArgumentException("mixBlend cannot be null.");
             this.mixBlend = mixBlend;
         }
 
