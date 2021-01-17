@@ -62,6 +62,7 @@ public class Bone implements Updatable {
         ashearX = shearX;
         ashearY = shearY;
         appliedValid = true;
+
         Bone parent = this.parent;
         switch (RuntimesLoader.spineVersion.get()) {
             case 38, 37 -> {
