@@ -1,21 +1,16 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.ObjectFloatMap;
 
 public class AnimationStateData {
     final SkeletonData skeletonData;
     final Key tempKey = new Key();
-    ObjectFloatMap<Key> animationToMixTime;
+    final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap<>(51, 0.8f);
     float defaultMix;
 
     public AnimationStateData(SkeletonData skeletonData) {
         if (skeletonData == null) throw new IllegalArgumentException("skeletonData cannot be null.");
         this.skeletonData = skeletonData;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38 -> animationToMixTime = new ObjectFloatMap<>(51, 0.8f);
-            case 37, 36 -> animationToMixTime = new ObjectFloatMap<>();
-        }
     }
 
     public SkeletonData getSkeletonData() {

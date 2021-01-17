@@ -2,14 +2,11 @@ package com.esotericsoftware.spine36;
 
 import com.badlogic.gdx.graphics.GL20;
 
-/**
- * Determines how images are blended with existing pixels when drawn.
- */
 public enum BlendMode {
-    normal(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA), //
-    additive(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE), //
-    multiply(GL20.GL_DST_COLOR, GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA), //
-    screen(GL20.GL_ONE, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_COLOR), //
+    normal(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA),
+    additive(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE),
+    multiply(GL20.GL_DST_COLOR, GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA),
+    screen(GL20.GL_ONE, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_COLOR),
     ;
 
     static public final BlendMode[] values = values();
