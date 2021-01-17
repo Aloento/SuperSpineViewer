@@ -14,7 +14,7 @@ public class SkeletonRendererDebug {
     static private final Color boneLineColor = Color.RED;
     static private final Color boneOriginColor = Color.GREEN;
     static private final Color attachmentLineColor = new Color(0, 0, 1, 0.5f);
-    static private final Color triangleLineColor = new Color(1, 0.64f, 0, 0.5f); // ffa3007f
+    static private final Color triangleLineColor = new Color(1, 0.64f, 0, 0.5f);
     static private final Color aabbColor = new Color(0, 1, 0, 0.5f);
 
     private final ShapeRenderer shapes;
@@ -49,7 +49,7 @@ public class SkeletonRendererDebug {
             for (int i = 0, n = bones.size; i < n; i++) {
                 Bone bone = bones.get(i);
                 if (bone.parent == null) continue;
-                float length = bone.data.length, width = (float) 2;
+                float length = bone.data.length, width = 2f;
                 if (length == 0) {
                     length = 8;
                     width /= 2;
@@ -110,9 +110,9 @@ public class SkeletonRendererDebug {
                     shapes.setColor(triangleLineColor);
                     for (int ii = 0, nn = triangles.length; ii < nn; ii += 3) {
                         int v1 = triangles[ii] * 2, v2 = triangles[ii + 1] * 2, v3 = triangles[ii + 2] * 2;
-                        shapes.triangle(vertices[v1], vertices[v1 + 1], //
-                                vertices[v2], vertices[v2 + 1], //
-                                vertices[v3], vertices[v3 + 1] //
+                        shapes.triangle(vertices[v1], vertices[v1 + 1],
+                                vertices[v2], vertices[v2 + 1],
+                                vertices[v3], vertices[v3 + 1]
                         );
                     }
                 }

@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -43,12 +44,11 @@ public class SkeletonRendererDebug {
         Array<Bone> bones = skeleton.getBones();
         Array<Slot> slots = skeleton.getSlots();
         shapes.begin(ShapeType.Filled);
-        float boneWidth = 2;
         if (drawBones) {
             for (int i = 0, n = bones.size; i < n; i++) {
                 Bone bone = bones.get(i);
-                if (bone.parent == null || !bone.active) continue;
-                float length = bone.data.length, width = boneWidth;
+                if (bone.parent == null || (!bone.active && RuntimesLoader.spineVersion.get() == 38)) continue;
+                float length = bone.data.length, width = 2f;
                 if (length == 0) {
                     length = 8;
                     width /= 2;
@@ -70,7 +70,7 @@ public class SkeletonRendererDebug {
                 PointAttachment point = (PointAttachment) attachment;
                 point.computeWorldPosition(slot.getBone(), temp1);
                 temp2.set(8, 0).rotate(point.computeWorldRotation(slot.getBone()));
-                shapes.rectLine(temp1, temp2, boneWidth / 2 * scale);
+                shapes.rectLine(temp1, temp2, scale);
             }
         }
         shapes.end();
@@ -193,7 +193,7 @@ public class SkeletonRendererDebug {
             shapes.setColor(boneOriginColor);
             for (int i = 0, n = bones.size; i < n; i++) {
                 Bone bone = bones.get(i);
-                if (!bone.active) continue;
+                if (!bone.active && RuntimesLoader.spineVersion.get() == 38) continue;
                 shapes.circle(bone.worldX, bone.worldY, 3 * scale, 8);
             }
         }
