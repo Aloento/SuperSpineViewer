@@ -11,16 +11,14 @@ import static com.esotericsoftware.SpineStandard.Animation.RotateTimeline.*;
 
 public class AnimationState {
     static private final Animation emptyAnimation = new Animation("<empty>", new Array<>(0), 0);
-    static private final int SUBSEQUENT = 0;
-    static private final int FIRST = 1;
-    static private final int HOLD = 2;
-    static private final int HOLD_SUBSEQUENT = 2;
-    static private final int HOLD_FIRST = 3;
-    static private final int SETUP = 1, CURRENT = 2;
+    static private final int SUBSEQUENT = 0, FIRST = 1;
+    static private final int DIP = 2, DIP_MIX = 3; // Spine36
+    static private final int HOLD = 2, HOLD_SUBSEQUENT = 2, HOLD_FIRST = 3; // Spine37
+    static private final int SETUP = 1, CURRENT = 2; // Spine38
     static private int HOLD_MIX;
     final Array<TrackEntry> tracks = new Array<>();
     final Array<AnimationStateListener> listeners = new Array<>();
-    final Pool<TrackEntry> trackEntryPool = new Pool() {
+    final Pool<TrackEntry> trackEntryPool = new Pool() { // Spine37/6
         protected Object newObject() {
             return new TrackEntry();
         }
@@ -28,6 +26,7 @@ public class AnimationState {
     private final Array<Event> events = new Array<>();
     private final EventQueue queue = new EventQueue();
     private final IntSet propertyIDs = new IntSet();
+    private final Array<TrackEntry> mixingTo = new Array(); // Spine36
     boolean animationsChanged;
     private AnimationStateData data;
     private float timeScale = 1;
@@ -39,10 +38,10 @@ public class AnimationState {
     public AnimationState(AnimationStateData data) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         this.data = data;
-        if (RuntimesLoader.spineVersion.get() == 38)
-            HOLD_MIX = 4;
-        else if (RuntimesLoader.spineVersion.get() == 37)
-            HOLD_MIX = 3;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38 -> HOLD_MIX = 4;
+            case 37 -> HOLD_MIX = 3;
+        }
     }
 
     public void update(float delta) {
@@ -64,14 +63,18 @@ public class AnimationState {
                 float nextTime = current.trackLast - next.delay;
                 if (nextTime >= 0) {
                     next.delay = 0;
-                    if (RuntimesLoader.spineVersion.get() == 38)
-                        next.trackTime += current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
-                    else if (RuntimesLoader.spineVersion.get() == 37)
-                        next.trackTime = current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
+                    switch (RuntimesLoader.spineVersion.get()) {
+                        case 38 -> next.trackTime += current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
+                        case 37 -> next.trackTime = current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
+                        case 36 -> next.trackTime = nextTime + delta * next.timeScale;
+                    }
                     current.trackTime += currentDelta;
                     setCurrent(i, next, true);
                     while (next.mixingFrom != null) {
-                        next.mixTime += delta;
+                        switch (RuntimesLoader.spineVersion.get()) {
+                            case 38, 37 -> next.mixTime += delta;
+                            case 36 -> next.mixTime += currentDelta;
+                        }
                         next = next.mixingFrom;
                     }
                     continue;
@@ -102,17 +105,32 @@ public class AnimationState {
         boolean finished = updateMixingFrom(from, delta);
         from.animationLast = from.nextAnimationLast;
         from.trackLast = from.nextTrackLast;
-        if (to.mixTime > 0 && to.mixTime >= to.mixDuration) {
-            if (from.totalAlpha == 0 || to.mixDuration == 0) {
-                to.mixingFrom = from.mixingFrom;
-                if (from.mixingFrom != null) from.mixingFrom.mixingTo = to;
-                to.interruptAlpha = from.interruptAlpha;
-                queue.end(from);
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {
+                if (to.mixTime > 0 && to.mixTime >= to.mixDuration) {
+                    if (from.totalAlpha == 0 || to.mixDuration == 0) {
+                        to.mixingFrom = from.mixingFrom;
+                        if (from.mixingFrom != null) from.mixingFrom.mixingTo = to;
+                        to.interruptAlpha = from.interruptAlpha;
+                        queue.end(from);
+                    }
+                    return finished;
+                }
+                to.mixTime += delta;
             }
-            return finished;
+            case 36 -> {
+                if (to.mixTime > 0 && (to.mixTime >= to.mixDuration || to.timeScale == 0)) {
+                    if (from.totalAlpha == 0 || to.mixDuration == 0) {
+                        to.mixingFrom = from.mixingFrom;
+                        to.interruptAlpha = from.interruptAlpha;
+                        queue.end(from);
+                    }
+                    return finished;
+                }
+                to.mixTime += delta * to.timeScale;
+            }
         }
         from.trackTime += delta * from.timeScale;
-        to.mixTime += delta;
         return false;
     }
 
@@ -126,41 +144,70 @@ public class AnimationState {
             if (current == null || current.delay > 0) continue;
             applied = true;
             MixBlend blend = i == 0 ? MixBlend.first : current.mixBlend;
+            MixPose currentPose = i == 0 ? MixPose.current : MixPose.currentLayered; // Spine 36
             float mix = current.alpha;
             if (current.mixingFrom != null)
-                mix *= applyMixingFrom(current, skeleton, blend);
+                switch (RuntimesLoader.spineVersion.get()) {
+                    case 38, 37 -> mix *= applyMixingFrom(current, skeleton, blend);
+                    case 36 -> mix *= applyMixingFrom(current, skeleton, currentPose);
+                }
             else if (current.trackTime >= current.trackEnd && current.next == null)
                 mix = 0;
             float animationLast = current.animationLast, animationTime = current.getAnimationTime();
             int timelineCount = current.animation.timelines.size;
             Object[] timelines = current.animation.timelines.items;
-            if ((i == 0 && mix == 1) || blend == MixBlend.add) {
-                for (int ii = 0; ii < timelineCount; ii++) {
-                    if (RuntimesLoader.spineVersion.get() == 38) {
-                        Object timeline = timelines[ii];
-                        if (timeline instanceof AttachmentTimeline)
-                            applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
-                        else
-                            ((Timeline) timeline).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
-                    } else if (RuntimesLoader.spineVersion.get() == 37) {
-                        ((Timeline) timelines[ii]).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+
+            switch (RuntimesLoader.spineVersion.get()) {
+                case 38, 37 -> {
+                    if ((i == 0 && mix == 1) || blend == MixBlend.add) {
+                        for (int ii = 0; ii < timelineCount; ii++) {
+                            if (RuntimesLoader.spineVersion.get() == 38) {
+                                Object timeline = timelines[ii];
+                                if (timeline instanceof AttachmentTimeline)
+                                    applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
+                                else
+                                    ((Timeline) timeline).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                            } else if (RuntimesLoader.spineVersion.get() == 37)
+                                ((Timeline) timelines[ii]).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                        }
+                    } else {
+                        int[] timelineMode = current.timelineMode.items;
+                        boolean firstFrame = current.timelinesRotation.size != timelineCount << 1;
+                        if (firstFrame) current.timelinesRotation.setSize(timelineCount << 1);
+                        float[] timelinesRotation = current.timelinesRotation.items;
+                        for (int ii = 0; ii < timelineCount; ii++) {
+                            Timeline timeline = (Timeline) timelines[ii];
+                            MixBlend timelineBlend = timelineMode[ii] == SUBSEQUENT ? blend : MixBlend.setup;
+                            if (timeline instanceof RotateTimeline) {
+                                applyRotateTimeline((RotateTimeline) timeline, skeleton, animationTime, mix, timelineBlend, timelinesRotation,
+                                        ii << 1, firstFrame);
+                            } else if (timeline instanceof AttachmentTimeline && RuntimesLoader.spineVersion.get() == 38)
+                                applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
+                            else
+                                timeline.apply(skeleton, animationLast, animationTime, events, mix, timelineBlend, MixDirection.in);
+                        }
                     }
                 }
-            } else {
-                int[] timelineMode = current.timelineMode.items;
-                boolean firstFrame = current.timelinesRotation.size != timelineCount << 1;
-                if (firstFrame) current.timelinesRotation.setSize(timelineCount << 1);
-                float[] timelinesRotation = current.timelinesRotation.items;
-                for (int ii = 0; ii < timelineCount; ii++) {
-                    Timeline timeline = (Timeline) timelines[ii];
-                    MixBlend timelineBlend = timelineMode[ii] == SUBSEQUENT ? blend : MixBlend.setup;
-                    if (timeline instanceof RotateTimeline) {
-                        applyRotateTimeline((RotateTimeline) timeline, skeleton, animationTime, mix, timelineBlend, timelinesRotation,
-                                ii << 1, firstFrame);
-                    } else if (timeline instanceof AttachmentTimeline && RuntimesLoader.spineVersion.get() == 38)
-                        applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
-                    else
-                        timeline.apply(skeleton, animationLast, animationTime, events, mix, timelineBlend, MixDirection.in);
+                case 36 -> {
+                    if (mix == 1) {
+                        for (int ii = 0; ii < timelineCount; ii++)
+                            ((Timeline) timelines[ii]).apply(skeleton, animationLast, animationTime, events, 1, MixPose.P_setup, MixDirection.in);
+                    } else {
+                        int[] timelineData = current.timelineData.items;
+
+                        boolean firstFrame = current.timelinesRotation.size == 0;
+                        if (firstFrame) current.timelinesRotation.setSize(timelineCount << 1);
+                        float[] timelinesRotation = current.timelinesRotation.items;
+
+                        for (int ii = 0; ii < timelineCount; ii++) {
+                            Timeline timeline = (Timeline) timelines[ii];
+                            MixPose pose = timelineData[ii] >= FIRST ? MixPose.P_setup : currentPose;
+                            if (timeline instanceof RotateTimeline)
+                                applyRotateTimeline(timeline, skeleton, animationTime, mix, pose, timelinesRotation, ii << 1, firstFrame);
+                            else
+                                timeline.apply(skeleton, animationLast, animationTime, events, mix, pose, MixDirection.in);
+                        }
+                    }
                 }
             }
             queueEvents(current, animationTime);
@@ -280,6 +327,72 @@ public class AnimationState {
         return mix;
     }
 
+    private float applyMixingFrom(TrackEntry to, Skeleton skeleton, MixPose currentPose) { // Spine36
+        TrackEntry from = to.mixingFrom;
+        if (from.mixingFrom != null) applyMixingFrom(from, skeleton, currentPose);
+
+        float mix;
+        if (to.mixDuration == 0) {
+            mix = 1;
+            currentPose = MixPose.P_setup;
+        } else {
+            mix = to.mixTime / to.mixDuration;
+            if (mix > 1) mix = 1;
+        }
+
+        Array<Event> events = mix < from.eventThreshold ? this.events : null;
+        boolean attachments = mix < from.attachmentThreshold, drawOrder = mix < from.drawOrderThreshold;
+        float animationLast = from.animationLast, animationTime = from.getAnimationTime();
+        int timelineCount = from.animation.timelines.size;
+        Object[] timelines = from.animation.timelines.items;
+        int[] timelineData = from.timelineData.items;
+        Object[] timelineDipMix = from.timelineDipMix.items;
+
+        boolean firstFrame = from.timelinesRotation.size == 0;
+        if (firstFrame) from.timelinesRotation.setSize(timelineCount << 1);
+        float[] timelinesRotation = from.timelinesRotation.items;
+
+        MixPose pose;
+        float alphaDip = from.alpha * to.interruptAlpha, alphaMix = alphaDip * (1 - mix), alpha;
+        from.totalAlpha = 0;
+        for (int i = 0; i < timelineCount; i++) {
+            Timeline timeline = (Timeline) timelines[i];
+            switch (timelineData[i]) {
+                case SUBSEQUENT -> {
+                    if (!attachments && timeline instanceof AttachmentTimeline) continue;
+                    if (!drawOrder && timeline instanceof DrawOrderTimeline) continue;
+                    pose = currentPose;
+                    alpha = alphaMix;
+                }
+                case FIRST -> {
+                    pose = MixPose.P_setup;
+                    alpha = alphaMix;
+                }
+                case DIP -> {
+                    pose = MixPose.P_setup;
+                    alpha = alphaDip;
+                }
+                default -> {
+                    pose = MixPose.P_setup;
+                    TrackEntry dipMix = (TrackEntry) timelineDipMix[i];
+                    alpha = alphaDip * Math.max(0, 1 - dipMix.mixTime / dipMix.mixDuration);
+                }
+            }
+            from.totalAlpha += alpha;
+            if (timeline instanceof RotateTimeline)
+                applyRotateTimeline(timeline, skeleton, animationTime, alpha, pose, timelinesRotation, i << 1, firstFrame);
+            else
+                timeline.apply(skeleton, animationLast, animationTime, events, alpha, pose, MixDirection.out);
+        }
+
+        if (to.mixDuration > 0) queueEvents(from, animationTime);
+        this.events.clear();
+        from.nextAnimationLast = animationTime;
+        from.nextTrackLast = from.trackTime;
+
+        return mix;
+    }
+
     private void applyAttachmentTimeline(AttachmentTimeline timeline, Skeleton skeleton, float time, MixBlend blend,
                                          boolean attachments) {
         Slot slot = skeleton.slots.get(timeline.slotIndex);
@@ -357,6 +470,70 @@ public class AnimationState {
             }
             boolean current = diff > 0, dir = lastTotal >= 0;
             if (Math.signum(lastDiff) != Math.signum(diff) && Math.abs(lastDiff) <= 90) {
+                if (Math.abs(lastTotal) > 180) lastTotal += 360 * Math.signum(lastTotal);
+                dir = current;
+            }
+            total = diff + lastTotal - lastTotal % 360;
+            if (dir != current) total += 360 * Math.signum(lastTotal);
+            timelinesRotation[i] = total;
+        }
+        timelinesRotation[i + 1] = diff;
+        r1 += total * alpha;
+        bone.rotation = r1 - (16384 - (int) (16384.499999999996 - r1 / 360)) * 360;
+    }
+
+    private void applyRotateTimeline(Timeline timeline, Skeleton skeleton, float time, float alpha, MixPose pose,
+                                     float[] timelinesRotation, int i, boolean firstFrame) { // Spine36
+        if (firstFrame) timelinesRotation[i] = 0;
+
+        if (alpha == 1) {
+            timeline.apply(skeleton, 0, time, null, 1, pose, MixDirection.in);
+            return;
+        }
+
+        RotateTimeline rotateTimeline = (RotateTimeline) timeline;
+        Bone bone = skeleton.bones.get(rotateTimeline.boneIndex);
+        float[] frames = rotateTimeline.frames;
+        if (time < frames[0]) {
+            if (pose == MixPose.P_setup) bone.rotation = bone.data.rotation;
+            return;
+        }
+
+        float r2;
+        if (time >= frames[frames.length - ENTRIES])
+            r2 = bone.data.rotation + frames[frames.length + PREV_ROTATION];
+        else {
+
+            int frame = Animation.binarySearch(frames, time, ENTRIES);
+            float prevRotation = frames[frame + PREV_ROTATION];
+            float frameTime = frames[frame];
+            float percent = rotateTimeline.getCurvePercent((frame >> 1) - 1,
+                    1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+            r2 = frames[frame + ROTATION] - prevRotation;
+            r2 -= (16384 - (int) (16384.499999999996 - r2 / 360)) * 360;
+            r2 = prevRotation + r2 * percent + bone.data.rotation;
+            r2 -= (16384 - (int) (16384.499999999996 - r2 / 360)) * 360;
+        }
+
+        float r1 = pose == MixPose.P_setup ? bone.data.rotation : bone.rotation;
+        float total, diff = r2 - r1;
+        if (diff == 0)
+            total = timelinesRotation[i];
+        else {
+            diff -= (16384 - (int) (16384.499999999996 - diff / 360)) * 360;
+            float lastTotal, lastDiff;
+            if (firstFrame) {
+                lastTotal = 0;
+                lastDiff = diff;
+            } else {
+                lastTotal = timelinesRotation[i];
+                lastDiff = timelinesRotation[i + 1];
+            }
+            boolean current = diff > 0, dir = lastTotal >= 0;
+
+            if (Math.signum(lastDiff) != Math.signum(diff) && Math.abs(lastDiff) <= 90) {
+
                 if (Math.abs(lastTotal) > 180) lastTotal += 360 * Math.signum(lastTotal);
                 dir = current;
             }
@@ -495,11 +672,15 @@ public class AnimationState {
                 if (duration != 0) {
                     if (last.loop)
                         delay += duration * (1 + (int) (last.trackTime / duration));
-                    else
-                        delay += Math.max(duration, last.trackTime);
+                    else switch (RuntimesLoader.spineVersion.get()) {
+                        case 38, 37 -> delay += Math.max(duration, last.trackTime);
+                        case 36 -> delay += duration;
+                    }
                     delay -= data.getMix(last.animation, animation);
-                } else
-                    delay = last.trackTime;
+                } else switch (RuntimesLoader.spineVersion.get()) {
+                    case 38, 37 -> delay = last.trackTime;
+                    case 36 -> delay = 0;
+                }
             }
         }
         entry.delay = delay;
@@ -577,15 +758,26 @@ public class AnimationState {
     void animationsChanged() {
         animationsChanged = false;
         propertyIDs.clear(2048);
-        for (int i = 0, n = tracks.size; i < n; i++) {
-            TrackEntry entry = tracks.get(i);
-            if (entry == null) continue;
-            while (entry.mixingFrom != null)
-                entry = entry.mixingFrom;
-            do {
-                if (entry.mixingTo == null || entry.mixBlend != MixBlend.add) setTimelineModes(entry);
-                entry = entry.mixingTo;
-            } while (entry != null);
+
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {
+                for (int i = 0, n = tracks.size; i < n; i++) {
+                    TrackEntry entry = tracks.get(i);
+                    if (entry == null) continue;
+                    while (entry.mixingFrom != null)
+                        entry = entry.mixingFrom;
+                    do {
+                        if (entry.mixingTo == null || entry.mixBlend != MixBlend.add) setTimelineModes(entry);
+                        entry = entry.mixingTo;
+                    } while (entry != null);
+                }
+            }
+            case 36 -> {
+                for (int i = 0, n = tracks.size; i < n; i++) {
+                    TrackEntry entry = tracks.get(i);
+                    if (entry != null) entry.setTimelineData(null, mixingTo, propertyIDs);
+                }
+            }
         }
     }
 
@@ -740,8 +932,8 @@ public class AnimationState {
     }
 
     static public class TrackEntry implements Poolable {
-        final IntArray timelineMode = new IntArray();
-        final Array<TrackEntry> timelineHoldMix = new Array<>();
+        final IntArray timelineMode = new IntArray(), timelineData = new IntArray(); // Spine36
+        final Array<TrackEntry> timelineHoldMix = new Array<>(), timelineDipMix = new Array<>(); // Spine36
         final FloatArray timelinesRotation = new FloatArray();
         Animation animation;
         TrackEntry next, mixingFrom, mixingTo;
@@ -760,11 +952,56 @@ public class AnimationState {
             mixingTo = null;
             animation = null;
             listener = null;
+            timelineData.clear();
+            timelineDipMix.clear();
             timelineMode.clear();
             timelineHoldMix.clear();
             timelinesRotation.clear();
         }
 
+        TrackEntry setTimelineData(TrackEntry to, Array<TrackEntry> mixingToArray, IntSet propertyIDs) { // Spine36
+            if (to != null) mixingToArray.add(to);
+            TrackEntry lastEntry = mixingFrom != null ? mixingFrom.setTimelineData(this, mixingToArray, propertyIDs) : this;
+            if (to != null) mixingToArray.pop();
+
+            Object[] mixingTo = mixingToArray.items;
+            int mixingToLast = mixingToArray.size - 1;
+            Object[] timelines = animation.timelines.items;
+            int timelinesCount = animation.timelines.size;
+            int[] timelineData = this.timelineData.setSize(timelinesCount);
+            timelineDipMix.clear();
+            Object[] timelineDipMix = this.timelineDipMix.setSize(timelinesCount);
+            outer:
+            for (int i = 0; i < timelinesCount; i++) {
+                int id = ((Timeline) timelines[i]).getPropertyId();
+                if (!propertyIDs.add(id))
+                    timelineData[i] = SUBSEQUENT;
+                else if (to == null || !to.hasTimeline(id))
+                    timelineData[i] = FIRST;
+                else {
+                    for (int ii = mixingToLast; ii >= 0; ii--) {
+                        TrackEntry entry = (TrackEntry) mixingTo[ii];
+                        if (!entry.hasTimeline(id)) {
+                            if (entry.mixDuration > 0) {
+                                timelineData[i] = DIP_MIX;
+                                timelineDipMix[i] = entry;
+                                continue outer;
+                            }
+                            break;
+                        }
+                    }
+                    timelineData[i] = DIP;
+                }
+            }
+            return lastEntry;
+        }
+
+        private boolean hasTimeline(int id) {
+            Object[] timelines = animation.timelines.items;
+            for (int i = 0, n = animation.timelines.size; i < n; i++)
+                if (((Timeline) timelines[i]).getPropertyId() == id) return true;
+            return false;
+        }
         public int getTrackIndex() {
             return trackIndex;
         }
