@@ -1,10 +1,6 @@
 package com.esotericsoftware.spine36;
 
-/**
- * Stores the setup pose values for an {@link Event}.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-events">Events</a> in the Spine User Guide.
- */
+
 public class EventData {
     final String name;
     int intValue;
@@ -40,9 +36,7 @@ public class EventData {
         this.stringValue = stringValue;
     }
 
-    /**
-     * The name of the event, which is unique within the skeleton.
-     */
+    
     public String getName() {
         return name;
     }
