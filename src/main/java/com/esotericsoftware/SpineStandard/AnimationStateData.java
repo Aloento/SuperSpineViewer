@@ -12,10 +12,10 @@ public class AnimationStateData {
     public AnimationStateData(SkeletonData skeletonData) {
         if (skeletonData == null) throw new IllegalArgumentException("skeletonData cannot be null.");
         this.skeletonData = skeletonData;
-        if (RuntimesLoader.spineVersion.get() == 38)
-            animationToMixTime = new ObjectFloatMap<>(51, 0.8f);
-        else if (RuntimesLoader.spineVersion.get() == 37)
-            animationToMixTime = new ObjectFloatMap<>();
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38 -> animationToMixTime = new ObjectFloatMap<>(51, 0.8f);
+            case 37, 36 -> animationToMixTime = new ObjectFloatMap<>();
+        }
     }
 
     public SkeletonData getSkeletonData() {
