@@ -34,81 +34,111 @@ public class MeshAttachment extends VertexAttachment {
     }
 
     public void updateUVs() {
-        float[] regionUVs = this.regionUVs;
-        if (this.uvs == null || this.uvs.length != regionUVs.length) this.uvs = new float[regionUVs.length];
-        float[] uvs = this.uvs;
-        float u = region.getU(), v = region.getV(), width, height;
-        int n = uvs.length;
-        if (region instanceof AtlasRegion) {
-            AtlasRegion region = (AtlasRegion) this.region;
-            float textureWidth = region.getTexture().getWidth(), textureHeight = region.getTexture().getHeight();
-            if (RuntimesLoader.spineVersion.get() == 38) {
-                switch (region.degrees) {
-                    case 90 -> {
-                        u -= (region.originalHeight - region.offsetY - region.packedWidth) / textureWidth;
-                        v -= (region.originalWidth - region.offsetX - region.packedHeight) / textureHeight;
-                        width = region.originalHeight / textureWidth;
-                        height = region.originalWidth / textureHeight;
-                        for (int i = 0; i < n; i += 2) {
-                            uvs[i] = u + regionUVs[i + 1] * width;
-                            uvs[i + 1] = v + (1 - regionUVs[i]) * height;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {
+                float[] regionUVs = this.regionUVs;
+                if (this.uvs == null || this.uvs.length != regionUVs.length) this.uvs = new float[regionUVs.length];
+                float[] uvs = this.uvs;
+                float u = region.getU(), v = region.getV(), width, height;
+                int n = uvs.length;
+                if (region instanceof AtlasRegion) {
+                    AtlasRegion region = (AtlasRegion) this.region;
+                    float textureWidth = region.getTexture().getWidth(), textureHeight = region.getTexture().getHeight();
+                    if (RuntimesLoader.spineVersion.get() == 38) {
+                        switch (region.degrees) {
+                            case 90 -> {
+                                u -= (region.originalHeight - region.offsetY - region.packedWidth) / textureWidth;
+                                v -= (region.originalWidth - region.offsetX - region.packedHeight) / textureHeight;
+                                width = region.originalHeight / textureWidth;
+                                height = region.originalWidth / textureHeight;
+                                for (int i = 0; i < n; i += 2) {
+                                    uvs[i] = u + regionUVs[i + 1] * width;
+                                    uvs[i + 1] = v + (1 - regionUVs[i]) * height;
+                                }
+                                return;
+                            }
+                            case 180 -> {
+                                u -= (region.originalWidth - region.offsetX - region.packedWidth) / textureWidth;
+                                v -= region.offsetY / textureHeight;
+                                width = region.originalWidth / textureWidth;
+                                height = region.originalHeight / textureHeight;
+                                for (int i = 0; i < n; i += 2) {
+                                    uvs[i] = u + (1 - regionUVs[i]) * width;
+                                    uvs[i + 1] = v + (1 - regionUVs[i + 1]) * height;
+                                }
+                                return;
+                            }
+                            case 270 -> {
+                                u -= region.offsetY / textureWidth;
+                                v -= region.offsetX / textureHeight;
+                                width = region.originalHeight / textureWidth;
+                                height = region.originalWidth / textureHeight;
+                                for (int i = 0; i < n; i += 2) {
+                                    uvs[i] = u + (1 - regionUVs[i + 1]) * width;
+                                    uvs[i + 1] = v + regionUVs[i] * height;
+                                }
+                                return;
+                            }
                         }
-                        return;
-                    }
-                    case 180 -> {
-                        u -= (region.originalWidth - region.offsetX - region.packedWidth) / textureWidth;
-                        v -= region.offsetY / textureHeight;
-                        width = region.originalWidth / textureWidth;
-                        height = region.originalHeight / textureHeight;
-                        for (int i = 0; i < n; i += 2) {
-                            uvs[i] = u + (1 - regionUVs[i]) * width;
-                            uvs[i + 1] = v + (1 - regionUVs[i + 1]) * height;
+                        u -= region.offsetX / textureWidth;
+                        v -= (region.originalHeight - region.offsetY - region.packedHeight) / textureHeight;
+                    } else if (RuntimesLoader.spineVersion.get() == 37) {
+                        if (region.rotate) {
+                            u = region.getU() - (region.originalHeight - region.offsetY - region.packedWidth) / textureWidth;
+                            v = region.getV() - (region.originalWidth - region.offsetX - region.packedHeight) / textureHeight;
+                            width = region.originalHeight / textureWidth;
+                            height = region.originalWidth / textureHeight;
+                            for (int i = 0; i < n; i += 2) {
+                                uvs[i] = u + regionUVs[i + 1] * width;
+                                uvs[i + 1] = v + height - regionUVs[i] * height;
+                            }
+                            return;
                         }
-                        return;
+                        u = region.getU() - region.offsetX / textureWidth;
+                        v = region.getV() - (region.originalHeight - region.offsetY - region.packedHeight) / textureHeight;
                     }
-                    case 270 -> {
-                        u -= region.offsetY / textureWidth;
-                        v -= region.offsetX / textureHeight;
-                        width = region.originalHeight / textureWidth;
-                        height = region.originalWidth / textureHeight;
-                        for (int i = 0; i < n; i += 2) {
-                            uvs[i] = u + (1 - regionUVs[i + 1]) * width;
-                            uvs[i + 1] = v + regionUVs[i] * height;
-                        }
-                        return;
-                    }
+                    width = region.originalWidth / textureWidth;
+                    height = region.originalHeight / textureHeight;
+                } else if (region == null) {
+                    u = v = 0;
+                    width = height = 1;
+                } else {
+                    u = region.getU();
+                    v = region.getV();
+                    width = region.getU2() - u;
+                    height = region.getV2() - v;
                 }
-                u -= region.offsetX / textureWidth;
-                v -= (region.originalHeight - region.offsetY - region.packedHeight) / textureHeight;
-            } else if (RuntimesLoader.spineVersion.get() == 37) {
-                if (region.rotate) {
-                    u = region.getU() - (region.originalHeight - region.offsetY - region.packedWidth) / textureWidth;
-                    v = region.getV() - (region.originalWidth - region.offsetX - region.packedHeight) / textureHeight;
-                    width = region.originalHeight / textureWidth;
-                    height = region.originalWidth / textureHeight;
-                    for (int i = 0; i < n; i += 2) {
+                for (int i = 0; i < n; i += 2) {
+                    uvs[i] = u + regionUVs[i] * width;
+                    uvs[i + 1] = v + regionUVs[i + 1] * height;
+                }
+            }
+            case 36 -> {
+                float u, v, width, height;
+                if (region == null) {
+                    u = v = 0;
+                    width = height = 1;
+                } else {
+                    u = region.getU();
+                    v = region.getV();
+                    width = region.getU2() - u;
+                    height = region.getV2() - v;
+                }
+                float[] regionUVs = this.regionUVs;
+                if (this.uvs == null || this.uvs.length != regionUVs.length) this.uvs = new float[regionUVs.length];
+                float[] uvs = this.uvs;
+                if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
+                    for (int i = 0, n = uvs.length; i < n; i += 2) {
                         uvs[i] = u + regionUVs[i + 1] * width;
                         uvs[i + 1] = v + height - regionUVs[i] * height;
                     }
-                    return;
+                } else {
+                    for (int i = 0, n = uvs.length; i < n; i += 2) {
+                        uvs[i] = u + regionUVs[i] * width;
+                        uvs[i + 1] = v + regionUVs[i + 1] * height;
+                    }
                 }
-                u = region.getU() - region.offsetX / textureWidth;
-                v = region.getV() - (region.originalHeight - region.offsetY - region.packedHeight) / textureHeight;
             }
-            width = region.originalWidth / textureWidth;
-            height = region.originalHeight / textureHeight;
-        } else if (region == null) {
-            u = v = 0;
-            width = height = 1;
-        } else {
-            u = region.getU();
-            v = region.getV();
-            width = region.getU2() - u;
-            height = region.getV2() - v;
-        }
-        for (int i = 0; i < n; i += 2) {
-            uvs[i] = u + regionUVs[i] * width;
-            uvs[i + 1] = v + regionUVs[i + 1] * height;
         }
     }
 
