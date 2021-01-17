@@ -33,16 +33,16 @@ public class TwoColorPolygonBatch {
     }
 
     public TwoColorPolygonBatch(int maxVertices, int maxTriangles) {
-        // 32767 is max vertex index.
+
         if (maxVertices > 32767)
             throw new IllegalArgumentException("Can't have more than 32767 vertices per batch: " + maxTriangles);
 
         VertexDataType vertexDataType = VertexDataType.VertexArray;
         if (Gdx.gl30 != null) vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
-        mesh = new Mesh(vertexDataType, false, maxVertices, maxTriangles * 3, //
-                new VertexAttribute(Usage.Position, 2, "a_position"), //
-                new VertexAttribute(Usage.ColorPacked, 4, "a_light"), //
-                new VertexAttribute(Usage.ColorPacked, 4, "a_dark"), // Dark alpha is unused, but colors are packed as 4 byte floats.
+        mesh = new Mesh(vertexDataType, false, maxVertices, maxTriangles * 3,
+                new VertexAttribute(Usage.Position, 2, "a_position"),
+                new VertexAttribute(Usage.ColorPacked, 4, "a_light"),
+                new VertexAttribute(Usage.ColorPacked, 4, "a_dark"),
                 new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoord0"));
 
         vertices = new float[maxVertices * 6];
@@ -120,9 +120,7 @@ public class TwoColorPolygonBatch {
         return projectionMatrix;
     }
 
-    /**
-     * Flushes the batch.
-     */
+    
     public void setProjectionMatrix(Matrix4 projection) {
         if (drawing) flush();
         projectionMatrix.set(projection);
@@ -133,19 +131,14 @@ public class TwoColorPolygonBatch {
         return transformMatrix;
     }
 
-    /**
-     * Flushes the batch.
-     */
+    
     public void setTransformMatrix(Matrix4 transform) {
         if (drawing) flush();
         transformMatrix.set(transform);
         if (drawing) setupMatrices();
     }
 
-    /**
-     * Specifies whether the texture colors have premultiplied alpha. Required for correct dark color tinting. Does not change the
-     * blending function. Flushes the batch if the setting was changed.
-     */
+    
     public void setPremultipliedAlpha(boolean premultipliedAlpha) {
         if (this.premultipliedAlpha == premultipliedAlpha) return;
         if (drawing) flush();
@@ -160,9 +153,7 @@ public class TwoColorPolygonBatch {
         shader.setUniformi("u_texture", 0);
     }
 
-    /**
-     * Flushes the batch if the shader was changed.
-     */
+    
     public void setShader(ShaderProgram newShader) {
         if (shader == newShader) return;
         if (drawing) {
@@ -176,16 +167,12 @@ public class TwoColorPolygonBatch {
         }
     }
 
-    /**
-     * Flushes the batch if the blend function was changed.
-     */
+    
     public void setBlendFunction(int srcFunc, int dstFunc) {
         setBlendFunctionSeparate(srcFunc, dstFunc, srcFunc, dstFunc);
     }
 
-    /**
-     * Flushes the batch if the blend function was changed.
-     */
+    
     public void setBlendFunctionSeparate(int srcFuncColor, int dstFuncColor, int srcFuncAlpha, int dstFuncAlpha) {
         if (blendSrcFunc == srcFuncColor && blendDstFunc == dstFuncColor && blendSrcFuncAlpha == srcFuncAlpha
                 && blendDstFuncAlpha == dstFuncAlpha) return;
@@ -197,22 +184,6 @@ public class TwoColorPolygonBatch {
     }
 
     private ShaderProgram createDefaultShader() {
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
         String vertexShader = """
                 attribute vec4 a_position;
                 attribute vec4 a_light;
@@ -225,29 +196,14 @@ public class TwoColorPolygonBatch {
 
                 void main()
                 {
-                   v_light = a_light;
-                   v_light.a = v_light.a * (255.0/254.0);
-                   v_dark = a_dark;
-                   v_texCoords = a_texCoord0;
-                   gl_Position =  u_projTrans * a_position;
+                  v_light = a_light;
+                  v_light.a = v_light.a * (255.0/254.0);
+                  v_dark = a_dark;
+                  v_texCoords = a_texCoord0;
+                  gl_Position = u_projTrans * a_position;
                 }
                 """;
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
+
         String fragmentShader = """
                 #ifdef GL_ES
                 #define LOWP lowp

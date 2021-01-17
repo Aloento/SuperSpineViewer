@@ -1232,7 +1232,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     @Override
     public void flush() {
         if (vertexIndex == 0) return;
-
         totalRenderCalls++;
 
         lastTexture.bind();

@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineStandard.utils;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
@@ -35,7 +36,10 @@ public class SkeletonActorPool extends Pool<SkeletonActor> {
 
             protected void reset(Skeleton skeleton) {
                 skeleton.setColor(Color.WHITE);
-                skeleton.setScale(1, 1);
+                switch (RuntimesLoader.spineVersion.get()) {
+                    case 38, 37 -> skeleton.setScale(1, 1);
+                    case 36 -> skeleton.setFlip(false, false);
+                }
                 skeleton.setSkin((Skin) null);
                 skeleton.setSkin(SkeletonActorPool.this.skeletonData.getDefaultSkin());
                 skeleton.setToSetupPose();

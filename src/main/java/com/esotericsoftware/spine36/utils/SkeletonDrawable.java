@@ -6,18 +6,13 @@ import com.esotericsoftware.spine36.AnimationState;
 import com.esotericsoftware.spine36.Skeleton;
 import com.esotericsoftware.spine36.SkeletonRenderer;
 
-/**
- * A scene2d drawable that draws a skeleton. The animation state and skeleton must be updated each frame, or
- * {@link #update(float)} called each frame.
- */
+
 public class SkeletonDrawable extends BaseDrawable {
     AnimationState state;
     private SkeletonRenderer renderer;
     private Skeleton skeleton;
 
-    /**
-     * Creates an uninitialized SkeletonDrawable. The renderer, skeleton, and animation state must be set before use.
-     */
+    
     public SkeletonDrawable() {
     }
 
