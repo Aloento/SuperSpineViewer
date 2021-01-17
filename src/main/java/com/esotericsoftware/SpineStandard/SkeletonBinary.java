@@ -261,9 +261,9 @@ public class SkeletonBinary {
                     }
                 }) {
                     skeletonData.hash = input.readString();
-                    if (Objects.requireNonNull(skeletonData.hash).isEmpty()) skeletonData.hash = null;
+                    if (skeletonData.hash.isEmpty()) skeletonData.hash = null;
                     skeletonData.version = input.readString();
-                    if (Objects.requireNonNull(skeletonData.version).isEmpty()) skeletonData.version = null;
+                    if (skeletonData.version.isEmpty()) skeletonData.version = null;
                     skeletonData.width = input.readFloat();
                     skeletonData.height = input.readFloat();
 
@@ -271,10 +271,11 @@ public class SkeletonBinary {
                     if (nonessential) {
                         skeletonData.fps = input.readFloat();
                         skeletonData.imagesPath = input.readString();
-                        if (Objects.requireNonNull(skeletonData.imagesPath).isEmpty()) skeletonData.imagesPath = null;
+                        if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
+
                         if (RuntimesLoader.spineVersion.get() == 37) {
                             skeletonData.audioPath = input.readString();
-                            if (Objects.requireNonNull(skeletonData.audioPath).isEmpty()) skeletonData.audioPath = null;
+                            if (skeletonData.audioPath.isEmpty()) skeletonData.audioPath = null;
                         }
                     }
 
