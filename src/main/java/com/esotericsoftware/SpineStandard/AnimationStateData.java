@@ -4,8 +4,8 @@ import com.badlogic.gdx.utils.ObjectFloatMap;
 
 public class AnimationStateData {
     final SkeletonData skeletonData;
+    final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap<>();
     final Key tempKey = new Key();
-    final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap<>(51, 0.8f);
     float defaultMix;
 
     public AnimationStateData(SkeletonData skeletonData) {
