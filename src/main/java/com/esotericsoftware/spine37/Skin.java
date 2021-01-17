@@ -1,5 +1,6 @@
 package com.esotericsoftware.spine37;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
@@ -20,7 +21,6 @@ public class Skin {
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
         this.name = name;
     }
-
     
     public void addAttachment(int slotIndex, String name, Attachment attachment) {
         if (attachment == null) throw new IllegalArgumentException("attachment cannot be null.");
@@ -29,13 +29,11 @@ public class Skin {
         key.set(slotIndex, name);
         attachments.put(key, attachment);
     }
-
     
     public void addAttachments(Skin skin) {
         for (Entry<Key, Attachment> entry : skin.attachments.entries())
             addAttachment(entry.key.slotIndex, entry.key.name, entry.value);
     }
-
     
     public Attachment getAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
@@ -43,7 +41,6 @@ public class Skin {
         return attachments.get(lookup);
     }
 
-    
     public void removeAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
         Key key = keyPool.obtain();
@@ -82,7 +79,6 @@ public class Skin {
         return attachments.size;
     }
 
-    
     public String getName() {
         return name;
     }
@@ -91,7 +87,6 @@ public class Skin {
         return name;
     }
 
-    
     void attachAll(Skeleton skeleton, Skin oldSkin) {
         for (Entry<Key, Attachment> entry : oldSkin.attachments.entries()) {
             int slotIndex = entry.key.slotIndex;
@@ -112,7 +107,10 @@ public class Skin {
             if (name == null) throw new IllegalArgumentException("name cannot be null.");
             this.slotIndex = slotIndex;
             this.name = name;
-            hashCode = name.hashCode() + slotIndex * 37;
+            switch (RuntimesLoader.spineVersion.get()) {
+                case 38, 37 -> hashCode = name.hashCode() + slotIndex * 37;
+                case 36 -> hashCode = 31 * (31 + name.hashCode()) + slotIndex;
+            }
         }
 
         public int hashCode() {
