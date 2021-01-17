@@ -1,7 +1,5 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
-
 public class EventData {
     final String name;
     int intValue;
@@ -35,8 +33,7 @@ public class EventData {
     }
 
     public void setString(String stringValue) {
-        if (stringValue == null && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("stringValue cannot be null.");
+        if (stringValue == null) throw new IllegalArgumentException("stringValue cannot be null.");
         this.stringValue = stringValue;
     }
 
@@ -45,8 +42,7 @@ public class EventData {
     }
 
     public void setAudioPath(String audioPath) {
-        if (audioPath == null && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("audioPath cannot be null.");
+        if (audioPath == null) throw new IllegalArgumentException("audioPath cannot be null.");
         this.audioPath = audioPath;
     }
 

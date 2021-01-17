@@ -19,7 +19,8 @@ public class IkConstraint implements Constraint {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         this.data = data;
         mix = data.mix;
-        softness = data.softness;
+        if (RuntimesLoader.spineVersion.get() == 38)
+            softness = data.softness;
         bendDirection = data.bendDirection;
         compress = data.compress;
         stretch = data.stretch;
@@ -38,7 +39,8 @@ public class IkConstraint implements Constraint {
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.bones.get(constraint.target.data.index);
         mix = constraint.mix;
-        softness = constraint.softness;
+        if (RuntimesLoader.spineVersion.get() == 38)
+            softness = constraint.softness;
         bendDirection = constraint.bendDirection;
         compress = constraint.compress;
         stretch = constraint.stretch;
@@ -108,10 +110,9 @@ public class IkConstraint implements Constraint {
 
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float softness,
                              float alpha) {
-        if (RuntimesLoader.spineVersion.get() == 38) {
-            if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
-            if (child == null) throw new IllegalArgumentException("child cannot be null.");
-        }
+        if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
+        if (child == null) throw new IllegalArgumentException("child cannot be null.");
+
         if (alpha == 0) {
             child.updateWorldTransform();
             return;
@@ -153,18 +154,10 @@ public class IkConstraint implements Constraint {
         b = pp.b;
         c = pp.c;
         d = pp.d;
-        float id = 1 / (a * d - b * c), x = 0, y = 0;
-        float tx = 0, ty = 0, dd = 0;
-        if (RuntimesLoader.spineVersion.get() == 38) {
-            x = cwx - pp.worldX;
-            y = cwy - pp.worldY;
-        } else if (RuntimesLoader.spineVersion.get() == 37) {
-            x = targetX - pp.worldX;
-            y = targetY - pp.worldY;
-            tx = (x * d - y * b) * id - px;
-            ty = (y * a - x * c) * id - py;
-            dd = tx * tx + ty * ty;
-        }
+        float id = 1 / (a * d - b * c), x = targetX - pp.worldX, y = targetY - pp.worldY;
+        float tx = (x * d - y * b) * id - px, ty = (y * a - x * c) * id - py, dd = tx * tx + ty * ty;
+        x = cwx - pp.worldX;
+        y = cwy - pp.worldY;
         float dx = (x * d - y * b) * id - px, dy = (y * a - x * c) * id - py;
         float l1 = (float) Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1, a2;
         if (RuntimesLoader.spineVersion.get() == 38) {
@@ -173,11 +166,6 @@ public class IkConstraint implements Constraint {
                 child.updateWorldTransform(cx, cy, 0, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
                 return;
             }
-            x = targetX - pp.worldX;
-            y = targetY - pp.worldY;
-            tx = (x * d - y * b) * id - px;
-            ty = (y * a - x * c) * id - py;
-            dd = tx * tx + ty * ty;
             if (softness != 0) {
                 softness *= psx * (csx + 1) / 2;
                 float td = (float) Math.sqrt(dd), sd = td - l1 - l2 * psx + softness;
@@ -198,10 +186,9 @@ public class IkConstraint implements Constraint {
                 cos = -1;
             else if (cos > 1) {
                 cos = 1;
-                if (RuntimesLoader.spineVersion.get() == 38) {
-                    if (stretch) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
-                } else if (RuntimesLoader.spineVersion.get() == 37) {
-                    if (stretch && l1 + l2 > 0.0001f) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
+                switch (RuntimesLoader.spineVersion.get()) {
+                    case 38 -> {if (stretch) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;}
+                    case 37 -> {if (stretch && l1 + l2 > 0.0001f) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;}
                 }
             }
             a2 = (float) Math.acos(cos) * bendDir;
@@ -410,7 +397,7 @@ public class IkConstraint implements Constraint {
         child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
     }
 
-    public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float alpha) {
+    static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float alpha) {
         apply(parent, child, targetX, targetY, bendDir, stretch, 0f, alpha); // Spine37
     }
 
