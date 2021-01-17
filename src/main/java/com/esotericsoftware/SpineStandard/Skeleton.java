@@ -13,8 +13,6 @@ import com.esotericsoftware.SpineStandard.attachments.MeshAttachment;
 import com.esotericsoftware.SpineStandard.attachments.PathAttachment;
 import com.esotericsoftware.SpineStandard.attachments.RegionAttachment;
 
-import java.util.Objects;
-
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
 public class Skeleton {
@@ -31,6 +29,7 @@ public class Skeleton {
     Skin skin;
     float time;
     float scaleX = 1, scaleY = 1;
+    boolean flipX, flipY; // Spine36
     float x, y;
 
     public Skeleton(SkeletonData data) {
@@ -104,8 +103,16 @@ public class Skeleton {
         skin = skeleton.skin;
         color = new Color(skeleton.color);
         time = skeleton.time;
-        scaleX = skeleton.scaleX;
-        scaleY = skeleton.scaleY;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {
+                scaleX = skeleton.scaleX;
+                scaleY = skeleton.scaleY;
+            }
+            case 36 -> {
+                flipX = skeleton.flipX;
+                flipY = skeleton.flipY;
+            }
+        }
         updateCache();
     }
 
@@ -238,6 +245,12 @@ public class Skeleton {
         if (skin != null) sortPathConstraintAttachment(skin, slotIndex, slotBone);
         if (data.defaultSkin != null && data.defaultSkin != skin)
             sortPathConstraintAttachment(data.defaultSkin, slotIndex, slotBone);
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 36 -> {
+                for (int ii = 0, nn = data.skins.size; ii < nn; ii++)
+                    sortPathConstraintAttachment(data.skins.get(ii), slotIndex, slotBone);
+            }
+        }
         Attachment attachment = slot.attachment;
         if (attachment instanceof PathAttachment) sortPathConstraintAttachment(attachment, slotBone);
         Array<Bone> constrained = constraint.bones;
@@ -279,12 +292,16 @@ public class Skeleton {
     }
 
     private void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
-        if (RuntimesLoader.spineVersion.get() == 38) {
-            for (SkinEntry entry : skin.attachments.keys())
-                if (entry.getSlotIndex() == slotIndex) sortPathConstraintAttachment(entry.getAttachment(), slotBone);
-        } else if (RuntimesLoader.spineVersion.get() == 37) {
-            for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
-                if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38 -> {
+                for (SkinEntry entry : skin.attachments.keys())
+                    if (entry.getSlotIndex() == slotIndex)
+                        sortPathConstraintAttachment(entry.getAttachment(), slotBone);
+            }
+            case 37, 36 -> {
+                for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
+                    if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
+            }
         }
     }
 
@@ -340,8 +357,7 @@ public class Skeleton {
     }
 
     public void updateWorldTransform(Bone parent) {
-        if (parent == null && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("parent cannot be null.");
+        if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
         Array<Bone> updateCacheReset = this.updateCacheReset;
         for (int i = 0, n = updateCacheReset.size; i < n; i++) {
             Bone bone = updateCacheReset.get(i);
@@ -355,7 +371,7 @@ public class Skeleton {
             bone.appliedValid = true;
         }
         Bone rootBone = getRootBone();
-        float pa = Objects.requireNonNull(parent).a, pb = parent.b, pc = parent.c, pd = parent.d;
+        float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
         rootBone.worldX = pa * x + pb * y + parent.worldX;
         rootBone.worldY = pc * x + pd * y + parent.worldY;
         float rotationY = rootBone.rotation + 90 + rootBone.shearY;
@@ -363,10 +379,29 @@ public class Skeleton {
         float lb = cosDeg(rotationY) * rootBone.scaleY;
         float lc = sinDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
         float ld = sinDeg(rotationY) * rootBone.scaleY;
-        rootBone.a = (pa * la + pb * lc) * scaleX;
-        rootBone.b = (pa * lb + pb * ld) * scaleX;
-        rootBone.c = (pc * la + pd * lc) * scaleY;
-        rootBone.d = (pc * lb + pd * ld) * scaleY;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {
+                rootBone.a = (pa * la + pb * lc) * scaleX;
+                rootBone.b = (pa * lb + pb * ld) * scaleX;
+                rootBone.c = (pc * la + pd * lc) * scaleY;
+                rootBone.d = (pc * lb + pd * ld) * scaleY;
+            }
+            case 36 -> {
+                rootBone.a = pa * la + pb * lc;
+                rootBone.b = pa * lb + pb * ld;
+                rootBone.c = pc * la + pd * lc;
+                rootBone.d = pc * lb + pd * ld;
+
+                if (flipY) {
+                    rootBone.a = -rootBone.a;
+                    rootBone.b = -rootBone.b;
+                }
+                if (flipX) {
+                    rootBone.c = -rootBone.c;
+                    rootBone.d = -rootBone.d;
+                }
+            }
+        }
         Array<Updatable> updateCache = this.updateCache;
         for (int i = 0, n = updateCache.size; i < n; i++) {
             Updatable updatable = updateCache.get(i);
@@ -386,12 +421,16 @@ public class Skeleton {
         Array<IkConstraint> ikConstraints = this.ikConstraints;
         for (int i = 0, n = ikConstraints.size; i < n; i++) {
             IkConstraint constraint = ikConstraints.get(i);
-            constraint.mix = constraint.data.mix;
-            if (RuntimesLoader.spineVersion.get() == 38)
-                constraint.softness = constraint.data.softness;
             constraint.bendDirection = constraint.data.bendDirection;
-            constraint.compress = constraint.data.compress;
-            constraint.stretch = constraint.data.stretch;
+            constraint.mix = constraint.data.mix;
+            switch (RuntimesLoader.spineVersion.get()) {
+                case 38, 37 -> {
+                    if (RuntimesLoader.spineVersion.get() == 38)
+                        constraint.softness = constraint.data.softness;
+                    constraint.compress = constraint.data.compress;
+                    constraint.stretch = constraint.data.stretch;
+                }
+            }
         }
         Array<TransformConstraint> transformConstraints = this.transformConstraints;
         for (int i = 0, n = transformConstraints.size; i < n; i++) {
@@ -576,8 +615,7 @@ public class Skeleton {
     public void getBounds(Vector2 offset, Vector2 size, FloatArray temp) {
         if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
         if (size == null) throw new IllegalArgumentException("size cannot be null.");
-        if (temp == null && RuntimesLoader.spineVersion.get() == 38)
-            throw new IllegalArgumentException("temp cannot be null.");
+        if (temp == null) throw new IllegalArgumentException("temp cannot be null.");
         Array<Slot> drawOrder = this.drawOrder;
         float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
@@ -588,12 +626,12 @@ public class Skeleton {
             Attachment attachment = slot.attachment;
             if (attachment instanceof RegionAttachment) {
                 verticesLength = 8;
-                vertices = Objects.requireNonNull(temp).setSize(8);
+                vertices = temp.setSize(8);
                 ((RegionAttachment) attachment).computeWorldVertices(slot.getBone(), vertices, 0, 2);
             } else if (attachment instanceof MeshAttachment) {
                 MeshAttachment mesh = (MeshAttachment) attachment;
                 verticesLength = mesh.getWorldVerticesLength();
-                vertices = Objects.requireNonNull(temp).setSize(verticesLength);
+                vertices = temp.setSize(verticesLength);
                 mesh.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
             }
             if (vertices != null) {
@@ -638,6 +676,28 @@ public class Skeleton {
     public void setScale(float scaleX, float scaleY) {
         this.scaleX = scaleX;
         this.scaleY = scaleY;
+    }
+
+    public boolean getFlipX() {
+        return flipX;
+    }
+
+    public void setFlipX(boolean flipX) {
+        this.flipX = flipX;
+    }
+
+
+    public boolean getFlipY() {
+        return flipY;
+    }
+
+    public void setFlipY(boolean flipY) {
+        this.flipY = flipY;
+    }
+
+    public void setFlip(boolean flipX, boolean flipY) {
+        this.flipX = flipX;
+        this.flipY = flipY;
     }
 
     public float getX() {
