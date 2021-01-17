@@ -26,7 +26,7 @@ public class PathConstraint implements Constraint {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         this.data = data;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findSlot(data.target.name);
@@ -41,7 +41,7 @@ public class PathConstraint implements Constraint {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.slots.get(constraint.target.data.index);

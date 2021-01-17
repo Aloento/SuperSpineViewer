@@ -2,10 +2,9 @@ package com.esotericsoftware.spine37;
 
 import com.badlogic.gdx.utils.Array;
 
-
 public class IkConstraintData {
     final String name;
-    final Array<BoneData> bones = new Array();
+    final Array<BoneData> bones = new Array<>();
     int order;
     BoneData target;
     int bendDirection = 1;
