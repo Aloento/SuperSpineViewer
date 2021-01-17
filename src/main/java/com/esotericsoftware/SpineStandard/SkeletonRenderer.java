@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -47,7 +48,7 @@ public class SkeletonRenderer {
         Array<Slot> drawOrder = skeleton.drawOrder;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
-            if (!slot.bone.active) {
+            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) {
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -102,6 +103,10 @@ public class SkeletonRenderer {
         Vector2 tempPosition = this.temp, tempUV = this.temp2;
         Color tempLight1 = this.temp3, tempDark1 = this.temp4;
         Color tempLight2 = this.temp5, tempDark2 = this.temp6;
+
+        Vector2 tempPos = this.temp, tempUv = this.temp2;
+        Color tempLight = this.temp3, tempDark = this.temp4;
+        Color temp5 = this.temp5, temp6 = this.temp6;
         VertexEffect vertexEffect = this.vertexEffect;
         if (vertexEffect != null) vertexEffect.begin(skeleton);
         boolean premultipliedAlpha = this.premultipliedAlpha;
@@ -114,7 +119,7 @@ public class SkeletonRenderer {
         Array<Slot> drawOrder = skeleton.drawOrder;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
-            if (!slot.bone.active) {
+            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) {
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -174,21 +179,40 @@ public class SkeletonRenderer {
                             clippedTriangles.size);
                 } else {
                     if (vertexEffect != null) {
-                        tempLight1.set(NumberUtils.floatToIntColor(c));
-                        tempDark1.set(0);
-                        for (int v = 0, u = 0; v < verticesLength; v += 5, u += 2) {
-                            tempPosition.x = vertices[v];
-                            tempPosition.y = vertices[v + 1];
-                            tempLight2.set(tempLight1);
-                            tempDark2.set(tempDark1);
-                            tempUV.x = uvs[u];
-                            tempUV.y = uvs[u + 1];
-                            vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
-                            vertices[v] = tempPosition.x;
-                            vertices[v + 1] = tempPosition.y;
-                            vertices[v + 2] = tempLight2.toFloatBits();
-                            vertices[v + 3] = tempUV.x;
-                            vertices[v + 4] = tempUV.y;
+                        if(RuntimesLoader.spineVersion.get() == 38) {
+                            tempLight1.set(NumberUtils.floatToIntColor(c));
+                            tempDark1.set(0);
+                            for (int v = 0, u = 0; v < verticesLength; v += 5, u += 2) {
+                                tempPosition.x = vertices[v];
+                                tempPosition.y = vertices[v + 1];
+                                tempLight2.set(tempLight1);
+                                tempDark2.set(tempDark1);
+                                tempUV.x = uvs[u];
+                                tempUV.y = uvs[u + 1];
+                                vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
+                                vertices[v] = tempPosition.x;
+                                vertices[v + 1] = tempPosition.y;
+                                vertices[v + 2] = tempLight2.toFloatBits();
+                                vertices[v + 3] = tempUV.x;
+                                vertices[v + 4] = tempUV.y;
+                            }
+                        } else if (RuntimesLoader.spineVersion.get() == 37) {
+                            temp5.set(NumberUtils.floatToIntColor(c));
+                            temp6.set(0);
+                            for (int v = 0, u = 0; v < verticesLength; v += 5, u += 2) {
+                                tempPos.x = vertices[v];
+                                tempPos.y = vertices[v + 1];
+                                tempLight.set(temp5);
+                                tempDark.set(temp6);
+                                tempUv.x = uvs[u];
+                                tempUv.y = uvs[u + 1];
+                                vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
+                                vertices[v] = tempPos.x;
+                                vertices[v + 1] = tempPos.y;
+                                vertices[v + 2] = tempLight.toFloatBits();
+                                vertices[v + 3] = tempUv.x;
+                                vertices[v + 4] = tempUv.y;
+                            }
                         }
                     } else {
                         for (int v = 2, u = 0; v < verticesLength; v += 5, u += 2) {
@@ -213,6 +237,11 @@ public class SkeletonRenderer {
         Vector2 tempPosition = this.temp, tempUV = this.temp2;
         Color tempLight1 = this.temp3, tempDark1 = this.temp4;
         Color tempLight2 = this.temp5, tempDark2 = this.temp6;
+
+        Vector2 tempPos = this.temp, tempUv = this.temp2;
+        Color tempLight = this.temp3, tempDark = this.temp4;
+        Color temp5 = this.temp5, temp6 = this.temp6;
+
         VertexEffect vertexEffect = this.vertexEffect;
         if (vertexEffect != null) vertexEffect.begin(skeleton);
         boolean premultipliedAlpha = this.premultipliedAlpha;
@@ -226,7 +255,7 @@ public class SkeletonRenderer {
         Array<Slot> drawOrder = skeleton.drawOrder;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
-            if (!slot.bone.active) {
+            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) {
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -295,22 +324,42 @@ public class SkeletonRenderer {
                             clippedTriangles.size);
                 } else {
                     if (vertexEffect != null) {
-                        tempLight1.set(NumberUtils.floatToIntColor(light));
-                        tempDark1.set(NumberUtils.floatToIntColor(dark));
-                        for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
-                            tempPosition.x = vertices[v];
-                            tempPosition.y = vertices[v + 1];
-                            tempLight2.set(tempLight1);
-                            tempDark2.set(tempDark1);
-                            tempUV.x = uvs[u];
-                            tempUV.y = uvs[u + 1];
-                            vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
-                            vertices[v] = tempPosition.x;
-                            vertices[v + 1] = tempPosition.y;
-                            vertices[v + 2] = tempLight2.toFloatBits();
-                            vertices[v + 3] = tempDark2.toFloatBits();
-                            vertices[v + 4] = tempUV.x;
-                            vertices[v + 5] = tempUV.y;
+                        if(RuntimesLoader.spineVersion.get() == 38) {
+                            tempLight1.set(NumberUtils.floatToIntColor(light));
+                            tempDark1.set(NumberUtils.floatToIntColor(dark));
+                            for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
+                                tempPosition.x = vertices[v];
+                                tempPosition.y = vertices[v + 1];
+                                tempLight2.set(tempLight1);
+                                tempDark2.set(tempDark1);
+                                tempUV.x = uvs[u];
+                                tempUV.y = uvs[u + 1];
+                                vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
+                                vertices[v] = tempPosition.x;
+                                vertices[v + 1] = tempPosition.y;
+                                vertices[v + 2] = tempLight2.toFloatBits();
+                                vertices[v + 3] = tempDark2.toFloatBits();
+                                vertices[v + 4] = tempUV.x;
+                                vertices[v + 5] = tempUV.y;
+                            }
+                        } else if (RuntimesLoader.spineVersion.get() == 37) {
+                            temp5.set(NumberUtils.floatToIntColor(light));
+                            temp6.set(NumberUtils.floatToIntColor(dark));
+                            for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
+                                tempPos.x = vertices[v];
+                                tempPos.y = vertices[v + 1];
+                                tempLight.set(temp5);
+                                tempDark.set(temp6);
+                                tempUv.x = uvs[u];
+                                tempUv.y = uvs[u + 1];
+                                vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
+                                vertices[v] = tempPos.x;
+                                vertices[v + 1] = tempPos.y;
+                                vertices[v + 2] = tempLight.toFloatBits();
+                                vertices[v + 3] = tempDark.toFloatBits();
+                                vertices[v + 4] = tempUv.x;
+                                vertices[v + 5] = tempUv.y;
+                            }
                         }
                     } else {
                         for (int v = 2, u = 0; v < verticesLength; v += 6, u += 2) {
@@ -330,42 +379,80 @@ public class SkeletonRenderer {
     }
 
     private void applyVertexEffect(float[] vertices, int verticesLength, int stride, float light, float dark) {
+        Vector2 tempPos = this.temp, tempUv = this.temp2;
+        Color tempLight = this.temp3, tempDark = this.temp4;
+        Color temp5 = this.temp5, temp6 = this.temp6;
+        temp5.set(NumberUtils.floatToIntColor(light));
+        temp6.set(NumberUtils.floatToIntColor(dark));
+
         Vector2 tempPosition = this.temp, tempUV = this.temp2;
         Color tempLight1 = this.temp3, tempDark1 = this.temp4;
         Color tempLight2 = this.temp5, tempDark2 = this.temp6;
-        VertexEffect vertexEffect = this.vertexEffect;
         tempLight1.set(NumberUtils.floatToIntColor(light));
         tempDark1.set(NumberUtils.floatToIntColor(dark));
+        VertexEffect vertexEffect = this.vertexEffect;
         if (stride == 5) {
             for (int v = 0; v < verticesLength; v += stride) {
-                tempPosition.x = vertices[v];
-                tempPosition.y = vertices[v + 1];
-                tempUV.x = vertices[v + 3];
-                tempUV.y = vertices[v + 4];
-                tempLight2.set(tempLight1);
-                tempDark2.set(tempDark1);
-                vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
-                vertices[v] = tempPosition.x;
-                vertices[v + 1] = tempPosition.y;
-                vertices[v + 2] = tempLight2.toFloatBits();
-                vertices[v + 3] = tempUV.x;
-                vertices[v + 4] = tempUV.y;
+
+                if(RuntimesLoader.spineVersion.get() == 38) {
+                    tempPosition.x = vertices[v];
+                    tempPosition.y = vertices[v + 1];
+                    tempUV.x = vertices[v + 3];
+                    tempUV.y = vertices[v + 4];
+                    tempLight2.set(tempLight1);
+                    tempDark2.set(tempDark1);
+                    vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
+                    vertices[v] = tempPosition.x;
+                    vertices[v + 1] = tempPosition.y;
+                    vertices[v + 2] = tempLight2.toFloatBits();
+                    vertices[v + 3] = tempUV.x;
+                    vertices[v + 4] = tempUV.y;
+                } else if (RuntimesLoader.spineVersion.get() == 37) {
+                    tempPos.x = vertices[v];
+                    tempPos.y = vertices[v + 1];
+                    tempUv.x = vertices[v + 3];
+                    tempUv.y = vertices[v + 4];
+                    tempLight.set(temp5);
+                    tempDark.set(temp6);
+                    vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
+                    vertices[v] = tempPos.x;
+                    vertices[v + 1] = tempPos.y;
+                    vertices[v + 2] = tempLight.toFloatBits();
+                    vertices[v + 3] = tempUv.x;
+                    vertices[v + 4] = tempUv.y;
+                }
             }
         } else {
             for (int v = 0; v < verticesLength; v += stride) {
-                tempPosition.x = vertices[v];
-                tempPosition.y = vertices[v + 1];
-                tempUV.x = vertices[v + 4];
-                tempUV.y = vertices[v + 5];
-                tempLight2.set(tempLight1);
-                tempDark2.set(tempDark1);
-                vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
-                vertices[v] = tempPosition.x;
-                vertices[v + 1] = tempPosition.y;
-                vertices[v + 2] = tempLight2.toFloatBits();
-                vertices[v + 3] = tempDark2.toFloatBits();
-                vertices[v + 4] = tempUV.x;
-                vertices[v + 5] = tempUV.y;
+                if(RuntimesLoader.spineVersion.get() == 38) {
+                    tempPosition.x = vertices[v];
+                    tempPosition.y = vertices[v + 1];
+                    tempUV.x = vertices[v + 4];
+                    tempUV.y = vertices[v + 5];
+                    tempLight2.set(tempLight1);
+                    tempDark2.set(tempDark1);
+                    vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
+                    vertices[v] = tempPosition.x;
+                    vertices[v + 1] = tempPosition.y;
+                    vertices[v + 2] = tempLight2.toFloatBits();
+                    vertices[v + 3] = tempDark2.toFloatBits();
+                    vertices[v + 4] = tempUV.x;
+                    vertices[v + 5] = tempUV.y;
+                } else if (RuntimesLoader.spineVersion.get() == 37) {
+                    tempPos.x = vertices[v];
+                    tempPos.y = vertices[v + 1];
+                    tempUv.x = vertices[v + 4];
+                    tempUv.y = vertices[v + 5];
+                    tempLight.set(temp5);
+                    tempDark.set(temp6);
+                    vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
+                    vertices[v] = tempPos.x;
+                    vertices[v + 1] = tempPos.y;
+                    vertices[v + 2] = tempLight.toFloatBits();
+                    vertices[v + 3] = tempDark.toFloatBits();
+                    vertices[v + 4] = tempUv.x;
+                    vertices[v + 5] = tempUv.y;
+                }
             }
         }
     }

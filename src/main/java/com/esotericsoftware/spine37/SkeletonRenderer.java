@@ -26,7 +26,6 @@ public class SkeletonRenderer {
     private boolean premultipliedAlpha;
     private VertexEffect vertexEffect;
 
-    
     public void draw(Batch batch, Skeleton skeleton) {
         if (batch instanceof TwoColorPolygonBatch) {
             draw((TwoColorPolygonBatch) batch, skeleton);
