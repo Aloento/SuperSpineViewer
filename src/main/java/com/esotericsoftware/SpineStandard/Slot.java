@@ -80,8 +80,7 @@ public class Slot {
     }
 
     public void setAttachmentVertices(FloatArray attachmentVertices) {
-        if (attachmentVertices == null) throw new IllegalArgumentException("attachmentVertices cannot be null.");
-        this.deform = attachmentVertices;
+        this.setDeform(attachmentVertices);
     }
 
     public FloatArray getDeform() {

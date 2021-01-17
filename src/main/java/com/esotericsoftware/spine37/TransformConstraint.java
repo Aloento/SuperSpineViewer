@@ -21,18 +21,17 @@ public class TransformConstraint implements Constraint {
         translateMix = data.translateMix;
         scaleMix = data.scaleMix;
         shearMix = data.shearMix;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findBone(data.target.name);
     }
 
-    
     public TransformConstraint(TransformConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.bones.get(constraint.target.data.index);
@@ -42,7 +41,6 @@ public class TransformConstraint implements Constraint {
         shearMix = constraint.shearMix;
     }
 
-    
     public void apply() {
         update();
     }
@@ -71,7 +69,6 @@ public class TransformConstraint implements Constraint {
         for (int i = 0, n = bones.size; i < n; i++) {
             Bone bone = bones.get(i);
             boolean modified = false;
-
             if (rotateMix != 0) {
                 float a = bone.a, b = bone.b, c = bone.c, d = bone.d;
                 float r = atan2(tc, ta) - atan2(c, a) + offsetRotation;
@@ -86,7 +83,6 @@ public class TransformConstraint implements Constraint {
                 bone.d = sin * b + cos * d;
                 modified = true;
             }
-
             if (translateMix != 0) {
                 Vector2 temp = this.temp;
                 target.localToWorld(temp.set(data.offsetX, data.offsetY));
@@ -94,7 +90,6 @@ public class TransformConstraint implements Constraint {
                 bone.worldY += (temp.y - bone.worldY) * translateMix;
                 modified = true;
             }
-
             if (scaleMix > 0) {
                 float s = (float) Math.sqrt(bone.a * bone.a + bone.c * bone.c);
                 if (s != 0) s = (s + ((float) Math.sqrt(ta * ta + tc * tc) - s + data.offsetScaleX) * scaleMix) / s;
@@ -106,7 +101,6 @@ public class TransformConstraint implements Constraint {
                 bone.d *= s;
                 modified = true;
             }
-
             if (shearMix > 0) {
                 float b = bone.b, d = bone.d;
                 float by = atan2(d, b);
@@ -120,7 +114,6 @@ public class TransformConstraint implements Constraint {
                 bone.d = sin(r) * s;
                 modified = true;
             }
-
             if (modified) bone.appliedValid = false;
         }
     }

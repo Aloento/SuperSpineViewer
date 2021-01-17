@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class TransformConstraintData {
     final String name;
-    final Array<BoneData> bones = new Array();
+    final Array<BoneData> bones = new Array<>();
     int order;
     BoneData target;
     float rotateMix, translateMix, scaleMix, shearMix;
@@ -16,7 +16,6 @@ public class TransformConstraintData {
         this.name = name;
     }
 
-    
     public String getName() {
         return name;
     }

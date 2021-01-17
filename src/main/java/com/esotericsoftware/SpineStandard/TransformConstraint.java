@@ -11,7 +11,7 @@ public class TransformConstraint implements Constraint {
     final Vector2 temp = new Vector2();
     Bone target;
     float rotateMix, translateMix, scaleMix, shearMix;
-    boolean active;
+    boolean active; // Spine38
 
     public TransformConstraint(TransformConstraintData data, Skeleton skeleton) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");

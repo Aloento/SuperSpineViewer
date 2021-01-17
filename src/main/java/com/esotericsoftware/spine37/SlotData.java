@@ -2,7 +2,6 @@ package com.esotericsoftware.spine37;
 
 import com.badlogic.gdx.graphics.Color;
 
-
 public class SlotData {
     final int index;
     final String name;
@@ -21,26 +20,21 @@ public class SlotData {
         this.boneData = boneData;
     }
 
-    
     public int getIndex() {
         return index;
     }
 
-    
     public String getName() {
         return name;
     }
-
     
     public BoneData getBoneData() {
         return boneData;
     }
 
-    
     public Color getColor() {
         return color;
     }
-
     
     public Color getDarkColor() {
         return darkColor;
@@ -50,17 +44,14 @@ public class SlotData {
         this.darkColor = darkColor;
     }
 
-    
     public String getAttachmentName() {
         return attachmentName;
     }
 
-    
     public void setAttachmentName(String attachmentName) {
         this.attachmentName = attachmentName;
     }
 
-    
     public BlendMode getBlendMode() {
         return blendMode;
     }
