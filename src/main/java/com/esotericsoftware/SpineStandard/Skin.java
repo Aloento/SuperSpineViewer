@@ -34,7 +34,8 @@ public class Skin {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
         Key key = keyPool.obtain();
         key.set(slotIndex, name);
-        O_attachments.put(key, attachment);
+        if (RuntimesLoader.spineVersion.get() != 38)
+            O_attachments.put(key, attachment);
     }
 
     public void setAttachment(int slotIndex, String name, Attachment attachment) {
@@ -49,13 +50,16 @@ public class Skin {
 
     public Attachment getAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
-        if (RuntimesLoader.spineVersion.get() == 38) {
-            lookup.set(slotIndex, name);
-            SkinEntry entry = attachments.get(lookup);
-            return entry != null ? entry.attachment : null;
-        } else if (RuntimesLoader.spineVersion.get() == 37) {
-            O_lookup.set(slotIndex, name);
-            return O_attachments.get(O_lookup);
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38 -> {
+                lookup.set(slotIndex, name);
+                SkinEntry entry = attachments.get(lookup);
+                return entry != null ? entry.attachment : null;
+            }
+            case 37 -> {
+                O_lookup.set(slotIndex, name);
+                return O_attachments.get(O_lookup);
+            }
         }
         return null;
     }
@@ -65,13 +69,18 @@ public class Skin {
     }
 
     public void clear() {
-        if (RuntimesLoader.spineVersion.get() == 38) {
-            bones.clear();
-            constraints.clear();
-        } else if (RuntimesLoader.spineVersion.get() == 37)
-            for (Key key : O_attachments.keys())
-                keyPool.free(key);
-        attachments.clear(1024);
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38 -> {
+                bones.clear();
+                constraints.clear();
+                attachments.clear(1024);
+            }
+            case 37 -> {
+                for (Key key : O_attachments.keys())
+                    keyPool.free(key);
+                O_attachments.clear(1024);
+            }
+        }
     }
 
     public int size() {
@@ -95,22 +104,25 @@ public class Skin {
     }
 
     void attachAll(Skeleton skeleton, Skin oldSkin) {
-        if (RuntimesLoader.spineVersion.get() == 38) {
-            for (SkinEntry entry : oldSkin.attachments.keys()) {
-                int slotIndex = entry.slotIndex;
-                Slot slot = skeleton.slots.get(slotIndex);
-                if (slot.attachment == entry.attachment) {
-                    Attachment attachment = getAttachment(slotIndex, entry.name);
-                    if (attachment != null) slot.setAttachment(attachment);
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38 -> {
+                for (SkinEntry entry : oldSkin.attachments.keys()) {
+                    int slotIndex = entry.slotIndex;
+                    Slot slot = skeleton.slots.get(slotIndex);
+                    if (slot.attachment == entry.attachment) {
+                        Attachment attachment = getAttachment(slotIndex, entry.name);
+                        if (attachment != null) slot.setAttachment(attachment);
+                    }
                 }
             }
-        } else if (RuntimesLoader.spineVersion.get() == 37) {
-            for (Entry<Key, Attachment> entry : oldSkin.O_attachments.entries()) {
-                int slotIndex = entry.key.slotIndex;
-                Slot slot = skeleton.slots.get(slotIndex);
-                if (slot.attachment == entry.value) {
-                    Attachment attachment = getAttachment(slotIndex, entry.key.name);
-                    if (attachment != null) slot.setAttachment(attachment);
+            case 37 -> {
+                for (Entry<Key, Attachment> entry : oldSkin.O_attachments.entries()) {
+                    int slotIndex = entry.key.slotIndex;
+                    Slot slot = skeleton.slots.get(slotIndex);
+                    if (slot.attachment == entry.value) {
+                        Attachment attachment = getAttachment(slotIndex, entry.key.name);
+                        if (attachment != null) slot.setAttachment(attachment);
+                    }
                 }
             }
         }

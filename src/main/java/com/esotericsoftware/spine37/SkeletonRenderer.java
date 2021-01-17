@@ -251,7 +251,6 @@ public class SkeletonRenderer {
                 texture = region.getRegion().getTexture();
                 uvs = region.getUVs();
                 color = region.getColor();
-
             } else if (attachment instanceof MeshAttachment) {
                 MeshAttachment mesh = (MeshAttachment) attachment;
                 int count = mesh.getWorldVerticesLength();
@@ -262,22 +261,18 @@ public class SkeletonRenderer {
                 texture = mesh.getRegion().getTexture();
                 uvs = mesh.getUVs();
                 color = mesh.getColor();
-
             } else if (attachment instanceof ClippingAttachment) {
                 ClippingAttachment clip = (ClippingAttachment) attachment;
                 clipper.clipStart(slot, clip);
                 continue;
-
             } else if (attachment instanceof SkeletonAttachment) {
                 Skeleton attachmentSkeleton = ((SkeletonAttachment) attachment).getSkeleton();
                 if (attachmentSkeleton != null) draw(batch, attachmentSkeleton);
             }
-
             if (texture != null) {
                 Color lightColor = slot.getColor();
                 float alpha = a * lightColor.a * color.a * 255;
                 float multiplier = premultipliedAlpha ? alpha : 255;
-
                 BlendMode slotBlendMode = slot.data.getBlendMode();
                 if (slotBlendMode != blendMode) {
                     if (slotBlendMode == BlendMode.additive && premultipliedAlpha) {
@@ -287,7 +282,6 @@ public class SkeletonRenderer {
                     blendMode = slotBlendMode;
                     batch.setBlendFunction(blendMode.getSource(premultipliedAlpha), blendMode.getDest());
                 }
-
                 float red = r * color.r * multiplier;
                 float green = g * color.g * multiplier;
                 float blue = b * color.b * multiplier;
@@ -300,7 +294,6 @@ public class SkeletonRenderer {
                         : NumberUtils.intToFloatColor((int) (blue * darkColor.b) << 16
                         | (int) (green * darkColor.g) << 8
                         | (int) (red * darkColor.r));
-
                 if (clipper.isClipping()) {
                     clipper.clipTriangles(vertices, verticesLength, triangles, triangles.length, uvs, light, dark, true);
                     FloatArray clippedVertices = clipper.getClippedVertices();

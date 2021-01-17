@@ -103,7 +103,7 @@ public class SkeletonRenderer {
         Vector2 tempPosition = this.temp, tempUV = this.temp2;
         Color tempLight1 = this.temp3, tempDark1 = this.temp4;
         Color tempLight2 = this.temp5, tempDark2 = this.temp6;
-
+        // Spine37
         Vector2 tempPos = this.temp, tempUv = this.temp2;
         Color tempLight = this.temp3, tempDark = this.temp4;
         Color temp5 = this.temp5, temp6 = this.temp6;
@@ -237,7 +237,7 @@ public class SkeletonRenderer {
         Vector2 tempPosition = this.temp, tempUV = this.temp2;
         Color tempLight1 = this.temp3, tempDark1 = this.temp4;
         Color tempLight2 = this.temp5, tempDark2 = this.temp6;
-
+        // Spine37
         Vector2 tempPos = this.temp, tempUv = this.temp2;
         Color tempLight = this.temp3, tempDark = this.temp4;
         Color temp5 = this.temp5, temp6 = this.temp6;

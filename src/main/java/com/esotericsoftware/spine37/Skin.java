@@ -8,7 +8,7 @@ import com.esotericsoftware.spine37.attachments.Attachment;
 
 public class Skin {
     final String name;
-    final ObjectMap<Key, Attachment> attachments = new ObjectMap();
+    final ObjectMap<Key, Attachment> attachments = new ObjectMap<>();
     final Pool<Key> keyPool = new Pool(64) {
         protected Object newObject() {
             return new Key();
