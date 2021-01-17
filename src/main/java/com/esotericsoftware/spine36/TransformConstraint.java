@@ -5,12 +5,6 @@ import com.badlogic.gdx.utils.Array;
 
 import static com.esotericsoftware.spine36.utils.SpineUtils.*;
 
-/**
- * Stores the current pose for a transform constraint. A transform constraint adjusts the world transform of the constrained
- * bones to match that of the target bone.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-transform-constraints">Transform constraints</a> in the Spine User Guide.
- */
 public class TransformConstraint implements Constraint {
     final TransformConstraintData data;
     final Array<Bone> bones;
@@ -26,20 +20,18 @@ public class TransformConstraint implements Constraint {
         translateMix = data.translateMix;
         scaleMix = data.scaleMix;
         shearMix = data.shearMix;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findBone(data.target.name);
     }
 
-    /**
-     * Copy constructor.
-     */
+    
     public TransformConstraint(TransformConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.bones.get(constraint.target.data.index);
@@ -49,9 +41,7 @@ public class TransformConstraint implements Constraint {
         shearMix = constraint.shearMix;
     }
 
-    /**
-     * Applies the constraint to the constrained bones.
-     */
+    
     public void apply() {
         update();
     }
@@ -269,16 +259,12 @@ public class TransformConstraint implements Constraint {
         return data.order;
     }
 
-    /**
-     * The bones that will be modified by this transform constraint.
-     */
+    
     public Array<Bone> getBones() {
         return bones;
     }
 
-    /**
-     * The target bone whose world transform will be copied to the constrained bones.
-     */
+    
     public Bone getTarget() {
         return target;
     }
@@ -287,9 +273,7 @@ public class TransformConstraint implements Constraint {
         this.target = target;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained rotations.
-     */
+    
     public float getRotateMix() {
         return rotateMix;
     }
@@ -298,9 +282,7 @@ public class TransformConstraint implements Constraint {
         this.rotateMix = rotateMix;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained translations.
-     */
+    
     public float getTranslateMix() {
         return translateMix;
     }
@@ -309,9 +291,7 @@ public class TransformConstraint implements Constraint {
         this.translateMix = translateMix;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained scales.
-     */
+    
     public float getScaleMix() {
         return scaleMix;
     }
@@ -320,9 +300,7 @@ public class TransformConstraint implements Constraint {
         this.scaleMix = scaleMix;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained scales.
-     */
+    
     public float getShearMix() {
         return shearMix;
     }
@@ -331,9 +309,7 @@ public class TransformConstraint implements Constraint {
         this.shearMix = shearMix;
     }
 
-    /**
-     * The transform constraint's setup pose data.
-     */
+    
     public TransformConstraintData getData() {
         return data;
     }
