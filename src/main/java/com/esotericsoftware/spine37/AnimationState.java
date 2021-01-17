@@ -8,7 +8,6 @@ import java.lang.StringBuilder;
 
 import static com.esotericsoftware.spine37.Animation.RotateTimeline.*;
 
-
 public class AnimationState {
     static private final Animation emptyAnimation = new Animation("<empty>", new Array(0), 0);
     static private final int SUBSEQUENT = 0;

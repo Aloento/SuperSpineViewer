@@ -445,26 +445,6 @@ public class SkeletonBinary {
         return skin;
     }
 
-    private Skin readSkin(DataInput input, SkeletonData skeletonData, String skinName, boolean nonessential) throws IOException {
-        int slotCount = input.readInt(true);
-        if (slotCount == 0) return null;
-        Skin skin = new Skin(skinName);
-        for (int i = 0; i < slotCount; i++) {
-            int slotIndex = input.readInt(true);
-            for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
-                String name = input.readString();
-                Attachment attachment = readAttachment(input, skeletonData, skin, slotIndex, name, nonessential);
-                if (attachment != null) skin.addAttachment(slotIndex, name, attachment);
-            }
-        }
-        return skin;
-    }
-
-    private Attachment readAttachment(DataInput input, SkeletonData skeletonData, Skin skin, int slotIndex, String attachmentName,
-                                      boolean nonessential) throws IOException {
-        return this.readAttachment((SkeletonInput) input, skeletonData, skin, slotIndex, attachmentName, nonessential);
-    }
-
     private Attachment readAttachment(SkeletonInput input, SkeletonData skeletonData, Skin skin, int slotIndex,
                                       String attachmentName, boolean nonessential) throws IOException {
         float scale = this.scale;
@@ -677,10 +657,6 @@ public class SkeletonBinary {
         for (int i = 0; i < n; i++)
             array[i] = input.readShort();
         return array;
-    }
-
-    private void readAnimation(DataInput input, String name, SkeletonData skeletonData) {
-        this.readAnimation((SkeletonInput) input, name, skeletonData);
     }
 
     private Animation readAnimation(SkeletonInput input, String name, SkeletonData skeletonData) {
@@ -950,6 +926,494 @@ public class SkeletonBinary {
     }
 
     private void readCurve(SkeletonInput input, int frameIndex, CurveTimeline timeline) throws IOException {
+        switch (input.readByte()) {
+            case CURVE_STEPPED -> timeline.setStepped(frameIndex);
+            case CURVE_BEZIER -> setCurve(timeline, frameIndex, input.readFloat(), input.readFloat(), input.readFloat(), input.readFloat());
+        }
+    }
+
+    private Skin readSkin(DataInput input, SkeletonData skeletonData, String skinName, boolean nonessential) throws IOException {
+        int slotCount = input.readInt(true);
+        if (slotCount == 0) return null;
+        Skin skin = new Skin(skinName);
+        for (int i = 0; i < slotCount; i++) {
+            int slotIndex = input.readInt(true);
+            for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                String name = input.readString();
+                Attachment attachment = readAttachment(input, skeletonData, skin, slotIndex, name, nonessential);
+                if (attachment != null) skin.addAttachment(slotIndex, name, attachment);
+            }
+        }
+        return skin;
+    }
+
+    private Attachment readAttachment(DataInput input, SkeletonData skeletonData, Skin skin, int slotIndex, String attachmentName,
+                                      boolean nonessential) throws IOException {
+        float scale = this.scale;
+
+        String name = input.readString();
+        if (name == null) name = attachmentName;
+
+        AttachmentType type = AttachmentType.values[input.readByte()];
+        switch (type) {
+            case region -> {
+                String path = input.readString();
+                float rotation = input.readFloat();
+                float x = input.readFloat();
+                float y = input.readFloat();
+                float scaleX = input.readFloat();
+                float scaleY = input.readFloat();
+                float width = input.readFloat();
+                float height = input.readFloat();
+                int color = input.readInt();
+
+                if (path == null) path = name;
+                RegionAttachment region = attachmentLoader.newRegionAttachment(skin, name, path);
+                if (region == null) return null;
+                region.setPath(path);
+                region.setX(x * scale);
+                region.setY(y * scale);
+                region.setScaleX(scaleX);
+                region.setScaleY(scaleY);
+                region.setRotation(rotation);
+                region.setWidth(width * scale);
+                region.setHeight(height * scale);
+                Color.rgba8888ToColor(region.getColor(), color);
+                region.updateOffset();
+                return region;
+            }
+            case boundingbox -> {
+                int vertexCount = input.readInt(true);
+                Vertices vertices = readVertices(input, vertexCount);
+                int color = nonessential ? input.readInt() : 0;
+
+                BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
+                if (box == null) return null;
+                box.setWorldVerticesLength(vertexCount << 1);
+                box.setVertices(vertices.vertices);
+                box.setBones(vertices.bones);
+                if (nonessential) Color.rgba8888ToColor(box.getColor(), color);
+                return box;
+            }
+            case mesh -> {
+                String path = input.readString();
+                int color = input.readInt();
+                int vertexCount = input.readInt(true);
+                float[] uvs = readFloatArray(input, vertexCount << 1, 1);
+                short[] triangles = readShortArray(input);
+                Vertices vertices = readVertices(input, vertexCount);
+                int hullLength = input.readInt(true);
+                short[] edges = null;
+                float width = 0, height = 0;
+                if (nonessential) {
+                    edges = readShortArray(input);
+                    width = input.readFloat();
+                    height = input.readFloat();
+                }
+
+                if (path == null) path = name;
+                MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
+                if (mesh == null) return null;
+                mesh.setPath(path);
+                Color.rgba8888ToColor(mesh.getColor(), color);
+                mesh.setBones(vertices.bones);
+                mesh.setVertices(vertices.vertices);
+                mesh.setWorldVerticesLength(vertexCount << 1);
+                mesh.setTriangles(triangles);
+                mesh.setRegionUVs(uvs);
+                mesh.updateUVs();
+                mesh.setHullLength(hullLength << 1);
+                if (nonessential) {
+                    mesh.setEdges(edges);
+                    mesh.setWidth(width * scale);
+                    mesh.setHeight(height * scale);
+                }
+                return mesh;
+            }
+            case linkedmesh -> {
+                String path = input.readString();
+                int color = input.readInt();
+                String skinName = input.readString();
+                String parent = input.readString();
+                boolean inheritDeform = input.readBoolean();
+                float width = 0, height = 0;
+                if (nonessential) {
+                    width = input.readFloat();
+                    height = input.readFloat();
+                }
+
+                if (path == null) path = name;
+                MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
+                if (mesh == null) return null;
+                mesh.setPath(path);
+                Color.rgba8888ToColor(mesh.getColor(), color);
+                mesh.setInheritDeform(inheritDeform);
+                if (nonessential) {
+                    mesh.setWidth(width * scale);
+                    mesh.setHeight(height * scale);
+                }
+                linkedMeshes.add(new LinkedMesh(mesh, skinName, slotIndex, parent));
+                return mesh;
+            }
+            case path -> {
+                boolean closed = input.readBoolean();
+                boolean constantSpeed = input.readBoolean();
+                int vertexCount = input.readInt(true);
+                Vertices vertices = readVertices(input, vertexCount);
+                float[] lengths = new float[vertexCount / 3];
+                for (int i = 0, n = lengths.length; i < n; i++)
+                    lengths[i] = input.readFloat() * scale;
+                int color = nonessential ? input.readInt() : 0;
+
+                PathAttachment path = attachmentLoader.newPathAttachment(skin, name);
+                if (path == null) return null;
+                path.setClosed(closed);
+                path.setConstantSpeed(constantSpeed);
+                path.setWorldVerticesLength(vertexCount << 1);
+                path.setVertices(vertices.vertices);
+                path.setBones(vertices.bones);
+                path.setLengths(lengths);
+                if (nonessential) Color.rgba8888ToColor(path.getColor(), color);
+                return path;
+            }
+            case point -> {
+                float rotation = input.readFloat();
+                float x = input.readFloat();
+                float y = input.readFloat();
+                int color = nonessential ? input.readInt() : 0;
+
+                PointAttachment point = attachmentLoader.newPointAttachment(skin, name);
+                if (point == null) return null;
+                point.setX(x * scale);
+                point.setY(y * scale);
+                point.setRotation(rotation);
+                if (nonessential) Color.rgba8888ToColor(point.getColor(), color);
+                return point;
+            }
+            case clipping -> {
+                int endSlotIndex = input.readInt(true);
+                int vertexCount = input.readInt(true);
+                Vertices vertices = readVertices(input, vertexCount);
+                int color = nonessential ? input.readInt() : 0;
+
+                ClippingAttachment clip = attachmentLoader.newClippingAttachment(skin, name);
+                if (clip == null) return null;
+                clip.setEndSlot(skeletonData.slots.get(endSlotIndex));
+                clip.setWorldVerticesLength(vertexCount << 1);
+                clip.setVertices(vertices.vertices);
+                clip.setBones(vertices.bones);
+                if (nonessential) Color.rgba8888ToColor(clip.getColor(), color);
+                return clip;
+            }
+        }
+        return null;
+    }
+
+    private Vertices readVertices(DataInput input, int vertexCount) throws IOException {
+        int verticesLength = vertexCount << 1;
+        Vertices vertices = new Vertices();
+        if (!input.readBoolean()) {
+            vertices.vertices = readFloatArray(input, verticesLength, scale);
+            return vertices;
+        }
+        FloatArray weights = new FloatArray(verticesLength * 3 * 3);
+        IntArray bonesArray = new IntArray(verticesLength * 3);
+        for (int i = 0; i < vertexCount; i++) {
+            int boneCount = input.readInt(true);
+            bonesArray.add(boneCount);
+            for (int ii = 0; ii < boneCount; ii++) {
+                bonesArray.add(input.readInt(true));
+                weights.add(input.readFloat() * scale);
+                weights.add(input.readFloat() * scale);
+                weights.add(input.readFloat());
+            }
+        }
+        vertices.vertices = weights.toArray();
+        vertices.bones = bonesArray.toArray();
+        return vertices;
+    }
+
+    private float[] readFloatArray(DataInput input, int n, float scale) throws IOException {
+        float[] array = new float[n];
+        if (scale == 1) {
+            for (int i = 0; i < n; i++)
+                array[i] = input.readFloat();
+        } else {
+            for (int i = 0; i < n; i++)
+                array[i] = input.readFloat() * scale;
+        }
+        return array;
+    }
+
+    private short[] readShortArray(DataInput input) throws IOException {
+        int n = input.readInt(true);
+        short[] array = new short[n];
+        for (int i = 0; i < n; i++)
+            array[i] = input.readShort();
+        return array;
+    }
+
+    private void readAnimation(DataInput input, String name, SkeletonData skeletonData) {
+        Array<Timeline> timelines = new Array<>();
+        float scale = this.scale;
+        float duration = 0;
+
+        try {
+
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int slotIndex = input.readInt(true);
+                for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                    int timelineType = input.readByte();
+                    int frameCount = input.readInt(true);
+                    switch (timelineType) {
+                        case SLOT_ATTACHMENT -> {
+                            AttachmentTimeline timeline = new AttachmentTimeline(frameCount);
+                            timeline.slotIndex = slotIndex;
+                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++)
+                                timeline.setFrame(frameIndex, input.readFloat(), input.readString());
+                            timelines.add(timeline);
+                            duration = Math.max(duration, timeline.getFrames()[frameCount - 1]);
+                        }
+                        case SLOT_COLOR -> {
+                            ColorTimeline timeline = new ColorTimeline(frameCount);
+                            timeline.slotIndex = slotIndex;
+                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                                float time = input.readFloat();
+                                Color.rgba8888ToColor(tempColor1, input.readInt());
+                                timeline.setFrame(frameIndex, time, tempColor1.r, tempColor1.g, tempColor1.b, tempColor1.a);
+                                if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                            }
+                            timelines.add(timeline);
+                            duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * ColorTimeline.ENTRIES]);
+                        }
+                        case SLOT_TWO_COLOR -> {
+                            TwoColorTimeline timeline = new TwoColorTimeline(frameCount);
+                            timeline.slotIndex = slotIndex;
+                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                                float time = input.readFloat();
+                                Color.rgba8888ToColor(tempColor1, input.readInt());
+                                Color.rgb888ToColor(tempColor2, input.readInt());
+                                timeline.setFrame(frameIndex, time, tempColor1.r, tempColor1.g, tempColor1.b, tempColor1.a, tempColor2.r,
+                                        tempColor2.g, tempColor2.b);
+                                if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                            }
+                            timelines.add(timeline);
+                            duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * TwoColorTimeline.ENTRIES]);
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int boneIndex = input.readInt(true);
+                for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                    int timelineType = input.readByte();
+                    int frameCount = input.readInt(true);
+                    switch (timelineType) {
+                        case BONE_ROTATE -> {
+                            RotateTimeline timeline = new RotateTimeline(frameCount);
+                            timeline.boneIndex = boneIndex;
+                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                                timeline.setFrame(frameIndex, input.readFloat(), input.readFloat());
+                                if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                            }
+                            timelines.add(timeline);
+                            duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * RotateTimeline.ENTRIES]);
+                        }
+                        case BONE_TRANSLATE, BONE_SCALE, BONE_SHEAR -> {
+                            TranslateTimeline timeline;
+                            float timelineScale = 1;
+                            if (timelineType == BONE_SCALE)
+                                timeline = new ScaleTimeline(frameCount);
+                            else if (timelineType == BONE_SHEAR)
+                                timeline = new ShearTimeline(frameCount);
+                            else {
+                                timeline = new TranslateTimeline(frameCount);
+                                timelineScale = scale;
+                            }
+                            timeline.boneIndex = boneIndex;
+                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                                timeline.setFrame(frameIndex, input.readFloat(), input.readFloat() * timelineScale,
+                                        input.readFloat() * timelineScale);
+                                if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                            }
+                            timelines.add(timeline);
+                            duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * TranslateTimeline.ENTRIES]);
+                        }
+                    }
+                }
+            }
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int index = input.readInt(true);
+                int frameCount = input.readInt(true);
+                IkConstraintTimeline timeline = new IkConstraintTimeline(frameCount);
+                timeline.ikConstraintIndex = index;
+                for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                    timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte(), input.readBoolean(),
+                            input.readBoolean());
+                    if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * IkConstraintTimeline.ENTRIES]);
+            }
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int index = input.readInt(true);
+                int frameCount = input.readInt(true);
+                TransformConstraintTimeline timeline = new TransformConstraintTimeline(frameCount);
+                timeline.transformConstraintIndex = index;
+                for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                    timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readFloat(), input.readFloat(),
+                            input.readFloat());
+                    if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * TransformConstraintTimeline.ENTRIES]);
+            }
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                int index = input.readInt(true);
+                PathConstraintData data = skeletonData.pathConstraints.get(index);
+                for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                    int timelineType = input.readByte();
+                    int frameCount = input.readInt(true);
+                    switch (timelineType) {
+                        case PATH_POSITION, PATH_SPACING -> {
+                            PathConstraintPositionTimeline timeline;
+                            float timelineScale = 1;
+                            if (timelineType == PATH_SPACING) {
+                                timeline = new PathConstraintSpacingTimeline(frameCount);
+                                if (data.spacingMode == SpacingMode.length || data.spacingMode == SpacingMode.fixed)
+                                    timelineScale = scale;
+                            } else {
+                                timeline = new PathConstraintPositionTimeline(frameCount);
+                                if (data.positionMode == PositionMode.fixed) timelineScale = scale;
+                            }
+                            timeline.pathConstraintIndex = index;
+                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                                timeline.setFrame(frameIndex, input.readFloat(), input.readFloat() * timelineScale);
+                                if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                            }
+                            timelines.add(timeline);
+                            duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * PathConstraintPositionTimeline.ENTRIES]);
+                        }
+                        case PATH_MIX -> {
+                            PathConstraintMixTimeline timeline = new PathConstraintMixTimeline(frameCount);
+                            timeline.pathConstraintIndex = index;
+                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                                timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readFloat());
+                                if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                            }
+                            timelines.add(timeline);
+                            duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * PathConstraintMixTimeline.ENTRIES]);
+                        }
+                    }
+                }
+            }
+            for (int i = 0, n = input.readInt(true); i < n; i++) {
+                Skin skin = skeletonData.skins.get(input.readInt(true));
+                for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
+                    int slotIndex = input.readInt(true);
+                    for (int iii = 0, nnn = input.readInt(true); iii < nnn; iii++) {
+                        VertexAttachment attachment = (VertexAttachment) skin.getAttachment(slotIndex, input.readString());
+                        boolean weighted = attachment.getBones() != null;
+                        float[] vertices = attachment.getVertices();
+                        int deformLength = weighted ? vertices.length / 3 * 2 : vertices.length;
+
+                        int frameCount = input.readInt(true);
+                        DeformTimeline timeline = new DeformTimeline(frameCount);
+                        timeline.slotIndex = slotIndex;
+                        timeline.attachment = attachment;
+
+                        for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                            float time = input.readFloat();
+                            float[] deform;
+                            int end = input.readInt(true);
+                            if (end == 0)
+                                deform = weighted ? new float[deformLength] : vertices;
+                            else {
+                                deform = new float[deformLength];
+                                int start = input.readInt(true);
+                                end += start;
+                                if (scale == 1) {
+                                    for (int v = start; v < end; v++)
+                                        deform[v] = input.readFloat();
+                                } else {
+                                    for (int v = start; v < end; v++)
+                                        deform[v] = input.readFloat() * scale;
+                                }
+                                if (!weighted) {
+                                    for (int v = 0, vn = deform.length; v < vn; v++)
+                                        deform[v] += vertices[v];
+                                }
+                            }
+
+                            timeline.setFrame(frameIndex, time, deform);
+                            if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                        }
+                        timelines.add(timeline);
+                        duration = Math.max(duration, timeline.getFrames()[frameCount - 1]);
+                    }
+                }
+            }
+            int drawOrderCount = input.readInt(true);
+            if (drawOrderCount > 0) {
+                DrawOrderTimeline timeline = new DrawOrderTimeline(drawOrderCount);
+                int slotCount = skeletonData.slots.size;
+                for (int i = 0; i < drawOrderCount; i++) {
+                    float time = input.readFloat();
+                    int offsetCount = input.readInt(true);
+                    int[] drawOrder = new int[slotCount];
+                    for (int ii = slotCount - 1; ii >= 0; ii--)
+                        drawOrder[ii] = -1;
+                    int[] unchanged = new int[slotCount - offsetCount];
+                    int originalIndex = 0, unchangedIndex = 0;
+                    for (int ii = 0; ii < offsetCount; ii++) {
+                        int slotIndex = input.readInt(true);
+
+                        while (originalIndex != slotIndex)
+                            unchanged[unchangedIndex++] = originalIndex++;
+
+                        drawOrder[originalIndex + input.readInt(true)] = originalIndex++;
+                    }
+
+                    while (originalIndex < slotCount)
+                        unchanged[unchangedIndex++] = originalIndex++;
+
+                    for (int ii = slotCount - 1; ii >= 0; ii--)
+                        if (drawOrder[ii] == -1) drawOrder[ii] = unchanged[--unchangedIndex];
+                    timeline.setFrame(i, time, drawOrder);
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[drawOrderCount - 1]);
+            }
+            int eventCount = input.readInt(true);
+            if (eventCount > 0) {
+                EventTimeline timeline = new EventTimeline(eventCount);
+                for (int i = 0; i < eventCount; i++) {
+                    float time = input.readFloat();
+                    EventData eventData = skeletonData.events.get(input.readInt(true));
+                    Event event = new Event(time, eventData);
+                    event.intValue = input.readInt(false);
+                    event.floatValue = input.readFloat();
+                    event.stringValue = input.readBoolean() ? input.readString() : eventData.stringValue;
+                    if (event.getData().audioPath != null) {
+                        event.volume = input.readFloat();
+                        event.balance = input.readFloat();
+                    }
+                    timeline.setFrame(i, event);
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[eventCount - 1]);
+            }
+        } catch (IOException ex) {
+            throw new SerializationException("Error reading skeleton file.", ex);
+        }
+
+        timelines.shrink();
+        skeletonData.animations.add(new Animation(name, timelines, duration));
+
+    }
+
+    private void readCurve(DataInput input, int frameIndex, CurveTimeline timeline) throws IOException {
         switch (input.readByte()) {
             case CURVE_STEPPED -> timeline.setStepped(frameIndex);
             case CURVE_BEZIER -> setCurve(timeline, frameIndex, input.readFloat(), input.readFloat(), input.readFloat(), input.readFloat());

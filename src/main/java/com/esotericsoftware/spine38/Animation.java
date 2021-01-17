@@ -13,7 +13,6 @@ import static com.esotericsoftware.spine38.Animation.MixDirection.in;
 import static com.esotericsoftware.spine38.Animation.MixDirection.out;
 import static com.esotericsoftware.spine38.utils.SpineUtils.arraycopy;
 
-
 public class Animation {
     final String name;
     final IntSet timelineIDs = new IntSet();

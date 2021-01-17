@@ -583,14 +583,9 @@ public class AnimationState {
             while (entry.mixingFrom != null)
                 entry = entry.mixingFrom;
             do {
-                if (RuntimesLoader.spineVersion.get() == 38) {
-                    if (entry.mixingTo == null || entry.mixBlend != MixBlend.add) computeHold(entry);
-                } else if (RuntimesLoader.spineVersion.get() == 37) {
-                    if (entry.mixingTo == null || entry.mixBlend != MixBlend.add) setTimelineModes(entry);
-                }
+                if (entry.mixingTo == null || entry.mixBlend != MixBlend.add) setTimelineModes(entry);
                 entry = entry.mixingTo;
-            }
-            while (entry != null);
+            } while (entry != null);
         }
     }
 

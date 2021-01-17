@@ -24,7 +24,6 @@ public class Animation {
         this.timelines = timelines;
         this.duration = duration;
     }
-
     
     static int binarySearch(float[] values, float target, int step) {
         int low = 0;
@@ -40,7 +39,6 @@ public class Animation {
             current = (low + high) >>> 1;
         }
     }
-
     
     static int binarySearch(float[] values, float target) {
         int low = 0;
@@ -67,7 +65,6 @@ public class Animation {
         return timelines;
     }
 
-    
     public float getDuration() {
         return duration;
     }
@@ -75,7 +72,6 @@ public class Animation {
     public void setDuration(float duration) {
         this.duration = duration;
     }
-
     
     public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha,
                       MixBlend blend, MixDirection direction) {

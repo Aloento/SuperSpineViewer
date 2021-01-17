@@ -23,15 +23,14 @@ public class Animation {
     float duration;
 
     public Animation(String name, Array<Timeline> timelines, float duration) {
-        if (name == null)
-            throw new IllegalArgumentException("name cannot be null.");
+        if (name == null) throw new IllegalArgumentException("name cannot be null.");
+        if (timelines == null) throw new IllegalArgumentException("timelines cannot be null.");
         this.name = name;
         this.duration = duration;
-        if (RuntimesLoader.spineVersion.get() == 37)
-            if (timelines == null)
-                throw new IllegalArgumentException("timelines cannot be null.");
         if (RuntimesLoader.spineVersion.get() == 38)
             setTimelines(timelines);
+        else if (RuntimesLoader.spineVersion.get() == 37)
+            this.timelines = timelines;
     }
 
     static int binarySearch(float[] values, float target, int step) {

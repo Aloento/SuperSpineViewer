@@ -11,7 +11,7 @@ import com.esotericsoftware.SpineStandard.AnimationState.TrackEntry;
 import com.esotericsoftware.SpineStandard.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 
-public class Spine37 extends SuperSpine {
+public class Standard extends SuperSpine {
 
     private TwoColorPolygonBatch batch;
     private OrthographicCamera camera;

@@ -54,7 +54,7 @@ public class Skin {
             SkinEntry entry = attachments.get(lookup);
             return entry != null ? entry.attachment : null;
         } else if (RuntimesLoader.spineVersion.get() == 37) {
-            lookup.set(slotIndex, name);
+            O_lookup.set(slotIndex, name);
             return O_attachments.get(O_lookup);
         }
         return null;
