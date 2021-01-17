@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class PathConstraintData {
     final String name;
-    final Array<BoneData> bones = new Array();
+    final Array<BoneData> bones = new Array<>();
     int order;
     SlotData target;
     PositionMode positionMode;

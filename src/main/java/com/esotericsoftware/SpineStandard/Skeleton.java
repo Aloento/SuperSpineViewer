@@ -35,6 +35,7 @@ public class Skeleton {
     public Skeleton(SkeletonData data) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         this.data = data;
+
         bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones) {
             Bone bone;
@@ -47,6 +48,7 @@ public class Skeleton {
             }
             bones.add(bone);
         }
+
         slots = new Array<>(data.slots.size);
         drawOrder = new Array<>(data.slots.size);
         for (SlotData slotData : data.slots) {
@@ -55,15 +57,19 @@ public class Skeleton {
             slots.add(slot);
             drawOrder.add(slot);
         }
+
         ikConstraints = new Array<>(data.ikConstraints.size);
         for (IkConstraintData ikConstraintData : data.ikConstraints)
             ikConstraints.add(new IkConstraint(ikConstraintData, this));
+
         transformConstraints = new Array<>(data.transformConstraints.size);
         for (TransformConstraintData transformConstraintData : data.transformConstraints)
             transformConstraints.add(new TransformConstraint(transformConstraintData, this));
+
         pathConstraints = new Array<>(data.pathConstraints.size);
         for (PathConstraintData pathConstraintData : data.pathConstraints)
             pathConstraints.add(new PathConstraint(pathConstraintData, this));
+
         color = new Color(1, 1, 1, 1);
         updateCache();
     }
@@ -71,6 +77,7 @@ public class Skeleton {
     public Skeleton(Skeleton skeleton) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = skeleton.data;
+
         bones = new Array<>(skeleton.bones.size);
         for (Bone bone : skeleton.bones) {
             Bone newBone;
@@ -91,15 +98,19 @@ public class Skeleton {
         drawOrder = new Array<>(slots.size);
         for (Slot slot : skeleton.drawOrder)
             drawOrder.add(slots.get(slot.data.index));
+
         ikConstraints = new Array<>(skeleton.ikConstraints.size);
         for (IkConstraint ikConstraint : skeleton.ikConstraints)
             ikConstraints.add(new IkConstraint(ikConstraint, this));
+
         transformConstraints = new Array<>(skeleton.transformConstraints.size);
         for (TransformConstraint transformConstraint : skeleton.transformConstraints)
             transformConstraints.add(new TransformConstraint(transformConstraint, this));
+
         pathConstraints = new Array<>(skeleton.pathConstraints.size);
         for (PathConstraint pathConstraint : skeleton.pathConstraints)
             pathConstraints.add(new PathConstraint(pathConstraint, this));
+
         skin = skeleton.skin;
         color = new Color(skeleton.color);
         time = skeleton.time;
@@ -226,10 +237,12 @@ public class Skeleton {
         Array<Bone> constrained = constraint.bones;
         Bone parent = constrained.first();
         sortBone(parent);
+
         if (constrained.size > 1) {
             Bone child = constrained.peek();
             if (!updateCache.contains(child, true)) updateCacheReset.add(child);
         }
+
         updateCache.add(constraint);
         sortReset(parent.children);
         constrained.peek().sorted = true;
@@ -423,8 +436,8 @@ public class Skeleton {
         Array<IkConstraint> ikConstraints = this.ikConstraints;
         for (int i = 0, n = ikConstraints.size; i < n; i++) {
             IkConstraint constraint = ikConstraints.get(i);
-            constraint.bendDirection = constraint.data.bendDirection;
             constraint.mix = constraint.data.mix;
+            constraint.bendDirection = constraint.data.bendDirection;
             switch (RuntimesLoader.spineVersion.get()) {
                 case 38, 37 -> {
                     if (RuntimesLoader.spineVersion.get() == 38)
@@ -687,7 +700,6 @@ public class Skeleton {
     public void setFlipX(boolean flipX) {
         this.flipX = flipX;
     }
-
 
     public boolean getFlipY() {
         return flipY;
