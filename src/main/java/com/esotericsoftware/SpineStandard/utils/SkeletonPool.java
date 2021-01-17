@@ -1,8 +1,8 @@
 package com.esotericsoftware.SpineStandard.utils;
 
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.spine38.Skeleton;
-import com.esotericsoftware.spine38.SkeletonData;
+import com.esotericsoftware.SpineStandard.Skeleton;
+import com.esotericsoftware.SpineStandard.SkeletonData;
 
 public class SkeletonPool extends Pool<Skeleton> {
     private final SkeletonData skeletonData;

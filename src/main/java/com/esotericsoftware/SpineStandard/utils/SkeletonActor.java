@@ -3,9 +3,9 @@ package com.esotericsoftware.SpineStandard.utils;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.esotericsoftware.spine38.AnimationState;
-import com.esotericsoftware.spine38.Skeleton;
-import com.esotericsoftware.spine38.SkeletonRenderer;
+import com.esotericsoftware.SpineStandard.AnimationState;
+import com.esotericsoftware.SpineStandard.Skeleton;
+import com.esotericsoftware.SpineStandard.SkeletonRenderer;
 
 public class SkeletonActor extends Actor {
     AnimationState state;

@@ -3,8 +3,8 @@ package com.esotericsoftware.SpineStandard.utils;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.spine38.*;
-import com.esotericsoftware.spine38.AnimationState.TrackEntry;
+import com.esotericsoftware.SpineStandard.*;
+import com.esotericsoftware.SpineStandard.AnimationState.TrackEntry;
 
 public class SkeletonActorPool extends Pool<SkeletonActor> {
     final SkeletonData skeletonData;
