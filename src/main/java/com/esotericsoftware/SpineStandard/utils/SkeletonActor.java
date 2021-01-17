@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineStandard.utils;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -29,9 +30,6 @@ public class SkeletonActor extends Actor {
     }
 
     public void draw(Batch batch, float parentAlpha) {
-        int blendSrc = batch.getBlendSrcFunc(), blendDst = batch.getBlendDstFunc();
-        int blendSrcAlpha = batch.getBlendSrcFuncAlpha(), blendDstAlpha = batch.getBlendDstFuncAlpha();
-
         Color color = skeleton.getColor();
         float oldAlpha = color.a;
         skeleton.getColor().a *= parentAlpha;
@@ -40,8 +38,13 @@ public class SkeletonActor extends Actor {
         skeleton.updateWorldTransform();
         renderer.draw(batch, skeleton);
 
-        if (resetBlendFunction) batch.setBlendFunctionSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
-
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {
+                int blendSrc = batch.getBlendSrcFunc(), blendDst = batch.getBlendDstFunc();
+                int blendSrcAlpha = batch.getBlendSrcFuncAlpha(), blendDstAlpha = batch.getBlendDstFuncAlpha();
+                if (resetBlendFunction) batch.setBlendFunctionSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
+            }
+        }
         color.a = oldAlpha;
     }
 

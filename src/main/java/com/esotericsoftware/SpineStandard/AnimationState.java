@@ -144,7 +144,7 @@ public class AnimationState {
             if (current == null || current.delay > 0) continue;
             applied = true;
             MixBlend blend = i == 0 ? MixBlend.first : current.mixBlend;
-            MixPose currentPose = i == 0 ? MixPose.current : MixPose.currentLayered; // Spine 36
+            MixPose currentPose = i == 0 ? MixPose.current : MixPose.currentLayered;
             float mix = current.alpha;
             if (current.mixingFrom != null)
                 switch (RuntimesLoader.spineVersion.get()) {
@@ -161,14 +161,16 @@ public class AnimationState {
                 case 38, 37 -> {
                     if ((i == 0 && mix == 1) || blend == MixBlend.add) {
                         for (int ii = 0; ii < timelineCount; ii++) {
-                            if (RuntimesLoader.spineVersion.get() == 38) {
-                                Object timeline = timelines[ii];
-                                if (timeline instanceof AttachmentTimeline)
-                                    applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
-                                else
-                                    ((Timeline) timeline).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
-                            } else if (RuntimesLoader.spineVersion.get() == 37)
-                                ((Timeline) timelines[ii]).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                            switch (RuntimesLoader.spineVersion.get()) {
+                                case 38 -> {
+                                    Object timeline = timelines[ii];
+                                    if (timeline instanceof AttachmentTimeline)
+                                        applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, blend, true);
+                                    else
+                                        ((Timeline) timeline).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                                }
+                                case 37 -> ((Timeline) timelines[ii]).apply(skeleton, animationLast, animationTime, events, mix, blend, MixDirection.in);
+                            }
                         }
                     } else {
                         int[] timelineMode = current.timelineMode.items;
@@ -279,11 +281,11 @@ public class AnimationState {
                         timelineBlend = MixBlend.setup;
                         alpha = alphaMix;
                     }
-                    case HOLD_SUBSEQUENT -> {
-                        if (RuntimesLoader.spineVersion.get() == 38)
-                            timelineBlend = blend;
-                        else if (RuntimesLoader.spineVersion.get() == 37)
-                            timelineBlend = MixBlend.setup;
+                    case HOLD -> {
+                        switch (RuntimesLoader.spineVersion.get()) {
+                            case 38 -> timelineBlend = blend;
+                            case 37 -> timelineBlend = MixBlend.setup;
+                        }
                         alpha = alphaHold;
                     }
                     case HOLD_FIRST -> {
@@ -300,22 +302,25 @@ public class AnimationState {
                 if (timeline instanceof RotateTimeline) {
                     applyRotateTimeline((RotateTimeline) timeline, skeleton, animationTime, alpha, timelineBlend, timelinesRotation,
                             i << 1, firstFrame);
-                } else if (timeline instanceof AttachmentTimeline)
+                } else if (timeline instanceof AttachmentTimeline && RuntimesLoader.spineVersion.get() == 38)
                     applyAttachmentTimeline((AttachmentTimeline) timeline, skeleton, animationTime, timelineBlend, attachments);
                 else {
-                    if (RuntimesLoader.spineVersion.get() == 38) {
-                        if (drawOrder && timeline instanceof DrawOrderTimeline && timelineBlend == MixBlend.setup)
-                            direction = MixDirection.in;
-                        timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
-                    } else if (RuntimesLoader.spineVersion.get() == 37) {
-                        if (timelineBlend == MixBlend.setup) {
-                            if (timeline instanceof AttachmentTimeline) {
-                                if (attachments) direction = MixDirection.in;
-                            } else if (timeline instanceof DrawOrderTimeline) {
-                                if (drawOrder) direction = MixDirection.in;
-                            }
+                    switch (RuntimesLoader.spineVersion.get()) {
+                        case 38 -> {
+                            if (drawOrder && timeline instanceof DrawOrderTimeline && timelineBlend == MixBlend.setup)
+                                direction = MixDirection.in;
+                            timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
                         }
-                        timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
+                        case 37 -> {
+                            if (timelineBlend == MixBlend.setup) {
+                                if (timeline instanceof AttachmentTimeline) {
+                                    if (attachments) direction = MixDirection.in;
+                                } else if (timeline instanceof DrawOrderTimeline) {
+                                    if (drawOrder) direction = MixDirection.in;
+                                }
+                            }
+                            timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
+                        }
                     }
                 }
             }

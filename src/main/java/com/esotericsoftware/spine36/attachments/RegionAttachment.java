@@ -6,11 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.spine36.Bone;
 
-/**
- * An attachment that displays a textured quadrilateral.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-regions">Region attachments</a> in the Spine User Guide.
- */
+
 public class RegionAttachment extends Attachment {
     static public final int BLX = 0;
     static public final int BLY = 1;
@@ -31,9 +27,7 @@ public class RegionAttachment extends Attachment {
         super(name);
     }
 
-    /**
-     * Calculates the {@link #offset} using the region settings. Must be called after changing region settings.
-     */
+    
     public void updateOffset() {
         float width = getWidth();
         float height = getHeight();
@@ -115,16 +109,7 @@ public class RegionAttachment extends Attachment {
         }
     }
 
-    /**
-     * Transforms the attachment's four vertices to world coordinates.
-     * <p>
-     * See <a href="http://esotericsoftware.com/spine-runtime-skeletons#World-transforms">World transforms</a> in the Spine
-     * Runtimes Guide.
-     *
-     * @param worldVertices The output world vertices. Must have a length >= <code>offset</code> + 8.
-     * @param offset        The <code>worldVertices</code> index to begin writing values.
-     * @param stride        The number of <code>worldVertices</code> entries between the value pairs written.
-     */
+    
     public void computeWorldVertices(Bone bone, float[] worldVertices, int offset, int stride) {
         float[] vertexOffset = this.offset;
         float x = bone.getWorldX(), y = bone.getWorldY();
@@ -133,33 +118,29 @@ public class RegionAttachment extends Attachment {
 
         offsetX = vertexOffset[BRX];
         offsetY = vertexOffset[BRY];
-        worldVertices[offset] = offsetX * a + offsetY * b + x; // br
+        worldVertices[offset] = offsetX * a + offsetY * b + x;
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
         offset += stride;
 
         offsetX = vertexOffset[BLX];
         offsetY = vertexOffset[BLY];
-        worldVertices[offset] = offsetX * a + offsetY * b + x; // bl
+        worldVertices[offset] = offsetX * a + offsetY * b + x;
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
         offset += stride;
 
         offsetX = vertexOffset[ULX];
         offsetY = vertexOffset[ULY];
-        worldVertices[offset] = offsetX * a + offsetY * b + x; // ul
+        worldVertices[offset] = offsetX * a + offsetY * b + x;
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
         offset += stride;
 
         offsetX = vertexOffset[URX];
         offsetY = vertexOffset[URY];
-        worldVertices[offset] = offsetX * a + offsetY * b + x; // ur
+        worldVertices[offset] = offsetX * a + offsetY * b + x;
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
     }
 
-    /**
-     * For each of the 4 vertices, a pair of <code>x,y</code> values that is the local position of the vertex.
-     * <p>
-     * See {@link #updateOffset()}.
-     */
+    
     public float[] getOffset() {
         return offset;
     }
@@ -168,9 +149,7 @@ public class RegionAttachment extends Attachment {
         return uvs;
     }
 
-    /**
-     * The local x translation.
-     */
+    
     public float getX() {
         return x;
     }
@@ -179,9 +158,7 @@ public class RegionAttachment extends Attachment {
         this.x = x;
     }
 
-    /**
-     * The local y translation.
-     */
+    
     public float getY() {
         return y;
     }
@@ -190,9 +167,7 @@ public class RegionAttachment extends Attachment {
         this.y = y;
     }
 
-    /**
-     * The local scaleX.
-     */
+    
     public float getScaleX() {
         return scaleX;
     }
@@ -201,9 +176,7 @@ public class RegionAttachment extends Attachment {
         this.scaleX = scaleX;
     }
 
-    /**
-     * The local scaleY.
-     */
+    
     public float getScaleY() {
         return scaleY;
     }
@@ -212,9 +185,7 @@ public class RegionAttachment extends Attachment {
         this.scaleY = scaleY;
     }
 
-    /**
-     * The local rotation.
-     */
+    
     public float getRotation() {
         return rotation;
     }
@@ -223,9 +194,7 @@ public class RegionAttachment extends Attachment {
         this.rotation = rotation;
     }
 
-    /**
-     * The width of the region attachment in Spine.
-     */
+    
     public float getWidth() {
         return width;
     }
@@ -234,9 +203,7 @@ public class RegionAttachment extends Attachment {
         this.width = width;
     }
 
-    /**
-     * The height of the region attachment in Spine.
-     */
+    
     public float getHeight() {
         return height;
     }
@@ -245,16 +212,12 @@ public class RegionAttachment extends Attachment {
         this.height = height;
     }
 
-    /**
-     * The color to tint the region attachment.
-     */
+    
     public Color getColor() {
         return color;
     }
 
-    /**
-     * The name of the texture region for this attachment.
-     */
+    
     public String getPath() {
         return path;
     }
