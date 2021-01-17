@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool;
@@ -27,7 +28,7 @@ public class SkeletonBounds {
         polygons.clear();
         for (int i = 0; i < slotCount; i++) {
             Slot slot = slots.get(i);
-            if (!slot.bone.active) continue;
+            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) continue;
             Attachment attachment = slot.attachment;
             if (attachment instanceof BoundingBoxAttachment) {
                 BoundingBoxAttachment boundingBox = (BoundingBoxAttachment) attachment;
