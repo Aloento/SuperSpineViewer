@@ -56,7 +56,7 @@ public class Skin {
                 SkinEntry entry = attachments.get(lookup);
                 return entry != null ? entry.attachment : null;
             }
-            case 37 -> {
+            case 37, 36 -> {
                 O_lookup.set(slotIndex, name);
                 return O_attachments.get(O_lookup);
             }
@@ -75,7 +75,7 @@ public class Skin {
                 constraints.clear();
                 attachments.clear(1024);
             }
-            case 37 -> {
+            case 37, 36 -> {
                 for (Key key : O_attachments.keys())
                     keyPool.free(key);
                 O_attachments.clear(1024);
@@ -115,7 +115,7 @@ public class Skin {
                     }
                 }
             }
-            case 37 -> {
+            case 37, 36 -> {
                 for (Entry<Key, Attachment> entry : oldSkin.O_attachments.entries()) {
                     int slotIndex = entry.key.slotIndex;
                     Slot slot = skeleton.slots.get(slotIndex);
@@ -187,7 +187,10 @@ public class Skin {
             if (name == null) throw new IllegalArgumentException("name cannot be null.");
             this.slotIndex = slotIndex;
             this.name = name;
-            hashCode = name.hashCode() + slotIndex * 37;
+            switch (RuntimesLoader.spineVersion.get()) {
+                case 37 -> hashCode = name.hashCode() + slotIndex * 37;
+                case 36 -> hashCode = 31 * (31 + name.hashCode()) + slotIndex;
+            }
         }
 
         public int hashCode() {

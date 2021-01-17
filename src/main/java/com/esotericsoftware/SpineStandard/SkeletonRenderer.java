@@ -391,7 +391,7 @@ public class SkeletonRenderer {
         VertexEffect vertexEffect = this.vertexEffect;
         temp5.set(NumberUtils.floatToIntColor(light));
         temp6.set(NumberUtils.floatToIntColor(dark));
-
+        // Spine38
         Vector2 tempPosition = this.temp, tempUV = this.temp2;
         Color tempLight1 = this.temp3, tempDark1 = this.temp4;
         Color tempLight2 = this.temp5, tempDark2 = this.temp6;
