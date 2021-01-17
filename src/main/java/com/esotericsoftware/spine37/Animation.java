@@ -86,7 +86,6 @@ public class Animation {
         for (int i = 0, n = timelines.size; i < n; i++)
             timelines.get(i).apply(skeleton, lastTime, time, events, alpha, blend, direction);
     }
-
     
     public String getName() {
         return name;
@@ -96,19 +95,13 @@ public class Animation {
         return name;
     }
 
-    
     public enum MixBlend {
-        
         setup,
-        
         first,
-        
         replace,
-        
         add
     }
 
-    
     public enum MixDirection {
         in, out
     }
@@ -122,7 +115,6 @@ public class Animation {
         twoColor
     }
 
-    
     public interface Timeline {
         
         void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
@@ -132,7 +124,6 @@ public class Animation {
         int getPropertyId();
     }
 
-    
     public interface BoneTimeline extends Timeline {
         
         int getBoneIndex();
@@ -140,7 +131,6 @@ public class Animation {
         void setBoneIndex(int index);
     }
 
-    
     public interface SlotTimeline extends Timeline {
         
         int getSlotIndex();

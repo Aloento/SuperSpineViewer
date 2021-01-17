@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="SuperSpineViewer" type="Application" factoryName="Application">
+  <configuration default="false" name="SuperSpineViewer" type="Application" factoryName="Application" singleton="false">
     <option name="MAIN_CLASS_NAME" value="com.QYun.SuperSpineViewer.GUI.Controller" />
     <module name="SuperSpineViewer" />
     <method v="2">

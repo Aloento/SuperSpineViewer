@@ -19,7 +19,7 @@ import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class Animation {
     final String name;
-    final IntSet timelineIDs = new IntSet();
+    IntSet timelineIDs;
     Array<Timeline> timelines;
     float duration;
 
@@ -29,7 +29,10 @@ public class Animation {
         this.name = name;
         this.duration = duration;
         switch (RuntimesLoader.spineVersion.get()) {
-            case 38 -> setTimelines(timelines);
+            case 38 -> {
+                timelineIDs = new IntSet();
+                setTimelines(timelines);
+            }
             case 37, 36 -> this.timelines = timelines;
         }
     }
@@ -185,6 +188,15 @@ public class Animation {
 
         public void setStepped(int frameIndex) {
             curves[frameIndex * BEZIER_SIZE] = STEPPED;
+        }
+
+        public float getCurveType(int frameIndex) {
+            int index = frameIndex * BEZIER_SIZE;
+            if (index == curves.length) return LINEAR;
+            float type = curves[index];
+            if (type == LINEAR) return LINEAR;
+            if (type == STEPPED) return STEPPED;
+            return BEZIER;
         }
 
         public void setCurve(int frameIndex, float cx1, float cy1, float cx2, float cy2) {
@@ -1078,8 +1090,7 @@ public class Animation {
         int slotIndex;
 
         public AttachmentTimeline(int frameCount) {
-            if (frameCount <= 0 && RuntimesLoader.spineVersion.get() == 38)
-                throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
+            if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             attachmentNames = new String[frameCount];
         }
