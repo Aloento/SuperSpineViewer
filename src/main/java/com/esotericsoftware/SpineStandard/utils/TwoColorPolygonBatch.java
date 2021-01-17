@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineStandard.utils;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
@@ -688,7 +689,13 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         final float[] vertices = this.vertices;
 
         if (texture != lastTexture) {
-            switchTexture(texture);
+            switch (RuntimesLoader.spineVersion.get()) {
+                case 38, 37 -> switchTexture(texture);
+                case 36 -> {
+                    flush();
+                    lastTexture = texture;
+                }
+            }
         } else if (triangleIndex + trianglesCount > triangles.length || vertexIndex + verticesCount > vertices.length)
             flush();
 

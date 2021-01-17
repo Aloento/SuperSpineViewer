@@ -80,7 +80,7 @@ public class TwoColorPolygonBatch {
         if (texture != lastTexture) {
             flush();
             lastTexture = texture;
-        } else if (triangleIndex + trianglesCount > triangles.length || vertexIndex + verticesCount > vertices.length) //
+        } else if (triangleIndex + trianglesCount > triangles.length || vertexIndex + verticesCount > vertices.length)
             flush();
 
         int triangleIndex = this.triangleIndex;
