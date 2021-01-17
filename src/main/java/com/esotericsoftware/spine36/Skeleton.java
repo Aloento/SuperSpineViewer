@@ -21,8 +21,8 @@ public class Skeleton {
     final Array<IkConstraint> ikConstraints;
     final Array<TransformConstraint> transformConstraints;
     final Array<PathConstraint> pathConstraints;
-    final Array<Updatable> updateCache = new Array();
-    final Array<Bone> updateCacheReset = new Array();
+    final Array<Updatable> updateCache = new Array<>();
+    final Array<Bone> updateCacheReset = new Array<>();
     final Color color;
     Array<Slot> drawOrder;
     Skin skin;
@@ -274,9 +274,6 @@ public class Skeleton {
 
     
     public void updateWorldTransform() {
-
-
-
         Array<Bone> updateCacheReset = this.updateCacheReset;
         for (int i = 0, n = updateCacheReset.size; i < n; i++) {
             Bone bone = updateCacheReset.get(i);

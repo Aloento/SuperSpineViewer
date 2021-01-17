@@ -184,7 +184,7 @@ public class Skeleton {
                 for (int i = 0; i < boneCount; i++)
                     sortBone((Bone) bones[i]);
             }
-            case 37 -> {
+            case 37, 36 -> {
                 Array<Bone> bones = this.bones;
                 for (int i = 0, n = bones.size; i < n; i++)
                     bones.get(i).sorted = false;

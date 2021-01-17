@@ -29,7 +29,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private final ShaderProgram defaultShader;
     private final Color light = new Color(1, 1, 1, 1);
     private final Color dark = new Color(0, 0, 0, 1);
-
     public int totalRenderCalls = 0;
     private boolean blendingDisabled;
     private ShaderProgram shader;
@@ -54,7 +53,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     }
 
     public TwoColorPolygonBatch(int maxVertices, int maxTriangles) {
-
         if (maxVertices > 32767)
             throw new IllegalArgumentException("Can't have more than 32767 vertices per batch: " + maxTriangles);
 
@@ -87,8 +85,10 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         if (!drawing) throw new IllegalStateException("begin must be called before end.");
         if (vertexIndex > 0) flush();
         Gdx.gl.glDepthMask(true);
-        if (isBlendingEnabled()) Gdx.gl.glDisable(GL20.GL_BLEND);
-
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> {if (isBlendingEnabled()) Gdx.gl.glDisable(GL20.GL_BLEND);}
+            case 36 -> Gdx.gl.glDisable(GL20.GL_BLEND);
+        }
         lastTexture = null;
         drawing = false;
     }
@@ -1232,8 +1232,9 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     @Override
     public void flush() {
         if (vertexIndex == 0) return;
-        totalRenderCalls++;
-
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37 -> totalRenderCalls++;
+        }
         lastTexture.bind();
         Mesh mesh = this.mesh;
         mesh.setVertices(vertices, 0, vertexIndex);

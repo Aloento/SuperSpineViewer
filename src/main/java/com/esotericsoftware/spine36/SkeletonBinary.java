@@ -36,7 +36,7 @@ public class SkeletonBinary {
     static private final Color tempColor1 = new Color(), tempColor2 = new Color();
 
     private final AttachmentLoader attachmentLoader;
-    private final Array<LinkedMesh> linkedMeshes = new Array();
+    private final Array<LinkedMesh> linkedMeshes = new Array<>();
     private float scale = 1;
 
     public SkeletonBinary(TextureAtlas atlas) {
@@ -183,7 +183,6 @@ public class SkeletonBinary {
                 skeletonData.transformConstraints.add(data);
             }
 
-
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 PathConstraintData data = new PathConstraintData(input.readString());
                 data.order = input.readInt(true);
@@ -204,17 +203,14 @@ public class SkeletonBinary {
                 skeletonData.pathConstraints.add(data);
             }
 
-
             Skin defaultSkin = readSkin(input, skeletonData, "default", nonessential);
             if (defaultSkin != null) {
                 skeletonData.defaultSkin = defaultSkin;
                 skeletonData.skins.add(defaultSkin);
             }
 
-
             for (int i = 0, n = input.readInt(true); i < n; i++)
                 skeletonData.skins.add(readSkin(input, skeletonData, input.readString(), nonessential));
-
 
             for (int i = 0, n = linkedMeshes.size; i < n; i++) {
                 LinkedMesh linkedMesh = linkedMeshes.get(i);
@@ -227,7 +223,6 @@ public class SkeletonBinary {
             }
             linkedMeshes.clear();
 
-
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 EventData data = new EventData(input.readString());
                 data.intValue = input.readInt(false);
@@ -235,7 +230,6 @@ public class SkeletonBinary {
                 data.stringValue = input.readString();
                 skeletonData.events.add(data);
             }
-
 
             for (int i = 0, n = input.readInt(true); i < n; i++)
                 readAnimation(input, input.readString(), skeletonData);
@@ -476,7 +470,7 @@ public class SkeletonBinary {
     }
 
     private void readAnimation(DataInput input, String name, SkeletonData skeletonData) {
-        Array<Timeline> timelines = new Array();
+        Array<Timeline> timelines = new Array<>();
         float scale = this.scale;
         float duration = 0;
 

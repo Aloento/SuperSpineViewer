@@ -33,7 +33,6 @@ public class TwoColorPolygonBatch {
     }
 
     public TwoColorPolygonBatch(int maxVertices, int maxTriangles) {
-
         if (maxVertices > 32767)
             throw new IllegalArgumentException("Can't have more than 32767 vertices per batch: " + maxTriangles);
 
