@@ -7,8 +7,8 @@ import com.esotericsoftware.spine37.attachments.Attachment;
 import com.esotericsoftware.spine37.attachments.BoundingBoxAttachment;
 
 public class SkeletonBounds {
-    private final Array<BoundingBoxAttachment> boundingBoxes = new Array();
-    private final Array<FloatArray> polygons = new Array();
+    private final Array<BoundingBoxAttachment> boundingBoxes = new Array<>();
+    private final Array<FloatArray> polygons = new Array<>();
     private final Pool<FloatArray> polygonPool = new Pool() {
         protected Object newObject() {
             return new FloatArray();

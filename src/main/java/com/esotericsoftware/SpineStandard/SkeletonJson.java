@@ -55,8 +55,6 @@ public class SkeletonJson {
             skeletonData.hash = skeletonMap.getString("hash", null);
             skeletonData.version = skeletonMap.getString("spine", null);
             if (RuntimesLoader.spineVersion.get() == 38) {
-                if ("3.8.75".equals(skeletonData.version))
-                    throw new RuntimeException("Unsupported skeleton data, please export with a newer version of Spine.");
                 skeletonData.x = skeletonMap.getFloat("x", 0);
                 skeletonData.y = skeletonMap.getFloat("y", 0);
             }
@@ -442,9 +440,8 @@ public class SkeletonJson {
                         AttachmentTimeline timeline = new AttachmentTimeline(timelineMap.size);
                         timeline.slotIndex = slot.index;
                         int frameIndex = 0;
-                        for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next) {
+                        for (JsonValue valueMap = timelineMap.child; valueMap != null; valueMap = valueMap.next)
                             timeline.setFrame(frameIndex++, valueMap.getFloat("time", 0), valueMap.getString("name"));
-                        }
                         timelines.add(timeline);
                         duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() - 1]);
                     }

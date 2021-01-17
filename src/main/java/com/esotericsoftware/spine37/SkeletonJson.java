@@ -11,10 +11,9 @@ import com.esotericsoftware.spine37.PathConstraintData.RotateMode;
 import com.esotericsoftware.spine37.PathConstraintData.SpacingMode;
 import com.esotericsoftware.spine37.attachments.*;
 
-
 public class SkeletonJson {
     private final AttachmentLoader attachmentLoader;
-    private final Array<LinkedMesh> linkedMeshes = new Array();
+    private final Array<LinkedMesh> linkedMeshes = new Array<>();
     private float scale = 1;
 
     public SkeletonJson(TextureAtlas atlas) {
@@ -25,7 +24,6 @@ public class SkeletonJson {
         if (attachmentLoader == null) throw new IllegalArgumentException("attachmentLoader cannot be null.");
         this.attachmentLoader = attachmentLoader;
     }
-
     
     public float getScale() {
         return scale;
@@ -41,15 +39,10 @@ public class SkeletonJson {
 
     public SkeletonData readSkeletonData(FileHandle file) {
         if (file == null) throw new IllegalArgumentException("file cannot be null.");
-
         float scale = this.scale;
-
         SkeletonData skeletonData = new SkeletonData();
         skeletonData.name = file.nameWithoutExtension();
-
         JsonValue root = parse(file);
-
-
         JsonValue skeletonMap = root.get("skeleton");
         if (skeletonMap != null) {
             skeletonData.hash = skeletonMap.getString("hash", null);
@@ -60,8 +53,6 @@ public class SkeletonJson {
             skeletonData.imagesPath = skeletonMap.getString("images", null);
             skeletonData.audioPath = skeletonMap.getString("audio", null);
         }
-
-
         for (JsonValue boneMap = root.getChild("bones"); boneMap != null; boneMap = boneMap.next) {
             BoneData parent = null;
             String parentName = boneMap.getString("parent", null);
@@ -86,7 +77,6 @@ public class SkeletonJson {
             skeletonData.bones.add(data);
         }
 
-
         for (JsonValue slotMap = root.getChild("slots"); slotMap != null; slotMap = slotMap.next) {
             String slotName = slotMap.getString("name");
             String boneName = slotMap.getString("bone");
@@ -104,7 +94,6 @@ public class SkeletonJson {
             data.blendMode = BlendMode.valueOf(slotMap.getString("blend", BlendMode.normal.name()));
             skeletonData.slots.add(data);
         }
-
 
         for (JsonValue constraintMap = root.getChild("ik"); constraintMap != null; constraintMap = constraintMap.next) {
             IkConstraintData data = new IkConstraintData(constraintMap.getString("name"));
@@ -129,7 +118,6 @@ public class SkeletonJson {
 
             skeletonData.ikConstraints.add(data);
         }
-
 
         for (JsonValue constraintMap = root.getChild("transform"); constraintMap != null; constraintMap = constraintMap.next) {
             TransformConstraintData data = new TransformConstraintData(constraintMap.getString("name"));
@@ -165,7 +153,6 @@ public class SkeletonJson {
             skeletonData.transformConstraints.add(data);
         }
 
-
         for (JsonValue constraintMap = root.getChild("outPath"); constraintMap != null; constraintMap = constraintMap.next) {
             PathConstraintData data = new PathConstraintData(constraintMap.getString("name"));
             data.order = constraintMap.getInt("order", 0);
@@ -195,7 +182,6 @@ public class SkeletonJson {
             skeletonData.pathConstraints.add(data);
         }
 
-
         for (JsonValue skinMap = root.getChild("skins"); skinMap != null; skinMap = skinMap.next) {
             Skin skin = new Skin(skinMap.name);
             for (JsonValue slotEntry = skinMap.child; slotEntry != null; slotEntry = slotEntry.next) {
@@ -214,7 +200,6 @@ public class SkeletonJson {
             if (skin.name.equals("default")) skeletonData.defaultSkin = skin;
         }
 
-
         for (int i = 0, n = linkedMeshes.size; i < n; i++) {
             LinkedMesh linkedMesh = linkedMeshes.get(i);
             Skin skin = linkedMesh.skin == null ? skeletonData.getDefaultSkin() : skeletonData.findSkin(linkedMesh.skin);
@@ -225,7 +210,6 @@ public class SkeletonJson {
             linkedMesh.mesh.updateUVs();
         }
         linkedMeshes.clear();
-
 
         for (JsonValue eventMap = root.getChild("events"); eventMap != null; eventMap = eventMap.next) {
             EventData data = new EventData(eventMap.name);
@@ -239,7 +223,6 @@ public class SkeletonJson {
             }
             skeletonData.events.add(data);
         }
-
 
         for (JsonValue animationMap = root.getChild("animations"); animationMap != null; animationMap = animationMap.next) {
             try {
@@ -261,9 +244,7 @@ public class SkeletonJson {
     private Attachment readAttachment(JsonValue map, Skin skin, int slotIndex, String name, SkeletonData skeletonData) {
         float scale = this.scale;
         name = map.getString("name", name);
-
         String type = map.getString("type", AttachmentType.region.name());
-
         switch (AttachmentType.valueOf(type)) {
             case region -> {
                 String path = map.getString("outPath", name);
@@ -402,7 +383,7 @@ public class SkeletonJson {
 
     private void readAnimation(JsonValue map, String name, SkeletonData skeletonData) {
         float scale = this.scale;
-        Array<Timeline> timelines = new Array();
+        Array<Timeline> timelines = new Array<>();
         float duration = 0;
 
 
