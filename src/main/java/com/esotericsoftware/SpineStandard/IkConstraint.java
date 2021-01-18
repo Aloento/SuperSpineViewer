@@ -3,7 +3,9 @@ package com.esotericsoftware.SpineStandard;
 import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.Array;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.atan2;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.radDeg;
+import static com.esotericsoftware.spine35.utils.TrigUtils.*;
 
 public class IkConstraint implements Constraint {
     final IkConstraintData data;
@@ -19,11 +21,14 @@ public class IkConstraint implements Constraint {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         this.data = data;
         mix = data.mix;
-        if (RuntimesLoader.spineVersion.get() == 38)
-            softness = data.softness;
         bendDirection = data.bendDirection;
-        compress = data.compress;
-        stretch = data.stretch;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38:
+                softness = data.softness;
+            case 37, 36:
+                compress = data.compress;
+                stretch = data.stretch;
+        }
         bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
@@ -39,11 +44,14 @@ public class IkConstraint implements Constraint {
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.bones.get(constraint.target.data.index);
         mix = constraint.mix;
-        if (RuntimesLoader.spineVersion.get() == 38)
-            softness = constraint.softness;
         bendDirection = constraint.bendDirection;
-        compress = constraint.compress;
-        stretch = constraint.stretch;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38:
+                softness = constraint.softness;
+            case 37, 36:
+                compress = constraint.compress;
+                stretch = constraint.stretch;
+        }
     }
 
     static public void apply(Bone bone, float targetX, float targetY, boolean compress, boolean stretch, boolean uniform,
@@ -263,7 +271,7 @@ public class IkConstraint implements Constraint {
         child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
     }
 
-    static public void apply(Bone bone, float targetX, float targetY, float alpha) { // Spine36
+    static public void apply(Bone bone, float targetX, float targetY, float alpha) { // Spine36/5
         if (!bone.appliedValid) bone.updateAppliedTransform();
         Bone p = bone.parent;
         float id = 1 / (p.a * p.d - p.b * p.c);
@@ -278,7 +286,7 @@ public class IkConstraint implements Constraint {
                 bone.ashearY);
     }
 
-    static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, float alpha) { // Spine 36
+    static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, float alpha) { // Spine 36/5
         if (alpha == 0) {
             child.updateWorldTransform();
             return;
@@ -325,7 +333,7 @@ public class IkConstraint implements Constraint {
         x = cwx - pp.worldX;
         y = cwy - pp.worldY;
         float dx = (x * d - y * b) * id - px, dy = (y * a - x * c) * id - py;
-        float l1 = (float) Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1, a2;
+        float l1 = (float) Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1 = 0, a2 = 0;
         outer:
         if (u) {
             l2 *= psx;
@@ -357,33 +365,78 @@ public class IkConstraint implements Constraint {
                     break outer;
                 }
             }
-            float minAngle = PI, minX = l1 - a, minDist = minX * minX, minY = 0;
-            float maxAngle = 0, maxX = l1 + a, maxDist = maxX * maxX, maxY = 0;
-            c = -a * l1 / (aa - bb);
-            if (c >= -1 && c <= 1) {
-                c = (float) Math.acos(c);
-                x = a * cos(c) + l1;
-                y = b * sin(c);
-                d = x * x + y * y;
-                if (d < minDist) {
-                    minAngle = c;
-                    minDist = d;
-                    minX = x;
-                    minY = y;
+            switch (RuntimesLoader.spineVersion.get()) {
+                case 36 -> {
+                    float minAngle = PI, minX = l1 - a, minDist = minX * minX, minY = 0;
+                    float maxAngle = 0, maxX = l1 + a, maxDist = maxX * maxX, maxY = 0;
+                    c = -a * l1 / (aa - bb);
+                    if (c >= -1 && c <= 1) {
+                        c = (float) Math.acos(c);
+                        x = a * cos(c) + l1;
+                        y = b * sin(c);
+                        d = x * x + y * y;
+                        if (d < minDist) {
+                            minAngle = c;
+                            minDist = d;
+                            minX = x;
+                            minY = y;
+                        }
+                        if (d > maxDist) {
+                            maxAngle = c;
+                            maxDist = d;
+                            maxX = x;
+                            maxY = y;
+                        }
+                    }
+                    if (dd <= (minDist + maxDist) / 2) {
+                        a1 = ta - atan2(minY * bendDir, minX);
+                        a2 = minAngle * bendDir;
+                    } else {
+                        a1 = ta - atan2(maxY * bendDir, maxX);
+                        a2 = maxAngle * bendDir;
+                    }
                 }
-                if (d > maxDist) {
-                    maxAngle = c;
-                    maxDist = d;
-                    maxX = x;
-                    maxY = y;
+                case 35 -> {
+                    float minAngle = 0, minDist = Float.MAX_VALUE, minX = 0, minY = 0;
+                    float maxAngle = 0, maxDist = 0, maxX = 0, maxY = 0;
+                    x = l1 + a;
+                    d = x * x;
+                    if (d > maxDist) {
+                        maxAngle = 0;
+                        maxDist = d;
+                        maxX = x;
+                    }
+                    x = l1 - a;
+                    d = x * x;
+                    if (d < minDist) {
+                        minAngle = PI;
+                        minDist = d;
+                        minX = x;
+                    }
+                    float angle = (float) Math.acos(-a * l1 / (aa - bb));
+                    x = a * cos(angle) + l1;
+                    y = b * sin(angle);
+                    d = x * x + y * y;
+                    if (d < minDist) {
+                        minAngle = angle;
+                        minDist = d;
+                        minX = x;
+                        minY = y;
+                    }
+                    if (d > maxDist) {
+                        maxAngle = angle;
+                        maxDist = d;
+                        maxX = x;
+                        maxY = y;
+                    }
+                    if (dd <= (minDist + maxDist) / 2) {
+                        a1 = ta - atan2(minY * bendDir, minX);
+                        a2 = minAngle * bendDir;
+                    } else {
+                        a1 = ta - atan2(maxY * bendDir, maxX);
+                        a2 = maxAngle * bendDir;
+                    }
                 }
-            }
-            if (dd <= (minDist + maxDist) / 2) {
-                a1 = ta - atan2(minY * bendDir, minX);
-                a2 = minAngle * bendDir;
-            } else {
-                a1 = ta - atan2(maxY * bendDir, maxX);
-                a2 = maxAngle * bendDir;
             }
         }
         float os = atan2(cy, cx) * s2;
@@ -425,7 +478,7 @@ public class IkConstraint implements Constraint {
                     case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, stretch, mix);
                 }
             }
-            case 36 -> {
+            case 36, 35 -> {
                 switch (bones.size) {
                     case 1 -> apply(bones.first(), target.worldX, target.worldY, mix);
                     case 2 -> apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, mix);

@@ -4,12 +4,7 @@ import com.badlogic.gdx.utils.Array;
 
 import static com.esotericsoftware.spine35.utils.TrigUtils.*;
 
-/**
- * Stores the current pose for an IK constraint. An IK constraint adjusts the rotation of 1 or 2 constrained bones so the tip of
- * the last bone is as close to the target bone as possible.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-ik-constraints">IK constraints</a> in the Spine User Guide.
- */
+
 public class IkConstraint implements Constraint {
     final IkConstraintData data;
     final Array<Bone> bones;
@@ -24,20 +19,18 @@ public class IkConstraint implements Constraint {
         mix = data.mix;
         bendDirection = data.bendDirection;
 
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findBone(data.target.name);
     }
 
-    /**
-     * Copy constructor.
-     */
+
     public IkConstraint(IkConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.bones.get(constraint.target.data.index);
@@ -45,9 +38,7 @@ public class IkConstraint implements Constraint {
         bendDirection = constraint.bendDirection;
     }
 
-    /**
-     * Applies 1 bone IK. The target is specified in the world coordinate system.
-     */
+
     static public void apply(Bone bone, float targetX, float targetY, float alpha) {
         if (!bone.appliedValid) bone.updateAppliedTransform();
         Bone p = bone.parent;
@@ -63,11 +54,7 @@ public class IkConstraint implements Constraint {
                 bone.ashearY);
     }
 
-    /**
-     * Applies 2 bone IK. The target is specified in the world coordinate system.
-     *
-     * @param child A direct descendant of the parent bone.
-     */
+
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, float alpha) {
         if (alpha == 0) {
             child.updateWorldTransform();
@@ -202,9 +189,7 @@ public class IkConstraint implements Constraint {
         child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
     }
 
-    /**
-     * Applies the constraint to the constrained bones.
-     */
+
     public void apply() {
         update();
     }
@@ -222,16 +207,12 @@ public class IkConstraint implements Constraint {
         return data.order;
     }
 
-    /**
-     * The bones that will be modified by this IK constraint.
-     */
+
     public Array<Bone> getBones() {
         return bones;
     }
 
-    /**
-     * The bone that is the IK target.
-     */
+
     public Bone getTarget() {
         return target;
     }
@@ -240,9 +221,7 @@ public class IkConstraint implements Constraint {
         this.target = target;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained rotations.
-     */
+
     public float getMix() {
         return mix;
     }
@@ -251,9 +230,7 @@ public class IkConstraint implements Constraint {
         this.mix = mix;
     }
 
-    /**
-     * Controls the bend direction of the IK bones, either 1 or -1.
-     */
+
     public int getBendDirection() {
         return bendDirection;
     }
@@ -262,9 +239,7 @@ public class IkConstraint implements Constraint {
         this.bendDirection = bendDirection;
     }
 
-    /**
-     * The IK constraint's setup pose data.
-     */
+
     public IkConstraintData getData() {
         return data;
     }
