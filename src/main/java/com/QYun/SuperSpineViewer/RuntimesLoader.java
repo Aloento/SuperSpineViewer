@@ -121,26 +121,6 @@ public class RuntimesLoader extends Controller {
     }
 
     public boolean init(File file) {
-        if (!isLoad.get()) {
-            spineVersion.addListener((observable, oldValue, newValue) -> {
-                if (!newValue.equals(oldValue) && isLoad.get()) {
-                    if (Controller.class.getResource("").getProtocol().equals("jar")) {
-                        new Thread(() -> {
-                            try {
-                                Runtime.getRuntime().exec("cmd /k start "
-                                        + "java -jar "
-                                        + System.getProperty("java.class.path")
-                                        + " " + openPath, null, new File(System.getProperty("user.dir")));
-                            } catch (IOException ignored) {
-                            }
-                            System.out.println("重新加载LibGDX");
-                        }).start();
-                    } else System.out.println("重新加载，从源码启动请自行重启");
-                    System.exit(0);
-                }
-            });
-        }
-
         FileHandle skelFile = new FileHandle(new File(file.getAbsolutePath()));
         spine.setAtlasFile(atlasFile(skelFile));
         spine.setSkelFile(skelFile);

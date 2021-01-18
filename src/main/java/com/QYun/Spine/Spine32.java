@@ -2,10 +2,14 @@ package com.QYun.Spine;
 
 import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine32.*;
 import com.esotericsoftware.spine32.AnimationState.TrackEntry;
@@ -31,6 +35,25 @@ public class Spine32 extends SuperSpine {
     }
 
     private boolean loadSkel() {
+        TextureAtlasData atlasData;
+        atlasData = new TextureAtlasData(atlasFile, atlasFile.parent(), false);
+
+        atlas = new TextureAtlas(atlasData) {
+            public AtlasRegion findRegion (String name) {
+                AtlasRegion region = super.findRegion(name);
+                if (region == null) {
+                    FileHandle file = skelFile.sibling(name + ".png");
+                    if (file.exists()) {
+                        Texture texture = new Texture(file);
+                        texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+                        region = new AtlasRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
+                        region.name = name;
+                    }
+                }
+                return region;
+            }
+        };
+
         SkeletonData skeletonData;
         if (isBinary) {
             SkeletonBinary binary = new SkeletonBinary(atlas);
@@ -164,7 +187,6 @@ public class Spine32 extends SuperSpine {
         renderer = new SkeletonMeshRenderer();
         renderer.setPremultipliedAlpha(true);
 
-        atlas = new TextureAtlas(atlasFile);
         if (loadSkel())
             listeners();
     }
