@@ -57,9 +57,11 @@ public class Standard extends SuperSpine {
 
         spineVersion.set(skeletonData.getVersion());
         projectName.set(skeletonData.getName());
-        skins(skeletonData.getSkins());
-        animates(skeletonData.getAnimations());
 
+        if (skinsList.isEmpty()) {
+            skins(skeletonData.getSkins());
+            animates(skeletonData.getAnimations());
+        }
         return true;
     }
 
