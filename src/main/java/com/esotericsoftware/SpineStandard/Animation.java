@@ -19,8 +19,8 @@ import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class Animation {
     final String name;
-    IntSet timelineIDs;
     Array<Timeline> timelines;
+    IntSet timelineIDs;
     float duration;
 
     public Animation(String name, Array<Timeline> timelines, float duration) {
@@ -33,7 +33,7 @@ public class Animation {
                 timelineIDs = new IntSet();
                 setTimelines(timelines);
             }
-            case 37, 36 -> this.timelines = timelines;
+            case 37, 36, 35 -> this.timelines = timelines;
         }
     }
 
@@ -91,8 +91,20 @@ public class Animation {
         this.duration = duration;
     }
 
-    public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha, MixPose pose,
-                      MixDirection direction) { // Spine36
+    public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha,
+                      MixBlend blend, MixDirection direction) {
+        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+        if (loop && duration != 0) {
+            time %= duration;
+            if (lastTime > 0) lastTime %= duration;
+        }
+        Array<Timeline> timelines = this.timelines;
+        for (int i = 0, n = timelines.size; i < n; i++)
+            timelines.get(i).apply(skeleton, lastTime, time, events, alpha, blend, direction);
+    }
+
+    public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha,
+                      MixPose pose, MixDirection direction) { // Spine36
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
 
         if (loop && duration != 0) {
@@ -106,15 +118,17 @@ public class Animation {
     }
 
     public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha,
-                      MixBlend blend, MixDirection direction) {
+                      boolean setupPose, boolean mixingOut) { // Spine35
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+
         if (loop && duration != 0) {
             time %= duration;
             if (lastTime > 0) lastTime %= duration;
         }
+
         Array<Timeline> timelines = this.timelines;
         for (int i = 0, n = timelines.size; i < n; i++)
-            timelines.get(i).apply(skeleton, lastTime, time, events, alpha, blend, direction);
+            timelines.get(i).apply(skeleton, lastTime, time, events, alpha, setupPose, mixingOut);
     }
 
     public String getName() {
@@ -147,11 +161,14 @@ public class Animation {
     }
 
     public interface Timeline {
+        void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
+                   MixDirection direction);
+
         void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixPose pose,
                    MixDirection direction); // Spine36
 
-        void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
-                   MixDirection direction);
+        void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                   boolean mixingOut); // Spine35
 
         int getPropertyId();
     }
@@ -232,9 +249,24 @@ public class Animation {
             for (int start = i, n = i + BEZIER_SIZE - 1; i < n; i += 2) {
                 x = curves[i];
                 if (x >= percent) {
-                    if (i == start) return curves[i + 1] * percent / x;
-                    float prevX = curves[i - 2], prevY = curves[i - 1];
-                    return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
+                    switch (RuntimesLoader.spineVersion.get()) {
+                        case 38, 37, 36 -> {
+                            if (i == start) return curves[i + 1] * percent / x;
+                            float prevX = curves[i - 2], prevY = curves[i - 1];
+                            return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
+                        }
+                        case 35 -> {
+                            float prevX, prevY;
+                            if (i == start) {
+                                prevX = 0;
+                                prevY = 0;
+                            } else {
+                                prevX = curves[i - 2];
+                                prevY = curves[i - 1];
+                            }
+                            return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
+                        }
+                    }
                 }
             }
             float y = curves[i - 1];
@@ -375,6 +407,44 @@ public class Animation {
                 bone.rotation += r * alpha;
             }
         }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            Bone bone = skeleton.bones.get(boneIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) bone.rotation = bone.data.rotation;
+                return;
+            }
+
+            if (time >= frames[frames.length - ENTRIES]) {
+                if (setupPose)
+                    bone.rotation = bone.data.rotation + frames[frames.length + PREV_ROTATION] * alpha;
+                else {
+                    float r = bone.data.rotation + frames[frames.length + PREV_ROTATION] - bone.rotation;
+                    r -= (16384 - (int) (16384.499999999996 - r / 360)) * 360;
+                    bone.rotation += r * alpha;
+                }
+                return;
+            }
+
+            int frame = binarySearch(frames, time, ENTRIES);
+            float prevRotation = frames[frame + PREV_ROTATION];
+            float frameTime = frames[frame];
+            float percent = getCurvePercent((frame >> 1) - 1, 1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+            float r = frames[frame + ROTATION] - prevRotation;
+            r -= (16384 - (int) (16384.499999999996 - r / 360)) * 360;
+            r = prevRotation + r * percent;
+            if (setupPose) {
+                r -= (16384 - (int) (16384.499999999996 - r / 360)) * 360;
+                bone.rotation = bone.data.rotation + r * alpha;
+            } else {
+                r = bone.data.rotation + r - bone.rotation;
+                r -= (16384 - (int) (16384.499999999996 - r / 360)) * 360;
+                bone.rotation += r * alpha;
+            }
+        }
     }
 
     static public class TranslateTimeline extends CurveTimeline implements BoneTimeline {
@@ -498,6 +568,43 @@ public class Animation {
                 y += (frames[frame + Y] - y) * percent;
             }
             if (pose == P_setup) {
+                bone.x = bone.data.x + x * alpha;
+                bone.y = bone.data.y + y * alpha;
+            } else {
+                bone.x += (bone.data.x + x - bone.x) * alpha;
+                bone.y += (bone.data.y + y - bone.y) * alpha;
+            }
+        }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            Bone bone = skeleton.bones.get(boneIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    bone.x = bone.data.x;
+                    bone.y = bone.data.y;
+                }
+                return;
+            }
+
+            float x, y;
+            if (time >= frames[frames.length - ENTRIES]) {
+                x = frames[frames.length + PREV_X];
+                y = frames[frames.length + PREV_Y];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                x = frames[frame + PREV_X];
+                y = frames[frame + PREV_Y];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                x += (frames[frame + X] - x) * percent;
+                y += (frames[frame + Y] - y) * percent;
+            }
+            if (setupPose) {
                 bone.x = bone.data.x + x * alpha;
                 bone.y = bone.data.y + y * alpha;
             } else {
@@ -665,6 +772,59 @@ public class Animation {
                 bone.scaleY = by + (y - by) * alpha;
             }
         }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            Bone bone = skeleton.bones.get(boneIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    bone.scaleX = bone.data.scaleX;
+                    bone.scaleY = bone.data.scaleY;
+                }
+                return;
+            }
+
+            float x, y;
+            if (time >= frames[frames.length - ENTRIES]) {
+                x = frames[frames.length + PREV_X] * bone.data.scaleX;
+                y = frames[frames.length + PREV_Y] * bone.data.scaleY;
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                x = frames[frame + PREV_X];
+                y = frames[frame + PREV_Y];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                x = (x + (frames[frame + X] - x) * percent) * bone.data.scaleX;
+                y = (y + (frames[frame + Y] - y) * percent) * bone.data.scaleY;
+            }
+            if (alpha == 1) {
+                bone.scaleX = x;
+                bone.scaleY = y;
+            } else {
+                float bx, by;
+                if (setupPose) {
+                    bx = bone.data.scaleX;
+                    by = bone.data.scaleY;
+                } else {
+                    bx = bone.scaleX;
+                    by = bone.scaleY;
+                }
+
+                if (mixingOut) {
+                    x = Math.abs(x) * Math.signum(bx);
+                    y = Math.abs(y) * Math.signum(by);
+                } else {
+                    bx = Math.abs(bx) * Math.signum(x);
+                    by = Math.abs(by) * Math.signum(y);
+                }
+                bone.scaleX = bx + (x - bx) * alpha;
+                bone.scaleY = by + (y - by) * alpha;
+            }
+        }
     }
 
     static public class ShearTimeline extends TranslateTimeline {
@@ -761,6 +921,43 @@ public class Animation {
                 y = y + (frames[frame + Y] - y) * percent;
             }
             if (pose == P_setup) {
+                bone.shearX = bone.data.shearX + x * alpha;
+                bone.shearY = bone.data.shearY + y * alpha;
+            } else {
+                bone.shearX += (bone.data.shearX + x - bone.shearX) * alpha;
+                bone.shearY += (bone.data.shearY + y - bone.shearY) * alpha;
+            }
+        }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            Bone bone = skeleton.bones.get(boneIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    bone.shearX = bone.data.shearX;
+                    bone.shearY = bone.data.shearY;
+                }
+                return;
+            }
+
+            float x, y;
+            if (time >= frames[frames.length - ENTRIES]) {
+                x = frames[frames.length + PREV_X];
+                y = frames[frames.length + PREV_Y];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                x = frames[frame + PREV_X];
+                y = frames[frame + PREV_Y];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                x = x + (frames[frame + X] - x) * percent;
+                y = y + (frames[frame + Y] - y) * percent;
+            }
+            if (setupPose) {
                 bone.shearX = bone.data.shearX + x * alpha;
                 bone.shearY = bone.data.shearY + y * alpha;
             } else {
@@ -904,6 +1101,47 @@ public class Animation {
             else {
                 Color color = slot.color;
                 if (pose == P_setup) color.set(slot.data.color);
+                color.add((r - color.r) * alpha, (g - color.g) * alpha, (b - color.b) * alpha, (a - color.a) * alpha);
+            }
+        }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            Slot slot = skeleton.slots.get(slotIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) slot.color.set(slot.data.color);
+                return;
+            }
+
+            float r, g, b, a;
+            if (time >= frames[frames.length - ENTRIES]) {
+                int i = frames.length;
+                r = frames[i + PREV_R];
+                g = frames[i + PREV_G];
+                b = frames[i + PREV_B];
+                a = frames[i + PREV_A];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                r = frames[frame + PREV_R];
+                g = frames[frame + PREV_G];
+                b = frames[frame + PREV_B];
+                a = frames[frame + PREV_A];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                r += (frames[frame + R] - r) * percent;
+                g += (frames[frame + G] - g) * percent;
+                b += (frames[frame + B] - b) * percent;
+                a += (frames[frame + A] - a) * percent;
+            }
+            if (alpha == 1)
+                slot.color.set(r, g, b, a);
+            else {
+                Color color = slot.color;
+                if (setupPose) color.set(slot.data.color);
                 color.add((r - color.r) * alpha, (g - color.g) * alpha, (b - color.b) * alpha, (a - color.a) * alpha);
             }
         }
@@ -1082,6 +1320,11 @@ public class Animation {
                 dark.add((r2 - dark.r) * alpha, (g2 - dark.g) * alpha, (b2 - dark.b) * alpha, 0);
             }
         }
+
+        @Override
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+        }
     }
 
     static public class AttachmentTimeline implements SlotTimeline {
@@ -1196,6 +1439,34 @@ public class Animation {
             slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
         }
 
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            Slot slot = skeleton.slots.get(slotIndex);
+            if (mixingOut && setupPose) {
+                String attachmentName = slot.data.attachmentName;
+                slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
+                return;
+            }
+
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    String attachmentName = slot.data.attachmentName;
+                    slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
+                }
+                return;
+            }
+
+            int frameIndex;
+            if (time >= frames[frames.length - 1])
+                frameIndex = frames.length - 1;
+            else
+                frameIndex = binarySearch(frames, time) - 1;
+
+            String attachmentName = attachmentNames[frameIndex];
+            slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
+        }
+
         private void setAttachment(Skeleton skeleton, Slot slot, String attachmentName) {
             slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
         }
@@ -1214,7 +1485,11 @@ public class Animation {
         }
 
         public int getPropertyId() {
-            return (TimelineType.deform.ordinal() << 27) + attachment.getId() + slotIndex;
+            return switch (RuntimesLoader.spineVersion.get()) {
+                case 38, 37, 36 -> (TimelineType.deform.ordinal() << 27) + attachment.getId() + slotIndex;
+                case 35 -> (TimelineType.deform.ordinal() << 24) + slotIndex;
+                default -> throw new IllegalStateException("Unexpected value: " + RuntimesLoader.spineVersion.get());
+            };
         }
 
         public int getSlotIndex() {
@@ -1672,6 +1947,89 @@ public class Animation {
                 }
             }
         }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            Slot slot = skeleton.slots.get(slotIndex);
+            Attachment slotAttachment = slot.attachment;
+            if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
+                return;
+
+            FloatArray verticesArray = slot.getAttachmentVertices();
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) verticesArray.size = 0;
+                return;
+            }
+
+            float[][] frameVertices = this.frameVertices;
+            int vertexCount = frameVertices[0].length;
+            if (verticesArray.size != vertexCount) alpha = 1;
+            float[] vertices = verticesArray.setSize(vertexCount);
+
+            if (time >= frames[frames.length - 1]) {
+                float[] lastVertices = frameVertices[frames.length - 1];
+                if (alpha == 1) {
+
+                    System.arraycopy(lastVertices, 0, vertices, 0, vertexCount);
+                } else if (setupPose) {
+                    VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                    if (vertexAttachment.getBones() == null) {
+
+                        float[] setupVertices = vertexAttachment.getVertices();
+                        for (int i = 0; i < vertexCount; i++) {
+                            float setup = setupVertices[i];
+                            vertices[i] = setup + (lastVertices[i] - setup) * alpha;
+                        }
+                    } else {
+
+                        for (int i = 0; i < vertexCount; i++)
+                            vertices[i] = lastVertices[i] * alpha;
+                    }
+                } else {
+
+                    for (int i = 0; i < vertexCount; i++)
+                        vertices[i] += (lastVertices[i] - vertices[i]) * alpha;
+                }
+                return;
+            }
+
+            int frame = binarySearch(frames, time);
+            float[] prevVertices = frameVertices[frame - 1];
+            float[] nextVertices = frameVertices[frame];
+            float frameTime = frames[frame];
+            float percent = getCurvePercent(frame - 1, 1 - (time - frameTime) / (frames[frame - 1] - frameTime));
+
+            if (alpha == 1) {
+
+                for (int i = 0; i < vertexCount; i++) {
+                    float prev = prevVertices[i];
+                    vertices[i] = prev + (nextVertices[i] - prev) * percent;
+                }
+            } else if (setupPose) {
+                VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
+                if (vertexAttachment.getBones() == null) {
+
+                    float[] setupVertices = vertexAttachment.getVertices();
+                    for (int i = 0; i < vertexCount; i++) {
+                        float prev = prevVertices[i], setup = setupVertices[i];
+                        vertices[i] = setup + (prev + (nextVertices[i] - prev) * percent - setup) * alpha;
+                    }
+                } else {
+
+                    for (int i = 0; i < vertexCount; i++) {
+                        float prev = prevVertices[i];
+                        vertices[i] = (prev + (nextVertices[i] - prev) * percent) * alpha;
+                    }
+                }
+            } else {
+
+                for (int i = 0; i < vertexCount; i++) {
+                    float prev = prevVertices[i];
+                    vertices[i] += (prev + (nextVertices[i] - prev) * percent - vertices[i]) * alpha;
+                }
+            }
+        }
     }
 
     static public class EventTimeline implements Timeline {
@@ -1679,8 +2037,7 @@ public class Animation {
         private final Event[] events;
 
         public EventTimeline(int frameCount) {
-            if (frameCount <= 0 && RuntimesLoader.spineVersion.get() == 38)
-                throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
+            if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             events = new Event[frameCount];
         }
@@ -1759,6 +2116,34 @@ public class Animation {
             for (; frame < frameCount && time >= frames[frame]; frame++)
                 firedEvents.add(events[frame]);
         }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            if (firedEvents == null) return;
+            float[] frames = this.frames;
+            int frameCount = frames.length;
+
+            if (lastTime > time) {
+                apply(skeleton, lastTime, Integer.MAX_VALUE, firedEvents, alpha, setupPose, mixingOut);
+                lastTime = -1f;
+            } else if (lastTime >= frames[frameCount - 1])
+                return;
+            if (time < frames[0]) return;
+
+            int frame;
+            if (lastTime < frames[0])
+                frame = 0;
+            else {
+                frame = binarySearch(frames, lastTime);
+                float frameTime = frames[frame];
+                while (frame > 0) {
+                    if (frames[frame - 1] != frameTime) break;
+                    frame--;
+                }
+            }
+            for (; frame < frameCount && time >= frames[frame]; frame++)
+                firedEvents.add(events[frame]);
+        }
     }
 
     static public class DrawOrderTimeline implements Timeline {
@@ -1766,8 +2151,7 @@ public class Animation {
         private final int[][] drawOrders;
 
         public DrawOrderTimeline(int frameCount) {
-            if (frameCount <= 0 && RuntimesLoader.spineVersion.get() == 38)
-                throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
+            if (frameCount <= 0) throw new IllegalArgumentException("frameCount must be > 0: " + frameCount);
             frames = new float[frameCount];
             drawOrders = new int[frameCount][];
         }
@@ -1865,6 +2249,36 @@ public class Animation {
                     drawOrder.set(i, slots.get(drawOrderToSetupIndex[i]));
             }
         }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            Array<Slot> drawOrder = skeleton.drawOrder;
+            Array<Slot> slots = skeleton.slots;
+            if (mixingOut && setupPose) {
+                System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+                return;
+            }
+
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+                return;
+            }
+
+            int frame;
+            if (time >= frames[frames.length - 1])
+                frame = frames.length - 1;
+            else
+                frame = binarySearch(frames, time) - 1;
+
+            int[] drawOrderToSetupIndex = drawOrders[frame];
+            if (drawOrderToSetupIndex == null)
+                System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
+            else {
+                for (int i = 0, n = drawOrderToSetupIndex.length; i < n; i++)
+                    drawOrder.set(i, slots.get(drawOrderToSetupIndex[i]));
+            }
+        }
     }
 
     static public class IkConstraintTimeline extends CurveTimeline {
@@ -1903,7 +2317,7 @@ public class Animation {
                     COMPRESS = 3;
                     STRETCH = 4;
                 }
-                case 36 -> {
+                case 36, 35 -> {
                     ENTRIES = 3;
                     PREV_TIME = -3;
                     PREV_MIX = -2;
@@ -1944,7 +2358,7 @@ public class Animation {
             frames[frameIndex + STRETCH] = stretch ? 1 : 0;
         }
 
-        public void setFrame(int frameIndex, float time, float mix, int bendDirection) { // Spine36
+        public void setFrame(int frameIndex, float time, float mix, int bendDirection) { // Spine36/5
             frameIndex *= ENTRIES;
             frames[frameIndex] = time;
             frames[frameIndex + MIX] = mix;
@@ -2077,6 +2491,44 @@ public class Animation {
             } else {
                 constraint.mix += (mix + (frames[frame + MIX] - mix) * percent - constraint.mix) * alpha;
                 if (direction == in) constraint.bendDirection = (int) frames[frame + PREV_BEND_DIRECTION];
+            }
+        }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            IkConstraint constraint = skeleton.ikConstraints.get(ikConstraintIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    constraint.mix = constraint.data.mix;
+                    constraint.bendDirection = constraint.data.bendDirection;
+                }
+                return;
+            }
+
+            if (time >= frames[frames.length - ENTRIES]) {
+                if (setupPose) {
+                    constraint.mix = constraint.data.mix + (frames[frames.length + PREV_MIX] - constraint.data.mix) * alpha;
+                    constraint.bendDirection = mixingOut ? constraint.data.bendDirection
+                            : (int) frames[frames.length + PREV_BEND_DIRECTION];
+                } else {
+                    constraint.mix += (frames[frames.length + PREV_MIX] - constraint.mix) * alpha;
+                    if (!mixingOut) constraint.bendDirection = (int) frames[frames.length + PREV_BEND_DIRECTION];
+                }
+                return;
+            }
+
+            int frame = binarySearch(frames, time, ENTRIES);
+            float mix = frames[frame + PREV_MIX];
+            float frameTime = frames[frame];
+            float percent = getCurvePercent(frame / ENTRIES - 1, 1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+            if (setupPose) {
+                constraint.mix = constraint.data.mix + (mix + (frames[frame + MIX] - mix) * percent - constraint.data.mix) * alpha;
+                constraint.bendDirection = mixingOut ? constraint.data.bendDirection : (int) frames[frame + PREV_BEND_DIRECTION];
+            } else {
+                constraint.mix += (mix + (frames[frame + MIX] - mix) * percent - constraint.mix) * alpha;
+                if (!mixingOut) constraint.bendDirection = (int) frames[frame + PREV_BEND_DIRECTION];
             }
         }
     }
@@ -2238,6 +2690,58 @@ public class Animation {
                 constraint.shearMix += (shear - constraint.shearMix) * alpha;
             }
         }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            TransformConstraint constraint = skeleton.transformConstraints.get(transformConstraintIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    TransformConstraintData data = constraint.data;
+                    constraint.rotateMix = data.rotateMix;
+                    constraint.translateMix = data.translateMix;
+                    constraint.scaleMix = data.scaleMix;
+                    constraint.shearMix = data.shearMix;
+                }
+                return;
+            }
+
+            float rotate, translate, scale, shear;
+            if (time >= frames[frames.length - ENTRIES]) {
+                int i = frames.length;
+                rotate = frames[i + PREV_ROTATE];
+                translate = frames[i + PREV_TRANSLATE];
+                scale = frames[i + PREV_SCALE];
+                shear = frames[i + PREV_SHEAR];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                rotate = frames[frame + PREV_ROTATE];
+                translate = frames[frame + PREV_TRANSLATE];
+                scale = frames[frame + PREV_SCALE];
+                shear = frames[frame + PREV_SHEAR];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                rotate += (frames[frame + ROTATE] - rotate) * percent;
+                translate += (frames[frame + TRANSLATE] - translate) * percent;
+                scale += (frames[frame + SCALE] - scale) * percent;
+                shear += (frames[frame + SHEAR] - shear) * percent;
+            }
+            if (setupPose) {
+                TransformConstraintData data = constraint.data;
+                constraint.rotateMix = data.rotateMix + (rotate - data.rotateMix) * alpha;
+                constraint.translateMix = data.translateMix + (translate - data.translateMix) * alpha;
+                constraint.scaleMix = data.scaleMix + (scale - data.scaleMix) * alpha;
+                constraint.shearMix = data.shearMix + (shear - data.shearMix) * alpha;
+            } else {
+                constraint.rotateMix += (rotate - constraint.rotateMix) * alpha;
+                constraint.translateMix += (translate - constraint.translateMix) * alpha;
+                constraint.scaleMix += (scale - constraint.scaleMix) * alpha;
+                constraint.shearMix += (shear - constraint.shearMix) * alpha;
+            }
+        }
     }
 
     static public class PathConstraintPositionTimeline extends CurveTimeline {
@@ -2340,6 +2844,34 @@ public class Animation {
             else
                 constraint.position += (position - constraint.position) * alpha;
         }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) constraint.position = constraint.data.position;
+                return;
+            }
+
+            float position;
+            if (time >= frames[frames.length - ENTRIES])
+                position = frames[frames.length + PREV_VALUE];
+            else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                position = frames[frame + PREV_VALUE];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                position += (frames[frame + VALUE] - position) * percent;
+            }
+            if (setupPose)
+                constraint.position = constraint.data.position + (position - constraint.data.position) * alpha;
+            else
+                constraint.position += (position - constraint.position) * alpha;
+        }
     }
 
     static public class PathConstraintSpacingTimeline extends PathConstraintPositionTimeline {
@@ -2413,6 +2945,35 @@ public class Animation {
             }
 
             if (pose == P_setup)
+                constraint.spacing = constraint.data.spacing + (spacing - constraint.data.spacing) * alpha;
+            else
+                constraint.spacing += (spacing - constraint.spacing) * alpha;
+        }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) constraint.spacing = constraint.data.spacing;
+                return;
+            }
+
+            float spacing;
+            if (time >= frames[frames.length - ENTRIES])
+                spacing = frames[frames.length + PREV_VALUE];
+            else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                spacing = frames[frame + PREV_VALUE];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                spacing += (frames[frame + VALUE] - spacing) * percent;
+            }
+
+            if (setupPose)
                 constraint.spacing = constraint.data.spacing + (spacing - constraint.data.spacing) * alpha;
             else
                 constraint.spacing += (spacing - constraint.spacing) * alpha;
@@ -2534,6 +3095,44 @@ public class Animation {
             }
 
             if (pose == P_setup) {
+                constraint.rotateMix = constraint.data.rotateMix + (rotate - constraint.data.rotateMix) * alpha;
+                constraint.translateMix = constraint.data.translateMix + (translate - constraint.data.translateMix) * alpha;
+            } else {
+                constraint.rotateMix += (rotate - constraint.rotateMix) * alpha;
+                constraint.translateMix += (translate - constraint.translateMix) * alpha;
+            }
+        }
+
+        public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
+                          boolean mixingOut) { // Spine35
+            PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    constraint.rotateMix = constraint.data.rotateMix;
+                    constraint.translateMix = constraint.data.translateMix;
+                }
+                return;
+            }
+
+            float rotate, translate;
+            if (time >= frames[frames.length - ENTRIES]) {
+                rotate = frames[frames.length + PREV_ROTATE];
+                translate = frames[frames.length + PREV_TRANSLATE];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                rotate = frames[frame + PREV_ROTATE];
+                translate = frames[frame + PREV_TRANSLATE];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                rotate += (frames[frame + ROTATE] - rotate) * percent;
+                translate += (frames[frame + TRANSLATE] - translate) * percent;
+            }
+
+            if (setupPose) {
                 constraint.rotateMix = constraint.data.rotateMix + (rotate - constraint.data.rotateMix) * alpha;
                 constraint.translateMix = constraint.data.translateMix + (translate - constraint.data.translateMix) * alpha;
             } else {
