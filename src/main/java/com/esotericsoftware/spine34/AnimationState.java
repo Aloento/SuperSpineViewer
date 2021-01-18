@@ -4,13 +4,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-/**
- * Stores state for an animation and automatically mixes between animations.
- */
+
 public class AnimationState {
-    private final Array<TrackEntry> tracks = new Array();
-    private final Array<Event> events = new Array();
-    private final Array<AnimationStateListener> listeners = new Array();
+    private final Array<TrackEntry> tracks = new Array<>();
+    private final Array<Event> events = new Array<>();
+    private final Array<AnimationStateListener> listeners = new Array<>();
     private final Pool<TrackEntry> trackEntryPool = new Pool() {
         protected Object newObject() {
             return new TrackEntry();
@@ -19,9 +17,7 @@ public class AnimationState {
     private AnimationStateData data;
     private float timeScale = 1;
 
-    /**
-     * Creates an uninitialized AnimationState. The animation state data must be set.
-     */
+    
     public AnimationState() {
     }
 
@@ -41,14 +37,14 @@ public class AnimationState {
                 float nextTime = current.lastTime - next.delay;
                 if (nextTime >= 0) {
                     float nextDelta = delta * next.timeScale;
-                    next.time = nextTime + nextDelta; // For start event to see correct time.
-                    current.time += delta * current.timeScale; // For end event to see correct time.
+                    next.time = nextTime + nextDelta;
+                    current.time += delta * current.timeScale;
                     setCurrent(i, next);
-                    next.time -= nextDelta; // Prevent increasing time twice, below.
+                    next.time -= nextDelta;
                     current = next;
                 }
             } else if (!current.loop && current.lastTime >= current.endTime) {
-                // End non-looping animation when it reaches its end time and there is no next entry.
+
                 clearTrack(i);
                 continue;
             }
@@ -102,7 +98,7 @@ public class AnimationState {
                     listeners.get(iii).event(i, event);
             }
 
-            // Check if completed the animation or a loop iteration.
+
             if (loop ? (lastTime % endTime > time % endTime) : (lastTime < endTime && time >= endTime)) {
                 int count = (int) (time / endTime);
                 if (current.listener != null) current.listener.complete(i, count);
@@ -143,13 +139,6 @@ public class AnimationState {
         }
     }
 
-    private TrackEntry expandToIndex(int index) {
-        if (index < tracks.size) return tracks.get(index);
-        tracks.ensureCapacity(index - tracks.size + 1);
-        tracks.size = index + 1;
-        return null;
-    }
-
     private void setCurrent(int index, TrackEntry entry) {
         TrackEntry current = expandToIndex(index);
         if (current != null) {
@@ -163,7 +152,7 @@ public class AnimationState {
             entry.mixDuration = data.getMix(current.animation, entry.animation);
             if (entry.mixDuration > 0) {
                 entry.mixTime = 0;
-                // If a mix is in progress, mix from the closest animation.
+
                 if (previous != null && current.mixTime / current.mixDuration < 0.5f) {
                     entry.previous = previous;
                     previous = current;
@@ -182,18 +171,14 @@ public class AnimationState {
             listeners.get(i).start(index);
     }
 
-    /**
-     * @see #setAnimation(int, Animation, boolean)
-     */
+    
     public TrackEntry setAnimation(int trackIndex, String animationName, boolean loop) {
         Animation animation = data.getSkeletonData().findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return setAnimation(trackIndex, animation, loop);
     }
 
-    /**
-     * Set the current animation. Any queued animations are cleared.
-     */
+    
     public TrackEntry setAnimation(int trackIndex, Animation animation, boolean loop) {
         TrackEntry current = expandToIndex(trackIndex);
         if (current != null) freeAll(current.next);
@@ -206,20 +191,14 @@ public class AnimationState {
         return entry;
     }
 
-    /**
-     * {@link #addAnimation(int, Animation, boolean, float)}
-     */
+    
     public TrackEntry addAnimation(int trackIndex, String animationName, boolean loop, float delay) {
         Animation animation = data.getSkeletonData().findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return addAnimation(trackIndex, animation, loop, delay);
     }
 
-    /**
-     * Adds an animation to be played delay seconds after the current or last queued animation.
-     *
-     * @param delay May be <= 0 to use duration of previous animation minus any mix duration plus the negative delay.
-     */
+    
     public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
         TrackEntry entry = trackEntryPool.obtain();
         entry.animation = animation;
@@ -240,30 +219,30 @@ public class AnimationState {
             else
                 delay = 0;
         }
-        entry.delay = delay;
 
+        entry.delay = delay;
         return entry;
     }
 
-    /**
-     * @return May be null.
-     */
+    private TrackEntry expandToIndex(int index) {
+        if (index < tracks.size) return tracks.get(index);
+        tracks.ensureCapacity(index - tracks.size + 1);
+        tracks.size = index + 1;
+        return null;
+    }
+
     public TrackEntry getCurrent(int trackIndex) {
         if (trackIndex >= tracks.size) return null;
         return tracks.get(trackIndex);
     }
 
-    /**
-     * Adds a listener to receive events for all animations.
-     */
+    
     public void addListener(AnimationStateListener listener) {
         if (listener == null) throw new IllegalArgumentException("listener cannot be null.");
         listeners.add(listener);
     }
 
-    /**
-     * Removes the listener added with {@link #addListener(AnimationStateListener)}.
-     */
+    
     public void removeListener(AnimationStateListener listener) {
         listeners.removeValue(listener, true);
     }
@@ -288,9 +267,7 @@ public class AnimationState {
         this.data = data;
     }
 
-    /**
-     * Returns the list of tracks that have animations, which may contain nulls.
-     */
+    
     public Array<TrackEntry> getTracks() {
         return tracks;
     }
@@ -308,26 +285,9 @@ public class AnimationState {
     }
 
     public interface AnimationStateListener {
-        /**
-         * Invoked when the current animation triggers an event.
-         */
         void event(int trackIndex, Event event);
-
-        /**
-         * Invoked when the current animation has completed.
-         *
-         * @param loopCount The number of times the animation reached the end.
-         */
         void complete(int trackIndex, int loopCount);
-
-        /**
-         * Invoked just after the current animation is set.
-         */
         void start(int trackIndex);
-
-        /**
-         * Invoked just before the current animation is replaced.
-         */
         void end(int trackIndex);
     }
 
@@ -342,11 +302,11 @@ public class AnimationState {
 
         public void reset() {
             next = null;
-            previous = null;
             animation = null;
             listener = null;
+            previous = null;
             timeScale = 1;
-            lastTime = -1; // Trigger events on frame zero.
+            lastTime = -1;
             time = 0;
         }
 
@@ -390,14 +350,6 @@ public class AnimationState {
             this.endTime = endTime;
         }
 
-        public AnimationStateListener getListener() {
-            return listener;
-        }
-
-        public void setListener(AnimationStateListener listener) {
-            this.listener = listener;
-        }
-
         public float getLastTime() {
             return lastTime;
         }
@@ -422,6 +374,14 @@ public class AnimationState {
             this.timeScale = timeScale;
         }
 
+        public AnimationStateListener getListener() {
+            return listener;
+        }
+
+        public void setListener(AnimationStateListener listener) {
+            this.listener = listener;
+        }
+
         public TrackEntry getNext() {
             return next;
         }
@@ -430,9 +390,6 @@ public class AnimationState {
             this.next = next;
         }
 
-        /**
-         * Returns true if the current time is greater than the end time, regardless of looping.
-         */
         public boolean isComplete() {
             return time >= endTime;
         }
