@@ -19,6 +19,7 @@ public class Bone implements Updatable {
     boolean appliedValid;
     float a, b, worldX;
     float c, d, worldY;
+    float worldSignX, worldSignY; // Spine34
     boolean sorted, active;
 
     public Bone(BoneData data, Skeleton skeleton, Bone parent) {
@@ -64,11 +65,17 @@ public class Bone implements Updatable {
         appliedValid = true;
 
         Bone parent = this.parent;
+        float rotationY = rotation + 90 + shearY;
+        float la = cosDeg(rotation + shearX) * scaleX;
+        float lb = cosDeg(rotationY) * scaleY;
+        float lc = sinDeg(rotation + shearX) * scaleX;
+        float ld = sinDeg(rotationY) * scaleY;
+
         switch (RuntimesLoader.spineVersion.get()) {
             case 38, 37 -> {
                 if (parent == null) {
                     Skeleton skeleton = this.skeleton;
-                    float rotationY = rotation + 90 + shearY, sx = skeleton.scaleX, sy = skeleton.scaleY;
+                    float sx = skeleton.scaleX, sy = skeleton.scaleY;
                     a = cosDeg(rotation + shearX) * scaleX * sx;
                     switch (RuntimesLoader.spineVersion.get()) {
                         case 38 -> {
@@ -86,13 +93,8 @@ public class Bone implements Updatable {
                     return;
                 }
             }
-            case 36, 35 -> {
+            case 36, 35, 34 -> {
                 if (parent == null) {
-                    float rotationY = rotation + 90 + shearY;
-                    float la = cosDeg(rotation + shearX) * scaleX;
-                    float lb = cosDeg(rotationY) * scaleY;
-                    float lc = sinDeg(rotation + shearX) * scaleX;
-                    float ld = sinDeg(rotationY) * scaleY;
                     Skeleton skeleton = this.skeleton;
                     if (skeleton.flipX) {
                         x = -x;
@@ -108,8 +110,18 @@ public class Bone implements Updatable {
                     b = lb;
                     c = lc;
                     d = ld;
-                    worldX = x + skeleton.x;
-                    worldY = y + skeleton.y;
+                    switch (RuntimesLoader.spineVersion.get()) {
+                        case 36, 35 -> {
+                            worldX = x + skeleton.x;
+                            worldY = y + skeleton.y;
+                        }
+                        case 34 -> {
+                            worldX = x;
+                            worldY = y;
+                            worldSignX = Math.signum(scaleX);
+                            worldSignY = Math.signum(scaleY);
+                        }
+                    }
                     return;
                 }
             }
@@ -117,104 +129,173 @@ public class Bone implements Updatable {
         float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
         worldX = pa * x + pb * y + parent.worldX;
         worldY = pc * x + pd * y + parent.worldY;
-        switch (data.transformMode) {
-            case normal -> {
-                float rotationY = rotation + 90 + shearY;
-                float la = cosDeg(rotation + shearX) * scaleX;
-                float lb = cosDeg(rotationY) * scaleY;
-                float lc = sinDeg(rotation + shearX) * scaleX;
-                float ld = sinDeg(rotationY) * scaleY;
-                a = pa * la + pb * lc;
-                b = pa * lb + pb * ld;
-                c = pc * la + pd * lc;
-                d = pc * lb + pd * ld;
-                return;
-            }
-            case onlyTranslation -> {
-                float rotationY = rotation + 90 + shearY;
-                a = cosDeg(rotation + shearX) * scaleX;
-                b = cosDeg(rotationY) * scaleY;
-                c = sinDeg(rotation + shearX) * scaleX;
-                d = sinDeg(rotationY) * scaleY;
-            }
-            case noRotationOrReflection -> {
-                float s = pa * pa + pc * pc, prx;
-                if (s > 0.0001f) {
-                    s = Math.abs(pa * pd - pb * pc) / s;
-                    if (RuntimesLoader.spineVersion.get() == 38) {
-                        pa /= skeleton.scaleX;
-                        pc /= skeleton.scaleY;
+
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37, 36, 35 -> {
+                switch (data.transformMode) {
+                    case normal -> {
+                        a = pa * la + pb * lc;
+                        b = pa * lb + pb * ld;
+                        c = pc * la + pd * lc;
+                        d = pc * lb + pd * ld;
+                        return;
                     }
-                    pb = pc * s;
-                    pd = pa * s;
-                    prx = atan2(pc, pa) * radDeg;
+                    case onlyTranslation -> {
+                        a = cosDeg(rotation + shearX) * scaleX;
+                        b = cosDeg(rotationY) * scaleY;
+                        c = sinDeg(rotation + shearX) * scaleX;
+                        d = sinDeg(rotationY) * scaleY;
+                    }
+                    case noRotationOrReflection -> {
+                        float s = pa * pa + pc * pc, prx;
+                        if (s > 0.0001f) {
+                            s = Math.abs(pa * pd - pb * pc) / s;
+                            if (RuntimesLoader.spineVersion.get() == 38) {
+                                pa /= skeleton.scaleX;
+                                pc /= skeleton.scaleY;
+                            }
+                            pb = pc * s;
+                            pd = pa * s;
+                            prx = atan2(pc, pa) * radDeg;
+                        } else {
+                            pa = 0;
+                            pc = 0;
+                            prx = 90 - atan2(pd, pb) * radDeg;
+                        }
+                        float rx = rotation + shearX - prx;
+                        float ry = rotation + shearY - prx + 90;
+                        la = cosDeg(rx) * scaleX;
+                        lb = cosDeg(ry) * scaleY;
+                        lc = sinDeg(rx) * scaleX;
+                        ld = sinDeg(ry) * scaleY;
+                        a = pa * la - pb * lc;
+                        b = pa * lb - pb * ld;
+                        c = pc * la + pd * lc;
+                        d = pc * lb + pd * ld;
+                    }
+                    case noScale, noScaleOrReflection -> {
+                        float cos = cosDeg(rotation), sin = sinDeg(rotation);
+                        float za = 0;
+                        float zc = 0;
+                        switch (RuntimesLoader.spineVersion.get()) {
+                            case 38, 37 -> {
+                                za = (pa * cos + pb * sin) / skeleton.scaleX;
+                                zc = (pc * cos + pd * sin) / skeleton.scaleY;
+                            }
+                            case 36, 35 -> {
+                                za = pa * cos + pb * sin;
+                                zc = pc * cos + pd * sin;
+                            }
+                        }
+                        float s = (float) Math.sqrt(za * za + zc * zc);
+                        if (s > 0.00001f) s = 1 / s;
+                        za *= s;
+                        zc *= s;
+                        s = (float) Math.sqrt(za * za + zc * zc);
+                        boolean b1 = pa * pd - pb * pc < 0;
+                        switch (RuntimesLoader.spineVersion.get()) {
+                            case 38, 37 -> {
+                                if (data.transformMode == TransformMode.noScale
+                                        && b1 == (skeleton.scaleX < 0 == skeleton.scaleY < 0)) s = -s;
+                            }
+                        }
+                        float r = PI / 2 + atan2(zc, za);
+                        float zb = cos(r) * s;
+                        float zd = sin(r) * s;
+                        la = cosDeg(shearX) * scaleX;
+                        lb = cosDeg(90 + shearY) * scaleY;
+                        lc = sinDeg(shearX) * scaleX;
+                        ld = sinDeg(90 + shearY) * scaleY;
+
+                        if (RuntimesLoader.spineVersion.get() == 36 &&
+                                (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY)) {
+                            zb = -zb;
+                            zd = -zd;
+                        }
+
+                        a = za * la + zb * lc;
+                        b = za * lb + zb * ld;
+                        c = zc * la + zd * lc;
+                        d = zc * lb + zd * ld;
+
+                        if (RuntimesLoader.spineVersion.get() == 35 &&
+                                (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY)) {
+                            b = -b;
+                            d = -d;
+                        }
+                        return;
+                    }
+                }
+            }
+            case 34 -> {
+                worldSignX = parent.worldSignX * Math.signum(scaleX);
+                worldSignY = parent.worldSignY * Math.signum(scaleY);
+
+                if (data.inheritRotation && data.inheritScale) {
+                    a = pa * la + pb * lc;
+                    b = pa * lb + pb * ld;
+                    c = pc * la + pd * lc;
+                    d = pc * lb + pd * ld;
                 } else {
-                    pa = 0;
-                    pc = 0;
-                    prx = 90 - atan2(pd, pb) * radDeg;
-                }
-                float rx = rotation + shearX - prx;
-                float ry = rotation + shearY - prx + 90;
-                float la = cosDeg(rx) * scaleX;
-                float lb = cosDeg(ry) * scaleY;
-                float lc = sinDeg(rx) * scaleX;
-                float ld = sinDeg(ry) * scaleY;
-                a = pa * la - pb * lc;
-                b = pa * lb - pb * ld;
-                c = pc * la + pd * lc;
-                d = pc * lb + pd * ld;
-            }
-            case noScale, noScaleOrReflection -> {
-                float cos = cosDeg(rotation), sin = sinDeg(rotation);
-                float za = 0;
-                float zc = 0;
-                switch (RuntimesLoader.spineVersion.get()) {
-                    case 38, 37 -> {
-                        za = (pa * cos + pb * sin) / skeleton.scaleX;
-                        zc = (pc * cos + pd * sin) / skeleton.scaleY;
-                    }
-                    case 36, 35 -> {
-                        za = pa * cos + pb * sin;
-                        zc = pc * cos + pd * sin;
-                    }
-                }
-                float s = (float) Math.sqrt(za * za + zc * zc);
-                if (s > 0.00001f) s = 1 / s;
-                za *= s;
-                zc *= s;
-                s = (float) Math.sqrt(za * za + zc * zc);
-                boolean b1 = pa * pd - pb * pc < 0;
-                switch (RuntimesLoader.spineVersion.get()) {
-                    case 38, 37 -> {
-                        if (data.transformMode == TransformMode.noScale
-                                && b1 == (skeleton.scaleX < 0 == skeleton.scaleY < 0)) s = -s;
-                    }
-                }
-                float r = PI / 2 + atan2(zc, za);
-                float zb = cos(r) * s;
-                float zd = sin(r) * s;
-                float la = cosDeg(shearX) * scaleX;
-                float lb = cosDeg(90 + shearY) * scaleY;
-                float lc = sinDeg(shearX) * scaleX;
-                float ld = sinDeg(90 + shearY) * scaleY;
+                    if (data.inheritRotation) {
+                        pa = 1;
+                        pb = 0;
+                        pc = 0;
+                        pd = 1;
+                        do {
+                            float cos = cosDeg(parent.arotation), sin = sinDeg(parent.arotation);
+                            float temp = pa * cos + pb * sin;
+                            pb = pb * cos - pa * sin;
+                            pa = temp;
+                            temp = pc * cos + pd * sin;
+                            pd = pd * cos - pc * sin;
+                            pc = temp;
 
-                if (RuntimesLoader.spineVersion.get() == 36 &&
-                        (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY)) {
-                    zb = -zb;
-                    zd = -zd;
-                }
+                            if (!parent.data.inheritRotation) break;
+                            parent = parent.parent;
+                        } while (parent != null);
+                        a = pa * la + pb * lc;
+                        b = pa * lb + pb * ld;
+                        c = pc * la + pd * lc;
+                        d = pc * lb + pd * ld;
+                    } else if (data.inheritScale) {
+                        pa = 1;
+                        pb = 0;
+                        pc = 0;
+                        pd = 1;
+                        do {
+                            float cos = cosDeg(parent.arotation), sin = sinDeg(parent.arotation);
+                            float psx = parent.scaleX, psy = parent.scaleY;
+                            float za = cos * psx, zb = sin * psy, zc = sin * psx, zd = cos * psy;
+                            float temp = pa * za + pb * zc;
+                            pb = pb * zd - pa * zb;
+                            pa = temp;
+                            temp = pc * za + pd * zc;
+                            pd = pd * zd - pc * zb;
+                            pc = temp;
 
-                a = za * la + zb * lc;
-                b = za * lb + zb * ld;
-                c = zc * la + zd * lc;
-                d = zc * lb + zd * ld;
+                            if (psx >= 0) sin = -sin;
+                            temp = pa * cos + pb * sin;
+                            pb = pb * cos - pa * sin;
+                            pa = temp;
+                            temp = pc * cos + pd * sin;
+                            pd = pd * cos - pc * sin;
+                            pc = temp;
 
-                if (RuntimesLoader.spineVersion.get() == 35 &&
-                        (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY)) {
-                    b = -b;
-                    d = -d;
+                            if (!parent.data.inheritScale) break;
+                            parent = parent.parent;
+                        } while (parent != null);
+                        a = pa * la + pb * lc;
+                        b = pa * lb + pb * ld;
+                        c = pc * la + pd * lc;
+                        d = pc * lb + pd * ld;
+                    } else {
+                        a = la;
+                        b = lb;
+                        c = lc;
+                        d = ld;
+                    }
                 }
-                return;
             }
         }
         switch (RuntimesLoader.spineVersion.get()) {
@@ -224,7 +305,7 @@ public class Bone implements Updatable {
                 c *= skeleton.scaleY;
                 d *= skeleton.scaleY;
             }
-            case 36, 35 -> {
+            case 36, 35, 34 -> {
                 if (skeleton.flipX) {
                     a = -a;
                     b = -b;
@@ -501,10 +582,14 @@ public class Bone implements Updatable {
     }
 
     public float getWorldScaleX() {
+        if (RuntimesLoader.spineVersion.get() == 34)
+            return (float) Math.sqrt(a * a + b * b) * worldSignX;
         return (float) Math.sqrt(a * a + c * c);
     }
 
     public float getWorldScaleY() {
+        if (RuntimesLoader.spineVersion.get() == 34)
+            return (float) Math.sqrt(c * c + d * d) * worldSignY;
         return (float) Math.sqrt(b * b + d * d);
     }
 

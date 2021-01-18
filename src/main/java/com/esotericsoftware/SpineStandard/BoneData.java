@@ -9,6 +9,7 @@ public class BoneData {
     final Color color = new Color(0.61f, 0.61f, 0.61f, 1);
     float length;
     float x, y, rotation, scaleX = 1, scaleY = 1, shearX, shearY;
+    boolean inheritRotation = true, inheritScale = true; // Spine34
     TransformMode transformMode = TransformMode.normal;
     boolean skinRequired;
 
@@ -121,21 +122,20 @@ public class BoneData {
         this.shearY = shearY;
     }
 
-    public TransformMode getTransformMode() {
-        return transformMode;
+    public boolean getInheritRotation() {
+        return inheritRotation;
     }
 
-    public void setTransformMode(TransformMode transformMode) {
-        if (transformMode == null) throw new IllegalArgumentException("transformMode cannot be null.");
-        this.transformMode = transformMode;
+    public void setInheritRotation(boolean inheritRotation) {
+        this.inheritRotation = inheritRotation;
     }
 
-    public boolean getSkinRequired() {
-        return skinRequired;
+    public boolean getInheritScale() {
+        return inheritScale;
     }
 
-    public void setSkinRequired(boolean skinRequired) {
-        this.skinRequired = skinRequired;
+    public void setInheritScale(boolean inheritScale) {
+        this.inheritScale = inheritScale;
     }
 
     public Color getColor() {

@@ -6,15 +6,13 @@ public class BoneData {
     final int index;
     final String name;
     final BoneData parent;
-    // Nonessential.
+
     final Color color = new Color(0.61f, 0.61f, 0.61f, 1);
     float length;
     float x, y, rotation, scaleX = 1, scaleY = 1, shearX, shearY;
     boolean inheritRotation = true, inheritScale = true;
 
-    /**
-     * @param parent May be null.
-     */
+    
     public BoneData(int index, String name, BoneData parent) {
         if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
@@ -23,11 +21,7 @@ public class BoneData {
         this.parent = parent;
     }
 
-    /**
-     * Copy constructor.
-     *
-     * @param parent May be null.
-     */
+    
     public BoneData(BoneData bone, BoneData parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
         index = bone.index;
@@ -51,9 +45,7 @@ public class BoneData {
         return name;
     }
 
-    /**
-     * @return May be null.
-     */
+    
     public BoneData getParent() {
         return parent;
     }

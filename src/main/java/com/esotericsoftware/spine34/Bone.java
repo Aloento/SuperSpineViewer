@@ -13,7 +13,7 @@ public class Bone implements Updatable {
     final Bone parent;
     final Array<Bone> children = new Array();
     float x, y, rotation, scaleX, scaleY, shearX, shearY;
-    float appliedRotation;
+    float arotation;
 
     float a, b, worldX;
     float c, d, worldY;
@@ -21,9 +21,7 @@ public class Bone implements Updatable {
 
     boolean sorted;
 
-    /**
-     * @param parent May be null.
-     */
+    
     public Bone(BoneData data, Skeleton skeleton, Bone parent) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -33,11 +31,7 @@ public class Bone implements Updatable {
         setToSetupPose();
     }
 
-    /**
-     * Copy constructor. Does not copy the children bones.
-     *
-     * @param parent May be null.
-     */
+    
     public Bone(Bone bone, Skeleton skeleton, Bone parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -53,32 +47,27 @@ public class Bone implements Updatable {
         shearY = bone.shearY;
     }
 
-    /**
-     * Same as {@link #updateWorldTransform()}. This method exists for Bone to implement {@link Updatable}.
-     */
+    
     public void update() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
     }
 
-    /**
-     * Computes the world transform using the parent bone and this bone's local transform.
-     */
+    
     public void updateWorldTransform() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
     }
 
-    /**
-     * Computes the world transform using the parent bone and the specified local transform.
-     */
+    
     public void updateWorldTransform(float x, float y, float rotation, float scaleX, float scaleY, float shearX, float shearY) {
-        appliedRotation = rotation;
-
-        float rotationY = rotation + 90 + shearY;
-        float la = cosDeg(rotation + shearX) * scaleX, lb = cosDeg(rotationY) * scaleY;
-        float lc = sinDeg(rotation + shearX) * scaleX, ld = sinDeg(rotationY) * scaleY;
-
+        arotation = rotation;
         Bone parent = this.parent;
-        if (parent == null) { // Root bone.
+        float rotationY = rotation + 90 + shearY;
+        float la = cosDeg(rotation + shearX) * scaleX;
+        float lb = cosDeg(rotationY) * scaleY;
+        float lc = sinDeg(rotation + shearX) * scaleX;
+        float ld = sinDeg(rotationY) * scaleY;
+
+        if (parent == null) {
             Skeleton skeleton = this.skeleton;
             if (skeleton.flipX) {
                 x = -x;
@@ -113,13 +102,13 @@ public class Bone implements Updatable {
             c = pc * la + pd * lc;
             d = pc * lb + pd * ld;
         } else {
-            if (data.inheritRotation) { // No scale inheritance.
+            if (data.inheritRotation) {
                 pa = 1;
                 pb = 0;
                 pc = 0;
                 pd = 1;
                 do {
-                    float cos = cosDeg(parent.appliedRotation), sin = sinDeg(parent.appliedRotation);
+                    float cos = cosDeg(parent.arotation), sin = sinDeg(parent.arotation);
                     float temp = pa * cos + pb * sin;
                     pb = pb * cos - pa * sin;
                     pa = temp;
@@ -134,13 +123,13 @@ public class Bone implements Updatable {
                 b = pa * lb + pb * ld;
                 c = pc * la + pd * lc;
                 d = pc * lb + pd * ld;
-            } else if (data.inheritScale) { // No rotation inheritance.
+            } else if (data.inheritScale) {
                 pa = 1;
                 pb = 0;
                 pc = 0;
                 pd = 1;
                 do {
-                    float cos = cosDeg(parent.appliedRotation), sin = sinDeg(parent.appliedRotation);
+                    float cos = cosDeg(parent.arotation), sin = sinDeg(parent.arotation);
                     float psx = parent.scaleX, psy = parent.scaleY;
                     float za = cos * psx, zb = sin * psy, zc = sin * psx, zd = cos * psy;
                     float temp = pa * za + pb * zc;
@@ -351,13 +340,7 @@ public class Bone implements Updatable {
         this.d = sin * b + cos * d;
     }
 
-    /**
-     * Computes the local transform from the world transform. This can be useful to perform processing on the local transform
-     * after the world transform has been modified directly (eg, by a constraint).
-     * <p>
-     * Some redundant information is lost by the world transform, such as -1,-1 scale versus 180 rotation. The computed local
-     * transform values may differ from the original values but are functionally the same.
-     */
+    
     public void updateLocalTransform() {
         Bone parent = this.parent;
         if (parent == null) {
@@ -397,7 +380,7 @@ public class Bone implements Updatable {
             shearY = 0;
             rotation = 90 - atan2(rd, rb) * radDeg;
         }
-        appliedRotation = rotation;
+        arotation = rotation;
     }
 
     public Matrix3 getWorldTransform(Matrix3 worldTransform) {
