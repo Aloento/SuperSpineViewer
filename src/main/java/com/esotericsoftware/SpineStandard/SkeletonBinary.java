@@ -223,7 +223,7 @@ public class SkeletonBinary {
                     throw new SerializationException("Error reading skeleton file.", ex);
                 }
             }
-            case 37, 36 -> {
+            case 37, 36, 35 -> {
                 try (DataInput input = new DataInput(file.read(512)) {
                     private char[] chars = new char[32];
 
@@ -272,14 +272,9 @@ public class SkeletonBinary {
                         skeletonData.fps = input.readFloat();
                         skeletonData.imagesPath = input.readString();
                         if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
-
-                        switch (RuntimesLoader.spineVersion.get()) {
-                            case 38, 37 -> {
-                                if (RuntimesLoader.spineVersion.get() == 37) {
-                                    skeletonData.audioPath = input.readString();
-                                    if (skeletonData.audioPath.isEmpty()) skeletonData.audioPath = null;
-                                }
-                            }
+                        if (RuntimesLoader.spineVersion.get() == 37) {
+                            skeletonData.audioPath = input.readString();
+                            if (skeletonData.audioPath.isEmpty()) skeletonData.audioPath = null;
                         }
                     }
 
@@ -305,10 +300,12 @@ public class SkeletonBinary {
                         BoneData boneData = skeletonData.bones.get(input.readInt(true));
                         SlotData data = new SlotData(i, slotName, boneData);
                         Color.rgba8888ToColor(data.color, input.readInt());
-
-                        int darkColor = input.readInt();
-                        if (darkColor != -1) Color.rgb888ToColor(data.darkColor = new Color(), darkColor);
-
+                        switch (RuntimesLoader.spineVersion.get()) {
+                            case 37, 36 -> {
+                                int darkColor = input.readInt();
+                                if (darkColor != -1) Color.rgb888ToColor(data.darkColor = new Color(), darkColor);
+                            }
+                        }
                         data.attachmentName = input.readString();
                         data.blendMode = BlendMode.values[input.readInt(true)];
                         skeletonData.slots.add(data);
@@ -336,8 +333,12 @@ public class SkeletonBinary {
                         for (int ii = 0, nn = input.readInt(true); ii < nn; ii++)
                             data.bones.add(skeletonData.bones.get(input.readInt(true)));
                         data.target = skeletonData.bones.get(input.readInt(true));
-                        data.local = input.readBoolean();
-                        data.relative = input.readBoolean();
+                        switch (RuntimesLoader.spineVersion.get()) {
+                            case 37, 36 -> {
+                                data.local = input.readBoolean();
+                                data.relative = input.readBoolean();
+                            }
+                        }
                         data.offsetRotation = input.readFloat();
                         data.offsetX = input.readFloat() * scale;
                         data.offsetY = input.readFloat() * scale;
@@ -1262,7 +1263,7 @@ public class SkeletonBinary {
                 for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
                     switch (RuntimesLoader.spineVersion.get()) {
                         case 38, 37 -> timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte(), input.readBoolean(), input.readBoolean());
-                        case 36 -> timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte());
+                        case 36, 35 -> timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte());
                     }
                     if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
                 }
@@ -1424,10 +1425,8 @@ public class SkeletonBinary {
         } catch (IOException ex) {
             throw new SerializationException("Error reading skeleton file.", ex);
         }
-
         timelines.shrink();
         skeletonData.animations.add(new Animation(name, timelines, duration));
-
     }
 
     private void readCurve(DataInput input, int frameIndex, CurveTimeline timeline) throws IOException {

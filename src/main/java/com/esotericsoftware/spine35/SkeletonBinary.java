@@ -15,34 +15,22 @@ import com.esotericsoftware.spine35.attachments.*;
 import java.io.EOFException;
 import java.io.IOException;
 
-/**
- * Loads skeleton data in the Spine binary format.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-binary-format">Spine binary format</a> and
- * <a href="http://esotericsoftware.com/spine-loading-skeleton-data#JSON-and-binary-data">JSON and binary data</a> in the Spine
- * Runtimes Guide.
- */
 public class SkeletonBinary {
     static public final int BONE_ROTATE = 0;
     static public final int BONE_TRANSLATE = 1;
     static public final int BONE_SCALE = 2;
     static public final int BONE_SHEAR = 3;
-
     static public final int SLOT_ATTACHMENT = 0;
     static public final int SLOT_COLOR = 1;
-
     static public final int PATH_POSITION = 0;
     static public final int PATH_SPACING = 1;
     static public final int PATH_MIX = 2;
-
     static public final int CURVE_LINEAR = 0;
     static public final int CURVE_STEPPED = 1;
     static public final int CURVE_BEZIER = 2;
-
-    static private final Color tempColor = new Color();
-
+    static private final Color tempColor1 = new Color();
     private final AttachmentLoader attachmentLoader;
-    private final Array<LinkedMesh> linkedMeshes = new Array();
+    private final Array<LinkedMesh> linkedMeshes = new Array<>();
     private float scale = 1;
 
     public SkeletonBinary(TextureAtlas atlas) {
@@ -54,12 +42,6 @@ public class SkeletonBinary {
         this.attachmentLoader = attachmentLoader;
     }
 
-    /**
-     * Scales bone positions, image sizes, and translations as they are loaded. This allows different size images to be used at
-     * runtime than were used in Spine.
-     * <p>
-     * See <a href="http://esotericsoftware.com/spine-loading-skeleton-data#Scaling">Scaling</a> in the Spine Runtimes Guide.
-     */
     public float getScale() {
         return scale;
     }
@@ -127,7 +109,7 @@ public class SkeletonBinary {
                 if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
             }
 
-            // Bones.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 String name = input.readString();
                 BoneData parent = i == 0 ? null : skeletonData.bones.get(input.readInt(true));
@@ -145,7 +127,7 @@ public class SkeletonBinary {
                 skeletonData.bones.add(data);
             }
 
-            // Slots.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 String slotName = input.readString();
                 BoneData boneData = skeletonData.bones.get(input.readInt(true));
@@ -156,7 +138,7 @@ public class SkeletonBinary {
                 skeletonData.slots.add(data);
             }
 
-            // IK constraints.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 IkConstraintData data = new IkConstraintData(input.readString());
                 data.order = input.readInt(true);
@@ -168,7 +150,7 @@ public class SkeletonBinary {
                 skeletonData.ikConstraints.add(data);
             }
 
-            // Transform constraints.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 TransformConstraintData data = new TransformConstraintData(input.readString());
                 data.order = input.readInt(true);
@@ -188,7 +170,7 @@ public class SkeletonBinary {
                 skeletonData.transformConstraints.add(data);
             }
 
-            // Path constraints.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 PathConstraintData data = new PathConstraintData(input.readString());
                 data.order = input.readInt(true);
@@ -209,18 +191,18 @@ public class SkeletonBinary {
                 skeletonData.pathConstraints.add(data);
             }
 
-            // Default skin.
+
             Skin defaultSkin = readSkin(input, "default", nonessential);
             if (defaultSkin != null) {
                 skeletonData.defaultSkin = defaultSkin;
                 skeletonData.skins.add(defaultSkin);
             }
 
-            // Skins.
+
             for (int i = 0, n = input.readInt(true); i < n; i++)
                 skeletonData.skins.add(readSkin(input, input.readString(), nonessential));
 
-            // Linked meshes.
+
             for (int i = 0, n = linkedMeshes.size; i < n; i++) {
                 LinkedMesh linkedMesh = linkedMeshes.get(i);
                 Skin skin = linkedMesh.skin == null ? skeletonData.getDefaultSkin() : skeletonData.findSkin(linkedMesh.skin);
@@ -232,7 +214,7 @@ public class SkeletonBinary {
             }
             linkedMeshes.clear();
 
-            // Events.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 EventData data = new EventData(input.readString());
                 data.intValue = input.readInt(false);
@@ -241,9 +223,9 @@ public class SkeletonBinary {
                 skeletonData.events.add(data);
             }
 
-            // Animations.
+
             for (int i = 0, n = input.readInt(true); i < n; i++)
-                readAnimation(input.readString(), input, skeletonData);
+                readAnimation(input, input.readString(), skeletonData);
 
         } catch (IOException ex) {
             throw new SerializationException("Error reading skeleton file.", ex);
@@ -258,9 +240,7 @@ public class SkeletonBinary {
         return skeletonData;
     }
 
-    /**
-     * @return May be null.
-     */
+    
     private Skin readSkin(DataInput input, String skinName, boolean nonessential) throws IOException {
         int slotCount = input.readInt(true);
         if (slotCount == 0) return null;
@@ -453,31 +433,19 @@ public class SkeletonBinary {
         return array;
     }
 
-    private void readAnimation(String name, DataInput input, SkeletonData skeletonData) {
-        Array<Timeline> timelines = new Array();
+    private void readAnimation(DataInput input, String name, SkeletonData skeletonData) {
+        Array<Timeline> timelines = new Array<>();
         float scale = this.scale;
         float duration = 0;
 
         try {
-            // Slot timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 int slotIndex = input.readInt(true);
                 for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
                     int timelineType = input.readByte();
                     int frameCount = input.readInt(true);
                     switch (timelineType) {
-                        case SLOT_COLOR -> {
-                            ColorTimeline timeline = new ColorTimeline(frameCount);
-                            timeline.slotIndex = slotIndex;
-                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-                                float time = input.readFloat();
-                                Color.rgba8888ToColor(tempColor, input.readInt());
-                                timeline.setFrame(frameIndex, time, tempColor.r, tempColor.g, tempColor.b, tempColor.a);
-                                if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
-                            }
-                            timelines.add(timeline);
-                            duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * ColorTimeline.ENTRIES]);
-                        }
                         case SLOT_ATTACHMENT -> {
                             AttachmentTimeline timeline = new AttachmentTimeline(frameCount);
                             timeline.slotIndex = slotIndex;
@@ -486,11 +454,22 @@ public class SkeletonBinary {
                             timelines.add(timeline);
                             duration = Math.max(duration, timeline.getFrames()[frameCount - 1]);
                         }
+                        case SLOT_COLOR -> {
+                            ColorTimeline timeline = new ColorTimeline(frameCount);
+                            timeline.slotIndex = slotIndex;
+                            for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+                                float time = input.readFloat();
+                                Color.rgba8888ToColor(tempColor1, input.readInt());
+                                timeline.setFrame(frameIndex, time, tempColor1.r, tempColor1.g, tempColor1.b, tempColor1.a);
+                                if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
+                            }
+                            timelines.add(timeline);
+                            duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * ColorTimeline.ENTRIES]);
+                        }
                     }
                 }
             }
 
-            // Bone timelines.
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 int boneIndex = input.readInt(true);
                 for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
@@ -531,7 +510,7 @@ public class SkeletonBinary {
                 }
             }
 
-            // IK constraint timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 int index = input.readInt(true);
                 int frameCount = input.readInt(true);
@@ -545,7 +524,7 @@ public class SkeletonBinary {
                 duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * IkConstraintTimeline.ENTRIES]);
             }
 
-            // Transform constraint timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 int index = input.readInt(true);
                 int frameCount = input.readInt(true);
@@ -560,7 +539,7 @@ public class SkeletonBinary {
                 duration = Math.max(duration, timeline.getFrames()[(frameCount - 1) * TransformConstraintTimeline.ENTRIES]);
             }
 
-            // Path constraint timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 int index = input.readInt(true);
                 PathConstraintData data = skeletonData.pathConstraints.get(index);
@@ -601,7 +580,7 @@ public class SkeletonBinary {
                 }
             }
 
-            // Deform timelines.
+
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 Skin skin = skeletonData.skins.get(input.readInt(true));
                 for (int ii = 0, nn = input.readInt(true); ii < nn; ii++) {
@@ -649,7 +628,7 @@ public class SkeletonBinary {
                 }
             }
 
-            // Draw order timeline.
+
             int drawOrderCount = input.readInt(true);
             if (drawOrderCount > 0) {
                 DrawOrderTimeline timeline = new DrawOrderTimeline(drawOrderCount);
@@ -664,16 +643,16 @@ public class SkeletonBinary {
                     int originalIndex = 0, unchangedIndex = 0;
                     for (int ii = 0; ii < offsetCount; ii++) {
                         int slotIndex = input.readInt(true);
-                        // Collect unchanged items.
+
                         while (originalIndex != slotIndex)
                             unchanged[unchangedIndex++] = originalIndex++;
-                        // Set changed items.
+
                         drawOrder[originalIndex + input.readInt(true)] = originalIndex++;
                     }
-                    // Collect remaining unchanged items.
+
                     while (originalIndex < slotCount)
                         unchanged[unchangedIndex++] = originalIndex++;
-                    // Fill in unchanged items.
+
                     for (int ii = slotCount - 1; ii >= 0; ii--)
                         if (drawOrder[ii] == -1) drawOrder[ii] = unchanged[--unchangedIndex];
                     timeline.setFrame(i, time, drawOrder);
@@ -682,7 +661,7 @@ public class SkeletonBinary {
                 duration = Math.max(duration, timeline.getFrames()[drawOrderCount - 1]);
             }
 
-            // Event timeline.
+
             int eventCount = input.readInt(true);
             if (eventCount > 0) {
                 EventTimeline timeline = new EventTimeline(eventCount);
