@@ -70,7 +70,7 @@ public class Bone implements Updatable {
                     Skeleton skeleton = this.skeleton;
                     float rotationY = rotation + 90 + shearY, sx = skeleton.scaleX, sy = skeleton.scaleY;
                     a = cosDeg(rotation + shearX) * scaleX * sx;
-                    switch (RuntimesLoader.spineVersion.get()){
+                    switch (RuntimesLoader.spineVersion.get()) {
                         case 38 -> {
                             b = cosDeg(rotationY) * scaleY * sx;
                             c = sinDeg(rotation + shearX) * scaleX * sy;
@@ -183,10 +183,11 @@ public class Bone implements Updatable {
                 za *= s;
                 zc *= s;
                 s = (float) Math.sqrt(za * za + zc * zc);
+                boolean b1 = pa * pd - pb * pc < 0;
                 switch (RuntimesLoader.spineVersion.get()) {
                     case 38, 37 -> {
                         if (data.transformMode == TransformMode.noScale
-                                && (pa * pd - pb * pc < 0) == (skeleton.scaleX < 0 == skeleton.scaleY < 0)) s = -s;
+                                && b1 == (skeleton.scaleX < 0 == skeleton.scaleY < 0)) s = -s;
                     }
                 }
                 float r = PI / 2 + atan2(zc, za);
@@ -198,7 +199,7 @@ public class Bone implements Updatable {
                 float ld = sinDeg(90 + shearY) * scaleY;
                 switch (RuntimesLoader.spineVersion.get()) {
                     case 36 -> {
-                        if (data.transformMode != TransformMode.noScaleOrReflection ? pa * pd - pb * pc < 0 : skeleton.flipX != skeleton.flipY) {
+                        if (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY) {
                             zb = -zb;
                             zd = -zd;
                         }

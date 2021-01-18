@@ -389,12 +389,13 @@ public class PathConstraint implements Constraint {
 
     private void addCurvePosition(float p, float x1, float y1, float cx1, float cy1, float cx2, float cy2, float x2, float y2,
                                   float[] out, int o, boolean tangents) {
+        double atan2 = Math.atan2(cy1 - y1, cx1 - x1);
         if (p < epsilon || Float.isNaN(p)) {
             switch (RuntimesLoader.spineVersion.get()) {
                 case 38, 37 -> {
                     out[o] = x1;
                     out[o + 1] = y1;
-                    out[o + 2] = (float) Math.atan2(cy1 - y1, cx1 - x1);
+                    out[o + 2] = (float) atan2;
                     return;
                 }
                 case 36 -> p = epsilon;
@@ -406,8 +407,9 @@ public class PathConstraint implements Constraint {
         out[o] = x;
         out[o + 1] = y;
         if (tangents) {
-            if (p < 0.001f) out[o + 2] = (float) Math.atan2(cy1 - y1, cx1 - x1);
-            else out[o + 2] = (float) Math.atan2(y - (y1 * uu + cy1 * ut * 2 + cy2 * tt), x - (x1 * uu + cx1 * ut * 2 + cx2 * tt));
+            if (p < 0.001f) out[o + 2] = (float) atan2;
+            else
+                out[o + 2] = (float) Math.atan2(y - (y1 * uu + cy1 * ut * 2 + cy2 * tt), x - (x1 * uu + cx1 * ut * 2 + cx2 * tt));
         }
     }
 

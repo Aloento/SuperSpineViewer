@@ -276,9 +276,10 @@ public class SkeletonBinary {
                         switch (RuntimesLoader.spineVersion.get()) {
                             case 38, 37 -> {
                                 if (RuntimesLoader.spineVersion.get() == 37) {
-                                skeletonData.audioPath = input.readString();
-                                if (skeletonData.audioPath.isEmpty()) skeletonData.audioPath = null;
-                            }}
+                                    skeletonData.audioPath = input.readString();
+                                    if (skeletonData.audioPath.isEmpty()) skeletonData.audioPath = null;
+                                }
+                            }
                         }
                     }
 

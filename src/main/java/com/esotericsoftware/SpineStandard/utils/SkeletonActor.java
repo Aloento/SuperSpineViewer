@@ -42,7 +42,8 @@ public class SkeletonActor extends Actor {
             case 38, 37 -> {
                 int blendSrc = batch.getBlendSrcFunc(), blendDst = batch.getBlendDstFunc();
                 int blendSrcAlpha = batch.getBlendSrcFuncAlpha(), blendDstAlpha = batch.getBlendDstFuncAlpha();
-                if (resetBlendFunction) batch.setBlendFunctionSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
+                if (resetBlendFunction)
+                    batch.setBlendFunctionSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
             }
         }
         color.a = oldAlpha;

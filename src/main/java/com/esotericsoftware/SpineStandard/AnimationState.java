@@ -1006,6 +1006,7 @@ public class AnimationState {
                 if (((Timeline) timelines[i]).getPropertyId() == id) return true;
             return false;
         }
+
         public int getTrackIndex() {
             return trackIndex;
         }

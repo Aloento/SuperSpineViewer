@@ -187,8 +187,12 @@ public class IkConstraint implements Constraint {
             else if (cos > 1) {
                 cos = 1;
                 switch (RuntimesLoader.spineVersion.get()) {
-                    case 38 -> {if (stretch) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;}
-                    case 37 -> {if (stretch && l1 + l2 > 0.0001f) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;}
+                    case 38 -> {
+                        if (stretch) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
+                    }
+                    case 37 -> {
+                        if (stretch && l1 + l2 > 0.0001f) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
+                    }
                 }
             }
             a2 = (float) Math.acos(cos) * bendDir;
