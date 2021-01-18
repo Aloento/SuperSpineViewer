@@ -28,7 +28,6 @@ public class SkeletonBinary {
     static public final int PATH_POSITION = 0;
     static public final int PATH_SPACING = 1;
     static public final int PATH_MIX = 2;
-    static public final int CURVE_LINEAR = 0;
     static public final int CURVE_STEPPED = 1;
     static public final int CURVE_BEZIER = 2;
     static private final Color tempColor1 = new Color(), tempColor2 = new Color();
