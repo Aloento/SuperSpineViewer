@@ -8,26 +8,18 @@ import com.esotericsoftware.spine35.BoneData.TransformMode;
 import static com.badlogic.gdx.math.Matrix3.*;
 import static com.esotericsoftware.spine35.utils.TrigUtils.*;
 
-/**
- * Stores a bone's current pose.
- */
 public class Bone implements Updatable {
     final BoneData data;
     final Skeleton skeleton;
     final Bone parent;
-    final Array<Bone> children = new Array();
+    final Array<Bone> children = new Array<>();
     float x, y, rotation, scaleX, scaleY, shearX, shearY;
     float ax, ay, arotation, ascaleX, ascaleY, ashearX, ashearY;
     boolean appliedValid;
-
     float a, b, worldX;
     float c, d, worldY;
-
     boolean sorted;
 
-    /**
-     * @param parent May be null.
-     */
     public Bone(BoneData data, Skeleton skeleton, Bone parent) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -37,11 +29,7 @@ public class Bone implements Updatable {
         setToSetupPose();
     }
 
-    /**
-     * Copy constructor. Does not copy the children bones.
-     *
-     * @param parent May be null.
-     */
+
     public Bone(Bone bone, Skeleton skeleton, Bone parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -57,28 +45,17 @@ public class Bone implements Updatable {
         shearY = bone.shearY;
     }
 
-    /**
-     * Same as {@link #updateWorldTransform()}. This method exists for Bone to implement {@link Updatable}.
-     */
+
     public void update() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
     }
 
-    /**
-     * Computes the world transform using the parent bone and this bone's local transform.
-     * <p>
-     * See {@link #updateWorldTransform(float, float, float, float, float, float, float)}.
-     */
+
     public void updateWorldTransform() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
     }
 
-    /**
-     * Computes the world transform using the parent bone and the specified local transform. Child bones are not updated.
-     * <p>
-     * See <a href="http://esotericsoftware.com/spine-runtime-skeletons#World-transforms">World transforms</a> in the Spine
-     * Runtimes Guide.
-     */
+
     public void updateWorldTransform(float x, float y, float rotation, float scaleX, float scaleY, float shearX, float shearY) {
         ax = x;
         ay = y;
@@ -90,7 +67,7 @@ public class Bone implements Updatable {
         appliedValid = true;
 
         Bone parent = this.parent;
-        if (parent == null) { // Root bone.
+        if (parent == null) {
             float rotationY = rotation + 90 + shearY;
             float la = cosDeg(rotation + shearX) * scaleX;
             float lb = cosDeg(rotationY) * scaleY;
@@ -200,9 +177,7 @@ public class Bone implements Updatable {
         }
     }
 
-    /**
-     * Sets this bone's local transform to the setup pose.
-     */
+
     public void setToSetupPose() {
         BoneData data = this.data;
         x = data.x;
@@ -214,37 +189,27 @@ public class Bone implements Updatable {
         shearY = data.shearY;
     }
 
-    /**
-     * The bone's setup pose data.
-     */
+
     public BoneData getData() {
         return data;
     }
 
-    /**
-     * The skeleton this bone belongs to.
-     */
+
     public Skeleton getSkeleton() {
         return skeleton;
     }
 
-    /**
-     * The parent bone, or null if this is the root bone.
-     */
+
     public Bone getParent() {
         return parent;
     }
 
-    /**
-     * The immediate children of this bone.
-     */
+
     public Array<Bone> getChildren() {
         return children;
     }
 
-    /**
-     * The local x translation.
-     */
+
     public float getX() {
         return x;
     }
@@ -253,9 +218,7 @@ public class Bone implements Updatable {
         this.x = x;
     }
 
-    /**
-     * The local y translation.
-     */
+
     public float getY() {
         return y;
     }
@@ -269,9 +232,7 @@ public class Bone implements Updatable {
         this.y = y;
     }
 
-    /**
-     * The local rotation.
-     */
+
     public float getRotation() {
         return rotation;
     }
@@ -280,9 +241,7 @@ public class Bone implements Updatable {
         this.rotation = rotation;
     }
 
-    /**
-     * The local scaleX.
-     */
+
     public float getScaleX() {
         return scaleX;
     }
@@ -291,9 +250,7 @@ public class Bone implements Updatable {
         this.scaleX = scaleX;
     }
 
-    /**
-     * The local scaleY.
-     */
+
     public float getScaleY() {
         return scaleY;
     }
@@ -312,9 +269,7 @@ public class Bone implements Updatable {
         scaleY = scale;
     }
 
-    /**
-     * The local shearX.
-     */
+
     public float getShearX() {
         return shearX;
     }
@@ -323,9 +278,7 @@ public class Bone implements Updatable {
         this.shearX = shearX;
     }
 
-    /**
-     * The local shearY.
-     */
+
     public float getShearY() {
         return shearY;
     }
@@ -334,107 +287,6 @@ public class Bone implements Updatable {
         this.shearY = shearY;
     }
 
-    /**
-     * Part of the world transform matrix for the X axis.
-     */
-    public float getA() {
-        return a;
-    }
-
-    /**
-     * Part of the world transform matrix for the Y axis.
-     */
-    public float getB() {
-        return b;
-    }
-
-    /**
-     * Part of the world transform matrix for the X axis.
-     */
-    public float getC() {
-        return c;
-    }
-
-    /**
-     * Part of the world transform matrix for the Y axis.
-     */
-    public float getD() {
-        return d;
-    }
-
-    /**
-     * The world X position.
-     */
-    public float getWorldX() {
-        return worldX;
-    }
-
-    /**
-     * The world Y position.
-     */
-    public float getWorldY() {
-        return worldY;
-    }
-
-    /**
-     * The world rotation for the X axis, calculated using {@link #a} and {@link #c}.
-     */
-    public float getWorldRotationX() {
-        return atan2(c, a) * radDeg;
-    }
-
-    /**
-     * The world rotation for the Y axis, calculated using {@link #b} and {@link #d}.
-     */
-    public float getWorldRotationY() {
-        return atan2(d, b) * radDeg;
-    }
-
-    /**
-     * The magnitude (always positive) of the world scale X, calculated using {@link #a} and {@link #c}.
-     */
-    public float getWorldScaleX() {
-        return (float) Math.sqrt(a * a + c * c);
-    }
-
-    /**
-     * The magnitude (always positive) of the world scale Y, calculated using {@link #b} and {@link #d}.
-     */
-    public float getWorldScaleY() {
-        return (float) Math.sqrt(b * b + d * d);
-    }
-
-    public float worldToLocalRotationX() {
-        Bone parent = this.parent;
-        if (parent == null) return arotation;
-        return atan2(parent.a * c - parent.c * a, parent.d * a - parent.b * c) * radDeg;
-    }
-
-    public float worldToLocalRotationY() {
-        Bone parent = this.parent;
-        if (parent == null) return arotation;
-        return atan2(parent.a * d - parent.c * b, parent.d * b - parent.b * d) * radDeg;
-    }
-
-    /**
-     * Rotates the world transform the specified amount. {@link #updateWorldTransform()} will need to be called on any child
-     * bones, recursively.
-     */
-    public void rotateWorld(float degrees) {
-        float cos = cosDeg(degrees), sin = sinDeg(degrees);
-        a = cos * a - sin * c;
-        b = cos * b - sin * d;
-        c = sin * a + cos * c;
-        d = sin * b + cos * d;
-        appliedValid = false;
-    }
-
-    /**
-     * Computes the individual applied transform values from the world transform. This can be useful to perform processing using
-     * the applied transform after the world transform has been modified directly (eg, by a constraint).
-     * <p>
-     * Some information is ambiguous in the world transform, such as -1,-1 scale versus 180 rotation.
-     */
     void updateAppliedTransform() {
         appliedValid = true;
         Bone parent = this.parent;
@@ -476,6 +328,77 @@ public class Bone implements Updatable {
         }
     }
 
+    public float getA() {
+        return a;
+    }
+
+
+    public float getB() {
+        return b;
+    }
+
+
+    public float getC() {
+        return c;
+    }
+
+
+    public float getD() {
+        return d;
+    }
+
+
+    public float getWorldX() {
+        return worldX;
+    }
+
+
+    public float getWorldY() {
+        return worldY;
+    }
+
+
+    public float getWorldRotationX() {
+        return atan2(c, a) * radDeg;
+    }
+
+
+    public float getWorldRotationY() {
+        return atan2(d, b) * radDeg;
+    }
+
+
+    public float getWorldScaleX() {
+        return (float) Math.sqrt(a * a + c * c);
+    }
+
+
+    public float getWorldScaleY() {
+        return (float) Math.sqrt(b * b + d * d);
+    }
+
+    public float worldToLocalRotationX() {
+        Bone parent = this.parent;
+        if (parent == null) return arotation;
+        return atan2(parent.a * c - parent.c * a, parent.d * a - parent.b * c) * radDeg;
+    }
+
+    public float worldToLocalRotationY() {
+        Bone parent = this.parent;
+        if (parent == null) return arotation;
+        return atan2(parent.a * d - parent.c * b, parent.d * b - parent.b * d) * radDeg;
+    }
+
+
+    public void rotateWorld(float degrees) {
+        float cos = cosDeg(degrees), sin = sinDeg(degrees);
+        a = cos * a - sin * c;
+        b = cos * b - sin * d;
+        c = sin * a + cos * c;
+        d = sin * b + cos * d;
+        appliedValid = false;
+    }
+
     public Matrix3 getWorldTransform(Matrix3 worldTransform) {
         if (worldTransform == null) throw new IllegalArgumentException("worldTransform cannot be null.");
         float[] val = worldTransform.val;
@@ -491,9 +414,7 @@ public class Bone implements Updatable {
         return worldTransform;
     }
 
-    /**
-     * Transforms a point from world coordinates to the bone's local coordinates.
-     */
+
     public Vector2 worldToLocal(Vector2 world) {
         float invDet = 1 / (a * d - b * c);
         float x = world.x - worldX, y = world.y - worldY;
@@ -502,9 +423,7 @@ public class Bone implements Updatable {
         return world;
     }
 
-    /**
-     * Transforms a point from the bone's local coordinates to world coordinates.
-     */
+
     public Vector2 localToWorld(Vector2 local) {
         float x = local.x, y = local.y;
         local.x = x * a + y * b + worldX;

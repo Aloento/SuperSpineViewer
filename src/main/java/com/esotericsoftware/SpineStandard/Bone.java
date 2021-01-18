@@ -86,7 +86,7 @@ public class Bone implements Updatable {
                     return;
                 }
             }
-            case 36 -> {
+            case 36, 35 -> {
                 if (parent == null) {
                     float rotationY = rotation + 90 + shearY;
                     float la = cosDeg(rotation + shearX) * scaleX;
@@ -173,7 +173,7 @@ public class Bone implements Updatable {
                         za = (pa * cos + pb * sin) / skeleton.scaleX;
                         zc = (pc * cos + pd * sin) / skeleton.scaleY;
                     }
-                    case 36 -> {
+                    case 36, 35 -> {
                         za = pa * cos + pb * sin;
                         zc = pc * cos + pd * sin;
                     }
@@ -197,18 +197,24 @@ public class Bone implements Updatable {
                 float lb = cosDeg(90 + shearY) * scaleY;
                 float lc = sinDeg(shearX) * scaleX;
                 float ld = sinDeg(90 + shearY) * scaleY;
-                switch (RuntimesLoader.spineVersion.get()) {
-                    case 36 -> {
-                        if (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY) {
-                            zb = -zb;
-                            zd = -zd;
-                        }
-                    }
+
+                if (RuntimesLoader.spineVersion.get() == 36 &&
+                        (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY)) {
+                    zb = -zb;
+                    zd = -zd;
                 }
+
                 a = za * la + zb * lc;
                 b = za * lb + zb * ld;
                 c = zc * la + zd * lc;
                 d = zc * lb + zd * ld;
+
+                if (RuntimesLoader.spineVersion.get() == 35 &&
+                        (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY)) {
+                    b = -b;
+                    d = -d;
+                }
+                return;
             }
         }
         switch (RuntimesLoader.spineVersion.get()) {
@@ -218,7 +224,7 @@ public class Bone implements Updatable {
                 c *= skeleton.scaleY;
                 d *= skeleton.scaleY;
             }
-            case 36 -> {
+            case 36, 35 -> {
                 if (skeleton.flipX) {
                     a = -a;
                     b = -b;
