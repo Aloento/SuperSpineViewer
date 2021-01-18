@@ -85,12 +85,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         if (!drawing) throw new IllegalStateException("begin must be called before end.");
         if (vertexIndex > 0) flush();
         Gdx.gl.glDepthMask(true);
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38, 37 -> {
-                if (isBlendingEnabled()) Gdx.gl.glDisable(GL20.GL_BLEND);
-            }
-            case 36 -> Gdx.gl.glDisable(GL20.GL_BLEND);
-        }
+        if (isBlendingEnabled()) Gdx.gl.glDisable(GL20.GL_BLEND);
         lastTexture = null;
         drawing = false;
     }
