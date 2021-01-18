@@ -41,7 +41,7 @@ public class SkeletonBounds {
         }
         if (updateAabb)
             aabbCompute();
-        else if (RuntimesLoader.spineVersion.get() > 34){
+        else if (RuntimesLoader.spineVersion.get() > 34) {
             minX = Integer.MIN_VALUE;
             minY = Integer.MIN_VALUE;
             maxX = Integer.MAX_VALUE;

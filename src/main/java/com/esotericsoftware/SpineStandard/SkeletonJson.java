@@ -213,7 +213,7 @@ public class SkeletonJson {
             skeletonData.pathConstraints.add(data);
         }
         for (JsonValue skinMap = root.getChild("skins"); skinMap != null; skinMap = skinMap.next) {
-            Skin skin = null;
+            Skin skin;
             if (RuntimesLoader.spineVersion.get() > 37) {
                 skin = new Skin(skinMap.getString("name"));
                 for (JsonValue entry = skinMap.getChild("bones"); entry != null; entry = entry.next) {

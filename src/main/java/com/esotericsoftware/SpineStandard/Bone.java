@@ -495,7 +495,7 @@ public class Bone implements Updatable {
 
     public float getWorldX() {
         if (RuntimesLoader.spineVersion.get() < 35)
-            return x + worldX;
+            return skeleton.x + worldX;
         return worldX;
     }
 
@@ -505,7 +505,7 @@ public class Bone implements Updatable {
 
     public float getWorldY() {
         if (RuntimesLoader.spineVersion.get() < 35)
-            return y + worldY;
+            return skeleton.y + worldY;
         return worldY;
     }
 

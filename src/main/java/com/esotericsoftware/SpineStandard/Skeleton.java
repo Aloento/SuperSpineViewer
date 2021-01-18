@@ -489,26 +489,23 @@ public class Skeleton {
         float lb = cosDeg(rotationY) * rootBone.scaleY;
         float lc = sinDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
         float ld = sinDeg(rotationY) * rootBone.scaleY;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38, 37 -> {
-                rootBone.a = (pa * la + pb * lc) * scaleX;
-                rootBone.b = (pa * lb + pb * ld) * scaleX;
-                rootBone.c = (pc * la + pd * lc) * scaleY;
-                rootBone.d = (pc * lb + pd * ld) * scaleY;
+        if (RuntimesLoader.spineVersion.get() > 36) {
+            rootBone.a = (pa * la + pb * lc) * scaleX;
+            rootBone.b = (pa * lb + pb * ld) * scaleX;
+            rootBone.c = (pc * la + pd * lc) * scaleY;
+            rootBone.d = (pc * lb + pd * ld) * scaleY;
+        } else {
+            rootBone.a = pa * la + pb * lc;
+            rootBone.b = pa * lb + pb * ld;
+            rootBone.c = pc * la + pd * lc;
+            rootBone.d = pc * lb + pd * ld;
+            if (flipY) {
+                rootBone.a = -rootBone.a;
+                rootBone.b = -rootBone.b;
             }
-            case 36 -> {
-                rootBone.a = pa * la + pb * lc;
-                rootBone.b = pa * lb + pb * ld;
-                rootBone.c = pc * la + pd * lc;
-                rootBone.d = pc * lb + pd * ld;
-                if (flipY) {
-                    rootBone.a = -rootBone.a;
-                    rootBone.b = -rootBone.b;
-                }
-                if (flipX) {
-                    rootBone.c = -rootBone.c;
-                    rootBone.d = -rootBone.d;
-                }
+            if (flipX) {
+                rootBone.c = -rootBone.c;
+                rootBone.d = -rootBone.d;
             }
         }
         Array<Updatable> updateCache = this.updateCache;
@@ -826,11 +823,6 @@ public class Skeleton {
     }
 
     public void setFlipY(boolean flipY) {
-        this.flipY = flipY;
-    }
-
-    public void setFlip(boolean flipX, boolean flipY) {
-        this.flipX = flipX;
         this.flipY = flipY;
     }
 

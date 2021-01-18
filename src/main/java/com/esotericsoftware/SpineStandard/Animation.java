@@ -28,13 +28,10 @@ public class Animation {
         if (timelines == null) throw new IllegalArgumentException("timelines cannot be null.");
         this.name = name;
         this.duration = duration;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38 -> {
-                timelineIDs = new IntSet();
-                setTimelines(timelines);
-            }
-            case 37, 36, 35, 34 -> this.timelines = timelines;
-        }
+        if (RuntimesLoader.spineVersion.get() > 37) {
+            timelineIDs = new IntSet();
+            setTimelines(timelines);
+        } else this.timelines = timelines;
     }
 
     static int binarySearch(float[] values, float target, int step) {
@@ -132,7 +129,8 @@ public class Animation {
     }
 
     public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events) { // Spine34
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+        if (skeleton == null)
+            throw new IllegalArgumentException("skeleton cannot be null.");
 
         if (loop && duration != 0) {
             time %= duration;
@@ -264,23 +262,20 @@ public class Animation {
             for (int start = i, n = i + BEZIER_SIZE - 1; i < n; i += 2) {
                 x = curves[i];
                 if (x >= percent) {
-                    switch (RuntimesLoader.spineVersion.get()) {
-                        case 38, 37, 36 -> {
-                            if (i == start) return curves[i + 1] * percent / x;
-                            float prevX = curves[i - 2], prevY = curves[i - 1];
-                            return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
+                    if (RuntimesLoader.spineVersion.get() > 34) {
+                        if (i == start) return curves[i + 1] * percent / x;
+                        float prevX = curves[i - 2], prevY = curves[i - 1];
+                        return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
+                    } else {
+                        float prevX, prevY;
+                        if (i == start) {
+                            prevX = 0;
+                            prevY = 0;
+                        } else {
+                            prevX = curves[i - 2];
+                            prevY = curves[i - 1];
                         }
-                        case 35 -> {
-                            float prevX, prevY;
-                            if (i == start) {
-                                prevX = 0;
-                                prevY = 0;
-                            } else {
-                                prevX = curves[i - 2];
-                                prevY = curves[i - 1];
-                            }
-                            return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
-                        }
+                        return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
                     }
                 }
             }

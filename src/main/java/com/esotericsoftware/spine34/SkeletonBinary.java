@@ -19,10 +19,8 @@ public class SkeletonBinary {
     static public final int BONE_TRANSLATE = 1;
     static public final int BONE_SCALE = 2;
     static public final int BONE_SHEAR = 3;
-
     static public final int SLOT_ATTACHMENT = 0;
     static public final int SLOT_COLOR = 1;
-
     static public final int PATH_POSITION = 0;
     static public final int PATH_SPACING = 1;
     static public final int PATH_MIX = 2;
@@ -32,7 +30,6 @@ public class SkeletonBinary {
     static public final int CURVE_BEZIER = 2;
 
     static private final Color tempColor1 = new Color();
-
     private final AttachmentLoader attachmentLoader;
     private final Array<LinkedMesh> linkedMeshes = new Array<>();
     private float scale = 1;
@@ -50,16 +47,13 @@ public class SkeletonBinary {
         return scale;
     }
 
-
     public void setScale(float scale) {
         this.scale = scale;
     }
 
     public SkeletonData readSkeletonData(FileHandle file) {
         if (file == null) throw new IllegalArgumentException("file cannot be null.");
-
         float scale = this.scale;
-
         SkeletonData skeletonData = new SkeletonData();
         skeletonData.name = file.nameWithoutExtension();
 
@@ -105,14 +99,12 @@ public class SkeletonBinary {
             if (skeletonData.version.isEmpty()) skeletonData.version = null;
             skeletonData.width = input.readFloat();
             skeletonData.height = input.readFloat();
-
             boolean nonessential = input.readBoolean();
 
             if (nonessential) {
                 skeletonData.imagesPath = input.readString();
                 if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
             }
-
 
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 String name = input.readString();
@@ -131,7 +123,6 @@ public class SkeletonBinary {
                 if (nonessential) Color.rgba8888ToColor(data.color, input.readInt());
                 skeletonData.bones.add(data);
             }
-
 
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 String slotName = input.readString();
@@ -173,7 +164,6 @@ public class SkeletonBinary {
                 skeletonData.transformConstraints.add(data);
             }
 
-
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 PathConstraintData data = new PathConstraintData(input.readString());
                 for (int ii = 0, nn = input.readInt(true); ii < nn; ii++)
@@ -193,17 +183,14 @@ public class SkeletonBinary {
                 skeletonData.pathConstraints.add(data);
             }
 
-
             Skin defaultSkin = readSkin(input, "default", nonessential);
             if (defaultSkin != null) {
                 skeletonData.defaultSkin = defaultSkin;
                 skeletonData.skins.add(defaultSkin);
             }
 
-
             for (int i = 0, n = input.readInt(true); i < n; i++)
                 skeletonData.skins.add(readSkin(input, input.readString(), nonessential));
-
 
             for (int i = 0, n = linkedMeshes.size; i < n; i++) {
                 LinkedMesh linkedMesh = linkedMeshes.get(i);
@@ -216,7 +203,6 @@ public class SkeletonBinary {
             }
             linkedMeshes.clear();
 
-
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 EventData data = new EventData(input.readString());
                 data.intValue = input.readInt(false);
@@ -224,7 +210,6 @@ public class SkeletonBinary {
                 data.stringValue = input.readString();
                 skeletonData.events.add(data);
             }
-
 
             for (int i = 0, n = input.readInt(true); i < n; i++)
                 readAnimation(input, input.readString(), skeletonData);
@@ -651,7 +636,6 @@ public class SkeletonBinary {
 
                         drawOrder[originalIndex + input.readInt(true)] = originalIndex++;
                     }
-
                     while (originalIndex < slotCount)
                         unchanged[unchangedIndex++] = originalIndex++;
 
@@ -662,7 +646,6 @@ public class SkeletonBinary {
                 timelines.add(timeline);
                 duration = Math.max(duration, timeline.getFrames()[drawOrderCount - 1]);
             }
-
 
             int eventCount = input.readInt(true);
             if (eventCount > 0) {

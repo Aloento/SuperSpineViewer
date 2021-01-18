@@ -275,24 +275,21 @@ public class IkConstraint implements Constraint {
         Bone p = bone.parent;
         float id = 1 / (p.a * p.d - p.b * p.c), rotationIK = 0;
         float x = targetX - p.worldX, y = targetY - p.worldY;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 36, 35 -> {
-                float tx = (x * p.d - y * p.b) * id - bone.ax, ty = (y * p.a - x * p.c) * id - bone.ay;
-                rotationIK = atan2(ty, tx) * radDeg - bone.ashearX - bone.arotation;
-                if (bone.ascaleX < 0) rotationIK += 180;
-            }
-            case 34 -> {
-                float tx = (x * p.d - y * p.b) * id - bone.x, ty = (y * p.a - x * p.c) * id - bone.y;
-                rotationIK = atan2(ty, tx) * radDeg - bone.shearX - bone.rotation;
-                if (bone.scaleX < 0) rotationIK += 180;
-            }
+        if (RuntimesLoader.spineVersion.get() > 34) {
+            float tx = (x * p.d - y * p.b) * id - bone.ax, ty = (y * p.a - x * p.c) * id - bone.ay;
+            rotationIK = atan2(ty, tx) * radDeg - bone.ashearX - bone.arotation;
+            if (bone.ascaleX < 0) rotationIK += 180;
+        } else {
+            float tx = (x * p.d - y * p.b) * id - bone.x, ty = (y * p.a - x * p.c) * id - bone.y;
+            rotationIK = atan2(ty, tx) * radDeg - bone.shearX - bone.rotation;
+            if (bone.scaleX < 0) rotationIK += 180;
         }
         if (rotationIK > 180) rotationIK -= 360;
         else if (rotationIK < -180) rotationIK += 360;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 36, 35 -> bone.updateWorldTransform(bone.ax, bone.ay, bone.arotation + rotationIK * alpha, bone.ascaleX, bone.ascaleY, bone.ashearX, bone.ashearY);
-            case 34 -> bone.updateWorldTransform(bone.x, bone.y, bone.rotation + rotationIK * alpha, bone.scaleX, bone.scaleY, bone.shearX, bone.shearY);
-        }
+        if (RuntimesLoader.spineVersion.get() > 34)
+            bone.updateWorldTransform(bone.ax, bone.ay, bone.arotation + rotationIK * alpha, bone.ascaleX, bone.ascaleY, bone.ashearX, bone.ashearY);
+        else
+            bone.updateWorldTransform(bone.x, bone.y, bone.rotation + rotationIK * alpha, bone.scaleX, bone.scaleY, bone.shearX, bone.shearY);
     }
 
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, float alpha) { // Spine 36/5/4
@@ -301,23 +298,20 @@ public class IkConstraint implements Constraint {
             return;
         }
         float px = 0, py = 0, psx = 0, psy = 0, csx = 0;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 36, 35 -> {
-                if (!parent.appliedValid) parent.updateAppliedTransform();
-                if (!child.appliedValid) child.updateAppliedTransform();
-                px = parent.ax;
-                py = parent.ay;
-                psx = parent.ascaleX;
-                psy = parent.ascaleY;
-                csx = child.ascaleX;
-            }
-            case 34 -> {
-                px = parent.x;
-                py = parent.y;
-                psx = parent.scaleX;
-                psy = parent.scaleY;
-                csx = child.scaleX;
-            }
+        if (RuntimesLoader.spineVersion.get() > 34) {
+            if (!parent.appliedValid) parent.updateAppliedTransform();
+            if (!child.appliedValid) child.updateAppliedTransform();
+            px = parent.ax;
+            py = parent.ay;
+            psx = parent.ascaleX;
+            psy = parent.ascaleY;
+            csx = child.ascaleX;
+        } else {
+            px = parent.x;
+            py = parent.y;
+            psx = parent.scaleX;
+            psy = parent.scaleY;
+            csx = child.scaleX;
         }
         int os1, os2, s2;
         if (psx < 0) {
@@ -346,10 +340,9 @@ public class IkConstraint implements Constraint {
             cwx = a * cx + parent.worldX;
             cwy = c * cx + parent.worldY;
         } else {
-            switch (RuntimesLoader.spineVersion.get()) {
-                case 36, 35 -> cy = child.ay;
-                case 34 -> cy = child.y;
-            }
+            if (RuntimesLoader.spineVersion.get() > 34)
+                cy = child.ay;
+            else cy = child.y;
             cwx = a * cx + b * cy + parent.worldX;
             cwy = c * cx + d * cy + parent.worldY;
         }
@@ -395,114 +388,108 @@ public class IkConstraint implements Constraint {
                     break outer;
                 }
             }
-            switch (RuntimesLoader.spineVersion.get()) {
-                case 36 -> {
-                    float minAngle = PI, minX = l1 - a, minDist = minX * minX, minY = 0;
-                    float maxAngle = 0, maxX = l1 + a, maxDist = maxX * maxX, maxY = 0;
-                    c = -a * l1 / (aa - bb);
-                    if (c >= -1 && c <= 1) {
-                        c = (float) Math.acos(c);
-                        x = a * cos(c) + l1;
-                        y = b * sin(c);
-                        d = x * x + y * y;
-                        if (d < minDist) {
-                            minAngle = c;
-                            minDist = d;
-                            minX = x;
-                            minY = y;
-                        }
-                        if (d > maxDist) {
-                            maxAngle = c;
-                            maxDist = d;
-                            maxX = x;
-                            maxY = y;
-                        }
-                    }
-                    if (dd <= (minDist + maxDist) / 2) {
-                        a1 = ta - atan2(minY * bendDir, minX);
-                        a2 = minAngle * bendDir;
-                    } else {
-                        a1 = ta - atan2(maxY * bendDir, maxX);
-                        a2 = maxAngle * bendDir;
-                    }
-                }
-                case 35, 34 -> {
-                    float minAngle = 0, minDist = Float.MAX_VALUE, minX = 0, minY = 0;
-                    float maxAngle = 0, maxDist = 0, maxX = 0, maxY = 0;
-                    x = l1 + a;
-                    d = x * x;
-                    if (d > maxDist) {
-                        maxAngle = 0;
-                        maxDist = d;
-                        maxX = x;
-                    }
-                    x = l1 - a;
-                    d = x * x;
-                    if (d < minDist) {
-                        minAngle = PI;
-                        minDist = d;
-                        minX = x;
-                    }
-                    float angle = (float) Math.acos(-a * l1 / (aa - bb));
-                    x = a * cos(angle) + l1;
-                    y = b * sin(angle);
+            if (RuntimesLoader.spineVersion.get() > 35) {
+                float minAngle = PI, minX = l1 - a, minDist = minX * minX, minY = 0;
+                float maxAngle = 0, maxX = l1 + a, maxDist = maxX * maxX, maxY = 0;
+                c = -a * l1 / (aa - bb);
+                if (c >= -1 && c <= 1) {
+                    c = (float) Math.acos(c);
+                    x = a * cos(c) + l1;
+                    y = b * sin(c);
                     d = x * x + y * y;
                     if (d < minDist) {
-                        minAngle = angle;
+                        minAngle = c;
                         minDist = d;
                         minX = x;
                         minY = y;
                     }
                     if (d > maxDist) {
-                        maxAngle = angle;
+                        maxAngle = c;
                         maxDist = d;
                         maxX = x;
                         maxY = y;
                     }
-                    if (dd <= (minDist + maxDist) / 2) {
-                        a1 = ta - atan2(minY * bendDir, minX);
-                        a2 = minAngle * bendDir;
-                    } else {
-                        a1 = ta - atan2(maxY * bendDir, maxX);
-                        a2 = maxAngle * bendDir;
-                    }
+                }
+                if (dd <= (minDist + maxDist) / 2) {
+                    a1 = ta - atan2(minY * bendDir, minX);
+                    a2 = minAngle * bendDir;
+                } else {
+                    a1 = ta - atan2(maxY * bendDir, maxX);
+                    a2 = maxAngle * bendDir;
+                }
+            } else {
+                float minAngle = 0, minDist = Float.MAX_VALUE, minX = 0, minY = 0;
+                float maxAngle = 0, maxDist = 0, maxX = 0, maxY = 0;
+                x = l1 + a;
+                d = x * x;
+                if (d > maxDist) {
+                    maxAngle = 0;
+                    maxDist = d;
+                    maxX = x;
+                }
+                x = l1 - a;
+                d = x * x;
+                if (d < minDist) {
+                    minAngle = PI;
+                    minDist = d;
+                    minX = x;
+                }
+                float angle = (float) Math.acos(-a * l1 / (aa - bb));
+                x = a * cos(angle) + l1;
+                y = b * sin(angle);
+                d = x * x + y * y;
+                if (d < minDist) {
+                    minAngle = angle;
+                    minDist = d;
+                    minX = x;
+                    minY = y;
+                }
+                if (d > maxDist) {
+                    maxAngle = angle;
+                    maxDist = d;
+                    maxX = x;
+                    maxY = y;
+                }
+                if (dd <= (minDist + maxDist) / 2) {
+                    a1 = ta - atan2(minY * bendDir, minX);
+                    a2 = minAngle * bendDir;
+                } else {
+                    a1 = ta - atan2(maxY * bendDir, maxX);
+                    a2 = maxAngle * bendDir;
                 }
             }
         }
         float os = atan2(cy, cx) * s2;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 36, 35 -> {
-                float rotation = parent.arotation;
-                a1 = (a1 - os) * radDeg + os1 - rotation;
-                if (a1 > 180)
-                    a1 -= 360;
-                else if (a1 < -180) a1 += 360;
-                parent.updateWorldTransform(px, py, rotation + a1 * alpha, parent.ascaleX, parent.ascaleY, 0, 0);
-                rotation = child.arotation;
-                a2 = ((a2 + os) * radDeg - child.ashearX) * s2 + os2 - rotation;
-                if (a2 > 180)
-                    a2 -= 360;
-                else if (a2 < -180) a2 += 360;
-                child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
-            }
-            case 34 -> {
-                float rotation = parent.rotation;
-                a1 = (a1 - os) * radDeg + os1 - rotation;
-                if (a1 > 180)
-                    a1 -= 360;
-                else if (a1 < -180) a1 += 360;
-                parent.updateWorldTransform(px, py, rotation + a1 * alpha, parent.scaleX, parent.scaleY, 0, 0);
-                rotation = child.rotation;
-                a2 = ((a2 + os) * radDeg - child.shearX) * s2 + os2 - rotation;
-                if (a2 > 180)
-                    a2 -= 360;
-                else if (a2 < -180) a2 += 360;
-                child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.scaleX, child.scaleY, child.shearX, child.shearY);
-            }
+        if (RuntimesLoader.spineVersion.get() > 34) {
+            float rotation = parent.arotation;
+            a1 = (a1 - os) * radDeg + os1 - rotation;
+            if (a1 > 180)
+                a1 -= 360;
+            else if (a1 < -180) a1 += 360;
+            parent.updateWorldTransform(px, py, rotation + a1 * alpha, parent.ascaleX, parent.ascaleY, 0, 0);
+            rotation = child.arotation;
+            a2 = ((a2 + os) * radDeg - child.ashearX) * s2 + os2 - rotation;
+            if (a2 > 180)
+                a2 -= 360;
+            else if (a2 < -180) a2 += 360;
+            child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
+        } else {
+            float rotation = parent.rotation;
+            a1 = (a1 - os) * radDeg + os1 - rotation;
+            if (a1 > 180)
+                a1 -= 360;
+            else if (a1 < -180) a1 += 360;
+            parent.updateWorldTransform(px, py, rotation + a1 * alpha, parent.scaleX, parent.scaleY, 0, 0);
+            rotation = child.rotation;
+            a2 = ((a2 + os) * radDeg - child.shearX) * s2 + os2 - rotation;
+            if (a2 > 180)
+                a2 -= 360;
+            else if (a2 < -180) a2 += 360;
+            child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.scaleX, child.scaleY, child.shearX, child.shearY);
         }
     }
 
-    static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float alpha) {
+    public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float alpha) {
         apply(parent, child, targetX, targetY, bendDir, stretch, 0f, alpha); // Spine37
     }
 

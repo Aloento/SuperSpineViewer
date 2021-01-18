@@ -270,7 +270,6 @@ public class Skeleton {
         Array<Bone> bones = this.bones;
         for (int i = 0, n = bones.size; i < n; i++)
             bones.get(i).setToSetupPose();
-
         Array<IkConstraint> ikConstraints = this.ikConstraints;
         for (int i = 0, n = ikConstraints.size; i < n; i++) {
             IkConstraint constraint = ikConstraints.get(i);
@@ -287,7 +286,6 @@ public class Skeleton {
             constraint.scaleMix = data.scaleMix;
             constraint.shearMix = data.shearMix;
         }
-
         Array<PathConstraint> pathConstraints = this.pathConstraints;
         for (int i = 0, n = pathConstraints.size; i < n; i++) {
             PathConstraint constraint = pathConstraints.get(i);
@@ -318,12 +316,10 @@ public class Skeleton {
         return updateCache;
     }
 
-
     public Bone getRootBone() {
         if (bones.size == 0) return null;
         return bones.first();
     }
-
 
     public Bone findBone(String boneName) {
         if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");

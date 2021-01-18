@@ -62,7 +62,6 @@ public class Animation {
         return timelines;
     }
 
-
     public float getDuration() {
         return duration;
     }
@@ -71,9 +70,9 @@ public class Animation {
         this.duration = duration;
     }
 
-
     public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events) {
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+        if (skeleton == null)
+            throw new IllegalArgumentException("skeleton cannot be null.");
 
         if (loop && duration != 0) {
             time %= duration;

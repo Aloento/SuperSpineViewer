@@ -1247,7 +1247,7 @@ public class AnimationState {
         float animationStart, animationEnd, animationLast, nextAnimationLast;
         float delay, trackTime, trackLast, nextTrackLast, trackEnd, timeScale, time, lastTime = -1, endTime, mix = 1; // Spine34
         float alpha, mixTime, mixDuration, interruptAlpha, totalAlpha, mixAlpha; // Spine35
-        MixBlend mixBlend = MixBlend.replace;
+        final MixBlend mixBlend = MixBlend.replace;
 
         public void reset() {
             next = null;
