@@ -3,9 +3,7 @@ package com.esotericsoftware.SpineStandard;
 import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.Array;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.atan2;
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.radDeg;
-import static com.esotericsoftware.spine35.utils.TrigUtils.*;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
 public class IkConstraint implements Constraint {
     final IkConstraintData data;

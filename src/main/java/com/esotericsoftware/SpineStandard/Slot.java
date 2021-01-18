@@ -8,7 +8,8 @@ import com.esotericsoftware.SpineStandard.attachments.Attachment;
 public class Slot {
     final SlotData data;
     final Bone bone;
-    Color color = new Color(), darkColor = null;
+    final Color color = new Color();
+    Color darkColor = null;
     Attachment attachment;
     int attachmentState;
     private float attachmentTime;
