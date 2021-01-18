@@ -196,14 +196,6 @@ public class SkeletonData {
         this.imagesPath = imagesPath;
     }
 
-    public String getAudioPath() {
-        return audioPath;
-    }
-
-    public void setAudioPath(String audioPath) {
-        this.audioPath = audioPath;
-    }
-
     public float getFps() {
         return fps;
     }
