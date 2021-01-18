@@ -173,7 +173,7 @@ public class PathConstraint implements Constraint {
                         for (int i = 1; i < spacesCount; i++)
                             spaces[i] *= pathLength;
                     }
-                    case 36 -> {
+                    case 36, 35 -> {
                         for (int i = 0; i < spacesCount; i++)
                             spaces[i] *= pathLength;
                     }
@@ -283,7 +283,7 @@ public class PathConstraint implements Constraint {
                     for (int i = 1; i < spacesCount; i++)
                         spaces[i] *= pathLength;
                 }
-                case 36 -> {
+                case 36, 35 -> {
                     for (int i = 0; i < spacesCount; i++)
                         spaces[i] *= pathLength;
                 }
@@ -398,7 +398,7 @@ public class PathConstraint implements Constraint {
                     out[o + 2] = (float) atan2;
                     return;
                 }
-                case 36 -> p = epsilon;
+                case 36, 35 -> p = epsilon;
             }
         }
         float tt = p * p, ttt = tt * p, u = 1 - p, uu = u * u, uuu = uu * u;

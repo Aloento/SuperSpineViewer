@@ -10,12 +10,7 @@ import com.esotericsoftware.spine35.attachments.Attachment;
 import com.esotericsoftware.spine35.attachments.PathAttachment;
 import com.esotericsoftware.spine35.utils.TrigUtils;
 
-/**
- * Stores the current pose for a outPath constraint. A outPath constraint adjusts the rotation, translation, and scale of the
- * constrained bones so they follow a {@link PathAttachment}.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-path-constraints">Path constraints</a> in the Spine User Guide.
- */
+
 public class PathConstraint implements Constraint {
     static private final int NONE = -1, BEFORE = -2, AFTER = -3;
 
@@ -31,7 +26,7 @@ public class PathConstraint implements Constraint {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         this.data = data;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findSlot(data.target.name);
@@ -41,14 +36,12 @@ public class PathConstraint implements Constraint {
         translateMix = data.translateMix;
     }
 
-    /**
-     * Copy constructor.
-     */
+    
     public PathConstraint(PathConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.slots.get(constraint.target.data.index);
@@ -58,9 +51,7 @@ public class PathConstraint implements Constraint {
         translateMix = constraint.translateMix;
     }
 
-    /**
-     * Applies the constraint to the constrained bones.
-     */
+    
     public void apply() {
         update();
     }
@@ -142,7 +133,7 @@ public class PathConstraint implements Constraint {
                     r += offsetRotation;
                 if (r > TrigUtils.PI)
                     r -= TrigUtils.PI2;
-                else if (r < -TrigUtils.PI) //
+                else if (r < -TrigUtils.PI)
                     r += TrigUtils.PI2;
                 r *= rotateMix;
                 cos = (float) Math.cos(r);
@@ -199,7 +190,7 @@ public class PathConstraint implements Constraint {
                     continue;
                 }
 
-                // Determine curve containing position.
+
                 for (; ; curve++) {
                     float length = lengths[curve];
                     if (p > length) continue;
@@ -225,7 +216,7 @@ public class PathConstraint implements Constraint {
             return out;
         }
 
-        // World vertices.
+
         if (closed) {
             verticesLength += 2;
             world = this.world.setSize(verticesLength);
@@ -240,7 +231,7 @@ public class PathConstraint implements Constraint {
             path.computeWorldVertices(target, 2, verticesLength, world, 0);
         }
 
-        // Curve lengths.
+
         float[] curves = this.curves.setSize(curveCount);
         float pathLength = 0;
         float x1 = world[0], y1 = world[1], cx1 = 0, cy1 = 0, cx2 = 0, cy2 = 0, x2 = 0, y2 = 0;
@@ -301,7 +292,7 @@ public class PathConstraint implements Constraint {
                 continue;
             }
 
-            // Determine curve containing position.
+
             for (; ; curve++) {
                 float length = curves[curve];
                 if (p > length) continue;
@@ -314,7 +305,7 @@ public class PathConstraint implements Constraint {
                 break;
             }
 
-            // Curve segment lengths.
+
             if (curve != prevCurve) {
                 prevCurve = curve;
                 int ii = curve * 6;
@@ -355,7 +346,7 @@ public class PathConstraint implements Constraint {
                 segment = 0;
             }
 
-            // Weight by segment length.
+
             p *= curveLength;
             for (; ; segment++) {
                 float length = segments[segment];
@@ -403,9 +394,7 @@ public class PathConstraint implements Constraint {
         return data.order;
     }
 
-    /**
-     * The position along the outPath.
-     */
+    
     public float getPosition() {
         return position;
     }
@@ -414,9 +403,7 @@ public class PathConstraint implements Constraint {
         this.position = position;
     }
 
-    /**
-     * The spacing between bones.
-     */
+    
     public float getSpacing() {
         return spacing;
     }
@@ -425,9 +412,7 @@ public class PathConstraint implements Constraint {
         this.spacing = spacing;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained rotations.
-     */
+    
     public float getRotateMix() {
         return rotateMix;
     }
@@ -436,9 +421,7 @@ public class PathConstraint implements Constraint {
         this.rotateMix = rotateMix;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained translations.
-     */
+    
     public float getTranslateMix() {
         return translateMix;
     }
@@ -447,16 +430,12 @@ public class PathConstraint implements Constraint {
         this.translateMix = translateMix;
     }
 
-    /**
-     * The bones that will be modified by this outPath constraint.
-     */
+    
     public Array<Bone> getBones() {
         return bones;
     }
 
-    /**
-     * The slot whose outPath attachment will be used to constrained the bones.
-     */
+    
     public Slot getTarget() {
         return target;
     }
@@ -465,9 +444,7 @@ public class PathConstraint implements Constraint {
         this.target = target;
     }
 
-    /**
-     * The outPath constraint's setup pose data.
-     */
+    
     public PathConstraintData getData() {
         return data;
     }

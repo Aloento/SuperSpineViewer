@@ -2,14 +2,10 @@ package com.esotericsoftware.spine35;
 
 import com.badlogic.gdx.utils.Array;
 
-/**
- * Stores the setup pose for a {@link PathConstraint}.
- * <p>
- * See <a href="http://esotericsoftware.com/spine-path-constraints">Path constraints</a> in the Spine User Guide.
- */
+
 public class PathConstraintData {
     final String name;
-    final Array<BoneData> bones = new Array();
+    final Array<BoneData> bones = new Array<>();
     int order;
     SlotData target;
     PositionMode positionMode;
@@ -23,16 +19,12 @@ public class PathConstraintData {
         this.name = name;
     }
 
-    /**
-     * The outPath constraint's name, which is unique within the skeleton.
-     */
+    
     public String getName() {
         return name;
     }
 
-    /**
-     * See {@link Constraint#getOrder()}.
-     */
+    
     public int getOrder() {
         return order;
     }
@@ -41,16 +33,12 @@ public class PathConstraintData {
         this.order = order;
     }
 
-    /**
-     * The bones that will be modified by this outPath constraint.
-     */
+    
     public Array<BoneData> getBones() {
         return bones;
     }
 
-    /**
-     * The slot whose outPath attachment will be used to constrained the bones.
-     */
+    
     public SlotData getTarget() {
         return target;
     }
@@ -59,9 +47,7 @@ public class PathConstraintData {
         this.target = target;
     }
 
-    /**
-     * The mode for positioning the first bone on the outPath.
-     */
+    
     public PositionMode getPositionMode() {
         return positionMode;
     }
@@ -70,9 +56,7 @@ public class PathConstraintData {
         this.positionMode = positionMode;
     }
 
-    /**
-     * The mode for positioning the bones after the first bone on the outPath.
-     */
+    
     public SpacingMode getSpacingMode() {
         return spacingMode;
     }
@@ -81,9 +65,7 @@ public class PathConstraintData {
         this.spacingMode = spacingMode;
     }
 
-    /**
-     * The mode for adjusting the rotation of the bones.
-     */
+    
     public RotateMode getRotateMode() {
         return rotateMode;
     }
@@ -92,9 +74,7 @@ public class PathConstraintData {
         this.rotateMode = rotateMode;
     }
 
-    /**
-     * An offset added to the constrained bone rotation.
-     */
+    
     public float getOffsetRotation() {
         return offsetRotation;
     }
@@ -103,9 +83,7 @@ public class PathConstraintData {
         this.offsetRotation = offsetRotation;
     }
 
-    /**
-     * The position along the outPath.
-     */
+    
     public float getPosition() {
         return position;
     }
@@ -114,9 +92,7 @@ public class PathConstraintData {
         this.position = position;
     }
 
-    /**
-     * The spacing between bones.
-     */
+    
     public float getSpacing() {
         return spacing;
     }
@@ -125,9 +101,7 @@ public class PathConstraintData {
         this.spacing = spacing;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained rotations.
-     */
+    
     public float getRotateMix() {
         return rotateMix;
     }
@@ -136,9 +110,7 @@ public class PathConstraintData {
         this.rotateMix = rotateMix;
     }
 
-    /**
-     * A percentage (0-1) that controls the mix between the constrained and unconstrained translations.
-     */
+    
     public float getTranslateMix() {
         return translateMix;
     }
@@ -151,33 +123,21 @@ public class PathConstraintData {
         return name;
     }
 
-    /**
-     * Controls how the first bone is positioned along the outPath.
-     * <p>
-     * See <a href="http://esotericsoftware.com/spine-path-constraints#Position-mode">Position mode</a> in the Spine User Guide.
-     */
+    
     public enum PositionMode {
         fixed, percent;
 
         static public final PositionMode[] values = PositionMode.values();
     }
 
-    /**
-     * Controls how bones after the first bone are positioned along the outPath.
-     * <p>
-     * See <a href="http://esotericsoftware.com/spine-path-constraints#Spacing-mode">Spacing mode</a> in the Spine User Guide.
-     */
+    
     public enum SpacingMode {
         length, fixed, percent;
 
         static public final SpacingMode[] values = SpacingMode.values();
     }
 
-    /**
-     * Controls how bones are rotated, translated, and scaled to match the outPath.
-     * <p>
-     * See <a href="http://esotericsoftware.com/spine-path-constraints#Rotate-mode">Rotate mode</a> in the Spine User Guide.
-     */
+    
     public enum RotateMode {
         tangent, chain, chainScale;
 
