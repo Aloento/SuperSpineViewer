@@ -39,22 +39,6 @@ public class Event {
         this.stringValue = stringValue;
     }
 
-    public float getVolume() {
-        return volume;
-    }
-
-    public void setVolume(float volume) {
-        this.volume = volume;
-    }
-
-    public float getBalance() {
-        return balance;
-    }
-
-    public void setBalance(float balance) {
-        this.balance = balance;
-    }
-
     public float getTime() {
         return time;
     }

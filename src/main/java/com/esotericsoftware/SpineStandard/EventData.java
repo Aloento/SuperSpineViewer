@@ -37,31 +37,6 @@ public class EventData {
         this.stringValue = stringValue;
     }
 
-    public String getAudioPath() {
-        return audioPath;
-    }
-
-    public void setAudioPath(String audioPath) {
-        if (audioPath == null) throw new IllegalArgumentException("audioPath cannot be null.");
-        this.audioPath = audioPath;
-    }
-
-    public float getVolume() {
-        return volume;
-    }
-
-    public void setVolume(float volume) {
-        this.volume = volume;
-    }
-
-    public float getBalance() {
-        return balance;
-    }
-
-    public void setBalance(float balance) {
-        this.balance = balance;
-    }
-
     public String getName() {
         return name;
     }

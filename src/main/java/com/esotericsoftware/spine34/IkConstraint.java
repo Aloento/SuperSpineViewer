@@ -8,8 +8,8 @@ public class IkConstraint implements Updatable {
     final IkConstraintData data;
     final Array<Bone> bones;
     Bone target;
-    float mix;
     int bendDirection;
+    float mix;
 
     int level;
 
@@ -20,20 +20,18 @@ public class IkConstraint implements Updatable {
         mix = data.mix;
         bendDirection = data.bendDirection;
 
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findBone(data.target.name);
     }
 
-    /**
-     * Copy constructor.
-     */
+    
     public IkConstraint(IkConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.bones.get(constraint.target.data.index);
@@ -41,15 +39,12 @@ public class IkConstraint implements Updatable {
         bendDirection = constraint.bendDirection;
     }
 
-    /**
-     * Adjusts the bone rotation so the tip is as close to the target position as possible. The target is specified in the world
-     * coordinate system.
-     */
+    
     static public void apply(Bone bone, float targetX, float targetY, float alpha) {
-        Bone pp = bone.parent;
-        float id = 1 / (pp.a * pp.d - pp.b * pp.c);
-        float x = targetX - pp.worldX, y = targetY - pp.worldY;
-        float tx = (x * pp.d - y * pp.b) * id - bone.x, ty = (y * pp.a - x * pp.c) * id - bone.y;
+        Bone p = bone.parent;
+        float id = 1 / (p.a * p.d - p.b * p.c);
+        float x = targetX - p.worldX, y = targetY - p.worldY;
+        float tx = (x * p.d - y * p.b) * id - bone.x, ty = (y * p.a - x * p.c) * id - bone.y;
         float rotationIK = atan2(ty, tx) * radDeg - bone.shearX - bone.rotation;
         if (bone.scaleX < 0) rotationIK += 180;
         if (rotationIK > 180)
@@ -59,12 +54,7 @@ public class IkConstraint implements Updatable {
                 bone.shearY);
     }
 
-    /**
-     * Adjusts the parent and child bone rotations so the tip of the child is as close to the target position as possible. The
-     * target is specified in the world coordinate system.
-     *
-     * @param child A direct descendant of the parent bone.
-     */
+    
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, float alpha) {
         if (alpha == 0) {
             child.updateWorldTransform();
