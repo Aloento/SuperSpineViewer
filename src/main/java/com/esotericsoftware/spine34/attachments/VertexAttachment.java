@@ -5,9 +5,7 @@ import com.esotericsoftware.spine34.Bone;
 import com.esotericsoftware.spine34.Skeleton;
 import com.esotericsoftware.spine34.Slot;
 
-/**
- * An attachment with vertices that are transformed by one or more bones and can be deformed by a slot's vertices.
- */
+
 public class VertexAttachment extends Attachment {
     int[] bones;
     float[] vertices;
@@ -21,14 +19,7 @@ public class VertexAttachment extends Attachment {
         computeWorldVertices(slot, 0, worldVerticesLength, worldVertices, 0);
     }
 
-    /**
-     * Transforms local vertices to world coordinates.
-     *
-     * @param start         The index of the first local vertex value to transform. Each vertex has 2 values, x and y.
-     * @param count         The number of world vertex values to output. Must be <= {@link #getWorldVerticesLength()} - start.
-     * @param worldVertices The output world vertices. Must have a length >= offset + count.
-     * @param offset        The worldVertices index to begin writing values.
-     */
+    
     protected void computeWorldVertices(Slot slot, int start, int count, float[] worldVertices, int offset) {
         count += offset;
         Skeleton skeleton = slot.getSkeleton();
@@ -88,25 +79,17 @@ public class VertexAttachment extends Attachment {
         }
     }
 
-    /**
-     * Returns true if a deform originally applied to the specified attachment should be applied to this attachment.
-     */
+    
     public boolean applyDeform(VertexAttachment sourceAttachment) {
         return this == sourceAttachment;
     }
 
-    /**
-     * @return May be null if this attachment has no weights.
-     */
+    
     public int[] getBones() {
         return bones;
     }
 
-    /**
-     * For each vertex, the number of bones affecting the vertex followed by that many bone indices. Ie: count, boneIndex, ...
-     *
-     * @param bones May be null if this attachment has no weights.
-     */
+    
     public void setBones(int[] bones) {
         this.bones = bones;
     }
@@ -115,10 +98,7 @@ public class VertexAttachment extends Attachment {
         return vertices;
     }
 
-    /**
-     * Sets the vertex position in the bone's coordinate system. For a non-weighted attachment, the values are x,y entries for
-     * each vertex. For a weighted attachment, the values are x,y,weight entries for each bone affecting each vertex.
-     */
+    
     public void setVertices(float[] vertices) {
         this.vertices = vertices;
     }

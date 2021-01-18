@@ -32,12 +32,10 @@ public class Slot {
         color.set(slot.color);
         attachment = slot.attachment;
         attachmentTime = slot.attachmentTime;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38:
-                deform.addAll(slot.deform);
-            case 37, 36:
-                darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
-        }
+        if (RuntimesLoader.spineVersion.get() > 37)
+            deform.addAll(slot.deform);
+        else if (RuntimesLoader.spineVersion.get() > 35)
+            darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
     }
 
     public SlotData getData() {

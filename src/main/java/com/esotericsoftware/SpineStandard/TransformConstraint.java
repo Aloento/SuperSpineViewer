@@ -1,6 +1,5 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -47,11 +46,6 @@ public class TransformConstraint implements Constraint {
     }
 
     public void update() {
-        if (RuntimesLoader.spineVersion.get() == 35) {
-            applyAbsoluteWorld();
-            return;
-        }
-
         if (data.local) {
             if (data.relative)
                 applyRelativeLocal();

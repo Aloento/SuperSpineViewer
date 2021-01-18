@@ -50,7 +50,7 @@ public class SkeletonBinary {
         return scale;
     }
 
-    
+
     public void setScale(float scale) {
         this.scale = scale;
     }
@@ -242,7 +242,7 @@ public class SkeletonBinary {
         return skeletonData;
     }
 
-    
+
     private Skin readSkin(DataInput input, String skinName, boolean nonessential) throws IOException {
         int slotCount = input.readInt(true);
         if (slotCount == 0) return null;

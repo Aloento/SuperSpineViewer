@@ -167,7 +167,7 @@ public class MeshAttachment extends VertexAttachment {
                     }
                 }
             }
-            case 35 -> {
+            case 35, 34 -> {
                 float[] regionUVs = this.regionUVs;
                 int verticesLength = regionUVs.length;
                 int worldVerticesLength = (verticesLength >> 1) * 5;
@@ -277,10 +277,6 @@ public class MeshAttachment extends VertexAttachment {
         this.triangles = triangles;
     }
 
-    public float[] getRegionUVs() {
-        return regionUVs;
-    }
-
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;
     }
@@ -337,10 +333,6 @@ public class MeshAttachment extends VertexAttachment {
         this.height = height;
     }
 
-    public MeshAttachment getParentMesh() {
-        return parentMesh;
-    }
-
     public void setParentMesh(MeshAttachment parentMesh) {
         this.parentMesh = parentMesh;
         if (parentMesh != null) {
@@ -380,10 +372,6 @@ public class MeshAttachment extends VertexAttachment {
         copy.width = width;
         copy.height = height;
         return copy;
-    }
-
-    public boolean getInheritDeform() {
-        return inheritDeform;
     }
 
     public void setInheritDeform(boolean inheritDeform) {

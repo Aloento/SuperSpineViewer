@@ -38,13 +38,11 @@ public class SkeletonActor extends Actor {
         skeleton.updateWorldTransform();
         renderer.draw(batch, skeleton);
 
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38, 37 -> {
-                int blendSrc = batch.getBlendSrcFunc(), blendDst = batch.getBlendDstFunc();
-                int blendSrcAlpha = batch.getBlendSrcFuncAlpha(), blendDstAlpha = batch.getBlendDstFuncAlpha();
-                if (resetBlendFunction)
-                    batch.setBlendFunctionSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
-            }
+        if (RuntimesLoader.spineVersion.get() > 36) {
+            int blendSrc = batch.getBlendSrcFunc(), blendDst = batch.getBlendDstFunc();
+            int blendSrcAlpha = batch.getBlendSrcFuncAlpha(), blendDstAlpha = batch.getBlendDstFuncAlpha();
+            if (resetBlendFunction)
+                batch.setBlendFunctionSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
         }
         color.a = oldAlpha;
     }
@@ -71,13 +69,5 @@ public class SkeletonActor extends Actor {
 
     public void setAnimationState(AnimationState state) {
         this.state = state;
-    }
-
-    public boolean getResetBlendFunction() {
-        return resetBlendFunction;
-    }
-
-    public void setResetBlendFunction(boolean resetBlendFunction) {
-        this.resetBlendFunction = resetBlendFunction;
     }
 }

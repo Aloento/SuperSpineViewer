@@ -227,21 +227,8 @@ public class Animation {
             return curves.length / BEZIER_SIZE + 1;
         }
 
-        public void setLinear(int frameIndex) {
-            curves[frameIndex * BEZIER_SIZE] = LINEAR;
-        }
-
         public void setStepped(int frameIndex) {
             curves[frameIndex * BEZIER_SIZE] = STEPPED;
-        }
-
-        public float getCurveType(int frameIndex) {
-            int index = frameIndex * BEZIER_SIZE;
-            if (index == curves.length) return LINEAR;
-            float type = curves[index];
-            if (type == LINEAR) return LINEAR;
-            if (type == STEPPED) return STEPPED;
-            return BEZIER;
         }
 
         public void setCurve(int frameIndex, float cx1, float cy1, float cx2, float cy2) {
@@ -2424,10 +2411,6 @@ public class Animation {
             return frames;
         }
 
-        public int[][] getDrawOrders() {
-            return drawOrders;
-        }
-
         public void setFrame(int frameIndex, float time, int[] drawOrder) {
             frames[frameIndex] = time;
             drawOrders[frameIndex] = drawOrder;
@@ -2848,15 +2831,6 @@ public class Animation {
             return (TimelineType.transformConstraint.ordinal() << 24) + transformConstraintIndex;
         }
 
-        public int getTransformConstraintIndex() {
-            return transformConstraintIndex;
-        }
-
-        public void setTransformConstraintIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.transformConstraintIndex = index;
-        }
-
         public float[] getFrames() {
             return frames;
         }
@@ -3088,10 +3062,6 @@ public class Animation {
 
         public int getPropertyId() {
             return (TimelineType.pathConstraintPosition.ordinal() << 24) + pathConstraintIndex;
-        }
-
-        public int getPathConstraintIndex() {
-            return pathConstraintIndex;
         }
 
         public void setPathConstraintIndex(int index) {
@@ -3366,10 +3336,6 @@ public class Animation {
 
         public int getPropertyId() {
             return (TimelineType.pathConstraintMix.ordinal() << 24) + pathConstraintIndex;
-        }
-
-        public int getPathConstraintIndex() {
-            return pathConstraintIndex;
         }
 
         public void setPathConstraintIndex(int index) {

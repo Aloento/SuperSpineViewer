@@ -382,23 +382,20 @@ public class Skeleton {
         sortBone(constraint.target);
         Array<Bone> constrained = constraint.bones;
         int boneCount = constrained.size;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38, 37, 36 -> {
-                if (constraint.data.local) {
-                    for (int i = 0; i < boneCount; i++) {
-                        Bone child = constrained.get(i);
-                        sortBone(child.parent);
-                        if (!updateCache.contains(child, true)) updateCacheReset.add(child);
-                    }
-                } else {
-                    for (int i = 0; i < boneCount; i++)
-                        sortBone(constrained.get(i));
+        if (RuntimesLoader.spineVersion.get() > 35) {
+            if (constraint.data.local) {
+                for (int i = 0; i < boneCount; i++) {
+                    Bone child = constrained.get(i);
+                    sortBone(child.parent);
+                    if (!updateCache.contains(child, true)) updateCacheReset.add(child);
                 }
-            }
-            case 35 -> {
+            } else {
                 for (int i = 0; i < boneCount; i++)
                     sortBone(constrained.get(i));
             }
+        } else {
+            for (int i = 0; i < boneCount; i++)
+                sortBone(constrained.get(i));
         }
         updateCache.add(constraint);
         for (int i = 0; i < boneCount; i++)
@@ -408,16 +405,13 @@ public class Skeleton {
     }
 
     private void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38 -> {
-                for (SkinEntry entry : skin.attachments.keys())
-                    if (entry.getSlotIndex() == slotIndex)
-                        sortPathConstraintAttachment(entry.getAttachment(), slotBone);
-            }
-            case 37, 36, 35, 34 -> {
-                for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
-                    if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
-            }
+        if (RuntimesLoader.spineVersion.get() > 37) {
+            for (SkinEntry entry : skin.attachments.keys())
+                if (entry.getSlotIndex() == slotIndex)
+                    sortPathConstraintAttachment(entry.getAttachment(), slotBone);
+        } else {
+            for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
+                if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
         }
     }
 
@@ -455,21 +449,17 @@ public class Skeleton {
     }
 
     public void updateWorldTransform() {
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38, 37, 36, 35 -> {
-                Array<Bone> updateCacheReset = this.updateCacheReset;
-                for (int i = 0, n = updateCacheReset.size; i < n; i++) {
-                    Bone bone = updateCacheReset.get(i);
-                    bone.ax = bone.x;
-                    bone.ay = bone.y;
-                    bone.arotation = bone.rotation;
-                    bone.ascaleX = bone.scaleX;
-                    bone.ascaleY = bone.scaleY;
-                    bone.ashearX = bone.shearX;
-                    bone.ashearY = bone.shearY;
-                    bone.appliedValid = true;
-                }
-            }
+        Array<Bone> updateCacheReset = this.updateCacheReset;
+        for (int i = 0, n = updateCacheReset.size; i < n; i++) {
+            Bone bone = updateCacheReset.get(i);
+            bone.ax = bone.x;
+            bone.ay = bone.y;
+            bone.arotation = bone.rotation;
+            bone.ascaleX = bone.scaleX;
+            bone.ascaleY = bone.scaleY;
+            bone.ashearX = bone.shearX;
+            bone.ashearY = bone.shearY;
+            bone.appliedValid = true;
         }
         Array<Updatable> updateCache = this.updateCache;
         for (int i = 0, n = updateCache.size; i < n; i++)

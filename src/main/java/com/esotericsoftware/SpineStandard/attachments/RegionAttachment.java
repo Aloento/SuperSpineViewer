@@ -90,53 +90,49 @@ public class RegionAttachment extends Attachment {
     public void setRegion(TextureRegion region) {
         if (region == null) throw new IllegalArgumentException("region cannot be null.");
         this.region = region;
-        switch (RuntimesLoader.spineVersion.get()) {
-            case 38, 37, 36 -> {
-                float[] uvs = this.uvs;
-                if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
-                    uvs[URX] = region.getU();
-                    uvs[URY] = region.getV2();
-                    uvs[BRX] = region.getU();
-                    uvs[BRY] = region.getV();
-                    uvs[BLX] = region.getU2();
-                    uvs[BLY] = region.getV();
-                    uvs[ULX] = region.getU2();
-                    uvs[ULY] = region.getV2();
-                } else {
-                    uvs[ULX] = region.getU();
-                    uvs[ULY] = region.getV2();
-                    uvs[URX] = region.getU();
-                    uvs[URY] = region.getV();
-                    uvs[BRX] = region.getU2();
-                    uvs[BRY] = region.getV();
-                    uvs[BLX] = region.getU2();
-                    uvs[BLY] = region.getV2();
-                }
+        if (RuntimesLoader.spineVersion.get() > 35) {
+            float[] uvs = this.uvs;
+            if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
+                uvs[URX] = region.getU();
+                uvs[URY] = region.getV2();
+                uvs[BRX] = region.getU();
+                uvs[BRY] = region.getV();
+                uvs[BLX] = region.getU2();
+                uvs[BLY] = region.getV();
+                uvs[ULX] = region.getU2();
+                uvs[ULY] = region.getV2();
+            } else {
+                uvs[ULX] = region.getU();
+                uvs[ULY] = region.getV2();
+                uvs[URX] = region.getU();
+                uvs[URY] = region.getV();
+                uvs[BRX] = region.getU2();
+                uvs[BRY] = region.getV();
+                uvs[BLX] = region.getU2();
+                uvs[BLY] = region.getV2();
             }
-            case 35 -> {
-                float[] vertices = this.vertices;
-                if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
-                    vertices[U3] = region.getU();
-                    vertices[V3] = region.getV2();
-                    vertices[U4] = region.getU();
-                    vertices[V4] = region.getV();
-                    vertices[U1] = region.getU2();
-                    vertices[V1] = region.getV();
-                    vertices[U2] = region.getU2();
-                    vertices[V2] = region.getV2();
-                } else {
-                    vertices[U2] = region.getU();
-                    vertices[V2] = region.getV2();
-                    vertices[U3] = region.getU();
-                    vertices[V3] = region.getV();
-                    vertices[U4] = region.getU2();
-                    vertices[V4] = region.getV();
-                    vertices[U1] = region.getU2();
-                    vertices[V1] = region.getV2();
-                }
+        } else {
+            float[] vertices = this.vertices;
+            if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
+                vertices[U3] = region.getU();
+                vertices[V3] = region.getV2();
+                vertices[U4] = region.getU();
+                vertices[V4] = region.getV();
+                vertices[U1] = region.getU2();
+                vertices[V1] = region.getV();
+                vertices[U2] = region.getU2();
+                vertices[V2] = region.getV2();
+            } else {
+                vertices[U2] = region.getU();
+                vertices[V2] = region.getV2();
+                vertices[U3] = region.getU();
+                vertices[V3] = region.getV();
+                vertices[U4] = region.getU2();
+                vertices[V4] = region.getV();
+                vertices[U1] = region.getU2();
+                vertices[V1] = region.getV2();
             }
         }
-
     }
 
     public float[] updateWorldVertices(Slot slot, boolean premultipliedAlpha) { // Spine35

@@ -42,14 +42,6 @@ public class AnimationStateData {
         return animationToMixTime.get(tempKey, defaultMix);
     }
 
-    public float getDefaultMix() {
-        return defaultMix;
-    }
-
-    public void setDefaultMix(float defaultMix) {
-        this.defaultMix = defaultMix;
-    }
-
     static class Key {
         Animation a1, a2;
 

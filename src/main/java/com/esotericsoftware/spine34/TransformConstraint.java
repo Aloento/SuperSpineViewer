@@ -26,9 +26,7 @@ public class TransformConstraint implements Updatable {
         target = skeleton.findBone(data.target.name);
     }
 
-    /**
-     * Copy constructor.
-     */
+    
     public TransformConstraint(TransformConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
