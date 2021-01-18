@@ -8,7 +8,7 @@ import com.esotericsoftware.SpineStandard.attachments.Attachment;
 public class Slot {
     final SlotData data;
     final Bone bone;
-    final Color color = new Color(), darkColor;
+    Color color = new Color(), darkColor = null;
     Attachment attachment;
     int attachmentState;
     private float attachmentTime;
@@ -29,11 +29,14 @@ public class Slot {
         data = slot.data;
         this.bone = bone;
         color.set(slot.color);
-        darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
         attachment = slot.attachment;
         attachmentTime = slot.attachmentTime;
-        if (RuntimesLoader.spineVersion.get() == 38)
-            deform.addAll(slot.deform);
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38:
+                deform.addAll(slot.deform);
+            case 37, 36:
+                darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
+        }
     }
 
     public SlotData getData() {
