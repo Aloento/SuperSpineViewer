@@ -14,10 +14,10 @@ public class Skeleton {
     final SkeletonData data;
     final Array<Bone> bones;
     final Array<Slot> slots;
-    final Array<IkConstraint> ikConstraints, ikConstraintsSorted;
+    final Array<IkConstraint> ikConstraints;
     final Array<TransformConstraint> transformConstraints;
     final Array<PathConstraint> pathConstraints;
-    final Array<Updatable> updateCache = new Array();
+    final Array<Updatable> updateCache = new Array<>();
     final Color color;
     Array<Slot> drawOrder;
     Skin skin;
@@ -29,7 +29,7 @@ public class Skeleton {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         this.data = data;
 
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones) {
             Bone bone;
             if (boneData.parent == null)
@@ -42,8 +42,8 @@ public class Skeleton {
             bones.add(bone);
         }
 
-        slots = new Array(data.slots.size);
-        drawOrder = new Array(data.slots.size);
+        slots = new Array<>(data.slots.size);
+        drawOrder = new Array<>(data.slots.size);
         for (SlotData slotData : data.slots) {
             Bone bone = bones.get(slotData.boneData.index);
             Slot slot = new Slot(slotData, bone);
@@ -51,16 +51,16 @@ public class Skeleton {
             drawOrder.add(slot);
         }
 
-        ikConstraints = new Array(data.ikConstraints.size);
-        ikConstraintsSorted = new Array(ikConstraints.size);
+        ikConstraints = new Array<>(data.ikConstraints.size);
+        // ikConstraintsSorted = new Array<>(ikConstraints.size);
         for (IkConstraintData ikConstraintData : data.ikConstraints)
             ikConstraints.add(new IkConstraint(ikConstraintData, this));
 
-        transformConstraints = new Array(data.transformConstraints.size);
+        transformConstraints = new Array<>(data.transformConstraints.size);
         for (TransformConstraintData transformConstraintData : data.transformConstraints)
             transformConstraints.add(new TransformConstraint(transformConstraintData, this));
 
-        pathConstraints = new Array(data.pathConstraints.size);
+        pathConstraints = new Array<>(data.pathConstraints.size);
         for (PathConstraintData pathConstraintData : data.pathConstraints)
             pathConstraints.add(new PathConstraint(pathConstraintData, this));
 
@@ -69,46 +69,44 @@ public class Skeleton {
         updateCache();
     }
 
-    /**
-     * Copy constructor.
-     */
+
     public Skeleton(Skeleton skeleton) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = skeleton.data;
 
-        bones = new Array(skeleton.bones.size);
+        bones = new Array<>(skeleton.bones.size);
         for (Bone bone : skeleton.bones) {
-            Bone copy;
+            Bone newBone;
             if (bone.parent == null)
-                copy = new Bone(bone, this, null);
+                newBone = new Bone(bone, this, null);
             else {
                 Bone parent = bones.get(bone.parent.data.index);
-                copy = new Bone(bone, this, parent);
-                parent.children.add(copy);
+                newBone = new Bone(bone, this, parent);
+                parent.children.add(newBone);
             }
-            bones.add(copy);
+            bones.add(newBone);
         }
 
-        slots = new Array(skeleton.slots.size);
+        slots = new Array<>(skeleton.slots.size);
         for (Slot slot : skeleton.slots) {
             Bone bone = bones.get(slot.bone.data.index);
             slots.add(new Slot(slot, bone));
         }
 
-        drawOrder = new Array(slots.size);
+        drawOrder = new Array<>(slots.size);
         for (Slot slot : skeleton.drawOrder)
             drawOrder.add(slots.get(slot.data.index));
 
-        ikConstraints = new Array(skeleton.ikConstraints.size);
-        ikConstraintsSorted = new Array(ikConstraints.size);
+        ikConstraints = new Array<>(skeleton.ikConstraints.size);
+        // ikConstraintsSorted = new Array<>(ikConstraints.size);
         for (IkConstraint ikConstraint : skeleton.ikConstraints)
             ikConstraints.add(new IkConstraint(ikConstraint, this));
 
-        transformConstraints = new Array(skeleton.transformConstraints.size);
+        transformConstraints = new Array<>(skeleton.transformConstraints.size);
         for (TransformConstraint transformConstraint : skeleton.transformConstraints)
             transformConstraints.add(new TransformConstraint(transformConstraint, this));
 
-        pathConstraints = new Array(skeleton.pathConstraints.size);
+        pathConstraints = new Array<>(skeleton.pathConstraints.size);
         for (PathConstraint pathConstraint : skeleton.pathConstraints)
             pathConstraints.add(new PathConstraint(pathConstraint, this));
 
@@ -121,10 +119,7 @@ public class Skeleton {
         updateCache();
     }
 
-    /**
-     * Caches information about bones and constraints. Must be called if bones, constraints, or weighted outPath attachments are
-     * added or removed.
-     */
+
     public void updateCache() {
         Array<Updatable> updateCache = this.updateCache;
         updateCache.clear();
@@ -132,9 +127,7 @@ public class Skeleton {
         Array<Bone> bones = this.bones;
         for (int i = 0, n = bones.size; i < n; i++)
             bones.get(i).sorted = false;
-
-        // IK first, lowest hierarchy depth first.
-        Array<IkConstraint> ikConstraints = this.ikConstraintsSorted;
+        Array<IkConstraint> ikConstraints = this.ikConstraints;
         ikConstraints.clear();
         ikConstraints.addAll(this.ikConstraints);
         int ikCount = ikConstraints.size;
@@ -259,26 +252,20 @@ public class Skeleton {
         }
     }
 
-    /**
-     * Updates the world transform for each bone and applies constraints.
-     */
+
     public void updateWorldTransform() {
         Array<Updatable> updateCache = this.updateCache;
         for (int i = 0, n = updateCache.size; i < n; i++)
             updateCache.get(i).update();
     }
 
-    /**
-     * Sets the bones, constraints, and slots to their setup pose values.
-     */
+
     public void setToSetupPose() {
         setBonesToSetupPose();
         setSlotsToSetupPose();
     }
 
-    /**
-     * Sets the bones and constraints to their setup pose values.
-     */
+
     public void setBonesToSetupPose() {
         Array<Bone> bones = this.bones;
         for (int i = 0, n = bones.size; i < n; i++)
@@ -331,17 +318,13 @@ public class Skeleton {
         return updateCache;
     }
 
-    /**
-     * @return May return null.
-     */
+
     public Bone getRootBone() {
         if (bones.size == 0) return null;
         return bones.first();
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Bone findBone(String boneName) {
         if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
         Array<Bone> bones = this.bones;
@@ -352,9 +335,7 @@ public class Skeleton {
         return null;
     }
 
-    /**
-     * @return -1 if the bone was not found.
-     */
+
     public int findBoneIndex(String boneName) {
         if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
         Array<Bone> bones = this.bones;
@@ -367,9 +348,7 @@ public class Skeleton {
         return slots;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Slot findSlot(String slotName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
         Array<Slot> slots = this.slots;
@@ -380,9 +359,7 @@ public class Skeleton {
         return null;
     }
 
-    /**
-     * @return -1 if the bone was not found.
-     */
+
     public int findSlotIndex(String slotName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
         Array<Slot> slots = this.slots;
@@ -391,46 +368,30 @@ public class Skeleton {
         return -1;
     }
 
-    /**
-     * Returns the slots in the order they will be drawn. The returned array may be modified to change the draw order.
-     */
+
     public Array<Slot> getDrawOrder() {
         return drawOrder;
     }
 
-    /**
-     * Sets the slots and the order they will be drawn.
-     */
+
     public void setDrawOrder(Array<Slot> drawOrder) {
         if (drawOrder == null) throw new IllegalArgumentException("drawOrder cannot be null.");
         this.drawOrder = drawOrder;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Skin getSkin() {
         return skin;
     }
 
-    /**
-     * Sets a skin by name.
-     *
-     * @see #setSkin(Skin)
-     */
+
     public void setSkin(String skinName) {
         Skin skin = data.findSkin(skinName);
         if (skin == null) throw new IllegalArgumentException("Skin not found: " + skinName);
         setSkin(skin);
     }
 
-    /**
-     * Sets the skin used to look up attachments before looking in the {@link SkeletonData#getDefaultSkin() default skin}.
-     * Attachments from the new skin are attached if the corresponding attachment from the old skin was attached. If there was no
-     * old skin, each slot's setup mode attachment is attached from the new skin.
-     *
-     * @param newSkin May be null.
-     */
+
     public void setSkin(Skin newSkin) {
         if (newSkin != null) {
             if (skin != null)
@@ -450,16 +411,12 @@ public class Skeleton {
         skin = newSkin;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Attachment getAttachment(String slotName, String attachmentName) {
         return getAttachment(data.findSlotIndex(slotName), attachmentName);
     }
 
-    /**
-     * @return May be null.
-     */
+
     public Attachment getAttachment(int slotIndex, String attachmentName) {
         if (attachmentName == null) throw new IllegalArgumentException("attachmentName cannot be null.");
         if (skin != null) {
@@ -470,9 +427,7 @@ public class Skeleton {
         return null;
     }
 
-    /**
-     * @param attachmentName May be null.
-     */
+
     public void setAttachment(String slotName, String attachmentName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
         Array<Slot> slots = this.slots;
@@ -496,9 +451,7 @@ public class Skeleton {
         return ikConstraints;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public IkConstraint findIkConstraint(String constraintName) {
         if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
         Array<IkConstraint> ikConstraints = this.ikConstraints;
@@ -513,9 +466,7 @@ public class Skeleton {
         return transformConstraints;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public TransformConstraint findTransformConstraint(String constraintName) {
         if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
         Array<TransformConstraint> transformConstraints = this.transformConstraints;
@@ -530,9 +481,7 @@ public class Skeleton {
         return pathConstraints;
     }
 
-    /**
-     * @return May be null.
-     */
+
     public PathConstraint findPathConstraint(String constraintName) {
         if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
         Array<PathConstraint> pathConstraints = this.pathConstraints;
@@ -543,12 +492,7 @@ public class Skeleton {
         return null;
     }
 
-    /**
-     * Returns the axis aligned bounding box (AABB) of the region and mesh attachments for the current pose.
-     *
-     * @param offset The distance from the skeleton origin to the bottom left corner of the AABB.
-     * @param size   The width and height of the AABB.
-     */
+
     public void getBounds(Vector2 offset, Vector2 size) {
         if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
         if (size == null) throw new IllegalArgumentException("size cannot be null.");
@@ -560,7 +504,7 @@ public class Skeleton {
             Attachment attachment = slot.attachment;
             if (attachment instanceof RegionAttachment)
                 vertices = ((RegionAttachment) attachment).updateWorldVertices(slot, false);
-            else if (attachment instanceof MeshAttachment) //
+            else if (attachment instanceof MeshAttachment)
                 vertices = ((MeshAttachment) attachment).updateWorldVertices(slot, true);
             if (vertices != null) {
                 for (int ii = 0, nn = vertices.length; ii < nn; ii += 5) {
@@ -580,9 +524,7 @@ public class Skeleton {
         return color;
     }
 
-    /**
-     * A convenience method for setting the skeleton color. The color can also be set by modifying {@link #getColor()}.
-     */
+
     public void setColor(Color color) {
         if (color == null) throw new IllegalArgumentException("color cannot be null.");
         this.color.set(color);

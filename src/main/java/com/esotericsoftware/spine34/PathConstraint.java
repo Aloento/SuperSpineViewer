@@ -25,7 +25,7 @@ public class PathConstraint implements Updatable {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         this.data = data;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findSlot(data.target.name);
@@ -35,14 +35,12 @@ public class PathConstraint implements Updatable {
         translateMix = data.translateMix;
     }
 
-    /**
-     * Copy constructor.
-     */
+    
     public PathConstraint(PathConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = constraint.data;
-        bones = new Array(constraint.bones.size);
+        bones = new Array<>(constraint.bones.size);
         for (Bone bone : constraint.bones)
             bones.add(skeleton.bones.get(bone.data.index));
         target = skeleton.slots.get(constraint.target.data.index);
@@ -127,7 +125,7 @@ public class PathConstraint implements Updatable {
                 }
                 if (r > PI)
                     r -= PI2;
-                else if (r < -PI) //
+                else if (r < -PI)
                     r += PI2;
                 r *= rotateMix;
                 cos = cos(r);
@@ -183,7 +181,7 @@ public class PathConstraint implements Updatable {
                     continue;
                 }
 
-                // Determine curve containing position.
+
                 for (; ; curve++) {
                     float length = lengths[curve];
                     if (p > length) continue;
@@ -209,7 +207,7 @@ public class PathConstraint implements Updatable {
             return out;
         }
 
-        // World vertices.
+
         if (closed) {
             verticesLength += 2;
             world = this.world.setSize(verticesLength);
@@ -224,7 +222,7 @@ public class PathConstraint implements Updatable {
             path.computeWorldVertices(target, 2, verticesLength, world, 0);
         }
 
-        // Curve lengths.
+
         float[] curves = this.curves.setSize(curveCount);
         float pathLength = 0;
         float x1 = world[0], y1 = world[1], cx1 = 0, cy1 = 0, cx2 = 0, cy2 = 0, x2 = 0, y2 = 0;
@@ -285,7 +283,7 @@ public class PathConstraint implements Updatable {
                 continue;
             }
 
-            // Determine curve containing position.
+
             for (; ; curve++) {
                 float length = curves[curve];
                 if (p > length) continue;
@@ -298,7 +296,7 @@ public class PathConstraint implements Updatable {
                 break;
             }
 
-            // Curve segment lengths.
+
             if (curve != prevCurve) {
                 prevCurve = curve;
                 int ii = curve * 6;
@@ -339,7 +337,7 @@ public class PathConstraint implements Updatable {
                 segment = 0;
             }
 
-            // Weight by segment length.
+
             p *= curveLength;
             for (; ; segment++) {
                 float length = segments[segment];

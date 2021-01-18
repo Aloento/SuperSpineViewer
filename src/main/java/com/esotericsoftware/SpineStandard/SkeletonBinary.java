@@ -222,7 +222,7 @@ public class SkeletonBinary {
                     throw new SerializationException("Error reading skeleton file.", ex);
                 }
             }
-            case 37, 36, 35 -> {
+            case 37, 36, 35, 34 -> {
                 try (DataInput input = new DataInput(file.read(512)) {
                     private char[] chars = new char[32];
 
@@ -268,7 +268,8 @@ public class SkeletonBinary {
 
                     boolean nonessential = input.readBoolean();
                     if (nonessential) {
-                        skeletonData.fps = input.readFloat();
+                        if (RuntimesLoader.spineVersion.get() > 34)
+                            skeletonData.fps = input.readFloat();
                         skeletonData.imagesPath = input.readString();
                         if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
                         if (RuntimesLoader.spineVersion.get() == 37) {
@@ -289,7 +290,10 @@ public class SkeletonBinary {
                         data.shearX = input.readFloat();
                         data.shearY = input.readFloat();
                         data.length = input.readFloat() * scale;
-                        data.transformMode = TransformMode.values[input.readInt(true)];
+                        if (RuntimesLoader.spineVersion.get() < 35) {
+                            data.inheritRotation = input.readBoolean();
+                            data.inheritScale = input.readBoolean();
+                        } else data.transformMode = TransformMode.values[input.readInt(true)];
                         if (nonessential) Color.rgba8888ToColor(data.color, input.readInt());
                         skeletonData.bones.add(data);
                     }
@@ -299,11 +303,9 @@ public class SkeletonBinary {
                         BoneData boneData = skeletonData.bones.get(input.readInt(true));
                         SlotData data = new SlotData(i, slotName, boneData);
                         Color.rgba8888ToColor(data.color, input.readInt());
-                        switch (RuntimesLoader.spineVersion.get()) {
-                            case 37, 36 -> {
-                                int darkColor = input.readInt();
-                                if (darkColor != -1) Color.rgb888ToColor(data.darkColor = new Color(), darkColor);
-                            }
+                        if (RuntimesLoader.spineVersion.get() > 35) {
+                            int darkColor = input.readInt();
+                            if (darkColor != -1) Color.rgb888ToColor(data.darkColor = new Color(), darkColor);
                         }
                         data.attachmentName = input.readString();
                         data.blendMode = BlendMode.values[input.readInt(true)];
@@ -312,7 +314,8 @@ public class SkeletonBinary {
 
                     for (int i = 0, n = input.readInt(true); i < n; i++) {
                         IkConstraintData data = new IkConstraintData(input.readString());
-                        data.order = input.readInt(true);
+                        if (RuntimesLoader.spineVersion.get() > 34)
+                            data.order = input.readInt(true);
                         for (int ii = 0, nn = input.readInt(true); ii < nn; ii++)
                             data.bones.add(skeletonData.bones.get(input.readInt(true)));
                         data.target = skeletonData.bones.get(input.readInt(true));
@@ -328,7 +331,8 @@ public class SkeletonBinary {
 
                     for (int i = 0, n = input.readInt(true); i < n; i++) {
                         TransformConstraintData data = new TransformConstraintData(input.readString());
-                        data.order = input.readInt(true);
+                        if (RuntimesLoader.spineVersion.get() > 34)
+                            data.order = input.readInt(true);
                         for (int ii = 0, nn = input.readInt(true); ii < nn; ii++)
                             data.bones.add(skeletonData.bones.get(input.readInt(true)));
                         data.target = skeletonData.bones.get(input.readInt(true));
@@ -353,7 +357,8 @@ public class SkeletonBinary {
 
                     for (int i = 0, n = input.readInt(true); i < n; i++) {
                         PathConstraintData data = new PathConstraintData(input.readString());
-                        data.order = input.readInt(true);
+                        if (RuntimesLoader.spineVersion.get() > 34)
+                            data.order = input.readInt(true);
                         for (int ii = 0, nn = input.readInt(true); ii < nn; ii++)
                             data.bones.add(skeletonData.bones.get(input.readInt(true)));
                         data.target = skeletonData.slots.get(input.readInt(true));
@@ -1262,7 +1267,7 @@ public class SkeletonBinary {
                 for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
                     switch (RuntimesLoader.spineVersion.get()) {
                         case 38, 37 -> timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte(), input.readBoolean(), input.readBoolean());
-                        case 36, 35 -> timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte());
+                        case 36, 35, 34 -> timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte());
                     }
                     if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
                 }
@@ -1408,13 +1413,9 @@ public class SkeletonBinary {
                     event.intValue = input.readInt(false);
                     event.floatValue = input.readFloat();
                     event.stringValue = input.readBoolean() ? input.readString() : eventData.stringValue;
-                    switch (RuntimesLoader.spineVersion.get()) {
-                        case 38, 37 -> {
-                            if (event.getData().audioPath != null) {
-                                event.volume = input.readFloat();
-                                event.balance = input.readFloat();
-                            }
-                        }
+                    if (RuntimesLoader.spineVersion.get() > 36 && event.getData().audioPath != null) {
+                        event.volume = input.readFloat();
+                        event.balance = input.readFloat();
                     }
                     timeline.setFrame(i, event);
                 }

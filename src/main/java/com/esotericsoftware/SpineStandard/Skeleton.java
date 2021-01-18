@@ -29,7 +29,7 @@ public class Skeleton {
     Skin skin;
     float time;
     float scaleX = 1, scaleY = 1;
-    boolean flipX, flipY; // Spine36/5
+    boolean flipX, flipY; // Spine36/5/4
     float x, y;
 
     public Skeleton(SkeletonData data) {
@@ -119,7 +119,7 @@ public class Skeleton {
                 scaleX = skeleton.scaleX;
                 scaleY = skeleton.scaleY;
             }
-            case 36, 35 -> {
+            case 36, 35, 34 -> {
                 flipX = skeleton.flipX;
                 flipY = skeleton.flipY;
             }
@@ -217,6 +217,98 @@ public class Skeleton {
                             continue outer;
                         }
                     }
+                }
+
+                for (int i = 0, n = bones.size; i < n; i++)
+                    sortBone(bones.get(i));
+            }
+            case 34 -> {
+                updateCache.clear();
+                Array<Bone> bones = this.bones;
+                for (int i = 0, n = bones.size; i < n; i++)
+                    bones.get(i).sorted = false;
+                Array<IkConstraint> ikConstraints = this.ikConstraints;
+                ikConstraints.clear();
+                ikConstraints.addAll(this.ikConstraints);
+                int ikCount = ikConstraints.size;
+                for (int i = 0, level; i < ikCount; i++) {
+                    IkConstraint ik = ikConstraints.get(i);
+                    Bone bone = ik.bones.first().parent;
+                    for (level = 0; bone != null; level++)
+                        bone = bone.parent;
+                    ik.level = level;
+                }
+                for (int i = 1, ii; i < ikCount; i++) {
+                    IkConstraint ik = ikConstraints.get(i);
+                    int level = ik.level;
+                    for (ii = i - 1; ii >= 0; ii--) {
+                        IkConstraint other = ikConstraints.get(ii);
+                        if (other.level < level) break;
+                        ikConstraints.set(ii + 1, other);
+                    }
+                    ikConstraints.set(ii + 1, ik);
+                }
+                for (int i = 0, n = ikConstraints.size; i < n; i++) {
+                    IkConstraint constraint = ikConstraints.get(i);
+                    Bone target = constraint.target;
+                    sortBone(target);
+
+                    Array<Bone> constrained = constraint.bones;
+                    Bone parent = constrained.first();
+                    sortBone(parent);
+
+                    updateCache.add(constraint);
+
+                    sortReset(parent.children);
+                    constrained.peek().sorted = true;
+                }
+
+                Array<PathConstraint> pathConstraints = this.pathConstraints;
+                for (int i = 0, n = pathConstraints.size; i < n; i++) {
+                    PathConstraint constraint = pathConstraints.get(i);
+
+                    Slot slot = constraint.target;
+                    int slotIndex = slot.getData().index;
+                    Bone slotBone = slot.bone;
+                    if (skin != null) sortPathConstraintAttachment(skin, slotIndex, slotBone);
+                    if (data.defaultSkin != null && data.defaultSkin != skin)
+                        sortPathConstraintAttachment(data.defaultSkin, slotIndex, slotBone);
+                    for (int ii = 0, nn = data.skins.size; ii < nn; ii++)
+                        sortPathConstraintAttachment(data.skins.get(ii), slotIndex, slotBone);
+
+                    Attachment attachment = slot.attachment;
+                    if (attachment instanceof PathAttachment) sortPathConstraintAttachment(attachment, slotBone);
+
+                    Array<Bone> constrained = constraint.bones;
+                    int boneCount = constrained.size;
+                    for (int ii = 0; ii < boneCount; ii++)
+                        sortBone(constrained.get(ii));
+
+                    updateCache.add(constraint);
+
+                    for (int ii = 0; ii < boneCount; ii++)
+                        sortReset(constrained.get(ii).children);
+                    for (int ii = 0; ii < boneCount; ii++)
+                        constrained.get(ii).sorted = true;
+                }
+
+                Array<TransformConstraint> transformConstraints = this.transformConstraints;
+                for (int i = 0, n = transformConstraints.size; i < n; i++) {
+                    TransformConstraint constraint = transformConstraints.get(i);
+
+                    sortBone(constraint.target);
+
+                    Array<Bone> constrained = constraint.bones;
+                    int boneCount = constrained.size;
+                    for (int ii = 0; ii < boneCount; ii++)
+                        sortBone(constrained.get(ii));
+
+                    updateCache.add(constraint);
+
+                    for (int ii = 0; ii < boneCount; ii++)
+                        sortReset(constrained.get(ii).children);
+                    for (int ii = 0; ii < boneCount; ii++)
+                        constrained.get(ii).sorted = true;
                 }
 
                 for (int i = 0, n = bones.size; i < n; i++)
@@ -322,7 +414,7 @@ public class Skeleton {
                     if (entry.getSlotIndex() == slotIndex)
                         sortPathConstraintAttachment(entry.getAttachment(), slotBone);
             }
-            case 37, 36, 35 -> {
+            case 37, 36, 35, 34 -> {
                 for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
                     if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
             }
@@ -363,17 +455,21 @@ public class Skeleton {
     }
 
     public void updateWorldTransform() {
-        Array<Bone> updateCacheReset = this.updateCacheReset;
-        for (int i = 0, n = updateCacheReset.size; i < n; i++) {
-            Bone bone = updateCacheReset.get(i);
-            bone.ax = bone.x;
-            bone.ay = bone.y;
-            bone.arotation = bone.rotation;
-            bone.ascaleX = bone.scaleX;
-            bone.ascaleY = bone.scaleY;
-            bone.ashearX = bone.shearX;
-            bone.ashearY = bone.shearY;
-            bone.appliedValid = true;
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37, 36, 35 -> {
+                Array<Bone> updateCacheReset = this.updateCacheReset;
+                for (int i = 0, n = updateCacheReset.size; i < n; i++) {
+                    Bone bone = updateCacheReset.get(i);
+                    bone.ax = bone.x;
+                    bone.ay = bone.y;
+                    bone.arotation = bone.rotation;
+                    bone.ascaleX = bone.scaleX;
+                    bone.ascaleY = bone.scaleY;
+                    bone.ashearX = bone.shearX;
+                    bone.ashearY = bone.shearY;
+                    bone.appliedValid = true;
+                }
+            }
         }
         Array<Updatable> updateCache = this.updateCache;
         for (int i = 0, n = updateCache.size; i < n; i++)

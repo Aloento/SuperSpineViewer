@@ -15,7 +15,7 @@ public class SkeletonData {
     Skin defaultSkin;
     float x, y, width, height;
     String version, hash;
-    float fps = 30;
+    float fps = 60;
     String imagesPath, audioPath;
 
     public Array<BoneData> getBones() {
