@@ -1,8 +1,6 @@
 package com.esotericsoftware.spine35.attachments;
 
-/**
- * The base class for all attachments.
- */
+
 abstract public class Attachment {
     String name;
 
@@ -11,9 +9,7 @@ abstract public class Attachment {
         this.name = name;
     }
 
-    /**
-     * The attachment's name.
-     */
+    
     public String getName() {
         return name;
     }

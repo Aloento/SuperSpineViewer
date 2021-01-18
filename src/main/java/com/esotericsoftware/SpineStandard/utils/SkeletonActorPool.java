@@ -38,7 +38,7 @@ public class SkeletonActorPool extends Pool<SkeletonActor> {
                 skeleton.setColor(Color.WHITE);
                 switch (RuntimesLoader.spineVersion.get()) {
                     case 38, 37 -> skeleton.setScale(1, 1);
-                    case 36 -> skeleton.setFlip(false, false);
+                    case 36, 35 -> skeleton.setFlip(false, false);
                 }
                 skeleton.setSkin((Skin) null);
                 skeleton.setSkin(SkeletonActorPool.this.skeletonData.getDefaultSkin());

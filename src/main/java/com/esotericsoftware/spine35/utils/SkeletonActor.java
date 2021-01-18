@@ -7,17 +7,13 @@ import com.esotericsoftware.spine35.AnimationState;
 import com.esotericsoftware.spine35.Skeleton;
 import com.esotericsoftware.spine35.SkeletonRenderer;
 
-/**
- * A scene2d actor that draws a skeleton.
- */
+
 public class SkeletonActor extends Actor {
     AnimationState state;
     private SkeletonRenderer renderer;
     private Skeleton skeleton;
 
-    /**
-     * Creates an uninitialized SkeletonActor. The renderer, skeleton, and animation state must be set before use.
-     */
+    
     public SkeletonActor() {
     }
 
