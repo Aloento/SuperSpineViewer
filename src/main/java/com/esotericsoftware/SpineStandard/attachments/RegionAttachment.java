@@ -1,11 +1,16 @@
 package com.esotericsoftware.SpineStandard.attachments;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.NumberUtils;
 import com.esotericsoftware.SpineStandard.Bone;
+import com.esotericsoftware.SpineStandard.Skeleton;
+import com.esotericsoftware.SpineStandard.Slot;
 
+import static com.badlogic.gdx.graphics.g2d.Batch.*;
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class RegionAttachment extends Attachment {
@@ -17,7 +22,7 @@ public class RegionAttachment extends Attachment {
     static public final int URY = 5;
     static public final int BRX = 6;
     static public final int BRY = 7;
-    private final float[] uvs = new float[8];
+    private final float[] uvs = new float[8], vertices = new float[20]; // Spine35
     private final float[] offset = new float[8];
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -85,26 +90,103 @@ public class RegionAttachment extends Attachment {
     public void setRegion(TextureRegion region) {
         if (region == null) throw new IllegalArgumentException("region cannot be null.");
         this.region = region;
-        float[] uvs = this.uvs;
-        if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
-            uvs[URX] = region.getU();
-            uvs[URY] = region.getV2();
-            uvs[BRX] = region.getU();
-            uvs[BRY] = region.getV();
-            uvs[BLX] = region.getU2();
-            uvs[BLY] = region.getV();
-            uvs[ULX] = region.getU2();
-            uvs[ULY] = region.getV2();
-        } else {
-            uvs[ULX] = region.getU();
-            uvs[ULY] = region.getV2();
-            uvs[URX] = region.getU();
-            uvs[URY] = region.getV();
-            uvs[BRX] = region.getU2();
-            uvs[BRY] = region.getV();
-            uvs[BLX] = region.getU2();
-            uvs[BLY] = region.getV2();
+        switch (RuntimesLoader.spineVersion.get()) {
+            case 38, 37, 36 -> {
+                float[] uvs = this.uvs;
+                if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
+                    uvs[URX] = region.getU();
+                    uvs[URY] = region.getV2();
+                    uvs[BRX] = region.getU();
+                    uvs[BRY] = region.getV();
+                    uvs[BLX] = region.getU2();
+                    uvs[BLY] = region.getV();
+                    uvs[ULX] = region.getU2();
+                    uvs[ULY] = region.getV2();
+                } else {
+                    uvs[ULX] = region.getU();
+                    uvs[ULY] = region.getV2();
+                    uvs[URX] = region.getU();
+                    uvs[URY] = region.getV();
+                    uvs[BRX] = region.getU2();
+                    uvs[BRY] = region.getV();
+                    uvs[BLX] = region.getU2();
+                    uvs[BLY] = region.getV2();
+                }
+            }
+            case 35 -> {
+                float[] vertices = this.vertices;
+                if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
+                    vertices[U3] = region.getU();
+                    vertices[V3] = region.getV2();
+                    vertices[U4] = region.getU();
+                    vertices[V4] = region.getV();
+                    vertices[U1] = region.getU2();
+                    vertices[V1] = region.getV();
+                    vertices[U2] = region.getU2();
+                    vertices[V2] = region.getV2();
+                } else {
+                    vertices[U2] = region.getU();
+                    vertices[V2] = region.getV2();
+                    vertices[U3] = region.getU();
+                    vertices[V3] = region.getV();
+                    vertices[U4] = region.getU2();
+                    vertices[V4] = region.getV();
+                    vertices[U1] = region.getU2();
+                    vertices[V1] = region.getV2();
+                }
+            }
         }
+
+    }
+
+    public float[] updateWorldVertices(Slot slot, boolean premultipliedAlpha) { // Spine35
+        Skeleton skeleton = slot.getSkeleton();
+        Color skeletonColor = skeleton.getColor();
+        Color slotColor = slot.getColor();
+        Color regionColor = color;
+        float alpha = skeletonColor.a * slotColor.a * regionColor.a * 255;
+        float multiplier = premultipliedAlpha ? alpha : 255;
+        float color = NumberUtils.intToFloatColor(
+                ((int) alpha << 24)
+                        | ((int) (skeletonColor.b * slotColor.b * regionColor.b * multiplier) << 16)
+                        | ((int) (skeletonColor.g * slotColor.g * regionColor.g * multiplier) << 8)
+                        | (int) (skeletonColor.r * slotColor.r * regionColor.r * multiplier));
+
+        float[] vertices = this.vertices;
+        float[] offset = this.offset;
+        Bone bone = slot.getBone();
+        float x = bone.getWorldX(), y = bone.getWorldY();
+        float a = bone.getA(), b = bone.getB(), c = bone.getC(), d = bone.getD();
+        float offsetX, offsetY;
+
+        offsetX = offset[BRX];
+        offsetY = offset[BRY];
+        vertices[X1] = offsetX * a + offsetY * b + x;
+        vertices[Y1] = offsetX * c + offsetY * d + y;
+        vertices[C1] = color;
+
+        offsetX = offset[BLX];
+        offsetY = offset[BLY];
+        vertices[X2] = offsetX * a + offsetY * b + x;
+        vertices[Y2] = offsetX * c + offsetY * d + y;
+        vertices[C2] = color;
+
+        offsetX = offset[ULX];
+        offsetY = offset[ULY];
+        vertices[X3] = offsetX * a + offsetY * b + x;
+        vertices[Y3] = offsetX * c + offsetY * d + y;
+        vertices[C3] = color;
+
+        offsetX = offset[URX];
+        offsetY = offset[URY];
+        vertices[X4] = offsetX * a + offsetY * b + x;
+        vertices[Y4] = offsetX * c + offsetY * d + y;
+        vertices[C4] = color;
+        return vertices;
+    }
+
+    public float[] getWorldVertices() { // Spine 35
+        return vertices;
     }
 
     public void computeWorldVertices(Bone bone, float[] worldVertices, int offset, int stride) {

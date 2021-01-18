@@ -4,6 +4,11 @@ import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.FloatArray;
+import com.badlogic.gdx.utils.NumberUtils;
+import com.esotericsoftware.SpineStandard.Bone;
+import com.esotericsoftware.SpineStandard.Skeleton;
+import com.esotericsoftware.SpineStandard.Slot;
 
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
@@ -11,7 +16,7 @@ public class MeshAttachment extends VertexAttachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
     private String path;
-    private float[] regionUVs, uvs;
+    private float[] regionUVs, uvs, worldVertices; // Spine35
     private short[] triangles;
     private int hullLength;
     private MeshAttachment parentMesh;
@@ -162,11 +167,106 @@ public class MeshAttachment extends VertexAttachment {
                     }
                 }
             }
+            case 35 -> {
+                float[] regionUVs = this.regionUVs;
+                int verticesLength = regionUVs.length;
+                int worldVerticesLength = (verticesLength >> 1) * 5;
+                if (worldVertices == null || worldVertices.length != worldVerticesLength)
+                    worldVertices = new float[worldVerticesLength];
+
+                float u, v, width, height;
+                if (region == null) {
+                    u = v = 0;
+                    width = height = 1;
+                } else {
+                    u = region.getU();
+                    v = region.getV();
+                    width = region.getU2() - u;
+                    height = region.getV2() - v;
+                }
+                if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
+                    for (int i = 0, w = 3; i < verticesLength; i += 2, w += 5) {
+                        worldVertices[w] = u + regionUVs[i + 1] * width;
+                        worldVertices[w + 1] = v + height - regionUVs[i] * height;
+                    }
+                } else {
+                    for (int i = 0, w = 3; i < verticesLength; i += 2, w += 5) {
+                        worldVertices[w] = u + regionUVs[i] * width;
+                        worldVertices[w + 1] = v + regionUVs[i + 1] * height;
+                    }
+                }
+            }
         }
     }
 
     public boolean applyDeform(VertexAttachment sourceAttachment) {
         return this == sourceAttachment || (inheritDeform && parentMesh == sourceAttachment);
+    }
+
+    public float[] updateWorldVertices(Slot slot, boolean premultipliedAlpha) { // Spine35
+        Skeleton skeleton = slot.getSkeleton();
+        Color skeletonColor = skeleton.getColor(), slotColor = slot.getColor(), meshColor = color;
+        float alpha = skeletonColor.a * slotColor.a * meshColor.a * 255;
+        float multiplier = premultipliedAlpha ? alpha : 255;
+        float color = NumberUtils.intToFloatColor(
+                ((int) alpha << 24)
+                        | ((int) (skeletonColor.b * slotColor.b * meshColor.b * multiplier) << 16)
+                        | ((int) (skeletonColor.g * slotColor.g * meshColor.g * multiplier) << 8)
+                        | (int) (skeletonColor.r * slotColor.r * meshColor.r * multiplier));
+
+        FloatArray deformArray = slot.getAttachmentVertices();
+        float[] vertices = this.vertices, worldVertices = this.worldVertices;
+        int[] bones = this.bones;
+        if (bones == null) {
+            int verticesLength = vertices.length;
+            if (deformArray.size > 0) vertices = deformArray.items;
+            Bone bone = slot.getBone();
+            float x = bone.getWorldX(), y = bone.getWorldY();
+            float a = bone.getA(), b = bone.getB(), c = bone.getC(), d = bone.getD();
+            for (int v = 0, w = 0; v < verticesLength; v += 2, w += 5) {
+                float vx = vertices[v], vy = vertices[v + 1];
+                worldVertices[w] = vx * a + vy * b + x;
+                worldVertices[w + 1] = vx * c + vy * d + y;
+                worldVertices[w + 2] = color;
+            }
+            return worldVertices;
+        }
+        Object[] skeletonBones = skeleton.getBones().items;
+        if (deformArray.size == 0) {
+            for (int w = 0, v = 0, b = 0, n = bones.length; v < n; w += 5) {
+                float wx = 0, wy = 0;
+                int nn = bones[v++] + v;
+                for (; v < nn; v++, b += 3) {
+                    Bone bone = (Bone) skeletonBones[bones[v]];
+                    float vx = vertices[b], vy = vertices[b + 1], weight = vertices[b + 2];
+                    wx += (vx * bone.getA() + vy * bone.getB() + bone.getWorldX()) * weight;
+                    wy += (vx * bone.getC() + vy * bone.getD() + bone.getWorldY()) * weight;
+                }
+                worldVertices[w] = wx;
+                worldVertices[w + 1] = wy;
+                worldVertices[w + 2] = color;
+            }
+        } else {
+            float[] deform = deformArray.items;
+            for (int w = 0, v = 0, b = 0, f = 0, n = bones.length; v < n; w += 5) {
+                float wx = 0, wy = 0;
+                int nn = bones[v++] + v;
+                for (; v < nn; v++, b += 3, f += 2) {
+                    Bone bone = (Bone) skeletonBones[bones[v]];
+                    float vx = vertices[b] + deform[f], vy = vertices[b + 1] + deform[f + 1], weight = vertices[b + 2];
+                    wx += (vx * bone.getA() + vy * bone.getB() + bone.getWorldX()) * weight;
+                    wy += (vx * bone.getC() + vy * bone.getD() + bone.getWorldY()) * weight;
+                }
+                worldVertices[w] = wx;
+                worldVertices[w + 1] = wy;
+                worldVertices[w + 2] = color;
+            }
+        }
+        return worldVertices;
+    }
+
+    public float[] getWorldVertices() { // Spine35
+        return worldVertices;
     }
 
     public short[] getTriangles() {
