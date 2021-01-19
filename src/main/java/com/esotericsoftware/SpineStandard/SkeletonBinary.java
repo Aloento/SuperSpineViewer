@@ -490,7 +490,7 @@ public class SkeletonBinary {
                 region.updateOffset();
                 return region;
             }
-            case boundingbox -> {
+            case boundingBox -> {
                 int vertexCount = input.readInt(true);
                 Vertices vertices = readVertices(input, vertexCount);
                 int color = nonessential ? input.readInt() : 0;
@@ -539,7 +539,7 @@ public class SkeletonBinary {
                 }
                 return mesh;
             }
-            case linkedmesh -> {
+            case linkedMesh -> {
                 String path = input.readStringRef();
                 int color = input.readInt();
                 String skinName = input.readStringRef();
@@ -992,7 +992,7 @@ public class SkeletonBinary {
                 region.updateOffset();
                 return region;
             }
-            case boundingbox -> {
+            case boundingBox -> {
                 int vertexCount = input.readInt(true);
                 Vertices vertices = readVertices(input, vertexCount);
                 int color = nonessential ? input.readInt() : 0;
@@ -1040,7 +1040,7 @@ public class SkeletonBinary {
                 }
                 return mesh;
             }
-            case linkedmesh -> {
+            case linkedMesh -> {
                 String path = input.readString();
                 int color = input.readInt();
                 String skinName = input.readString();

@@ -1,6 +1,5 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.FloatArray;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
@@ -9,7 +8,7 @@ public class Slot {
     final SlotData data;
     final Bone bone;
     final Color color = new Color();
-    Color darkColor = null;
+    Color darkColor;
     Attachment attachment;
     int attachmentState;
     private float attachmentTime;
@@ -24,19 +23,19 @@ public class Slot {
         setToSetupPose();
     }
 
-    public Slot(Slot slot, Bone bone) {
-        if (slot == null) throw new IllegalArgumentException("slot cannot be null.");
-        if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
-        data = slot.data;
-        this.bone = bone;
-        color.set(slot.color);
-        attachment = slot.attachment;
-        attachmentTime = slot.attachmentTime;
-        if (RuntimesLoader.spineVersion > 37)
-            deform.addAll(slot.deform);
-        else if (RuntimesLoader.spineVersion > 35)
-            darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
-    }
+    // public Slot(Slot slot, Bone bone) {
+    //     if (slot == null) throw new IllegalArgumentException("slot cannot be null.");
+    //     if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
+    //     data = slot.data;
+    //     this.bone = bone;
+    //     color.set(slot.color);
+    //     attachment = slot.attachment;
+    //     attachmentTime = slot.attachmentTime;
+    //     if (RuntimesLoader.spineVersion > 37)
+    //         deform.addAll(slot.deform);
+    //     else if (RuntimesLoader.spineVersion > 35)
+    //         darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
+    // }
 
     public SlotData getData() {
         return data;

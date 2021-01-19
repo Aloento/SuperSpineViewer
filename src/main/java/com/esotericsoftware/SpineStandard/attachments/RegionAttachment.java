@@ -14,14 +14,14 @@ import static com.badlogic.gdx.graphics.g2d.Batch.*;
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class RegionAttachment extends Attachment {
-    static public final int BLX = 0;
-    static public final int BLY = 1;
-    static public final int ULX = 2;
-    static public final int ULY = 3;
-    static public final int URX = 4;
-    static public final int URY = 5;
-    static public final int BRX = 6;
-    static public final int BRY = 7;
+    static public final byte BLX = 0;
+    static public final byte BLY = 1;
+    static public final byte ULX = 2;
+    static public final byte ULY = 3;
+    static public final byte URX = 4;
+    static public final byte URY = 5;
+    static public final byte BRX = 6;
+    static public final byte BRY = 7;
     private final float[] uvs = new float[8], vertices = new float[20]; // Spine35
     private final float[] offset = new float[8];
     private final Color color = new Color(1, 1, 1, 1);

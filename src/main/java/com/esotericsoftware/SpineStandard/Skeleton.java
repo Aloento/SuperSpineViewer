@@ -69,55 +69,55 @@ public class Skeleton {
         updateCache();
     }
 
-    public Skeleton(Skeleton skeleton) {
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        data = skeleton.data;
-
-        bones = new Array<>(skeleton.bones.size);
-        for (Bone bone : skeleton.bones) {
-            Bone newBone;
-            if (bone.parent == null)
-                newBone = new Bone(bone, this, null);
-            else {
-                Bone parent = bones.get(bone.parent.data.index);
-                newBone = new Bone(bone, this, parent);
-                parent.children.add(newBone);
-            }
-            bones.add(newBone);
-        }
-        slots = new Array<>(skeleton.slots.size);
-        for (Slot slot : skeleton.slots) {
-            Bone bone = bones.get(slot.bone.data.index);
-            slots.add(new Slot(slot, bone));
-        }
-        drawOrder = new Array<>(slots.size);
-        for (Slot slot : skeleton.drawOrder)
-            drawOrder.add(slots.get(slot.data.index));
-
-        ikConstraints = new Array<>(skeleton.ikConstraints.size);
-        for (IkConstraint ikConstraint : skeleton.ikConstraints)
-            ikConstraints.add(new IkConstraint(ikConstraint, this));
-
-        transformConstraints = new Array<>(skeleton.transformConstraints.size);
-        for (TransformConstraint transformConstraint : skeleton.transformConstraints)
-            transformConstraints.add(new TransformConstraint(transformConstraint, this));
-
-        pathConstraints = new Array<>(skeleton.pathConstraints.size);
-        for (PathConstraint pathConstraint : skeleton.pathConstraints)
-            pathConstraints.add(new PathConstraint(pathConstraint, this));
-
-        skin = skeleton.skin;
-        color = new Color(skeleton.color);
-        time = skeleton.time;
-        if (RuntimesLoader.spineVersion > 36) {
-            scaleX = skeleton.scaleX;
-            scaleY = skeleton.scaleY;
-        } else {
-            flipX = skeleton.flipX;
-            flipY = skeleton.flipY;
-        }
-        updateCache();
-    }
+    // public Skeleton(Skeleton skeleton) {
+    //     if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+    //     data = skeleton.data;
+    //
+    //     bones = new Array<>(skeleton.bones.size);
+    //     for (Bone bone : skeleton.bones) {
+    //         Bone newBone;
+    //         if (bone.parent == null)
+    //             newBone = new Bone(bone, this, null);
+    //         else {
+    //             Bone parent = bones.get(bone.parent.data.index);
+    //             newBone = new Bone(bone, this, parent);
+    //             parent.children.add(newBone);
+    //         }
+    //         bones.add(newBone);
+    //     }
+    //     slots = new Array<>(skeleton.slots.size);
+    //     for (Slot slot : skeleton.slots) {
+    //         Bone bone = bones.get(slot.bone.data.index);
+    //         slots.add(new Slot(slot, bone));
+    //     }
+    //     drawOrder = new Array<>(slots.size);
+    //     for (Slot slot : skeleton.drawOrder)
+    //         drawOrder.add(slots.get(slot.data.index));
+    //
+    //     ikConstraints = new Array<>(skeleton.ikConstraints.size);
+    //     for (IkConstraint ikConstraint : skeleton.ikConstraints)
+    //         ikConstraints.add(new IkConstraint(ikConstraint, this));
+    //
+    //     transformConstraints = new Array<>(skeleton.transformConstraints.size);
+    //     for (TransformConstraint transformConstraint : skeleton.transformConstraints)
+    //         transformConstraints.add(new TransformConstraint(transformConstraint, this));
+    //
+    //     pathConstraints = new Array<>(skeleton.pathConstraints.size);
+    //     for (PathConstraint pathConstraint : skeleton.pathConstraints)
+    //         pathConstraints.add(new PathConstraint(pathConstraint, this));
+    //
+    //     skin = skeleton.skin;
+    //     color = new Color(skeleton.color);
+    //     time = skeleton.time;
+    //     if (RuntimesLoader.spineVersion > 36) {
+    //         scaleX = skeleton.scaleX;
+    //         scaleY = skeleton.scaleY;
+    //     } else {
+    //         flipX = skeleton.flipX;
+    //         flipY = skeleton.flipY;
+    //     }
+    //     updateCache();
+    // }
 
     public void updateCache() {
         Array<Updatable> updateCache = this.updateCache;

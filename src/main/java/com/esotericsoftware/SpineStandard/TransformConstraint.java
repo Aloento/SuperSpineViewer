@@ -27,19 +27,19 @@ public class TransformConstraint implements Constraint {
         target = skeleton.findBone(data.target.name);
     }
 
-    public TransformConstraint(TransformConstraint constraint, Skeleton skeleton) {
-        if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        data = constraint.data;
-        bones = new Array<>(constraint.bones.size);
-        for (Bone bone : constraint.bones)
-            bones.add(skeleton.bones.get(bone.data.index));
-        target = skeleton.bones.get(constraint.target.data.index);
-        rotateMix = constraint.rotateMix;
-        translateMix = constraint.translateMix;
-        scaleMix = constraint.scaleMix;
-        shearMix = constraint.shearMix;
-    }
+    // public TransformConstraint(TransformConstraint constraint, Skeleton skeleton) {
+    //     if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
+    //     if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+    //     data = constraint.data;
+    //     bones = new Array<>(constraint.bones.size);
+    //     for (Bone bone : constraint.bones)
+    //         bones.add(skeleton.bones.get(bone.data.index));
+    //     target = skeleton.bones.get(constraint.target.data.index);
+    //     rotateMix = constraint.rotateMix;
+    //     translateMix = constraint.translateMix;
+    //     scaleMix = constraint.scaleMix;
+    //     shearMix = constraint.shearMix;
+    // }
 
     public void apply() {
         update();

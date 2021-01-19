@@ -333,7 +333,7 @@ public class SkeletonJson {
                 region.updateOffset();
                 return region;
             }
-            case boundingbox -> {
+            case boundingBox -> {
                 BoundingBoxAttachment box = attachmentLoader.newBoundingBoxAttachment(skin, name);
                 if (box == null) return null;
                 readVertices(map, box, map.getInt("vertexCount") << 1);
@@ -341,7 +341,7 @@ public class SkeletonJson {
                 if (color != null) box.getColor().set(Color.valueOf(color));
                 return box;
             }
-            case mesh, linkedmesh -> {
+            case mesh, linkedMesh -> {
                 String path = map.getString("outPath", name);
                 MeshAttachment mesh = attachmentLoader.newMeshAttachment(skin, name, path);
                 if (mesh == null) return null;

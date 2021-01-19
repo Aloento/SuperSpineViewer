@@ -106,14 +106,6 @@ public class TransformConstraintData extends ConstraintData {
         this.offsetShearY = offsetShearY;
     }
 
-    public boolean getRelative() {
-        return relative;
-    }
-
-    public void setRelative(boolean relative) {
-        this.relative = relative;
-    }
-
     public boolean getLocal() {
         return local;
     }

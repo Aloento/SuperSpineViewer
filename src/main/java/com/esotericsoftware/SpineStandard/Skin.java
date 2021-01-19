@@ -14,8 +14,8 @@ public class Skin {
     final ObjectMap<Key, Attachment> O_attachments = new ObjectMap<>();
     final Array<BoneData> bones = new Array<>();
     final Array<ConstraintData> constraints = new Array<>();
-    final Pool<Key> keyPool = new Pool(64) {
-        protected Object newObject() {
+    final Pool<Key> keyPool = new Pool<>(64) {
+        protected Key newObject() {
             return new Key();
         }
     };
