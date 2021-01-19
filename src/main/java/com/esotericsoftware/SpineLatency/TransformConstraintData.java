@@ -3,7 +3,7 @@ package com.esotericsoftware.SpineLatency;
 public class TransformConstraintData {
     final String name;
     BoneData bone, target;
-    float rotateMix, translateMix, scaleMix, shearMix;
+    float rotateMix, translateMix, scaleMix, shearMix, x, y;
     float offsetRotation, offsetX, offsetY, offsetScaleX, offsetScaleY, offsetShearY;
 
     public TransformConstraintData(String name) {

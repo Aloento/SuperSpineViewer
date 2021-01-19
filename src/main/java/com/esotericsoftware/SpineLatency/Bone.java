@@ -1,10 +1,8 @@
 package com.esotericsoftware.SpineLatency;
 
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 
 import static com.badlogic.gdx.math.MathUtils.*;
-import static com.badlogic.gdx.math.Matrix3.*;
 
 public class Bone implements Updatable {
     final BoneData data;
@@ -15,12 +13,6 @@ public class Bone implements Updatable {
     float a, b, worldX;
     float c, d, worldY;
     float worldSignX, worldSignY;
-
-    Bone(BoneData data) {
-        this.data = data;
-        parent = null;
-        skeleton = null;
-    }
 
     public Bone(BoneData data, Skeleton skeleton, Bone parent) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
@@ -280,52 +272,8 @@ public class Bone implements Updatable {
         return worldY;
     }
 
-    public float getWorldSignX() {
-        return worldSignX;
-    }
-
-    public float getWorldSignY() {
-        return worldSignY;
-    }
-
     public float getWorldRotationX() {
         return atan2(c, a) * radDeg;
-    }
-
-    public float getWorldRotationY() {
-        return atan2(d, b) * radDeg;
-    }
-
-    public float getWorldScaleX() {
-        return (float) Math.sqrt(a * a + b * b) * worldSignX;
-    }
-
-    public float getWorldScaleY() {
-        return (float) Math.sqrt(c * c + d * d) * worldSignY;
-    }
-
-    public Matrix3 getWorldTransform(Matrix3 worldTransform) {
-        if (worldTransform == null) throw new IllegalArgumentException("worldTransform cannot be null.");
-        float[] val = worldTransform.val;
-        val[M00] = a;
-        val[M01] = b;
-        val[M10] = c;
-        val[M11] = d;
-        val[M02] = worldX;
-        val[M12] = worldY;
-        val[M20] = 0;
-        val[M21] = 0;
-        val[M22] = 1;
-        return worldTransform;
-    }
-
-    public Vector2 worldToLocal(Vector2 world) {
-        float x = world.x - worldX, y = world.y - worldY;
-        float a = this.a, b = this.b, c = this.c, d = this.d;
-        float invDet = 1 / (a * d - b * c);
-        world.x = (x * d * invDet - y * b * invDet);
-        world.y = (y * a * invDet - x * c * invDet);
-        return world;
     }
 
     public Vector2 localToWorld(Vector2 local) {

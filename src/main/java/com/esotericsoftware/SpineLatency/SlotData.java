@@ -9,11 +9,6 @@ public class SlotData {
     String attachmentName;
     BlendMode blendMode;
 
-    SlotData() {
-        name = null;
-        boneData = null;
-    }
-
     public SlotData(String name, BoneData boneData) {
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
         if (boneData == null) throw new IllegalArgumentException("boneData cannot be null.");

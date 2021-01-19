@@ -12,12 +12,6 @@ public class Slot {
     private float attachmentTime;
     private FloatArray attachmentVertices = new FloatArray();
 
-    Slot(SlotData data) {
-        this.data = data;
-        bone = null;
-        color = new Color(1, 1, 1, 1);
-    }
-
     public Slot(SlotData data, Bone bone) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");

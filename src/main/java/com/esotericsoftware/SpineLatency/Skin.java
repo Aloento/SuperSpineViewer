@@ -1,6 +1,5 @@
 package com.esotericsoftware.SpineLatency;
 
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
@@ -9,9 +8,9 @@ import com.esotericsoftware.SpineLatency.attachments.Attachment;
 public class Skin {
     static private final Key lookup = new Key();
     final String name;
-    final ObjectMap<Key, Attachment> attachments = new ObjectMap();
-    final Pool<Key> keyPool = new Pool(64) {
-        protected Object newObject() {
+    final ObjectMap<Key, Attachment> attachments = new ObjectMap<>();
+    final Pool<Key> keyPool = new Pool<>(64) {
+        protected Key newObject() {
             return new Key();
         }
     };
@@ -33,20 +32,6 @@ public class Skin {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
         lookup.set(slotIndex, name);
         return attachments.get(lookup);
-    }
-
-    public void findNamesForSlot(int slotIndex, Array<String> names) {
-        if (names == null) throw new IllegalArgumentException("names cannot be null.");
-        if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
-        for (Key key : attachments.keys())
-            if (key.slotIndex == slotIndex) names.add(key.name);
-    }
-
-    public void findAttachmentsForSlot(int slotIndex, Array<Attachment> attachments) {
-        if (attachments == null) throw new IllegalArgumentException("attachments cannot be null.");
-        if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
-        for (Entry<Key, Attachment> entry : this.attachments.entries())
-            if (entry.key.slotIndex == slotIndex) attachments.add(entry.value);
     }
 
     public void clear() {

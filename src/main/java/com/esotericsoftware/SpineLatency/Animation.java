@@ -50,12 +50,6 @@ public class Animation {
         }
     }
 
-    static int linearSearch(float[] values, float target, int step) {
-        for (int i = 0, last = values.length - step; i <= last; i += step)
-            if (values[i] > target) return i;
-        return -1;
-    }
-
     public Array<Timeline> getTimelines() {
         return timelines;
     }
@@ -116,21 +110,8 @@ public class Animation {
             return curves.length / BEZIER_SIZE + 1;
         }
 
-        public void setLinear(int frameIndex) {
-            curves[frameIndex * BEZIER_SIZE] = LINEAR;
-        }
-
         public void setStepped(int frameIndex) {
             curves[frameIndex * BEZIER_SIZE] = STEPPED;
-        }
-
-        public float getCurveType(int frameIndex) {
-            int index = frameIndex * BEZIER_SIZE;
-            if (index == curves.length) return LINEAR;
-            float type = curves[index];
-            if (type == LINEAR) return LINEAR;
-            if (type == STEPPED) return STEPPED;
-            return BEZIER;
         }
 
         public void setCurve(int frameIndex, float cx1, float cy1, float cx2, float cy2) {
@@ -184,8 +165,8 @@ public class Animation {
     }
 
     static public class RotateTimeline extends CurveTimeline {
-        static final int PREV_TIME = -2;
-        static final int VALUE = 1;
+        static final byte PREV_TIME = -2;
+        static final byte VALUE = 1;
         final float[] frames;
         int boneIndex;
 
@@ -245,9 +226,9 @@ public class Animation {
     }
 
     static public class TranslateTimeline extends CurveTimeline {
-        static final int PREV_TIME = -3;
-        static final int X = 1;
-        static final int Y = 2;
+        static final byte PREV_TIME = -3;
+        static final byte X = 1;
+        static final byte Y = 2;
         final float[] frames;
         int boneIndex;
 
@@ -346,11 +327,11 @@ public class Animation {
     }
 
     static public class ColorTimeline extends CurveTimeline {
-        static private final int PREV_TIME = -5;
-        static private final int R = 1;
-        static private final int G = 2;
-        static private final int B = 3;
-        static private final int A = 4;
+        static private final byte PREV_TIME = -5;
+        static private final byte R = 1;
+        static private final byte G = 2;
+        static private final byte B = 3;
+        static private final byte A = 4;
         private final float[] frames;
         int slotIndex;
 
@@ -436,10 +417,6 @@ public class Animation {
 
         public float[] getFrames() {
             return frames;
-        }
-
-        public String[] getAttachmentNames() {
-            return attachmentNames;
         }
 
         public void setFrame(int frameIndex, float time, String attachmentName) {
@@ -529,10 +506,6 @@ public class Animation {
 
         public float[] getFrames() {
             return frames;
-        }
-
-        public int[][] getDrawOrders() {
-            return drawOrders;
         }
 
         public void setFrame(int frameIndex, float time, int[] drawOrder) {
@@ -646,10 +619,10 @@ public class Animation {
     }
 
     static public class IkConstraintTimeline extends CurveTimeline {
-        static private final int PREV_TIME = -3;
-        static private final int PREV_MIX = -2;
-        static private final int PREV_BEND_DIRECTION = -1;
-        static private final int MIX = 1;
+        static private final byte PREV_TIME = -3;
+        static private final byte PREV_MIX = -2;
+        static private final byte PREV_BEND_DIRECTION = -1;
+        static private final byte MIX = 1;
         private final float[] frames;
         int ikConstraintIndex;
 
@@ -712,14 +685,6 @@ public class Animation {
         public TransformConstraintTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount * 5];
-        }
-
-        public int getTransformConstraintIndex() {
-            return transformConstraintIndex;
-        }
-
-        public void setTransformConstraintIndex(int ikConstraint) {
-            this.transformConstraintIndex = ikConstraint;
         }
 
         public float[] getFrames() {

@@ -15,7 +15,7 @@ public class Skeleton {
     final Array<IkConstraint> ikConstraints;
     final Array<TransformConstraint> transformConstraints;
     final Color color;
-    private final Array<Updatable> updateCache = new Array();
+    private final Array<Updatable> updateCache = new Array<>();
     Array<Slot> drawOrder;
     Skin skin;
     float time;
@@ -25,23 +25,23 @@ public class Skeleton {
     public Skeleton(SkeletonData data) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         this.data = data;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         for (BoneData boneData : data.bones) {
             Bone parent = boneData.parent == null ? null : bones.get(data.bones.indexOf(boneData.parent, true));
             bones.add(new Bone(boneData, this, parent));
         }
-        slots = new Array(data.slots.size);
-        drawOrder = new Array(data.slots.size);
+        slots = new Array<>(data.slots.size);
+        drawOrder = new Array<>(data.slots.size);
         for (SlotData slotData : data.slots) {
             Bone bone = bones.get(data.bones.indexOf(slotData.boneData, true));
             Slot slot = new Slot(slotData, bone);
             slots.add(slot);
             drawOrder.add(slot);
         }
-        ikConstraints = new Array(data.ikConstraints.size);
+        ikConstraints = new Array<>(data.ikConstraints.size);
         for (IkConstraintData ikConstraintData : data.ikConstraints)
             ikConstraints.add(new IkConstraint(ikConstraintData, this));
-        transformConstraints = new Array(data.transformConstraints.size);
+        transformConstraints = new Array<>(data.transformConstraints.size);
         for (TransformConstraintData transformConstraintData : data.transformConstraints)
             transformConstraints.add(new TransformConstraint(transformConstraintData, this));
         color = new Color(1, 1, 1, 1);
@@ -51,23 +51,23 @@ public class Skeleton {
     public Skeleton(Skeleton skeleton) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = skeleton.data;
-        bones = new Array(skeleton.bones.size);
+        bones = new Array<>(skeleton.bones.size);
         for (Bone bone : skeleton.bones) {
             Bone parent = bone.parent == null ? null : bones.get(skeleton.bones.indexOf(bone.parent, true));
             bones.add(new Bone(bone, this, parent));
         }
-        slots = new Array(skeleton.slots.size);
+        slots = new Array<>(skeleton.slots.size);
         for (Slot slot : skeleton.slots) {
             Bone bone = bones.get(skeleton.bones.indexOf(slot.bone, true));
             slots.add(new Slot(slot, bone));
         }
-        drawOrder = new Array(slots.size);
+        drawOrder = new Array<>(slots.size);
         for (Slot slot : skeleton.drawOrder)
             drawOrder.add(slots.get(skeleton.slots.indexOf(slot, true)));
-        ikConstraints = new Array(skeleton.ikConstraints.size);
+        ikConstraints = new Array<>(skeleton.ikConstraints.size);
         for (IkConstraint ikConstraint : skeleton.ikConstraints)
             ikConstraints.add(new IkConstraint(ikConstraint, this));
-        transformConstraints = new Array(skeleton.transformConstraints.size);
+        transformConstraints = new Array<>(skeleton.transformConstraints.size);
         for (TransformConstraint transformConstraint : skeleton.transformConstraints)
             transformConstraints.add(new TransformConstraint(transformConstraint, this));
         skin = skeleton.skin;
@@ -170,14 +170,6 @@ public class Skeleton {
         return null;
     }
 
-    public int findBoneIndex(String boneName) {
-        if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
-        Array<Bone> bones = this.bones;
-        for (int i = 0, n = bones.size; i < n; i++)
-            if (bones.get(i).data.name.equals(boneName)) return i;
-        return -1;
-    }
-
     public Array<Slot> getSlots() {
         return slots;
     }
@@ -190,14 +182,6 @@ public class Skeleton {
             if (slot.data.name.equals(slotName)) return slot;
         }
         return null;
-    }
-
-    public int findSlotIndex(String slotName) {
-        if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
-        Array<Slot> slots = this.slots;
-        for (int i = 0, n = slots.size; i < n; i++)
-            if (slots.get(i).data.name.equals(slotName)) return i;
-        return -1;
     }
 
     public Array<Slot> getDrawOrder() {
@@ -332,22 +316,6 @@ public class Skeleton {
 
     public void setColor(Color color) {
         this.color.set(color);
-    }
-
-    public boolean getFlipX() {
-        return flipX;
-    }
-
-    public void setFlipX(boolean flipX) {
-        this.flipX = flipX;
-    }
-
-    public boolean getFlipY() {
-        return flipY;
-    }
-
-    public void setFlipY(boolean flipY) {
-        this.flipY = flipY;
     }
 
     public void setFlip(boolean flipX, boolean flipY) {

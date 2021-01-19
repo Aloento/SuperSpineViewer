@@ -15,12 +15,6 @@ public class SkeletonActor extends Actor {
     public SkeletonActor() {
     }
 
-    public SkeletonActor(SkeletonRenderer renderer, Skeleton skeleton, AnimationState state) {
-        this.renderer = renderer;
-        this.skeleton = skeleton;
-        this.state = state;
-    }
-
     public void act(float delta) {
         state.update(delta);
         state.apply(skeleton);

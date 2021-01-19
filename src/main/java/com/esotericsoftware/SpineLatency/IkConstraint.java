@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineLatency;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.utils.Array;
 
 import static com.badlogic.gdx.math.MathUtils.*;
@@ -15,7 +16,7 @@ public class IkConstraint implements Updatable {
         this.data = data;
         mix = data.mix;
         bendDirection = data.bendDirection;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         if (skeleton != null) {
             for (BoneData boneData : data.bones)
                 bones.add(skeleton.findBone(boneData.name));
@@ -25,7 +26,7 @@ public class IkConstraint implements Updatable {
 
     public IkConstraint(IkConstraint ikConstraint, Skeleton skeleton) {
         data = ikConstraint.data;
-        bones = new Array(ikConstraint.bones.size);
+        bones = new Array<>(ikConstraint.bones.size);
         for (Bone bone : ikConstraint.bones)
             bones.add(skeleton.bones.get(bone.skeleton.bones.indexOf(bone, true)));
         target = skeleton.bones.get(ikConstraint.target.skeleton.bones.indexOf(ikConstraint.target, true));
@@ -34,17 +35,30 @@ public class IkConstraint implements Updatable {
     }
 
     static public void apply(Bone bone, float targetX, float targetY, float alpha) {
-        Bone pp = bone.parent;
-        float id = 1 / (pp.a * pp.d - pp.b * pp.c);
-        float x = targetX - pp.worldX, y = targetY - pp.worldY;
-        float tx = (x * pp.d - y * pp.b) * id - bone.x, ty = (y * pp.a - x * pp.c) * id - bone.y;
-        float rotationIK = atan2(ty, tx) * radDeg - bone.shearX;
-        if (bone.scaleX < 0) rotationIK += 180;
-        if (rotationIK > 180)
-            rotationIK -= 360;
-        else if (rotationIK < -180) rotationIK += 360;
-        bone.updateWorldTransform(bone.x, bone.y, bone.rotation + (rotationIK - bone.rotation) * alpha, bone.appliedScaleX,
-                bone.appliedScaleY, bone.shearX, bone.shearY);
+        if (RuntimesLoader.spineVersion == 32) {
+            Bone pp = bone.parent;
+            float id = 1 / (pp.a * pp.d - pp.b * pp.c);
+            float x = targetX - pp.worldX, y = targetY - pp.worldY;
+            float tx = (x * pp.d - y * pp.b) * id - bone.x, ty = (y * pp.a - x * pp.c) * id - bone.y;
+            float rotationIK = atan2(ty, tx) * radDeg - bone.shearX;
+            if (bone.scaleX < 0) rotationIK += 180;
+            if (rotationIK > 180)
+                rotationIK -= 360;
+            else if (rotationIK < -180) rotationIK += 360;
+            bone.updateWorldTransform(bone.x, bone.y, bone.rotation + (rotationIK - bone.rotation) * alpha, bone.appliedScaleX,
+                    bone.appliedScaleY, bone.shearX, bone.shearY);
+        } else {
+            float parentRotation = bone.parent == null ? 0 : bone.parent.getWorldRotationX();
+            float rotation = bone.rotation;
+            float rotationIK = atan2(targetY - bone.worldY, targetX - bone.worldX) * radDeg - parentRotation;
+            if ((bone.worldSignX != bone.worldSignY) == (bone.skeleton.flipX == bone.skeleton.flipY))
+                rotationIK = 360 - rotationIK;
+            if (rotationIK > 180)
+                rotationIK -= 360;
+            else if (rotationIK < -180) rotationIK += 360;
+            bone.updateWorldTransform(bone.x, bone.y, rotation + (rotationIK - rotation) * alpha, bone.appliedScaleX,
+                    bone.appliedScaleY, 0, 0);
+        }
     }
 
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, float alpha) {

@@ -1,5 +1,6 @@
 package com.esotericsoftware.SpineLatency;
 
+import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,7 +10,7 @@ import com.esotericsoftware.SpineLatency.attachments.*;
 
 public class SkeletonJson {
     private final AttachmentLoader attachmentLoader;
-    private final Array<LinkedMesh> linkedMeshes = new Array();
+    private final Array<LinkedMesh> linkedMeshes = new Array<>();
     private float scale = 1;
 
     public SkeletonJson(TextureAtlas atlas) {
@@ -56,8 +57,10 @@ public class SkeletonJson {
             boneData.rotation = boneMap.getFloat("rotation", 0);
             boneData.scaleX = boneMap.getFloat("scaleX", 1);
             boneData.scaleY = boneMap.getFloat("scaleY", 1);
-            boneData.shearX = boneMap.getFloat("shearX", 0);
-            boneData.shearY = boneMap.getFloat("shearY", 0);
+            if (RuntimesLoader.spineVersion > 31) {
+                boneData.shearX = boneMap.getFloat("shearX", 0);
+                boneData.shearY = boneMap.getFloat("shearY", 0);
+            }
             boneData.inheritScale = boneMap.getBoolean("inheritScale", true);
             boneData.inheritRotation = boneMap.getBoolean("inheritRotation", true);
             String color = boneMap.getString("color", null);
@@ -89,16 +92,21 @@ public class SkeletonJson {
             transformConstraintData.target = skeletonData.findBone(targetName);
             if (transformConstraintData.target == null)
                 throw new SerializationException("Target bone not found: " + targetName);
-            transformConstraintData.offsetRotation = transformMap.getFloat("rotation", 0);
-            transformConstraintData.offsetX = transformMap.getFloat("x", 0) * scale;
-            transformConstraintData.offsetY = transformMap.getFloat("y", 0) * scale;
-            transformConstraintData.offsetScaleX = transformMap.getFloat("scaleX", 0) * scale;
-            transformConstraintData.offsetScaleY = transformMap.getFloat("scaleY", 0) * scale;
-            transformConstraintData.offsetShearY = transformMap.getFloat("shearY", 0) * scale;
-            transformConstraintData.rotateMix = transformMap.getFloat("rotateMix", 1);
-            transformConstraintData.translateMix = transformMap.getFloat("translateMix", 1);
-            transformConstraintData.scaleMix = transformMap.getFloat("scaleMix", 1);
-            transformConstraintData.shearMix = transformMap.getFloat("shearMix", 1);
+            if (RuntimesLoader.spineVersion > 31) {
+                transformConstraintData.offsetRotation = transformMap.getFloat("rotation", 0);
+                transformConstraintData.offsetX = transformMap.getFloat("x", 0) * scale;
+                transformConstraintData.offsetY = transformMap.getFloat("y", 0) * scale;
+                transformConstraintData.offsetScaleX = transformMap.getFloat("scaleX", 0) * scale;
+                transformConstraintData.offsetScaleY = transformMap.getFloat("scaleY", 0) * scale;
+                transformConstraintData.offsetShearY = transformMap.getFloat("shearY", 0) * scale;
+                transformConstraintData.rotateMix = transformMap.getFloat("rotateMix", 1);
+                transformConstraintData.translateMix = transformMap.getFloat("translateMix", 1);
+                transformConstraintData.scaleMix = transformMap.getFloat("scaleMix", 1);
+                transformConstraintData.shearMix = transformMap.getFloat("shearMix", 1);
+            } else {
+                transformConstraintData.x = transformMap.getFloat("x", 0) * scale;
+                transformConstraintData.y = transformMap.getFloat("y", 0) * scale;
+            }
             skeletonData.transformConstraints.add(transformConstraintData);
         }
         for (JsonValue slotMap = root.getChild("slots"); slotMap != null; slotMap = slotMap.next) {
@@ -164,7 +172,10 @@ public class SkeletonJson {
     private Attachment readAttachment(Skin skin, int slotIndex, String name, JsonValue map) {
         float scale = this.scale;
         name = map.getString("name", name);
-        String path = map.getString("outPath", name);
+        String path;
+        if (RuntimesLoader.spineVersion > 31)
+            path = map.getString("outPath", name);
+        else path = map.getString("path", name);
         String type = map.getString("type", AttachmentType.region.name());
         if (type.equals("skinnedmesh")) type = "weightedmesh";
         switch (AttachmentType.valueOf(type)) {
@@ -265,7 +276,7 @@ public class SkeletonJson {
 
     private void readAnimation(String name, JsonValue map, SkeletonData skeletonData) {
         float scale = this.scale;
-        Array<Timeline> timelines = new Array();
+        Array<Timeline> timelines = new Array<>();
         float duration = 0;
         for (JsonValue slotMap = map.getChild("slots"); slotMap != null; slotMap = slotMap.next) {
             int slotIndex = skeletonData.findSlotIndex(slotMap.name);
@@ -351,19 +362,21 @@ public class SkeletonJson {
             timelines.add(timeline);
             duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 3 - 3]);
         }
-        for (JsonValue constraintMap = map.getChild("transform"); constraintMap != null; constraintMap = constraintMap.next) {
-            TransformConstraintData constraint = skeletonData.findTransformConstraint(constraintMap.name);
-            TransformConstraintTimeline timeline = new TransformConstraintTimeline(constraintMap.size);
-            timeline.transformConstraintIndex = skeletonData.getTransformConstraints().indexOf(constraint, true);
-            int frameIndex = 0;
-            for (JsonValue valueMap = constraintMap.child; valueMap != null; valueMap = valueMap.next) {
-                timeline.setFrame(frameIndex, valueMap.getFloat("time"), valueMap.getFloat("rotateMix", 1),
-                        valueMap.getFloat("translateMix", 1), valueMap.getFloat("scaleMix", 1), valueMap.getFloat("shearMix", 1));
-                readCurve(timeline, frameIndex, valueMap);
-                frameIndex++;
+        if (RuntimesLoader.spineVersion > 31) {
+            for (JsonValue constraintMap = map.getChild("transform"); constraintMap != null; constraintMap = constraintMap.next) {
+                TransformConstraintData constraint = skeletonData.findTransformConstraint(constraintMap.name);
+                TransformConstraintTimeline timeline = new TransformConstraintTimeline(constraintMap.size);
+                timeline.transformConstraintIndex = skeletonData.getTransformConstraints().indexOf(constraint, true);
+                int frameIndex = 0;
+                for (JsonValue valueMap = constraintMap.child; valueMap != null; valueMap = valueMap.next) {
+                    timeline.setFrame(frameIndex, valueMap.getFloat("time"), valueMap.getFloat("rotateMix", 1),
+                            valueMap.getFloat("translateMix", 1), valueMap.getFloat("scaleMix", 1), valueMap.getFloat("shearMix", 1));
+                    readCurve(timeline, frameIndex, valueMap);
+                    frameIndex++;
+                }
+                timelines.add(timeline);
+                duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 5 - 5]);
             }
-            timelines.add(timeline);
-            duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 5 - 5]);
         }
         for (JsonValue ffdMap = map.getChild("ffd"); ffdMap != null; ffdMap = ffdMap.next) {
             Skin skin = skeletonData.findSkin(ffdMap.name);

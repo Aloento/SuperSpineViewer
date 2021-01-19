@@ -3,7 +3,7 @@ package com.esotericsoftware.SpineLatency;
 import com.badlogic.gdx.utils.ObjectFloatMap;
 
 public class AnimationStateData {
-    final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap();
+    final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap<>();
     final Key tempKey = new Key();
     private final SkeletonData skeletonData;
     float defaultMix;
@@ -37,14 +37,6 @@ public class AnimationStateData {
         tempKey.a1 = from;
         tempKey.a2 = to;
         return animationToMixTime.get(tempKey, defaultMix);
-    }
-
-    public float getDefaultMix() {
-        return defaultMix;
-    }
-
-    public void setDefaultMix(float defaultMix) {
-        this.defaultMix = defaultMix;
     }
 
     static class Key {

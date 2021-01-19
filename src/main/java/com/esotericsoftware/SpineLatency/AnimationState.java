@@ -5,11 +5,11 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 public class AnimationState {
-    private final Array<TrackEntry> tracks = new Array();
-    private final Array<Event> events = new Array();
-    private final Array<AnimationStateListener> listeners = new Array();
-    private final Pool<TrackEntry> trackEntryPool = new Pool() {
-        protected Object newObject() {
+    private final Array<TrackEntry> tracks = new Array<>();
+    private final Array<Event> events = new Array<>();
+    private final Array<AnimationStateListener> listeners = new Array<>();
+    private final Pool<TrackEntry> trackEntryPool = new Pool<>() {
+        protected TrackEntry newObject() {
             return new TrackEntry();
         }
     };
@@ -172,34 +172,6 @@ public class AnimationState {
         return entry;
     }
 
-    public TrackEntry addAnimation(int trackIndex, String animationName, boolean loop, float delay) {
-        Animation animation = data.getSkeletonData().findAnimation(animationName);
-        if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
-        return addAnimation(trackIndex, animation, loop, delay);
-    }
-
-    public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
-        TrackEntry entry = trackEntryPool.obtain();
-        entry.animation = animation;
-        entry.loop = loop;
-        entry.endTime = animation.getDuration();
-        TrackEntry last = expandToIndex(trackIndex);
-        if (last != null) {
-            while (last.next != null)
-                last = last.next;
-            last.next = entry;
-        } else
-            tracks.set(trackIndex, entry);
-        if (delay <= 0) {
-            if (last != null)
-                delay += last.endTime - data.getMix(last.animation, animation);
-            else
-                delay = 0;
-        }
-        entry.delay = delay;
-        return entry;
-    }
-
     public TrackEntry getCurrent(int trackIndex) {
         if (trackIndex >= tracks.size) return null;
         return tracks.get(trackIndex);
@@ -210,16 +182,8 @@ public class AnimationState {
         listeners.add(listener);
     }
 
-    public void removeListener(AnimationStateListener listener) {
-        listeners.removeValue(listener, true);
-    }
-
     public void clearListeners() {
         listeners.clear();
-    }
-
-    public float getTimeScale() {
-        return timeScale;
     }
 
     public void setTimeScale(float timeScale) {
@@ -291,18 +255,6 @@ public class AnimationState {
             return loop;
         }
 
-        public void setLoop(boolean loop) {
-            this.loop = loop;
-        }
-
-        public float getDelay() {
-            return delay;
-        }
-
-        public void setDelay(float delay) {
-            this.delay = delay;
-        }
-
         public float getTime() {
             return time;
         }
@@ -315,40 +267,12 @@ public class AnimationState {
             return endTime;
         }
 
-        public void setEndTime(float endTime) {
-            this.endTime = endTime;
-        }
-
-        public AnimationStateListener getListener() {
-            return listener;
-        }
-
-        public void setListener(AnimationStateListener listener) {
-            this.listener = listener;
-        }
-
-        public float getLastTime() {
-            return lastTime;
-        }
-
-        public void setLastTime(float lastTime) {
-            this.lastTime = lastTime;
-        }
-
         public float getMix() {
             return mix;
         }
 
         public void setMix(float mix) {
             this.mix = mix;
-        }
-
-        public float getTimeScale() {
-            return timeScale;
-        }
-
-        public void setTimeScale(float timeScale) {
-            this.timeScale = timeScale;
         }
 
         public TrackEntry getNext() {
@@ -368,17 +292,4 @@ public class AnimationState {
         }
     }
 
-    static public abstract class AnimationStateAdapter implements AnimationStateListener {
-        public void event(int trackIndex, Event event) {
-        }
-
-        public void complete(int trackIndex, int loopCount) {
-        }
-
-        public void start(int trackIndex) {
-        }
-
-        public void end(int trackIndex) {
-        }
-    }
 }
