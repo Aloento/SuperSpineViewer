@@ -3,7 +3,7 @@
 至少需要Java15才能运行  
 或使用打包好的EXE包  
 当前版本：0.1.20  
-![Java CI with Maven](https://github.com/Aloento/SuperSpineViewer/workflows/Java%20CI%20with%20Maven/badge.svg)
+![Java CI with Maven For Windows X64](https://github.com/Aloento/SuperSpineViewer/workflows/Java%20CI%20with%20Maven%20For%20Windows%20X64/badge.svg)
 
 ## 关于这个工具
 它本质上是我学习Java和OpenJFX的练习作品  
