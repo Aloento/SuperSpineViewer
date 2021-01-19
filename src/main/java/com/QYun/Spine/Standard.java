@@ -134,7 +134,7 @@ public class Standard extends SuperSpine {
 
         scale.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
-                loadSkel();
+                Gdx.app.postRunnable(this::loadSkel);
                 if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
                     isPlay.set(true);
@@ -144,7 +144,7 @@ public class Standard extends SuperSpine {
 
         X.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
-                loadSkel();
+                Gdx.app.postRunnable(this::loadSkel);
                 if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
                     isPlay.set(true);
@@ -154,7 +154,7 @@ public class Standard extends SuperSpine {
 
         Y.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
-                loadSkel();
+                Gdx.app.postRunnable(this::loadSkel);
                 if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
                     isPlay.set(true);
