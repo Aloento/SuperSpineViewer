@@ -149,11 +149,10 @@ public class Spine40 extends SuperSpine {
                 animatesList.clear();
                 skin.set(null);
                 animate.set(null);
-                loadSkel();
+                Gdx.app.postRunnable(this::loadSkel);
                 isReload.set(false);
             }
         });
-
     }
 
     @Override

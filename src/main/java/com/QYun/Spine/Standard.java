@@ -20,7 +20,6 @@ public class Standard extends SuperSpine {
     private TwoColorPolygonBatch batch;
     private OrthographicCamera camera;
     private SkeletonRenderer renderer;
-    private TextureAtlas atlas;
     private Skeleton skeleton;
     private AnimationState state;
 
@@ -38,8 +37,8 @@ public class Standard extends SuperSpine {
         TextureAtlasData atlasData;
         atlasData = new TextureAtlasData(atlasFile, atlasFile.parent(), false);
 
-        atlas = new TextureAtlas(atlasData) {
-            public AtlasRegion findRegion (String name) {
+        TextureAtlas atlas = new TextureAtlas(atlasData) {
+            public AtlasRegion findRegion(String name) {
                 AtlasRegion region = super.findRegion(name);
                 if (region == null) {
                     FileHandle file = skelFile.sibling(name + ".png");
@@ -177,11 +176,10 @@ public class Standard extends SuperSpine {
                 animatesList.clear();
                 skin.set(null);
                 animate.set(null);
-                loadSkel();
+                Gdx.app.postRunnable(this::loadSkel);
                 isReload.set(false);
             }
         });
-
     }
 
     @Override
