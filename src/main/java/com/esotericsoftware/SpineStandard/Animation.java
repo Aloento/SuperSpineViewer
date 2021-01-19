@@ -285,9 +285,9 @@ public class Animation {
     }
 
     static public class RotateTimeline extends CurveTimeline implements BoneTimeline {
-        static public final int ENTRIES = 2;
-        static final int PREV_TIME = -2, PREV_ROTATION = -1;
-        static final int ROTATION = 1;
+        static public final byte ENTRIES = 2;
+        static final byte PREV_TIME = -2, PREV_ROTATION = -1;
+        static final byte ROTATION = 1;
         final float[] frames;
         int boneIndex;
 
@@ -492,9 +492,9 @@ public class Animation {
     }
 
     static public class TranslateTimeline extends CurveTimeline implements BoneTimeline {
-        static public final int ENTRIES = 3;
-        static final int PREV_TIME = -3, PREV_X = -2, PREV_Y = -1;
-        static final int X = 1, Y = 2;
+        static public final byte ENTRIES = 3;
+        static final byte PREV_TIME = -3, PREV_X = -2, PREV_Y = -1;
+        static final byte X = 1, Y = 2;
         final float[] frames;
         int boneIndex;
 
@@ -1079,9 +1079,9 @@ public class Animation {
     }
 
     static public class ColorTimeline extends CurveTimeline implements SlotTimeline {
-        static public final int ENTRIES = 5;
-        static private final int PREV_TIME = -5, PREV_R = -4, PREV_G = -3, PREV_B = -2, PREV_A = -1;
-        static private final int R = 1, G = 2, B = 3, A = 4;
+        static public final byte ENTRIES = 5;
+        static private final byte PREV_TIME = -5, PREV_R = -4, PREV_G = -3, PREV_B = -2, PREV_A = -1;
+        static private final byte R = 1, G = 2, B = 3, A = 4;
         private final float[] frames;
         int slotIndex;
 
@@ -1507,10 +1507,6 @@ public class Animation {
 
         public float[] getFrames() {
             return frames;
-        }
-
-        public String[] getAttachmentNames() {
-            return attachmentNames;
         }
 
         public void setFrame(int frameIndex, float time, String attachmentName) {
@@ -2517,9 +2513,9 @@ public class Animation {
     }
 
     static public class IkConstraintTimeline extends CurveTimeline {
-        static public int ENTRIES;
-        static private int PREV_TIME, PREV_MIX, PREV_SOFTNESS, PREV_BEND_DIRECTION, PREV_COMPRESS, PREV_STRETCH;
-        static private int MIX, SOFTNESS, BEND_DIRECTION, COMPRESS, STRETCH;
+        static public byte ENTRIES;
+        static private byte PREV_TIME, PREV_MIX, PREV_SOFTNESS, PREV_BEND_DIRECTION, PREV_COMPRESS, PREV_STRETCH;
+        static private byte MIX, SOFTNESS, BEND_DIRECTION, COMPRESS, STRETCH;
         private final float[] frames;
         int ikConstraintIndex;
 
@@ -2791,9 +2787,9 @@ public class Animation {
     }
 
     static public class TransformConstraintTimeline extends CurveTimeline {
-        static public final int ENTRIES = 5;
-        static private final int PREV_TIME = -5, PREV_ROTATE = -4, PREV_TRANSLATE = -3, PREV_SCALE = -2, PREV_SHEAR = -1;
-        static private final int ROTATE = 1, TRANSLATE = 2, SCALE = 3, SHEAR = 4;
+        static public final byte ENTRIES = 5;
+        static private final byte PREV_TIME = -5, PREV_ROTATE = -4, PREV_TRANSLATE = -3, PREV_SCALE = -2, PREV_SHEAR = -1;
+        static private final byte ROTATE = 1, TRANSLATE = 2, SCALE = 3, SHEAR = 4;
         private final float[] frames;
         int transformConstraintIndex;
 
