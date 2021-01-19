@@ -66,11 +66,4 @@ public class IkConstraintData extends ConstraintData {
         this.stretch = stretch;
     }
 
-    public boolean getUniform() {
-        return uniform;
-    }
-
-    public void setUniform(boolean uniform) {
-        this.uniform = uniform;
-    }
 }

@@ -23,14 +23,6 @@ abstract public class ConstraintData {
         this.order = order;
     }
 
-    public boolean getSkinRequired() {
-        return skinRequired;
-    }
-
-    public void setSkinRequired(boolean skinRequired) {
-        this.skinRequired = skinRequired;
-    }
-
     public String toString() {
         return name;
     }

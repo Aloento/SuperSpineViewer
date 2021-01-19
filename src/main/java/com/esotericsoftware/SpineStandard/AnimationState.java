@@ -30,7 +30,7 @@ public class AnimationState {
     boolean animationsChanged;
     private AnimationStateData data;
     private float timeScale = 1;
-    private short unkeyedState;
+    private int unKeyedState;
 
     public AnimationState() {
     }
@@ -279,7 +279,7 @@ public class AnimationState {
             }
 
             if (RuntimesLoader.spineVersion == 38) {
-                int setupState = unkeyedState + SETUP;
+                int setupState = unKeyedState + SETUP;
                 Object[] slots = skeleton.slots.items;
                 for (int i = 0, n = skeleton.slots.size; i < n; i++) {
                     Slot slot = (Slot) slots[i];
@@ -288,7 +288,7 @@ public class AnimationState {
                         slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slot.data.index, attachmentName));
                     }
                 }
-                unkeyedState += 2;
+                unKeyedState += 2;
             }
 
             queue.drain();
@@ -563,12 +563,12 @@ public class AnimationState {
                 frameIndex = Animation.binarySearch(frames, time) - 1;
             setAttachment(skeleton, slot, timeline.attachmentNames[frameIndex], attachments);
         }
-        if (slot.attachmentState <= unkeyedState) slot.attachmentState = unkeyedState + SETUP;
+        if (slot.attachmentState <= unKeyedState) slot.attachmentState = unKeyedState + SETUP;
     }
 
     private void setAttachment(Skeleton skeleton, Slot slot, String attachmentName, boolean attachments) {
         slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slot.data.index, attachmentName));
-        if (attachments) slot.attachmentState = unkeyedState + CURRENT;
+        if (attachments) slot.attachmentState = unKeyedState + CURRENT;
     }
 
     private void applyRotateTimeline(RotateTimeline timeline, Skeleton skeleton, float time, float alpha, MixBlend blend,

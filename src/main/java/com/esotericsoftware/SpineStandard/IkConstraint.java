@@ -59,7 +59,7 @@ public class IkConstraint implements Constraint {
         if (!bone.appliedValid) bone.updateAppliedTransform();
         Bone p = bone.parent;
 
-        float rotationIK = 0, tx = 0, ty = 0;
+        float rotationIK, tx, ty;
         if (RuntimesLoader.spineVersion == 38) {
             float pa = p.a, pb = p.b, pc = p.c, pd = p.d;
             rotationIK = -bone.ashearX - bone.arotation;
@@ -82,7 +82,7 @@ public class IkConstraint implements Constraint {
                     ty = (y * pa - x * pc) / d - bone.ay;
             }
             rotationIK += atan2(ty, tx) * radDeg;
-        } else if (RuntimesLoader.spineVersion == 37) {
+        } else {
             float id = 1 / (p.a * p.d - p.b * p.c);
             float x = targetX - p.worldX, y = targetY - p.worldY;
             tx = (x * p.d - y * p.b) * id - bone.ax;
@@ -273,7 +273,7 @@ public class IkConstraint implements Constraint {
     static public void apply(Bone bone, float targetX, float targetY, float alpha) { // Spine36/5/4
         if (!bone.appliedValid && RuntimesLoader.spineVersion != 34) bone.updateAppliedTransform();
         Bone p = bone.parent;
-        float id = 1 / (p.a * p.d - p.b * p.c), rotationIK = 0;
+        float id = 1 / (p.a * p.d - p.b * p.c), rotationIK;
         float x = targetX - p.worldX, y = targetY - p.worldY;
         if (RuntimesLoader.spineVersion > 34) {
             float tx = (x * p.d - y * p.b) * id - bone.ax, ty = (y * p.a - x * p.c) * id - bone.ay;
@@ -297,7 +297,7 @@ public class IkConstraint implements Constraint {
             child.updateWorldTransform();
             return;
         }
-        float px = 0, py = 0, psx = 0, psy = 0, csx = 0;
+        float px, py, psx, psy, csx;
         if (RuntimesLoader.spineVersion > 34) {
             if (!parent.appliedValid) parent.updateAppliedTransform();
             if (!child.appliedValid) child.updateAppliedTransform();
@@ -333,7 +333,7 @@ public class IkConstraint implements Constraint {
             os2 = 0;
         float cx = child.ax;
         if (RuntimesLoader.spineVersion == 34) cx = child.x;
-        float cy = 0, cwx, cwy, a = parent.a, b = parent.b, c = parent.c, d = parent.d;
+        float cy, cwx, cwy, a = parent.a, b = parent.b, c = parent.c, d = parent.d;
         boolean u = Math.abs(psx - psy) <= 0.0001f;
         if (!u) {
             cy = 0;
@@ -356,7 +356,7 @@ public class IkConstraint implements Constraint {
         x = cwx - pp.worldX;
         y = cwy - pp.worldY;
         float dx = (x * d - y * b) * id - px, dy = (y * a - x * c) * id - py;
-        float l1 = (float) Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1 = 0, a2 = 0;
+        float l1 = (float) Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1, a2;
         outer:
         if (u) {
             l2 *= psx;
