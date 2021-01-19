@@ -10,13 +10,13 @@ class Triangulator {
     private final BooleanArray isConcaveArray = new BooleanArray();
     private final ShortArray triangles = new ShortArray();
 
-    private final Pool<FloatArray> polygonPool = new Pool() {
+    private final Pool<FloatArray> polygonPool = new Pool<>() {
         protected FloatArray newObject() {
             return new FloatArray(16);
         }
     };
 
-    private final Pool<ShortArray> polygonIndicesPool = new Pool() {
+    private final Pool<ShortArray> polygonIndicesPool = new Pool<>() {
         protected ShortArray newObject() {
             return new ShortArray(16);
         }
