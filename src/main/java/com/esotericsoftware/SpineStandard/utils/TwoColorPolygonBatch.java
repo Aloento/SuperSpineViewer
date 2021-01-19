@@ -686,7 +686,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         final float[] vertices = this.vertices;
 
         if (texture != lastTexture) {
-            switch (RuntimesLoader.spineVersion.get()) {
+            switch (RuntimesLoader.spineVersion) {
                 case 38, 37 -> switchTexture(texture);
                 case 36 -> {
                     flush();
@@ -755,7 +755,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         final int vertexIndex = this.vertexIndex;
         int triangleIndex = this.triangleIndex;
         short vertex = (short) (vertexIndex / VERTEX_SIZE);
-        for (int n = triangleIndex + triangleCount; triangleIndex < n; triangleIndex += 6, vertex += 4) {
+        for (int n = triangleIndex + triangleCount; triangleIndex < n; triangleIndex += 6, vertex += (short) 4) {
             triangles[triangleIndex] = vertex;
             triangles[triangleIndex + 1] = (short) (vertex + 1);
             triangles[triangleIndex + 2] = (short) (vertex + 2);
@@ -785,7 +785,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         final int vertexIndex = this.vertexIndex;
         int triangleIndex = this.triangleIndex;
         short vertex = (short) (vertexIndex / VERTEX_SIZE);
-        for (int n = triangleIndex + triangleCount; triangleIndex < n; triangleIndex += 6, vertex += 4) {
+        for (int n = triangleIndex + triangleCount; triangleIndex < n; triangleIndex += 6, vertex += (short) 4) {
             triangles[triangleIndex] = vertex;
             triangles[triangleIndex + 1] = (short) (vertex + 1);
             triangles[triangleIndex + 2] = (short) (vertex + 2);
@@ -1229,7 +1229,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     @Override
     public void flush() {
         if (vertexIndex == 0) return;
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 38, 37 -> totalRenderCalls++;
         }
         lastTexture.bind();

@@ -48,7 +48,7 @@ public class SkeletonRenderer {
         Array<Slot> drawOrder = skeleton.drawOrder;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
-            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) {
+            if (!slot.bone.active && RuntimesLoader.spineVersion == 38) {
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -119,7 +119,7 @@ public class SkeletonRenderer {
         Array<Slot> drawOrder = skeleton.drawOrder;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
-            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) {
+            if (!slot.bone.active && RuntimesLoader.spineVersion == 38) {
                 clipper.clipEnd(slot);
                 continue;
             }
@@ -180,7 +180,7 @@ public class SkeletonRenderer {
                             clippedTriangles.size);
                 } else {
                     if (vertexEffect != null) {
-                        if (RuntimesLoader.spineVersion.get() > 37) {
+                        if (RuntimesLoader.spineVersion > 37) {
                             tempLight1.set(NumberUtils.floatToIntColor(c));
                             tempDark1.set(0);
                             for (int v = 0, u = 0; v < verticesLength; v += 5, u += 2) {
@@ -233,7 +233,7 @@ public class SkeletonRenderer {
 
     @SuppressWarnings("null")
     public void draw(TwoColorPolygonBatch batch, Skeleton skeleton) {
-        if (RuntimesLoader.spineVersion.get() > 35) {
+        if (RuntimesLoader.spineVersion > 35) {
             if (batch == null) throw new IllegalArgumentException("batch cannot be null.");
             if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
             Vector2 tempPosition = this.temp, tempUV = this.temp2;
@@ -257,7 +257,7 @@ public class SkeletonRenderer {
             Array<Slot> drawOrder = skeleton.drawOrder;
             for (int i = 0, n = drawOrder.size; i < n; i++) {
                 Slot slot = drawOrder.get(i);
-                if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) {
+                if (!slot.bone.active && RuntimesLoader.spineVersion == 38) {
                     clipper.clipEnd(slot);
                     continue;
                 }
@@ -326,7 +326,7 @@ public class SkeletonRenderer {
                                 clippedTriangles.size);
                     } else {
                         if (vertexEffect != null) {
-                            if (RuntimesLoader.spineVersion.get() > 37) {
+                            if (RuntimesLoader.spineVersion > 37) {
                                 tempLight1.set(NumberUtils.floatToIntColor(light));
                                 tempDark1.set(NumberUtils.floatToIntColor(dark));
                                 for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
@@ -448,7 +448,7 @@ public class SkeletonRenderer {
         tempDark1.set(NumberUtils.floatToIntColor(dark));
         if (stride == 5) {
             for (int v = 0; v < verticesLength; v += stride) {
-                if (RuntimesLoader.spineVersion.get() > 37) {
+                if (RuntimesLoader.spineVersion > 37) {
                     tempPosition.x = vertices[v];
                     tempPosition.y = vertices[v + 1];
                     tempUV.x = vertices[v + 3];
@@ -478,7 +478,7 @@ public class SkeletonRenderer {
             }
         } else {
             for (int v = 0; v < verticesLength; v += stride) {
-                if (RuntimesLoader.spineVersion.get() > 37) {
+                if (RuntimesLoader.spineVersion > 37) {
                     tempPosition.x = vertices[v];
                     tempPosition.y = vertices[v + 1];
                     tempUV.x = vertices[v + 4];

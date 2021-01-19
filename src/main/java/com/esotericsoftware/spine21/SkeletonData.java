@@ -15,7 +15,6 @@ public class SkeletonData {
     String version, hash, imagesPath;
 
 
-
     public Array<BoneData> getBones() {
         return bones;
     }
@@ -39,7 +38,6 @@ public class SkeletonData {
             if (bones.get(i).name.equals(boneName)) return i;
         return -1;
     }
-
 
 
     public Array<SlotData> getSlots() {
@@ -67,8 +65,6 @@ public class SkeletonData {
     }
 
 
-
-
     public Skin getDefaultSkin() {
         return defaultSkin;
     }
@@ -92,8 +88,6 @@ public class SkeletonData {
     }
 
 
-
-
     public EventData findEvent(String eventDataName) {
         if (eventDataName == null) throw new IllegalArgumentException("eventDataName cannot be null.");
         for (EventData eventData : events)
@@ -104,7 +98,6 @@ public class SkeletonData {
     public Array<EventData> getEvents() {
         return events;
     }
-
 
 
     public Array<Animation> getAnimations() {
@@ -123,7 +116,6 @@ public class SkeletonData {
     }
 
 
-
     public Array<IkConstraintData> getIkConstraints() {
         return ikConstraints;
     }
@@ -138,8 +130,6 @@ public class SkeletonData {
         }
         return null;
     }
-
-
 
 
     public String getName() {

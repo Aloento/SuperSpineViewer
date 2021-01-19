@@ -6,7 +6,6 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +15,7 @@ import java.nio.file.Files;
 
 public class RuntimesLoader extends Controller {
 
-    public static final SimpleIntegerProperty spineVersion = new SimpleIntegerProperty(0);
+    public static short spineVersion = 0;
     private final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
     private final String[] extraSuffixes = {"", ".txt", ".bytes"};
     private final String[] dataSuffixes = {"", ".json", ".skel"};
@@ -25,35 +24,35 @@ public class RuntimesLoader extends Controller {
 
     private void whichVersion(String skel) {
         if (skel.contains("4.0."))
-            spineVersion.set(40);
+            spineVersion = 40;
         else if (skel.contains("3.8."))
-            spineVersion.set(38);
+            spineVersion = 38;
         else if (skel.contains("3.7."))
-            spineVersion.set(37);
+            spineVersion = 37;
         else if (skel.contains("3.6."))
-            spineVersion.set(36);
+            spineVersion = 36;
         else if (skel.contains("3.5."))
-            spineVersion.set(35);
+            spineVersion = 35;
         else if (skel.contains("3.4.") || skel.contains("3.3."))
-            spineVersion.set(34);
+            spineVersion = 34;
         else if (skel.contains("3.2."))
-            spineVersion.set(32);
+            spineVersion = 32;
         else if (skel.contains("3.1."))
-            spineVersion.set(31);
+            spineVersion = 31;
         else if (skel.contains("2.1."))
-            spineVersion.set(21);
+            spineVersion = 21;
     }
 
     private boolean binaryVersion(File skelFile) {
         try {
             whichVersion(new BufferedReader(new FileReader(skelFile)).readLine());
-            if (spineVersion.get() < 20) {
+            if (spineVersion < 20) {
                 System.out.println("Spine二进制版本判断失败");
                 return false;
             }
 
             spine.setIsBinary(true);
-            System.out.println("Spine二进制版本：" + spineVersion.get());
+            System.out.println("Spine二进制版本：" + spineVersion);
         } catch (IOException e) {
             System.out.println("Spine二进制读取失败");
             e.printStackTrace();
@@ -65,13 +64,13 @@ public class RuntimesLoader extends Controller {
     private boolean jsonVersion(File skelFile) {
         try {
             whichVersion(Files.readString(skelFile.toPath()));
-            if (spineVersion.get() < 20) {
+            if (spineVersion < 20) {
                 System.out.println("SpineJson版本判断失败");
                 return false;
             }
 
             spine.setIsBinary(false);
-            System.out.println("SpineJson版本：" + spineVersion.get());
+            System.out.println("SpineJson版本：" + spineVersion);
         } catch (IOException e) {
             System.out.println("SpineJson读取失败");
             e.printStackTrace();
@@ -82,7 +81,7 @@ public class RuntimesLoader extends Controller {
 
     private boolean initLibDGX() {
         config.samples = 16;
-        switch (spineVersion.get()) {
+        switch (spineVersion) {
             case 40 -> new LwjglFXApplication(new Spine40(), spineRender, config);
             case 38, 37, 36, 35, 34 -> new LwjglFXApplication(new Standard(), spineRender, config);
             case 32 -> new LwjglFXApplication(new Spine32(), spineRender, config);

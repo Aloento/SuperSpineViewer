@@ -71,13 +71,13 @@ public class Bone implements Updatable {
         float lc = sinDeg(rotation + shearX) * scaleX;
         float ld = sinDeg(rotationY) * scaleY;
 
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 38, 37 -> {
                 if (parent == null) {
                     Skeleton skeleton = this.skeleton;
                     float sx = skeleton.scaleX, sy = skeleton.scaleY;
                     a = cosDeg(rotation + shearX) * scaleX * sx;
-                    switch (RuntimesLoader.spineVersion.get()) {
+                    switch (RuntimesLoader.spineVersion) {
                         case 38 -> {
                             b = cosDeg(rotationY) * scaleY * sx;
                             c = sinDeg(rotation + shearX) * scaleX * sy;
@@ -110,7 +110,7 @@ public class Bone implements Updatable {
                     b = lb;
                     c = lc;
                     d = ld;
-                    switch (RuntimesLoader.spineVersion.get()) {
+                    switch (RuntimesLoader.spineVersion) {
                         case 36, 35 -> {
                             worldX = x + skeleton.x;
                             worldY = y + skeleton.y;
@@ -130,7 +130,7 @@ public class Bone implements Updatable {
         worldX = pa * x + pb * y + parent.worldX;
         worldY = pc * x + pd * y + parent.worldY;
 
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 38, 37, 36, 35 -> {
                 switch (data.transformMode) {
                     case normal -> {
@@ -150,7 +150,7 @@ public class Bone implements Updatable {
                         float s = pa * pa + pc * pc, prx;
                         if (s > 0.0001f) {
                             s = Math.abs(pa * pd - pb * pc) / s;
-                            if (RuntimesLoader.spineVersion.get() == 38) {
+                            if (RuntimesLoader.spineVersion == 38) {
                                 pa /= skeleton.scaleX;
                                 pc /= skeleton.scaleY;
                             }
@@ -177,7 +177,7 @@ public class Bone implements Updatable {
                         float cos = cosDeg(rotation), sin = sinDeg(rotation);
                         float za = 0;
                         float zc = 0;
-                        switch (RuntimesLoader.spineVersion.get()) {
+                        switch (RuntimesLoader.spineVersion) {
                             case 38, 37 -> {
                                 za = (pa * cos + pb * sin) / skeleton.scaleX;
                                 zc = (pc * cos + pd * sin) / skeleton.scaleY;
@@ -193,7 +193,7 @@ public class Bone implements Updatable {
                         zc *= s;
                         s = (float) Math.sqrt(za * za + zc * zc);
                         boolean b1 = pa * pd - pb * pc < 0;
-                        switch (RuntimesLoader.spineVersion.get()) {
+                        switch (RuntimesLoader.spineVersion) {
                             case 38, 37 -> {
                                 if (data.transformMode == TransformMode.noScale
                                         && b1 == (skeleton.scaleX < 0 == skeleton.scaleY < 0)) s = -s;
@@ -207,7 +207,7 @@ public class Bone implements Updatable {
                         lc = sinDeg(shearX) * scaleX;
                         ld = sinDeg(90 + shearY) * scaleY;
 
-                        if (RuntimesLoader.spineVersion.get() == 36 &&
+                        if (RuntimesLoader.spineVersion == 36 &&
                                 (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY)) {
                             zb = -zb;
                             zd = -zd;
@@ -218,7 +218,7 @@ public class Bone implements Updatable {
                         c = zc * la + zd * lc;
                         d = zc * lb + zd * ld;
 
-                        if (RuntimesLoader.spineVersion.get() == 35 &&
+                        if (RuntimesLoader.spineVersion == 35 &&
                                 (data.transformMode != TransformMode.noScaleOrReflection ? b1 : skeleton.flipX != skeleton.flipY)) {
                             b = -b;
                             d = -d;
@@ -298,7 +298,7 @@ public class Bone implements Updatable {
                 }
             }
         }
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 38, 37 -> {
                 a *= skeleton.scaleX;
                 b *= skeleton.scaleX;
@@ -494,7 +494,7 @@ public class Bone implements Updatable {
     }
 
     public float getWorldX() {
-        if (RuntimesLoader.spineVersion.get() < 35)
+        if (RuntimesLoader.spineVersion < 35)
             return skeleton.x + worldX;
         return worldX;
     }
@@ -504,7 +504,7 @@ public class Bone implements Updatable {
     }
 
     public float getWorldY() {
-        if (RuntimesLoader.spineVersion.get() < 35)
+        if (RuntimesLoader.spineVersion < 35)
             return skeleton.y + worldY;
         return worldY;
     }
@@ -522,13 +522,13 @@ public class Bone implements Updatable {
     }
 
     public float getWorldScaleX() {
-        if (RuntimesLoader.spineVersion.get() == 34)
+        if (RuntimesLoader.spineVersion == 34)
             return (float) Math.sqrt(a * a + b * b) * worldSignX;
         return (float) Math.sqrt(a * a + c * c);
     }
 
     public float getWorldScaleY() {
-        if (RuntimesLoader.spineVersion.get() == 34)
+        if (RuntimesLoader.spineVersion == 34)
             return (float) Math.sqrt(c * c + d * d) * worldSignY;
         return (float) Math.sqrt(b * b + d * d);
     }
@@ -567,15 +567,15 @@ public class Bone implements Updatable {
 
     public float worldToLocalRotation(float worldRotation) {
         float sin = sinDeg(worldRotation), cos = cosDeg(worldRotation);
-        return switch (RuntimesLoader.spineVersion.get()) {
+        return switch (RuntimesLoader.spineVersion) {
             case 38, 37 -> atan2(a * sin - c * cos, d * cos - b * sin) * radDeg + rotation - shearX;
             case 36 -> atan2(a * sin - c * cos, d * cos - b * sin) * radDeg;
-            default -> throw new IllegalStateException("Unexpected value: " + RuntimesLoader.spineVersion.get());
+            default -> throw new IllegalStateException("Unexpected value: " + RuntimesLoader.spineVersion);
         };
     }
 
     public float localToWorldRotation(float localRotation) {
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 38, 37 -> localRotation -= rotation - shearX;
         }
         float sin = sinDeg(localRotation), cos = cosDeg(localRotation);

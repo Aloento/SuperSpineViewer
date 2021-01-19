@@ -39,7 +39,7 @@ public class MeshAttachment extends VertexAttachment {
     }
 
     public void updateUVs() {
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 38 -> {
                 float[] regionUVs = this.regionUVs;
                 if (this.uvs == null || this.uvs.length != regionUVs.length) this.uvs = new float[regionUVs.length];

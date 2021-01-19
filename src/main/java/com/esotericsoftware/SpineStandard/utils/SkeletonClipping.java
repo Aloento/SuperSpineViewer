@@ -142,7 +142,7 @@ public class SkeletonClipping {
                         clippedTrianglesItems[s + 2] = (short) (index + ii + 1);
                         s += 3;
                     }
-                    index += clipOutputCount + 1;
+                    index += (short) (clipOutputCount + 1);
 
                 } else {
                     float[] clippedVerticesItems = clippedVertices.setSize(s + 3 * vertexSize);
@@ -189,7 +189,7 @@ public class SkeletonClipping {
                     clippedTrianglesItems[s] = index;
                     clippedTrianglesItems[s + 1] = (short) (index + 1);
                     clippedTrianglesItems[s + 2] = (short) (index + 2);
-                    index += 3;
+                    index += (short) 3;
                     continue outer;
                 }
             }

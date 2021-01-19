@@ -28,7 +28,7 @@ public class SkeletonBounds {
         polygons.clear();
         for (int i = 0; i < slotCount; i++) {
             Slot slot = slots.get(i);
-            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) continue;
+            if (!slot.bone.active && RuntimesLoader.spineVersion == 38) continue;
             Attachment attachment = slot.attachment;
             if (attachment instanceof BoundingBoxAttachment) {
                 BoundingBoxAttachment boundingBox = (BoundingBoxAttachment) attachment;
@@ -41,7 +41,7 @@ public class SkeletonBounds {
         }
         if (updateAabb)
             aabbCompute();
-        else if (RuntimesLoader.spineVersion.get() > 34) {
+        else if (RuntimesLoader.spineVersion > 34) {
             minX = Integer.MIN_VALUE;
             minY = Integer.MIN_VALUE;
             maxX = Integer.MAX_VALUE;

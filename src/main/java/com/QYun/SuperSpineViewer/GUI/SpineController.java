@@ -80,7 +80,7 @@ public class SpineController extends Controller implements Initializable {
         spineLogo.setImage(new Image("/UI/SpineLogo.png", 138, 0, true, true, false));
 
         StackPane header = new StackPane();
-        AtomicReference<String> headerColor = new AtomicReference<>(getDefaultColor((int) ((Math.random() * 12) % 22)));
+        AtomicReference<String> headerColor = new AtomicReference<>(getDefaultColor((short) ((Math.random() * 12) % 22)));
         header.setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
 
         Label project = new Label("Waiting Loading...");
@@ -167,7 +167,7 @@ public class SpineController extends Controller implements Initializable {
 
         JFXButton playButton = new JFXButton("");
         playButton.setButtonType(ButtonType.RAISED);
-        playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 20) % 22)));
+        playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((short) ((Math.random() * 20) % 22)));
         playButton.setPrefSize(56, 56);
         playButton.setRipplerFill(Color.valueOf(headerColor.get()));
         playButton.setScaleX(0);
@@ -226,9 +226,9 @@ public class SpineController extends Controller implements Initializable {
                 } else {
                     spine.setIsPlay(true);
                     playButton.setGraphic(pauseIcon);
-                    headerColor.set(getDefaultColor((int) ((Math.random() * 12) % 22)));
+                    headerColor.set(getDefaultColor((short) ((Math.random() * 12) % 22)));
                     header.setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
-                    playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((int) ((Math.random() * 20) % 22)));
+                    playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((short) ((Math.random() * 20) % 22)));
                     playButton.setRipplerFill(Color.valueOf(headerColor.get()));
                 }
             }
@@ -284,7 +284,7 @@ public class SpineController extends Controller implements Initializable {
 
         T_Loop.setOnAction(event -> spine.setIsLoop(T_Loop.isSelected()));
 
-        B_Reload.setOnAction(event -> RuntimesLoader.spineVersion.set(-1));
+        B_Reload.setOnAction(event -> RuntimesLoader.spineVersion = -1);
 
         B_Reset.setOnAction(event -> {
             spine.setScale(1);
@@ -350,82 +350,32 @@ public class SpineController extends Controller implements Initializable {
         timeline.play();
     }
 
-    private String getDefaultColor(int i) {
-        String color = "#FFFFFF";
-        switch (i) {
-            case 0:
-                color = "#455A64";
-                break;
-            case 1:
-                color = "#616161";
-                break;
-            case 2:
-                color = "#512DA8";
-                break;
-            case 3:
-                color = "#5D4037";
-                break;
-            case 4:
-                color = "#9C27B0";
-                break;
-            case 5:
-                color = "#7B1FA2";
-                break;
-            case 6:
-                color = "#673AB7";
-                break;
-            case 7:
-                color = "#7C4DFF";
-                break;
-            case 8:
-                color = "#3F51B5";
-                break;
-            case 9:
-                color = "#536DFE";
-                break;
-            case 10:
-                color = "#2196F3";
-                break;
-            case 11:
-                color = "#448AFF";
-                break;
-            case 12:
-                color = "#0288D1";
-                break;
-            case 13:
-                color = "#00BCD4";
-                break;
-            case 14:
-                color = "#009688";
-                break;
-            case 15:
-                color = "#4CAF50";
-                break;
-            case 16:
-                color = "#689F38";
-                break;
-            case 17:
-                color = "#607D8B";
-                break;
-            case 18:
-                color = "#FFC107";
-                break;
-            case 19:
-                color = "#FF9800";
-                break;
-            case 20:
-                color = "#FF5722";
-                break;
-            case 21:
-                color = "#795548";
-                break;
-            case 22:
-                color = "#9E9E9E";
-                break;
-            default:
-                break;
-        }
-        return color;
+    private String getDefaultColor(short i) {
+        return switch (i) {
+            case 0 -> "#455A64";
+            case 1 -> "#616161";
+            case 2 -> "#512DA8";
+            case 3 -> "#5D4037";
+            case 4 -> "#9C27B0";
+            case 5 -> "#7B1FA2";
+            case 6 -> "#673AB7";
+            case 7 -> "#7C4DFF";
+            case 8 -> "#3F51B5";
+            case 9 -> "#536DFE";
+            case 10 -> "#2196F3";
+            case 11 -> "#448AFF";
+            case 12 -> "#0288D1";
+            case 13 -> "#00BCD4";
+            case 14 -> "#009688";
+            case 15 -> "#4CAF50";
+            case 16 -> "#689F38";
+            case 17 -> "#607D8B";
+            case 18 -> "#FFC107";
+            case 19 -> "#FF9800";
+            case 20 -> "#FF5722";
+            case 21 -> "#795548";
+            case 22 -> "#9E9E9E";
+            default -> "#FFFFFF";
+        };
     }
-
 }

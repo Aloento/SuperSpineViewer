@@ -28,11 +28,11 @@ public class RecordFX {
     private final ObservableList<Image> framesList = FXCollections.observableArrayList();
     private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(framesList);
     private final SuperSpine spine = new SuperSpine();
-    private final float FPS = 60f;
+    private final short FPS = 60;
     private boolean recording = false;
     private boolean saveSequence = true;
-    private int timer;
-    private int counter;
+    private short timer;
+    private short counter;
     private String rootPath = null;
     private String fileName = null;
 
@@ -46,7 +46,7 @@ public class RecordFX {
                 new Thread("RecordFX_Saving") {
                     @Override
                     public void run() {
-                        new File(rootPath + "Sequence/").mkdirs();
+                        new File(rootPath + "Sequence" + File.separator).mkdirs();
                         while (recordFrames.size() != 0) {
                             saveToArray(recordFrames.get(0));
                             recordFrames.remove(0);
@@ -76,7 +76,7 @@ public class RecordFX {
                         System.out.println("捕获的帧：" + timer++ + "\t" + spine.getPercent());
                     });
                     try {
-                        Thread.sleep((long) (1000 / FPS));
+                        Thread.sleep((1000 / FPS));
                     } catch (InterruptedException ignored) {
                     }
                 } while (spine.getPercent() < 1);
@@ -107,7 +107,7 @@ public class RecordFX {
 
     private void saveToArray(Image image) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        File video = new File((rootPath + "Sequence/" + fileName) + "_" + counter++ + ".png");
+        File video = new File((rootPath + "Sequence" + File.separator + fileName) + "_" + counter++ + ".png");
         try {
             ImageIO.write(bufferedImage, "png", video);
         } catch (IOException e) {
@@ -129,17 +129,17 @@ public class RecordFX {
             });
             new File((rootPath + fileName) + ".mov").delete();
 
-            Process ffmpeg = Runtime.getRuntime().exec(
-                    "ffmpeg -r " + FPS +
-                            " -i " + rootPath + "Sequence/" + fileName + "_%d.png" +
-                            " -c:v png" +
-                            " -pix_fmt rgba" +
-                            " -filter:v \"setpts=0.5*PTS\"" +
-                            " " + rootPath + fileName + ".mov");
+            Process ffmpeg = Runtime.getRuntime().exec(new String[]{
+                    "ffmpeg", "-r", String.valueOf(FPS),
+                    "-i", rootPath + "Sequence" + File.separator + fileName + "_%d.png",
+                    "-c:v", "png", "-pix_fmt", "rgba",
+                    "-filter:v", "\"setpts=0.5*PTS\"",
+                    rootPath + fileName + ".mov"
+            });
 
-            int status = ffmpeg.waitFor();
+            short status = (short) ffmpeg.waitFor();
             if (status == 0) {
-                File sequence = new File(rootPath + "Sequence/");
+                File sequence = new File(rootPath + "Sequence" + File.separator);
                 String[] files = sequence.list();
                 for (String file : Objects.requireNonNull(files))
                     new File(sequence, file).delete();
@@ -161,7 +161,7 @@ public class RecordFX {
         Thread saveVideoThread = new Thread("RecordFX_Encoding") {
             @Override
             public void run() {
-                new File(rootPath + "Sequence/").mkdirs();
+                new File(rootPath + "Sequence" + File.separator).mkdirs();
                 while (exporting)
                     Thread.onSpinWait();
 

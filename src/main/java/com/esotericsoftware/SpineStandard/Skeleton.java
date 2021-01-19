@@ -114,7 +114,7 @@ public class Skeleton {
         skin = skeleton.skin;
         color = new Color(skeleton.color);
         time = skeleton.time;
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 38, 37 -> {
                 scaleX = skeleton.scaleX;
                 scaleY = skeleton.scaleY;
@@ -132,7 +132,7 @@ public class Skeleton {
         updateCache.clear();
         updateCacheReset.clear();
 
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 38 -> {
                 int boneCount = bones.size;
                 Object[] bones = this.bones.items;
@@ -318,7 +318,7 @@ public class Skeleton {
     }
 
     private void sortIkConstraint(IkConstraint constraint) {
-        if (RuntimesLoader.spineVersion.get() == 38) {
+        if (RuntimesLoader.spineVersion == 38) {
             constraint.active = constraint.target.active &&
                     (!constraint.data.skinRequired || (skin != null && skin.constraints.contains(constraint.data, true)));
             if (!constraint.active) return;
@@ -341,7 +341,7 @@ public class Skeleton {
     }
 
     private void sortPathConstraint(PathConstraint constraint) {
-        if (RuntimesLoader.spineVersion.get() == 38) {
+        if (RuntimesLoader.spineVersion == 38) {
             constraint.active = constraint.target.bone.active &&
                     (!constraint.data.skinRequired || (skin != null && skin.constraints.contains(constraint.data, true)));
             if (!constraint.active) return;
@@ -353,7 +353,7 @@ public class Skeleton {
         if (skin != null) sortPathConstraintAttachment(skin, slotIndex, slotBone);
         if (data.defaultSkin != null && data.defaultSkin != skin)
             sortPathConstraintAttachment(data.defaultSkin, slotIndex, slotBone);
-        switch (RuntimesLoader.spineVersion.get()) {
+        switch (RuntimesLoader.spineVersion) {
             case 36, 35 -> {
                 for (int ii = 0, nn = data.skins.size; ii < nn; ii++)
                     sortPathConstraintAttachment(data.skins.get(ii), slotIndex, slotBone);
@@ -373,7 +373,7 @@ public class Skeleton {
     }
 
     private void sortTransformConstraint(TransformConstraint constraint) {
-        if (RuntimesLoader.spineVersion.get() == 38) {
+        if (RuntimesLoader.spineVersion == 38) {
             constraint.active = constraint.target.active &&
                     (!constraint.data.skinRequired || (skin != null && skin.constraints.contains(constraint.data, true)));
             if (!constraint.active) return;
@@ -382,7 +382,7 @@ public class Skeleton {
         sortBone(constraint.target);
         Array<Bone> constrained = constraint.bones;
         int boneCount = constrained.size;
-        if (RuntimesLoader.spineVersion.get() > 35) {
+        if (RuntimesLoader.spineVersion > 35) {
             if (constraint.data.local) {
                 for (int i = 0; i < boneCount; i++) {
                     Bone child = constrained.get(i);
@@ -405,7 +405,7 @@ public class Skeleton {
     }
 
     private void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
-        if (RuntimesLoader.spineVersion.get() > 37) {
+        if (RuntimesLoader.spineVersion > 37) {
             for (SkinEntry entry : skin.attachments.keys())
                 if (entry.getSlotIndex() == slotIndex)
                     sortPathConstraintAttachment(entry.getAttachment(), slotBone);
@@ -442,7 +442,7 @@ public class Skeleton {
     private void sortReset(Array<Bone> bones) {
         for (int i = 0, n = bones.size; i < n; i++) {
             Bone bone = bones.get(i);
-            if (!bone.active && RuntimesLoader.spineVersion.get() == 38) continue;
+            if (!bone.active && RuntimesLoader.spineVersion == 38) continue;
             if (bone.sorted) sortReset(bone.children);
             bone.sorted = false;
         }
@@ -489,7 +489,7 @@ public class Skeleton {
         float lb = cosDeg(rotationY) * rootBone.scaleY;
         float lc = sinDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
         float ld = sinDeg(rotationY) * rootBone.scaleY;
-        if (RuntimesLoader.spineVersion.get() > 36) {
+        if (RuntimesLoader.spineVersion > 36) {
             rootBone.a = (pa * la + pb * lc) * scaleX;
             rootBone.b = (pa * lb + pb * ld) * scaleX;
             rootBone.c = (pc * la + pd * lc) * scaleY;
@@ -529,7 +529,7 @@ public class Skeleton {
             IkConstraint constraint = ikConstraints.get(i);
             constraint.bendDirection = constraint.data.bendDirection;
             constraint.mix = constraint.data.mix;
-            switch (RuntimesLoader.spineVersion.get()) {
+            switch (RuntimesLoader.spineVersion) {
                 case 38:
                     constraint.softness = constraint.data.softness;
                 case 37, 36:
@@ -642,7 +642,7 @@ public class Skeleton {
             }
         }
         skin = newSkin;
-        if (RuntimesLoader.spineVersion.get() == 38)
+        if (RuntimesLoader.spineVersion == 38)
             updateCache();
     }
 
@@ -725,7 +725,7 @@ public class Skeleton {
         float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
-            if (!slot.bone.active && RuntimesLoader.spineVersion.get() == 38) continue;
+            if (!slot.bone.active && RuntimesLoader.spineVersion == 38) continue;
             int verticesLength = 0;
             float[] vertices = null;
             Attachment attachment = slot.attachment;

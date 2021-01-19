@@ -90,7 +90,7 @@ public class RegionAttachment extends Attachment {
     public void setRegion(TextureRegion region) {
         if (region == null) throw new IllegalArgumentException("region cannot be null.");
         this.region = region;
-        if (RuntimesLoader.spineVersion.get() > 35) {
+        if (RuntimesLoader.spineVersion > 35) {
             float[] uvs = this.uvs;
             if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
                 uvs[URX] = region.getU();
