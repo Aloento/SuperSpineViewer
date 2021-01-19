@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Maven For Windows X64
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -20,7 +19,8 @@ jobs:
         architecture: x64  
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    - run: mkdir staging && cp target/*.jar staging
+      
+    - run: mkdir staging && cp target/SuperSpineViewer*.jar staging
     - uses: actions/upload-artifact@v2
       with:
         name: Package
