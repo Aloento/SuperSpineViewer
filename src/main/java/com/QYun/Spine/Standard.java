@@ -217,7 +217,7 @@ public class Standard extends SuperSpine {
                 percent = entry.getAnimationTime() / entry.getAnimationEnd();
                 if (isPlay.get())
                     Platform.runLater(() -> Controller.progressBar.setProgress(percent));
-                if (percent == 1 && !isLoop.get())
+                if (percent >= 1 && !isLoop.get())
                     isPlay.set(false);
             }
         }
