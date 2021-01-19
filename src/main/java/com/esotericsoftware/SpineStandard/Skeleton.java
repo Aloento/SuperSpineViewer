@@ -5,15 +5,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
-import com.esotericsoftware.SpineStandard.Skin.Key;
-import com.esotericsoftware.SpineStandard.Skin.SkinEntry;
 import com.esotericsoftware.SpineStandard.attachments.Attachment;
-import com.esotericsoftware.SpineStandard.attachments.MeshAttachment;
 import com.esotericsoftware.SpineStandard.attachments.PathAttachment;
-import com.esotericsoftware.SpineStandard.attachments.RegionAttachment;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
+import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class Skeleton {
     final SkeletonData data;
@@ -114,15 +109,12 @@ public class Skeleton {
         skin = skeleton.skin;
         color = new Color(skeleton.color);
         time = skeleton.time;
-        switch (RuntimesLoader.spineVersion) {
-            case 38, 37 -> {
-                scaleX = skeleton.scaleX;
-                scaleY = skeleton.scaleY;
-            }
-            case 36, 35, 34 -> {
-                flipX = skeleton.flipX;
-                flipY = skeleton.flipY;
-            }
+        if (RuntimesLoader.spineVersion > 36) {
+            scaleX = skeleton.scaleX;
+            scaleY = skeleton.scaleY;
+        } else {
+            flipX = skeleton.flipX;
+            flipY = skeleton.flipY;
         }
         updateCache();
     }
@@ -341,35 +333,33 @@ public class Skeleton {
     }
 
     private void sortPathConstraint(PathConstraint constraint) {
-        if (RuntimesLoader.spineVersion == 38) {
-            constraint.active = constraint.target.bone.active &&
-                    (!constraint.data.skinRequired || (skin != null && skin.constraints.contains(constraint.data, true)));
-            if (!constraint.active) return;
-        }
-
-        Slot slot = constraint.target;
-        int slotIndex = slot.getData().index;
-        Bone slotBone = slot.bone;
-        if (skin != null) sortPathConstraintAttachment(skin, slotIndex, slotBone);
-        if (data.defaultSkin != null && data.defaultSkin != skin)
-            sortPathConstraintAttachment(data.defaultSkin, slotIndex, slotBone);
-        switch (RuntimesLoader.spineVersion) {
-            case 36, 35 -> {
-                for (int ii = 0, nn = data.skins.size; ii < nn; ii++)
-                    sortPathConstraintAttachment(data.skins.get(ii), slotIndex, slotBone);
-            }
-        }
-        Attachment attachment = slot.attachment;
-        if (attachment instanceof PathAttachment) sortPathConstraintAttachment(attachment, slotBone);
-        Array<Bone> constrained = constraint.bones;
-        int boneCount = constrained.size;
-        for (int i = 0; i < boneCount; i++)
-            sortBone(constrained.get(i));
-        updateCache.add(constraint);
-        for (int i = 0; i < boneCount; i++)
-            sortReset(constrained.get(i).children);
-        for (int i = 0; i < boneCount; i++)
-            constrained.get(i).sorted = true;
+        // if (RuntimesLoader.spineVersion == 38) {
+        //     constraint.active = constraint.target.bone.active &&
+        //             (!constraint.data.skinRequired || (skin != null && skin.constraints.contains(constraint.data, true)));
+        //     if (!constraint.active) return;
+        // }
+        //
+        // Slot slot = constraint.target;
+        // int slotIndex = slot.getData().index;
+        // Bone slotBone = slot.bone;
+        // if (skin != null) sortPathConstraintAttachment(skin, slotIndex, slotBone);
+        // if (data.defaultSkin != null && data.defaultSkin != skin)
+        //     sortPathConstraintAttachment(data.defaultSkin, slotIndex, slotBone);
+        // if (RuntimesLoader.spineVersion < 37) {
+        //     for (int ii = 0, nn = data.skins.size; ii < nn; ii++)
+        //         sortPathConstraintAttachment(data.skins.get(ii), slotIndex, slotBone);
+        // }
+        // Attachment attachment = slot.attachment;
+        // if (attachment instanceof PathAttachment) sortPathConstraintAttachment(attachment, slotBone);
+        // Array<Bone> constrained = constraint.bones;
+        // int boneCount = constrained.size;
+        // for (int i = 0; i < boneCount; i++)
+        //     sortBone(constrained.get(i));
+        // updateCache.add(constraint);
+        // for (int i = 0; i < boneCount; i++)
+        //     sortReset(constrained.get(i).children);
+        // for (int i = 0; i < boneCount; i++)
+        //     constrained.get(i).sorted = true;
     }
 
     private void sortTransformConstraint(TransformConstraint constraint) {
@@ -405,30 +395,30 @@ public class Skeleton {
     }
 
     private void sortPathConstraintAttachment(Skin skin, int slotIndex, Bone slotBone) {
-        if (RuntimesLoader.spineVersion > 37) {
-            for (SkinEntry entry : skin.attachments.keys())
-                if (entry.getSlotIndex() == slotIndex)
-                    sortPathConstraintAttachment(entry.getAttachment(), slotBone);
-        } else {
-            for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
-                if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
-        }
+        // if (RuntimesLoader.spineVersion > 37) {
+        //     for (SkinEntry entry : skin.attachments.keys())
+        //         if (entry.getSlotIndex() == slotIndex)
+        //             sortPathConstraintAttachment(entry.getAttachment(), slotBone);
+        // } else {
+        //     for (Entry<Key, Attachment> entry : skin.O_attachments.entries())
+        //         if (entry.key.slotIndex == slotIndex) sortPathConstraintAttachment(entry.value, slotBone);
+        // }
     }
 
     private void sortPathConstraintAttachment(Attachment attachment, Bone slotBone) {
-        if (!(attachment instanceof PathAttachment)) return;
-        int[] pathBones = ((PathAttachment) attachment).getBones();
-        if (pathBones == null)
-            sortBone(slotBone);
-        else {
-            Array<Bone> bones = this.bones;
-            for (int i = 0, n = pathBones.length; i < n; ) {
-                int nn = pathBones[i++];
-                nn += i;
-                while (i < nn)
-                    sortBone(bones.get(pathBones[i++]));
-            }
-        }
+        // if (!(attachment instanceof PathAttachment)) return;
+        // int[] pathBones = ((PathAttachment) attachment).getBones();
+        // if (pathBones == null)
+        //     sortBone(slotBone);
+        // else {
+        //     Array<Bone> bones = this.bones;
+        //     for (int i = 0, n = pathBones.length; i < n; ) {
+        //         int nn = pathBones[i++];
+        //         nn += i;
+        //         while (i < nn)
+        //             sortBone(bones.get(pathBones[i++]));
+        //     }
+        // }
     }
 
     private void sortBone(Bone bone) {
@@ -467,52 +457,52 @@ public class Skeleton {
     }
 
     public void updateWorldTransform(Bone parent) {
-        if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
-        Array<Bone> updateCacheReset = this.updateCacheReset;
-        for (int i = 0, n = updateCacheReset.size; i < n; i++) {
-            Bone bone = updateCacheReset.get(i);
-            bone.ax = bone.x;
-            bone.ay = bone.y;
-            bone.arotation = bone.rotation;
-            bone.ascaleX = bone.scaleX;
-            bone.ascaleY = bone.scaleY;
-            bone.ashearX = bone.shearX;
-            bone.ashearY = bone.shearY;
-            bone.appliedValid = true;
-        }
-        Bone rootBone = getRootBone();
-        float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
-        rootBone.worldX = pa * x + pb * y + parent.worldX;
-        rootBone.worldY = pc * x + pd * y + parent.worldY;
-        float rotationY = rootBone.rotation + 90 + rootBone.shearY;
-        float la = cosDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
-        float lb = cosDeg(rotationY) * rootBone.scaleY;
-        float lc = sinDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
-        float ld = sinDeg(rotationY) * rootBone.scaleY;
-        if (RuntimesLoader.spineVersion > 36) {
-            rootBone.a = (pa * la + pb * lc) * scaleX;
-            rootBone.b = (pa * lb + pb * ld) * scaleX;
-            rootBone.c = (pc * la + pd * lc) * scaleY;
-            rootBone.d = (pc * lb + pd * ld) * scaleY;
-        } else {
-            rootBone.a = pa * la + pb * lc;
-            rootBone.b = pa * lb + pb * ld;
-            rootBone.c = pc * la + pd * lc;
-            rootBone.d = pc * lb + pd * ld;
-            if (flipY) {
-                rootBone.a = -rootBone.a;
-                rootBone.b = -rootBone.b;
-            }
-            if (flipX) {
-                rootBone.c = -rootBone.c;
-                rootBone.d = -rootBone.d;
-            }
-        }
-        Array<Updatable> updateCache = this.updateCache;
-        for (int i = 0, n = updateCache.size; i < n; i++) {
-            Updatable updatable = updateCache.get(i);
-            if (updatable != rootBone) updatable.update();
-        }
+        // if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
+        // Array<Bone> updateCacheReset = this.updateCacheReset;
+        // for (int i = 0, n = updateCacheReset.size; i < n; i++) {
+        //     Bone bone = updateCacheReset.get(i);
+        //     bone.ax = bone.x;
+        //     bone.ay = bone.y;
+        //     bone.arotation = bone.rotation;
+        //     bone.ascaleX = bone.scaleX;
+        //     bone.ascaleY = bone.scaleY;
+        //     bone.ashearX = bone.shearX;
+        //     bone.ashearY = bone.shearY;
+        //     bone.appliedValid = true;
+        // }
+        // Bone rootBone = getRootBone();
+        // float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
+        // rootBone.worldX = pa * x + pb * y + parent.worldX;
+        // rootBone.worldY = pc * x + pd * y + parent.worldY;
+        // float rotationY = rootBone.rotation + 90 + rootBone.shearY;
+        // float la = cosDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
+        // float lb = cosDeg(rotationY) * rootBone.scaleY;
+        // float lc = sinDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
+        // float ld = sinDeg(rotationY) * rootBone.scaleY;
+        // if (RuntimesLoader.spineVersion > 36) {
+        //     rootBone.a = (pa * la + pb * lc) * scaleX;
+        //     rootBone.b = (pa * lb + pb * ld) * scaleX;
+        //     rootBone.c = (pc * la + pd * lc) * scaleY;
+        //     rootBone.d = (pc * lb + pd * ld) * scaleY;
+        // } else {
+        //     rootBone.a = pa * la + pb * lc;
+        //     rootBone.b = pa * lb + pb * ld;
+        //     rootBone.c = pc * la + pd * lc;
+        //     rootBone.d = pc * lb + pd * ld;
+        //     if (flipY) {
+        //         rootBone.a = -rootBone.a;
+        //         rootBone.b = -rootBone.b;
+        //     }
+        //     if (flipX) {
+        //         rootBone.c = -rootBone.c;
+        //         rootBone.d = -rootBone.d;
+        //     }
+        // }
+        // Array<Updatable> updateCache = this.updateCache;
+        // for (int i = 0, n = updateCache.size; i < n; i++) {
+        //     Updatable updatable = updateCache.get(i);
+        //     if (updatable != rootBone) updatable.update();
+        // }
     }
 
     public void setToSetupPose() {
@@ -570,10 +560,6 @@ public class Skeleton {
 
     public Array<Bone> getBones() {
         return bones;
-    }
-
-    public Array<Updatable> getUpdateCache() {
-        return updateCache;
     }
 
     public Bone getRootBone() {
@@ -663,16 +649,16 @@ public class Skeleton {
     }
 
     public void setAttachment(String slotName, String attachmentName) {
-        if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
-        Slot slot = findSlot(slotName);
-        if (slot == null) throw new IllegalArgumentException("Slot not found: " + slotName);
-        Attachment attachment = null;
-        if (attachmentName != null) {
-            attachment = getAttachment(slot.data.index, attachmentName);
-            if (attachment == null)
-                throw new IllegalArgumentException("Attachment not found: " + attachmentName + ", for slot: " + slotName);
-        }
-        slot.setAttachment(attachment);
+        // if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
+        // Slot slot = findSlot(slotName);
+        // if (slot == null) throw new IllegalArgumentException("Slot not found: " + slotName);
+        // Attachment attachment = null;
+        // if (attachmentName != null) {
+        //     attachment = getAttachment(slot.data.index, attachmentName);
+        //     if (attachment == null)
+        //         throw new IllegalArgumentException("Attachment not found: " + attachmentName + ", for slot: " + slotName);
+        // }
+        // slot.setAttachment(attachment);
     }
 
     public Array<IkConstraint> getIkConstraints() {
@@ -707,77 +693,67 @@ public class Skeleton {
         return pathConstraints;
     }
 
-    public PathConstraint findPathConstraint(String constraintName) {
-        if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
-        Array<PathConstraint> pathConstraints = this.pathConstraints;
-        for (int i = 0, n = pathConstraints.size; i < n; i++) {
-            PathConstraint constraint = pathConstraints.get(i);
-            if (constraint.data.name.equals(constraintName)) return constraint;
-        }
-        return null;
-    }
-
     public void getBounds(Vector2 offset, Vector2 size, FloatArray temp) {
-        if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
-        if (size == null) throw new IllegalArgumentException("size cannot be null.");
-        if (temp == null) throw new IllegalArgumentException("temp cannot be null.");
-        Array<Slot> drawOrder = this.drawOrder;
-        float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
-        for (int i = 0, n = drawOrder.size; i < n; i++) {
-            Slot slot = drawOrder.get(i);
-            if (!slot.bone.active && RuntimesLoader.spineVersion == 38) continue;
-            int verticesLength = 0;
-            float[] vertices = null;
-            Attachment attachment = slot.attachment;
-            if (attachment instanceof RegionAttachment) {
-                verticesLength = 8;
-                vertices = temp.setSize(8);
-                ((RegionAttachment) attachment).computeWorldVertices(slot.getBone(), vertices, 0, 2);
-            } else if (attachment instanceof MeshAttachment) {
-                MeshAttachment mesh = (MeshAttachment) attachment;
-                verticesLength = mesh.getWorldVerticesLength();
-                vertices = temp.setSize(verticesLength);
-                mesh.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
-            }
-            if (vertices != null) {
-                for (int ii = 0; ii < verticesLength; ii += 2) {
-                    float x = vertices[ii], y = vertices[ii + 1];
-                    minX = Math.min(minX, x);
-                    minY = Math.min(minY, y);
-                    maxX = Math.max(maxX, x);
-                    maxY = Math.max(maxY, y);
-                }
-            }
-        }
-        offset.set(minX, minY);
-        size.set(maxX - minX, maxY - minY);
+        // if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
+        // if (size == null) throw new IllegalArgumentException("size cannot be null.");
+        // if (temp == null) throw new IllegalArgumentException("temp cannot be null.");
+        // Array<Slot> drawOrder = this.drawOrder;
+        // float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+        // for (int i = 0, n = drawOrder.size; i < n; i++) {
+        //     Slot slot = drawOrder.get(i);
+        //     if (!slot.bone.active && RuntimesLoader.spineVersion == 38) continue;
+        //     int verticesLength = 0;
+        //     float[] vertices = null;
+        //     Attachment attachment = slot.attachment;
+        //     if (attachment instanceof RegionAttachment) {
+        //         verticesLength = 8;
+        //         vertices = temp.setSize(8);
+        //         ((RegionAttachment) attachment).computeWorldVertices(slot.getBone(), vertices, 0, 2);
+        //     } else if (attachment instanceof MeshAttachment) {
+        //         MeshAttachment mesh = (MeshAttachment) attachment;
+        //         verticesLength = mesh.getWorldVerticesLength();
+        //         vertices = temp.setSize(verticesLength);
+        //         mesh.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
+        //     }
+        //     if (vertices != null) {
+        //         for (int ii = 0; ii < verticesLength; ii += 2) {
+        //             float x = vertices[ii], y = vertices[ii + 1];
+        //             minX = Math.min(minX, x);
+        //             minY = Math.min(minY, y);
+        //             maxX = Math.max(maxX, x);
+        //             maxY = Math.max(maxY, y);
+        //         }
+        //     }
+        // }
+        // offset.set(minX, minY);
+        // size.set(maxX - minX, maxY - minY);
     }
 
     public void getBounds(Vector2 offset, Vector2 size) { // Spine35
-        if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
-        if (size == null) throw new IllegalArgumentException("size cannot be null.");
-        Array<Slot> drawOrder = this.drawOrder;
-        float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
-        for (int i = 0, n = drawOrder.size; i < n; i++) {
-            Slot slot = drawOrder.get(i);
-            float[] vertices = null;
-            Attachment attachment = slot.attachment;
-            if (attachment instanceof RegionAttachment)
-                vertices = ((RegionAttachment) attachment).updateWorldVertices(slot, false);
-            else if (attachment instanceof MeshAttachment)
-                vertices = ((MeshAttachment) attachment).updateWorldVertices(slot, true);
-            if (vertices != null) {
-                for (int ii = 0, nn = vertices.length; ii < nn; ii += 5) {
-                    float x = vertices[ii], y = vertices[ii + 1];
-                    minX = Math.min(minX, x);
-                    minY = Math.min(minY, y);
-                    maxX = Math.max(maxX, x);
-                    maxY = Math.max(maxY, y);
-                }
-            }
-        }
-        offset.set(minX, minY);
-        size.set(maxX - minX, maxY - minY);
+        // if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
+        // if (size == null) throw new IllegalArgumentException("size cannot be null.");
+        // Array<Slot> drawOrder = this.drawOrder;
+        // float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+        // for (int i = 0, n = drawOrder.size; i < n; i++) {
+        //     Slot slot = drawOrder.get(i);
+        //     float[] vertices = null;
+        //     Attachment attachment = slot.attachment;
+        //     if (attachment instanceof RegionAttachment)
+        //         vertices = ((RegionAttachment) attachment).updateWorldVertices(slot, false);
+        //     else if (attachment instanceof MeshAttachment)
+        //         vertices = ((MeshAttachment) attachment).updateWorldVertices(slot, true);
+        //     if (vertices != null) {
+        //         for (int ii = 0, nn = vertices.length; ii < nn; ii += 5) {
+        //             float x = vertices[ii], y = vertices[ii + 1];
+        //             minX = Math.min(minX, x);
+        //             minY = Math.min(minY, y);
+        //             maxX = Math.max(maxX, x);
+        //             maxY = Math.max(maxY, y);
+        //         }
+        //     }
+        // }
+        // offset.set(minX, minY);
+        // size.set(maxX - minX, maxY - minY);
     }
 
     public Color getColor() {
