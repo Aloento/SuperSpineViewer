@@ -18,18 +18,18 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class SkeletonBinary {
-    static public final int BONE_ROTATE = 0;
-    static public final int BONE_TRANSLATE = 1;
-    static public final int BONE_SCALE = 2;
-    static public final int BONE_SHEAR = 3;
-    static public final int SLOT_ATTACHMENT = 0;
-    static public final int SLOT_COLOR = 1;
-    static public final int SLOT_TWO_COLOR = 2;
-    static public final int PATH_POSITION = 0;
-    static public final int PATH_SPACING = 1;
-    static public final int PATH_MIX = 2;
-    static public final int CURVE_STEPPED = 1;
-    static public final int CURVE_BEZIER = 2;
+    static public final byte BONE_ROTATE = 0;
+    static public final byte BONE_TRANSLATE = 1;
+    static public final byte BONE_SCALE = 2;
+    static public final byte BONE_SHEAR = 3;
+    static public final byte SLOT_ATTACHMENT = 0;
+    static public final byte SLOT_COLOR = 1;
+    static public final byte SLOT_TWO_COLOR = 2;
+    static public final byte PATH_POSITION = 0;
+    static public final byte PATH_SPACING = 1;
+    static public final byte PATH_MIX = 2;
+    static public final byte CURVE_STEPPED = 1;
+    static public final byte CURVE_BEZIER = 2;
     static private final Color tempColor1 = new Color(), tempColor2 = new Color();
     private final AttachmentLoader attachmentLoader;
     private final Array<LinkedMesh> linkedMeshes = new Array<>();
@@ -65,8 +65,6 @@ public class SkeletonBinary {
                 if (skeletonData.hash.isEmpty()) skeletonData.hash = null;
                 skeletonData.version = input.readString();
                 if (skeletonData.version.isEmpty()) skeletonData.version = null;
-                if ("3.8.75".equals(skeletonData.version))
-                    throw new RuntimeException("Unsupported skeleton data, please export with a newer version of Spine.");
                 skeletonData.x = input.readFloat();
                 skeletonData.y = input.readFloat();
                 skeletonData.width = input.readFloat();
@@ -258,9 +256,9 @@ public class SkeletonBinary {
                 }
             }) {
                 skeletonData.hash = input.readString();
-                if (skeletonData.hash.isEmpty()) skeletonData.hash = null;
+                if (Objects.requireNonNull(skeletonData.hash).isEmpty()) skeletonData.hash = null;
                 skeletonData.version = input.readString();
-                if (skeletonData.version.isEmpty()) skeletonData.version = null;
+                if (Objects.requireNonNull(skeletonData.version).isEmpty()) skeletonData.version = null;
                 skeletonData.width = input.readFloat();
                 skeletonData.height = input.readFloat();
 
@@ -269,10 +267,10 @@ public class SkeletonBinary {
                     if (RuntimesLoader.spineVersion > 34)
                         skeletonData.fps = input.readFloat();
                     skeletonData.imagesPath = input.readString();
-                    if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
+                    if (Objects.requireNonNull(skeletonData.imagesPath).isEmpty()) skeletonData.imagesPath = null;
                     if (RuntimesLoader.spineVersion == 37) {
                         skeletonData.audioPath = input.readString();
-                        if (skeletonData.audioPath.isEmpty()) skeletonData.audioPath = null;
+                        if (Objects.requireNonNull(skeletonData.audioPath).isEmpty()) skeletonData.audioPath = null;
                     }
                 }
 
@@ -1260,10 +1258,9 @@ public class SkeletonBinary {
                 IkConstraintTimeline timeline = new IkConstraintTimeline(frameCount);
                 timeline.ikConstraintIndex = index;
                 for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
-                    switch (RuntimesLoader.spineVersion) {
-                        case 38, 37 -> timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte(), input.readBoolean(), input.readBoolean());
-                        case 36, 35, 34 -> timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte());
-                    }
+                    if (RuntimesLoader.spineVersion > 36)
+                        timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte(), input.readBoolean(), input.readBoolean());
+                    else timeline.setFrame(frameIndex, input.readFloat(), input.readFloat(), input.readByte());
                     if (frameIndex < frameCount - 1) readCurve(input, frameIndex, timeline);
                 }
                 timelines.add(timeline);
