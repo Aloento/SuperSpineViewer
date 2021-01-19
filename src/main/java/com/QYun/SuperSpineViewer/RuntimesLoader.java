@@ -15,7 +15,7 @@ import java.nio.file.Files;
 
 public class RuntimesLoader extends Controller {
 
-    public static short spineVersion = 0;
+    public static byte spineVersion = 0;
     private final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
     private final String[] extraSuffixes = {"", ".txt", ".bytes"};
     private final String[] dataSuffixes = {"", ".json", ".skel"};

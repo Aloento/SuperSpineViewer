@@ -28,7 +28,7 @@ public class RecordFX {
     private final ObservableList<Image> framesList = FXCollections.observableArrayList();
     private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(framesList);
     private final SuperSpine spine = new SuperSpine();
-    private final short FPS = 60;
+    private final byte FPS = 60;
     private boolean recording = false;
     private boolean saveSequence = true;
     private short timer;
