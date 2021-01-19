@@ -28,33 +28,6 @@ public class PathConstraintData extends ConstraintData {
         this.target = target;
     }
 
-    public PositionMode getPositionMode() {
-        return positionMode;
-    }
-
-    public void setPositionMode(PositionMode positionMode) {
-        if (positionMode == null) throw new IllegalArgumentException("positionMode cannot be null.");
-        this.positionMode = positionMode;
-    }
-
-    public SpacingMode getSpacingMode() {
-        return spacingMode;
-    }
-
-    public void setSpacingMode(SpacingMode spacingMode) {
-        if (spacingMode == null) throw new IllegalArgumentException("spacingMode cannot be null.");
-        this.spacingMode = spacingMode;
-    }
-
-    public RotateMode getRotateMode() {
-        return rotateMode;
-    }
-
-    public void setRotateMode(RotateMode rotateMode) {
-        if (rotateMode == null) throw new IllegalArgumentException("rotateMode cannot be null.");
-        this.rotateMode = rotateMode;
-    }
-
     public float getOffsetRotation() {
         return offsetRotation;
     }
