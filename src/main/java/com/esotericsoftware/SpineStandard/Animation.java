@@ -1700,7 +1700,7 @@ public class Animation {
                 deformArray = slot.getDeform();
                 if (deformArray.size == 0) blend = setup;
             } else {
-                if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
+                if (!(slotAttachment instanceof VertexAttachment) || ((VertexAttachment) slotAttachment).applyDeform(attachment))
                     return;
                 verticesArray = slot.getAttachmentVertices();
                 if (verticesArray.size == 0) blend = setup;
@@ -2007,7 +2007,7 @@ public class Animation {
                           MixDirection direction) { // Spine36
             Slot slot = skeleton.slots.get(slotIndex);
             Attachment slotAttachment = slot.attachment;
-            if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
+            if (!(slotAttachment instanceof VertexAttachment) || ((VertexAttachment) slotAttachment).applyDeform(attachment))
                 return;
 
             FloatArray verticesArray = slot.getAttachmentVertices();
@@ -2106,7 +2106,7 @@ public class Animation {
                           boolean mixingOut) { // Spine35
             Slot slot = skeleton.slots.get(slotIndex);
             Attachment slotAttachment = slot.attachment;
-            if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
+            if (!(slotAttachment instanceof VertexAttachment) || ((VertexAttachment) slotAttachment).applyDeform(attachment))
                 return;
 
             FloatArray verticesArray = slot.getAttachmentVertices();
@@ -2181,7 +2181,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha) { // Spine34
             Slot slot = skeleton.slots.get(slotIndex);
             Attachment slotAttachment = slot.attachment;
-            if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
+            if (!(slotAttachment instanceof VertexAttachment) || ((VertexAttachment) slotAttachment).applyDeform(attachment))
                 return;
 
             float[] frames = this.frames;

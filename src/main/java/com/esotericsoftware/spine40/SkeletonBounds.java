@@ -257,7 +257,7 @@ public class SkeletonBounds {
      */
     public @Null
     FloatArray getPolygon(BoundingBoxAttachment boundingBox) {
-        if (boundingBox == null) throw new IllegalArgumentException("boundingBox cannot be null.");
+        if (boundingBox == null) throw new IllegalArgumentException("boundingbox cannot be null.");
         int index = boundingBoxes.indexOf(boundingBox, true);
         return index == -1 ? null : polygons.get(index);
     }

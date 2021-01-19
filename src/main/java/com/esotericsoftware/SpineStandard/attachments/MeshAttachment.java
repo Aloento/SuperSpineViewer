@@ -200,7 +200,7 @@ public class MeshAttachment extends VertexAttachment {
     }
 
     public boolean applyDeform(VertexAttachment sourceAttachment) {
-        return this == sourceAttachment || (inheritDeform && parentMesh == sourceAttachment);
+        return this != sourceAttachment && (!inheritDeform || parentMesh != sourceAttachment);
     }
 
     public float[] updateWorldVertices(Slot slot, boolean premultipliedAlpha) { // Spine35

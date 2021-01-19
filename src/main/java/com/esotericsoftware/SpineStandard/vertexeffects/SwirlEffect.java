@@ -9,8 +9,8 @@ import com.esotericsoftware.SpineStandard.SkeletonRenderer.VertexEffect;
 import com.esotericsoftware.SpineStandard.utils.SpineUtils;
 
 public class SwirlEffect implements VertexEffect {
-    private float worldX, worldY, radius, angle;
     private final Interpolation interpolation = Interpolation.pow2Out;
+    private float worldX, worldY, radius, angle;
     private float centerX, centerY;
 
     public void begin(Skeleton skeleton) {

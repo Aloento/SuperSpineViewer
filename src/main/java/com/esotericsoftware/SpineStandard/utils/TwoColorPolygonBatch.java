@@ -25,15 +25,13 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private final Matrix4 transformMatrix = new Matrix4();
     private final Matrix4 projectionMatrix = new Matrix4();
     private final Matrix4 combinedMatrix = new Matrix4();
-    private final ShaderProgram defaultShader;
     private final Color light = new Color(1, 1, 1, 1);
     private final Color dark = new Color(0, 0, 0, 1);
     public byte totalRenderCalls = 0;
     private boolean blendingDisabled;
-    private ShaderProgram shader;
+    private final ShaderProgram shader;
     private int vertexIndex, triangleIndex;
     private Texture lastTexture;
-    private float invTexWidth = 0, invTexHeight = 0;
     private boolean drawing;
     private int blendSrcFunc = GL20.GL_SRC_ALPHA;
     private int blendDstFunc = GL20.GL_ONE_MINUS_SRC_ALPHA;
@@ -41,7 +39,6 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private int blendDstFuncAlpha = GL20.GL_ONE_MINUS_SRC_ALPHA;
     private boolean premultipliedAlpha;
     private float lightPacked = Color.WHITE.toFloatBits();
-    private float darkPacked = Color.BLACK.toFloatBits();
 
     public TwoColorPolygonBatch(int size) {
         this(size, size * 2);
@@ -61,8 +58,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
         vertices = new float[maxVertices * 6];
         triangles = new short[maxTriangles * 3];
-        defaultShader = createDefaultShader();
-        shader = defaultShader;
+        shader = createDefaultShader();
         projectionMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
@@ -119,7 +115,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
 
     public void setDarkColor(Color tint) {
         dark.set(tint);
-        darkPacked = tint.toFloatBits();
+        float darkPacked = tint.toFloatBits();
     }
 
     public void draw(PolygonRegion region, float x, float y) {
@@ -1255,8 +1251,8 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private void switchTexture(Texture texture) {
         flush();
         lastTexture = texture;
-        invTexWidth = 1.0f / texture.getWidth();
-        invTexHeight = 1.0f / texture.getHeight();
+        float invTexWidth = 1.0f / texture.getWidth();
+        float invTexHeight = 1.0f / texture.getHeight();
     }
 
     @Override

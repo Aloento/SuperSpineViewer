@@ -414,7 +414,6 @@ public class AnimationState {
                     if (RuntimesLoader.spineVersion == 38) {
                         if (drawOrder && timeline instanceof DrawOrderTimeline && timelineBlend == MixBlend.setup)
                             direction = MixDirection.in;
-                        timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
                     } else {
                         if (timelineBlend == MixBlend.setup) {
                             if (timeline instanceof AttachmentTimeline) {
@@ -423,8 +422,8 @@ public class AnimationState {
                                 if (drawOrder) direction = MixDirection.in;
                             }
                         }
-                        timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
                     }
+                    timeline.apply(skeleton, animationLast, animationTime, events, alpha, timelineBlend, direction);
                 }
             }
         }

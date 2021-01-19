@@ -82,7 +82,7 @@ abstract public class VertexAttachment extends Attachment {
     }
 
     public boolean applyDeform(VertexAttachment sourceAttachment) {
-        return this == sourceAttachment;
+        return this != sourceAttachment;
     }
 
     public VertexAttachment getDeformAttachment() {
