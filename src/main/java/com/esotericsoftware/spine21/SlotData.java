@@ -33,11 +33,9 @@ public class SlotData {
         return color;
     }
 
-
     public String getAttachmentName() {
         return attachmentName;
     }
-
 
     public void setAttachmentName(String attachmentName) {
         this.attachmentName = attachmentName;

@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.badlogic.gdx.utils.Pools;
 
-
 public class AnimationStatePR {
     private final AnimationStateData data;
     private final Array<TrackEntry> tracks = new Array();
@@ -22,19 +21,16 @@ public class AnimationStatePR {
         for (int i = 0; i < tracks.size; i++) {
             TrackEntry current = tracks.get(i);
             if (current == null) continue;
-
             float trackDelta = delta * current.timeScale;
             current.time += trackDelta;
             if (current.mixDuration > 0) {
                 if (current.previous != null) current.previous.time += trackDelta;
                 current.mixTime += trackDelta;
             }
-
             TrackEntry next = current.next;
             if (next != null) {
                 if (current.lastTime >= next.delay) setCurrent(i, next);
             } else {
-
                 if (!current.loop && current.lastTime >= current.endTime) clearTrack(i);
             }
         }
@@ -43,45 +39,36 @@ public class AnimationStatePR {
     public void apply(Skeleton skeleton) {
         Array<Event> events = this.events;
         int listenerCount = listeners.size;
-
         for (int i = 0; i < tracks.size; i++) {
             TrackEntry current = tracks.get(i);
             if (current == null) continue;
-
             events.size = 0;
-
             float time = current.time;
             float lastTime = current.lastTime;
             float endTime = current.endTime;
             boolean loop = current.loop;
             if (!loop && time > endTime) time = endTime;
-
             TrackEntry previous = current.previous;
-
             if (current.mixDuration > 0) {
                 float alpha = current.mixTime / current.mixDuration;
                 if (alpha >= 1) {
                     alpha = 1;
                     current.mixDuration = 0;
                 }
-
                 if (previous == null) {
                     current.animation.mix(skeleton, lastTime, time, loop, events, alpha);
                     System.out.println("none -> " + current.animation + ": " + alpha);
                 } else {
                     float previousTime = previous.time;
                     if (!previous.loop && previousTime > previous.endTime) previousTime = previous.endTime;
-
                     if (current.animation == null) {
                         previous.animation.mix(skeleton, previousTime, previousTime, previous.loop, null, 1 - alpha);
                         System.out.println(previous.animation + " -> none: " + alpha);
-
                     } else {
                         previous.animation.apply(skeleton, previousTime, previousTime, previous.loop, null);
                         current.animation.mix(skeleton, lastTime, time, loop, events, alpha);
                         System.out.println(previous.animation + " -> " + current.animation + ": " + alpha);
                     }
-
                     if (alpha >= 1) {
                         Pools.free(previous);
                         current.previous = null;
@@ -90,22 +77,18 @@ public class AnimationStatePR {
                 }
             } else
                 current.animation.apply(skeleton, lastTime, time, loop, events);
-
             for (int ii = 0, nn = events.size; ii < nn; ii++) {
                 Event event = events.get(ii);
                 if (current.listener != null) current.listener.event(i, event);
                 for (int iii = 0; iii < listenerCount; iii++)
                     listeners.get(iii).event(i, event);
             }
-
-
             if (loop ? (lastTime % endTime > time % endTime) : (lastTime < endTime && time >= endTime)) {
                 int count = (int) (time / endTime);
                 if (current.listener != null) current.listener.complete(i, count);
                 for (int ii = 0, nn = listeners.size; ii < nn; ii++)
                     listeners.get(ii).complete(i, count);
             }
-
             current.lastTime = current.time;
         }
     }
@@ -120,11 +103,9 @@ public class AnimationStatePR {
         if (trackIndex >= tracks.size) return;
         TrackEntry current = tracks.get(trackIndex);
         if (current == null) return;
-
         if (current.listener != null) current.listener.end(trackIndex);
         for (int i = 0, n = listeners.size; i < n; i++)
             listeners.get(i).end(trackIndex);
-
         tracks.set(trackIndex, null);
         freeAll(current);
         if (current.previous != null) Pools.free(current.previous);
@@ -152,11 +133,9 @@ public class AnimationStatePR {
                 Pools.free(current.previous);
                 current.previous = null;
             }
-
             if (current.listener != null) current.listener.end(index);
             for (int i = 0, n = listeners.size; i < n; i++)
                 listeners.get(i).end(index);
-
             entry.mixDuration = entry.animation != null ? data.getMix(current.animation, entry.animation) : data.defaultMix;
             if (entry.mixDuration > 0) {
                 entry.mixTime = 0;
@@ -165,14 +144,11 @@ public class AnimationStatePR {
                 Pools.free(current);
         } else
             entry.mixDuration = data.defaultMix;
-
         tracks.set(index, entry);
-
         if (entry.listener != null) entry.listener.start(index);
         for (int i = 0, n = listeners.size; i < n; i++)
             listeners.get(i).start(index);
     }
-
 
     public TrackEntry setAnimation(int trackIndex, String animationName, boolean loop) {
         Animation animation = data.getSkeletonData().findAnimation(animationName);
@@ -180,11 +156,9 @@ public class AnimationStatePR {
         return setAnimation(trackIndex, animation, loop);
     }
 
-
     public TrackEntry setAnimation(int trackIndex, Animation animation, boolean loop) {
         TrackEntry current = expandToIndex(trackIndex);
         if (current != null) freeAll(current.next);
-
         TrackEntry entry = Pools.obtain(TrackEntry.class);
         entry.animation = animation;
         entry.loop = loop;
@@ -193,20 +167,17 @@ public class AnimationStatePR {
         return entry;
     }
 
-
     public TrackEntry addAnimation(int trackIndex, String animationName, boolean loop, float delay) {
         Animation animation = data.getSkeletonData().findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return addAnimation(trackIndex, animation, loop, delay);
     }
 
-
     public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
         TrackEntry entry = Pools.obtain(TrackEntry.class);
         entry.animation = animation;
         entry.loop = loop;
         entry.endTime = animation != null ? animation.getDuration() : data.defaultMix;
-
         TrackEntry last = expandToIndex(trackIndex);
         if (last != null) {
             while (last.next != null)
@@ -214,7 +185,6 @@ public class AnimationStatePR {
             last.next = entry;
         } else
             tracks.set(trackIndex, entry);
-
         if (delay <= 0) {
             if (last != null) {
                 float mix = animation != null ? data.getMix(last.animation, animation) : data.defaultMix;
@@ -223,22 +193,18 @@ public class AnimationStatePR {
                 delay = 0;
         }
         entry.delay = delay;
-
         return entry;
     }
-
 
     public TrackEntry getCurrent(int trackIndex) {
         if (trackIndex >= tracks.size) return null;
         return tracks.get(trackIndex);
     }
 
-
     public void addListener(AnimationStateListener listener) {
         if (listener == null) throw new IllegalArgumentException("listener cannot be null.");
         listeners.add(listener);
     }
-
 
     public void removeListener(AnimationStateListener listener) {
         listeners.removeValue(listener, true);
@@ -269,15 +235,11 @@ public class AnimationStatePR {
     }
 
     public interface AnimationStateListener {
-
         void event(int trackIndex, Event event);
-
 
         void complete(int trackIndex, int loopCount);
 
-
         void start(int trackIndex);
-
 
         void end(int trackIndex);
     }
@@ -373,7 +335,6 @@ public class AnimationStatePR {
         public void setNext(TrackEntry next) {
             this.next = next;
         }
-
 
         public boolean isComplete() {
             return time >= endTime;

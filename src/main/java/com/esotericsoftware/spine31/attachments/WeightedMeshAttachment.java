@@ -9,9 +9,6 @@ import com.esotericsoftware.spine31.Bone;
 import com.esotericsoftware.spine31.Skeleton;
 import com.esotericsoftware.spine31.Slot;
 
-/**
- * Attachment that displays a texture region.
- */
 public class WeightedMeshAttachment extends Attachment implements FfdAttachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -23,8 +20,6 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
     private int hullLength;
     private WeightedMeshAttachment parentMesh;
     private boolean inheritFFD;
-
-    // Nonessential.
     private short[] edges;
     private float width, height;
 
@@ -48,7 +43,6 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
         int worldVerticesLength = verticesLength / 2 * 5;
         if (worldVertices == null || worldVertices.length != worldVerticesLength)
             worldVertices = new float[worldVerticesLength];
-
         float u, v, width, height;
         if (region == null) {
             u = v = 0;
@@ -72,9 +66,6 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
         }
     }
 
-    /**
-     * @return The updated world vertices.
-     */
     public float[] updateWorldVertices(Slot slot, boolean premultipliedAlpha) {
         Skeleton skeleton = slot.getSkeleton();
         Color skeletonColor = skeleton.getColor();
@@ -82,18 +73,16 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
         Color regionColor = color;
         float a = skeletonColor.a * meshColor.a * regionColor.a * 255;
         float multiplier = premultipliedAlpha ? a : 255;
-        float color = NumberUtils.intToFloatColor( //
-                ((int) a << 24) //
-                        | ((int) (skeletonColor.b * meshColor.b * regionColor.b * multiplier) << 16) //
-                        | ((int) (skeletonColor.g * meshColor.g * regionColor.g * multiplier) << 8) //
+        float color = NumberUtils.intToFloatColor(
+                ((int) a << 24)
+                        | ((int) (skeletonColor.b * meshColor.b * regionColor.b * multiplier) << 16)
+                        | ((int) (skeletonColor.g * meshColor.g * regionColor.g * multiplier) << 8)
                         | (int) (skeletonColor.r * meshColor.r * regionColor.r * multiplier));
-
         float[] worldVertices = this.worldVertices;
         float x = skeleton.getX(), y = skeleton.getY();
         Object[] skeletonBones = skeleton.getBones().items;
         float[] weights = this.weights;
         int[] bones = this.bones;
-
         FloatArray ffdArray = slot.getAttachmentVertices();
         if (ffdArray.size == 0) {
             for (int w = 0, v = 0, b = 0, n = bones.length; v < n; w += 5) {
@@ -140,9 +129,6 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
         return bones;
     }
 
-    /**
-     * For each vertex, the number of bones affecting the vertex followed by that many bone indices. Ie: count, boneIndex, ...
-     */
     public void setBones(int[] bones) {
         this.bones = bones;
     }
@@ -151,10 +137,6 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
         return weights;
     }
 
-    /**
-     * For each bone affecting the vertex, the vertex position in the bone's coordinate system and the weight for the bone's
-     * influence. Ie: x, y, weight, ...
-     */
     public void setWeights(float[] weights) {
         this.weights = weights;
     }
@@ -163,9 +145,6 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
         return triangles;
     }
 
-    /**
-     * Vertex number triplets which describe the mesh's triangulation.
-     */
     public void setTriangles(short[] triangles) {
         this.triangles = triangles;
     }
@@ -174,9 +153,6 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
         return regionUVs;
     }
 
-    /**
-     * For each vertex, a texure coordinate pair. Ie: u, v, ...
-     */
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;
     }
@@ -225,16 +201,10 @@ public class WeightedMeshAttachment extends Attachment implements FfdAttachment 
         this.height = height;
     }
 
-    /**
-     * Returns the source mesh if this is a linked mesh, else returns null.
-     */
     public WeightedMeshAttachment getParentMesh() {
         return parentMesh;
     }
 
-    /**
-     * @param parentMesh May be null.
-     */
     public void setParentMesh(WeightedMeshAttachment parentMesh) {
         this.parentMesh = parentMesh;
         if (parentMesh != null) {

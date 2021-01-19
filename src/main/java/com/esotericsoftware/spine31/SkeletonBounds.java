@@ -21,28 +21,23 @@ public class SkeletonBounds {
         Array<FloatArray> polygons = this.polygons;
         Array<Slot> slots = skeleton.slots;
         int slotCount = slots.size;
-
         boundingBoxes.clear();
         polygonPool.freeAll(polygons);
         polygons.clear();
-
         for (int i = 0; i < slotCount; i++) {
             Slot slot = slots.get(i);
             Attachment attachment = slot.attachment;
             if (attachment instanceof BoundingBoxAttachment) {
                 BoundingBoxAttachment boundingBox = (BoundingBoxAttachment) attachment;
                 boundingBoxes.add(boundingBox);
-
                 FloatArray polygon = polygonPool.obtain();
                 polygons.add(polygon);
                 int vertexCount = boundingBox.getVertices().length;
                 polygon.ensureCapacity(vertexCount);
                 polygon.size = vertexCount;
-
                 boundingBox.computeWorldVertices(slot.bone, polygon.items);
             }
         }
-
         if (updateAabb) aabbCompute();
     }
 
@@ -67,16 +62,10 @@ public class SkeletonBounds {
         this.maxY = maxY;
     }
 
-    /**
-     * Returns true if the axis aligned bounding box contains the point.
-     */
     public boolean aabbContainsPoint(float x, float y) {
         return x >= minX && x <= maxX && y >= minY && y <= maxY;
     }
 
-    /**
-     * Returns true if the axis aligned bounding box intersects the line segment.
-     */
     public boolean aabbIntersectsSegment(float x1, float y1, float x2, float y2) {
         float minX = this.minX;
         float minY = this.minY;
@@ -95,17 +84,10 @@ public class SkeletonBounds {
         return x > minX && x < maxX;
     }
 
-    /**
-     * Returns true if the axis aligned bounding box intersects the axis aligned bounding box of the specified bounds.
-     */
     public boolean aabbIntersectsSkeleton(SkeletonBounds bounds) {
         return minX < bounds.maxX && maxX > bounds.minX && minY < bounds.maxY && maxY > bounds.minY;
     }
 
-    /**
-     * Returns the first bounding box attachment that contains the point, or null. When doing many checks, it is usually more
-     * efficient to only call this method if {@link #aabbContainsPoint(float, float)} returns true.
-     */
     public BoundingBoxAttachment containsPoint(float x, float y) {
         Array<FloatArray> polygons = this.polygons;
         for (int i = 0, n = polygons.size; i < n; i++)
@@ -113,13 +95,9 @@ public class SkeletonBounds {
         return null;
     }
 
-    /**
-     * Returns true if the polygon contains the point.
-     */
     public boolean containsPoint(FloatArray polygon, float x, float y) {
         float[] vertices = polygon.items;
         int nn = polygon.size;
-
         int prevIndex = nn - 2;
         boolean inside = false;
         for (int ii = 0; ii < nn; ii += 2) {
@@ -134,11 +112,6 @@ public class SkeletonBounds {
         return inside;
     }
 
-    /**
-     * Returns the first bounding box attachment that contains any part of the line segment, or null. When doing many checks, it
-     * is usually more efficient to only call this method if {@link #aabbIntersectsSegment(float, float, float, float)} returns
-     * true.
-     */
     public BoundingBoxAttachment intersectsSegment(float x1, float y1, float x2, float y2) {
         Array<FloatArray> polygons = this.polygons;
         for (int i = 0, n = polygons.size; i < n; i++)
@@ -146,13 +119,9 @@ public class SkeletonBounds {
         return null;
     }
 
-    /**
-     * Returns true if the polygon contains any part of the line segment.
-     */
     public boolean intersectsSegment(FloatArray polygon, float x1, float y1, float x2, float y2) {
         float[] vertices = polygon.items;
         int nn = polygon.size;
-
         float width12 = x1 - x2, height12 = y1 - y2;
         float det1 = x1 * y2 - y1 * x2;
         float x3 = vertices[nn - 2], y3 = vertices[nn - 1];
@@ -205,9 +174,6 @@ public class SkeletonBounds {
         return polygons;
     }
 
-    /**
-     * Returns the polygon for the specified bounding box, or null.
-     */
     public FloatArray getPolygon(BoundingBoxAttachment boundingBox) {
         int index = boundingBoxes.indexOf(boundingBox, true);
         return index == -1 ? null : polygons.get(index);

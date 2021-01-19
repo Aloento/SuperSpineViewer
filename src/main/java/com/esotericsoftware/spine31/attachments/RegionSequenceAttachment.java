@@ -4,9 +4,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.spine31.Slot;
 
-/**
- * Attachment that displays various texture regions over time.
- */
 public class RegionSequenceAttachment extends RegionAttachment {
     private Mode mode;
     private float frameTime;
@@ -18,7 +15,6 @@ public class RegionSequenceAttachment extends RegionAttachment {
 
     public float[] updateWorldVertices(Slot slot, boolean premultipliedAlpha) {
         if (regions == null) throw new IllegalStateException("Regions have not been set: " + this);
-
         int frameIndex = (int) (slot.getAttachmentTime() / frameTime);
         switch (mode) {
             case forward -> frameIndex = Math.min(regions.length - 1, frameIndex);
@@ -35,7 +31,6 @@ public class RegionSequenceAttachment extends RegionAttachment {
             }
         }
         setRegion(regions[frameIndex]);
-
         return super.updateWorldVertices(slot, premultipliedAlpha);
     }
 
@@ -48,9 +43,6 @@ public class RegionSequenceAttachment extends RegionAttachment {
         this.regions = regions;
     }
 
-    /**
-     * Sets the time in seconds each frame is shown.
-     */
     public void setFrameTime(float frameTime) {
         this.frameTime = frameTime;
     }

@@ -9,9 +9,6 @@ import com.esotericsoftware.spine31.Bone;
 import com.esotericsoftware.spine31.Skeleton;
 import com.esotericsoftware.spine31.Slot;
 
-/**
- * Attachment that displays a texture region.
- */
 public class MeshAttachment extends Attachment implements FfdAttachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -22,8 +19,6 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
     private int hullLength;
     private MeshAttachment parentMesh;
     private boolean inheritFFD;
-
-    // Nonessential.
     private short[] edges;
     private float width, height;
 
@@ -46,7 +41,6 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
         int worldVerticesLength = verticesLength / 2 * 5;
         if (worldVertices == null || worldVertices.length != worldVerticesLength)
             worldVertices = new float[worldVerticesLength];
-
         float u, v, width, height;
         if (region == null) {
             u = v = 0;
@@ -71,9 +65,6 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
         }
     }
 
-    /**
-     * @return The updated world vertices.
-     */
     public float[] updateWorldVertices(Slot slot, boolean premultipliedAlpha) {
         Skeleton skeleton = slot.getSkeleton();
         Color skeletonColor = skeleton.getColor();
@@ -81,12 +72,11 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
         Color meshColor = color;
         float a = skeletonColor.a * slotColor.a * meshColor.a * 255;
         float multiplier = premultipliedAlpha ? a : 255;
-        float color = NumberUtils.intToFloatColor( //
-                ((int) a << 24) //
-                        | ((int) (skeletonColor.b * slotColor.b * meshColor.b * multiplier) << 16) //
-                        | ((int) (skeletonColor.g * slotColor.g * meshColor.g * multiplier) << 8) //
+        float color = NumberUtils.intToFloatColor(
+                ((int) a << 24)
+                        | ((int) (skeletonColor.b * slotColor.b * meshColor.b * multiplier) << 16)
+                        | ((int) (skeletonColor.g * slotColor.g * meshColor.g * multiplier) << 8)
                         | (int) (skeletonColor.r * slotColor.r * meshColor.r * multiplier));
-
         float[] worldVertices = this.worldVertices;
         FloatArray slotVertices = slot.getAttachmentVertices();
         float[] vertices = this.vertices;
@@ -180,16 +170,10 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
         this.height = height;
     }
 
-    /**
-     * Returns the source mesh if this is a linked mesh, else returns null.
-     */
     public MeshAttachment getParentMesh() {
         return parentMesh;
     }
 
-    /**
-     * @param parentMesh May be null.
-     */
     public void setParentMesh(MeshAttachment parentMesh) {
         this.parentMesh = parentMesh;
         if (parentMesh != null) {

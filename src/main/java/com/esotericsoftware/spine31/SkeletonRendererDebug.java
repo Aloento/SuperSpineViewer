@@ -21,7 +21,6 @@ public class SkeletonRendererDebug {
     static private final Color triangleLineColor = new Color(1, 0.64f, 0, 0.5f);
     static private final Color boundingBoxColor = new Color(0, 1, 0, 0.8f);
     static private final Color aabbColor = new Color(0, 1, 0, 0.5f);
-
     private final ShapeRenderer shapes;
     private final SkeletonBounds bounds = new SkeletonBounds();
     private boolean drawBones = true, drawRegionAttachments = true, drawBoundingBoxes = true;
@@ -40,13 +39,10 @@ public class SkeletonRendererDebug {
     public void draw(Skeleton skeleton) {
         float skeletonX = skeleton.getX();
         float skeletonY = skeleton.getY();
-
         Gdx.gl.glEnable(GL20.GL_BLEND);
         int srcFunc = premultipliedAlpha ? GL20.GL_ONE : GL20.GL_SRC_ALPHA;
         Gdx.gl.glBlendFunc(srcFunc, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
         ShapeRenderer shapes = this.shapes;
-
         Array<Bone> bones = skeleton.getBones();
         if (drawBones) {
             shapes.setColor(boneLineColor);
@@ -64,7 +60,6 @@ public class SkeletonRendererDebug {
             shapes.x(skeletonX, skeletonY, 4 * scale);
         } else
             shapes.begin(ShapeType.Line);
-
         if (drawRegionAttachments) {
             shapes.setColor(attachmentLineColor);
             Array<Slot> slots = skeleton.getSlots();
@@ -81,7 +76,6 @@ public class SkeletonRendererDebug {
                 }
             }
         }
-
         if (drawMeshHull || drawMeshTriangles) {
             Array<Slot> slots = skeleton.getSlots();
             for (int i = 0, n = slots.size; i < n; i++) {
@@ -108,9 +102,9 @@ public class SkeletonRendererDebug {
                     shapes.setColor(triangleLineColor);
                     for (int ii = 0, nn = triangles.length; ii < nn; ii += 3) {
                         int v1 = triangles[ii] * 5, v2 = triangles[ii + 1] * 5, v3 = triangles[ii + 2] * 5;
-                        shapes.triangle(vertices[v1], vertices[v1 + 1], //
-                                vertices[v2], vertices[v2 + 1], //
-                                vertices[v3], vertices[v3 + 1] //
+                        shapes.triangle(vertices[v1], vertices[v1 + 1],
+                                vertices[v2], vertices[v2 + 1],
+                                vertices[v3], vertices[v3 + 1]
                         );
                     }
                 }
@@ -127,7 +121,6 @@ public class SkeletonRendererDebug {
                 }
             }
         }
-
         if (drawBoundingBoxes) {
             SkeletonBounds bounds = this.bounds;
             bounds.update(skeleton, true);
@@ -140,10 +133,8 @@ public class SkeletonRendererDebug {
                 shapes.polygon(polygon.items, 0, polygon.size);
             }
         }
-
         shapes.end();
         shapes.begin(ShapeType.Filled);
-
         if (drawBones) {
             shapes.setColor(boneOriginColor);
             for (int i = 0, n = bones.size; i < n; i++) {
@@ -152,7 +143,6 @@ public class SkeletonRendererDebug {
                 shapes.circle(skeletonX + bone.worldX, skeletonY + bone.worldY, 3 * scale, 8);
             }
         }
-
         shapes.end();
     }
 

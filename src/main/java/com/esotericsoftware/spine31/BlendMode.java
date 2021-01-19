@@ -3,12 +3,11 @@ package com.esotericsoftware.spine31;
 import com.badlogic.gdx.graphics.GL20;
 
 public enum BlendMode {
-    normal(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA), //
-    additive(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE), //
-    multiply(GL20.GL_DST_COLOR, GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA), //
-    screen(GL20.GL_ONE, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_COLOR), //
+    normal(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA),
+    additive(GL20.GL_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE),
+    multiply(GL20.GL_DST_COLOR, GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA),
+    screen(GL20.GL_ONE, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_COLOR),
     ;
-
     static public final BlendMode[] values = values();
     final int source;
     final int sourcePMA;

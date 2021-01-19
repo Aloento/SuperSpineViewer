@@ -7,7 +7,6 @@ import static com.badlogic.gdx.math.MathUtils.*;
 
 public class IkConstraint {
     static private final Vector2 temp = new Vector2();
-
     final IkConstraintData data;
     final Array<Bone> bones;
     Bone target;
@@ -18,7 +17,6 @@ public class IkConstraint {
         this.data = data;
         mix = data.mix;
         bendDirection = data.bendDirection;
-
         bones = new Array(data.bones.size);
         if (skeleton != null) {
             for (BoneData boneData : data.bones)
@@ -26,7 +24,6 @@ public class IkConstraint {
             target = skeleton.findBone(data.target.name);
         }
     }
-
 
     public IkConstraint(IkConstraint ikConstraint, Array<Bone> bones, Bone target) {
         data = ikConstraint.data;
@@ -36,14 +33,12 @@ public class IkConstraint {
         bendDirection = ikConstraint.bendDirection;
     }
 
-
     static public void apply(Bone bone, float targetX, float targetY, float alpha) {
         float parentRotation = (!bone.data.inheritRotation || bone.parent == null) ? 0 : bone.parent.worldRotation;
         float rotation = bone.rotation;
         float rotationIK = (float) Math.atan2(targetY - bone.worldY, targetX - bone.worldX) * radDeg - parentRotation;
         bone.rotationIK = rotation + (rotationIK - rotation) * alpha;
     }
-
 
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDirection, float alpha) {
         float childRotation = child.rotation, parentRotation = parent.rotation;
@@ -69,7 +64,6 @@ public class IkConstraint {
         float childX = position.x * parent.worldScaleX, childY = position.y * parent.worldScaleY;
         float offset = (float) Math.atan2(childY, childX);
         float len1 = (float) Math.sqrt(childX * childX + childY * childY), len2 = child.data.length * child.worldScaleX;
-
         float cosDenom = 2 * len1 * len2;
         if (cosDenom < 0.0001f) {
             child.rotationIK = childRotation + ((float) Math.atan2(targetY, targetX) * radDeg - parentRotation - childRotation)

@@ -6,10 +6,8 @@ import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
 import com.esotericsoftware.spine21.attachments.Attachment;
 
-
 public class Skin {
     static private final Key lookup = new Key();
-
     final String name;
     final ObjectMap<Key, Attachment> attachments = new ObjectMap();
     final Pool<Key> keyPool = new Pool(64) {
@@ -30,7 +28,6 @@ public class Skin {
         key.set(slotIndex, name);
         attachments.put(key, attachment);
     }
-
 
     public Attachment getAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
@@ -65,7 +62,6 @@ public class Skin {
     public String toString() {
         return name;
     }
-
 
     void attachAll(Skeleton skeleton, Skin oldSkin) {
         for (Entry<Key, Attachment> entry : oldSkin.attachments.entries()) {

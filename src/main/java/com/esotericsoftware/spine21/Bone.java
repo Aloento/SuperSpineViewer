@@ -14,7 +14,6 @@ public class Bone {
     float rotation, rotationIK;
     float scaleX, scaleY;
     boolean flipX, flipY;
-
     float m00, m01, worldX;
     float m10, m11, worldY;
     float worldRotation;
@@ -27,7 +26,6 @@ public class Bone {
         skeleton = null;
     }
 
-
     public Bone(BoneData data, Skeleton skeleton, Bone parent) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -36,7 +34,6 @@ public class Bone {
         this.parent = parent;
         setToSetupPose();
     }
-
 
     public Bone(Bone bone, Skeleton skeleton, Bone parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
@@ -52,7 +49,6 @@ public class Bone {
         flipX = bone.flipX;
         flipY = bone.flipY;
     }
-
 
     public void updateWorldTransform() {
         Skeleton skeleton = this.skeleton;
@@ -144,7 +140,6 @@ public class Bone {
         this.y = y;
     }
 
-
     public float getRotation() {
         return rotation;
     }
@@ -152,7 +147,6 @@ public class Bone {
     public void setRotation(float rotation) {
         this.rotation = rotation;
     }
-
 
     public float getRotationIK() {
         return rotationIK;

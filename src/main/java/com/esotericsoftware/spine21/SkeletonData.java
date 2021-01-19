@@ -14,11 +14,9 @@ public class SkeletonData {
     float width, height;
     String version, hash, imagesPath;
 
-
     public Array<BoneData> getBones() {
         return bones;
     }
-
 
     public BoneData findBone(String boneName) {
         if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
@@ -30,7 +28,6 @@ public class SkeletonData {
         return null;
     }
 
-
     public int findBoneIndex(String boneName) {
         if (boneName == null) throw new IllegalArgumentException("boneName cannot be null.");
         Array<BoneData> bones = this.bones;
@@ -39,11 +36,9 @@ public class SkeletonData {
         return -1;
     }
 
-
     public Array<SlotData> getSlots() {
         return slots;
     }
-
 
     public SlotData findSlot(String slotName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
@@ -55,7 +50,6 @@ public class SkeletonData {
         return null;
     }
 
-
     public int findSlotIndex(String slotName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
         Array<SlotData> slots = this.slots;
@@ -64,16 +58,13 @@ public class SkeletonData {
         return -1;
     }
 
-
     public Skin getDefaultSkin() {
         return defaultSkin;
     }
 
-
     public void setDefaultSkin(Skin defaultSkin) {
         this.defaultSkin = defaultSkin;
     }
-
 
     public Skin findSkin(String skinName) {
         if (skinName == null) throw new IllegalArgumentException("skinName cannot be null.");
@@ -82,11 +73,9 @@ public class SkeletonData {
         return null;
     }
 
-
     public Array<Skin> getSkins() {
         return skins;
     }
-
 
     public EventData findEvent(String eventDataName) {
         if (eventDataName == null) throw new IllegalArgumentException("eventDataName cannot be null.");
@@ -99,11 +88,9 @@ public class SkeletonData {
         return events;
     }
 
-
     public Array<Animation> getAnimations() {
         return animations;
     }
-
 
     public Animation findAnimation(String animationName) {
         if (animationName == null) throw new IllegalArgumentException("animationName cannot be null.");
@@ -115,11 +102,9 @@ public class SkeletonData {
         return null;
     }
 
-
     public Array<IkConstraintData> getIkConstraints() {
         return ikConstraints;
     }
-
 
     public IkConstraintData findIkConstraint(String ikConstraintName) {
         if (ikConstraintName == null) throw new IllegalArgumentException("ikConstraintName cannot be null.");
@@ -131,11 +116,9 @@ public class SkeletonData {
         return null;
     }
 
-
     public String getName() {
         return name;
     }
-
 
     public void setName(String name) {
         this.name = name;
@@ -157,31 +140,25 @@ public class SkeletonData {
         this.height = height;
     }
 
-
     public String getVersion() {
         return version;
     }
-
 
     public void setVersion(String version) {
         this.version = version;
     }
 
-
     public String getHash() {
         return hash;
     }
-
 
     public void setHash(String hash) {
         this.hash = hash;
     }
 
-
     public String getImagesPath() {
         return imagesPath;
     }
-
 
     public void setImagesPath(String imagesPath) {
         this.imagesPath = imagesPath;

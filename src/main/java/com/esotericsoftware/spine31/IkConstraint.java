@@ -15,7 +15,6 @@ public class IkConstraint implements Updatable {
         this.data = data;
         mix = data.mix;
         bendDirection = data.bendDirection;
-
         bones = new Array(data.bones.size);
         if (skeleton != null) {
             for (BoneData boneData : data.bones)
@@ -24,9 +23,6 @@ public class IkConstraint implements Updatable {
         }
     }
 
-    /**
-     * Copy constructor.
-     */
     public IkConstraint(IkConstraint ikConstraint, Skeleton skeleton) {
         data = ikConstraint.data;
         bones = new Array(ikConstraint.bones.size);
@@ -37,10 +33,6 @@ public class IkConstraint implements Updatable {
         bendDirection = ikConstraint.bendDirection;
     }
 
-    /**
-     * Adjusts the bone rotation so the tip is as close to the target position as possible. The target is specified in the world
-     * coordinate system.
-     */
     static public void apply(Bone bone, float targetX, float targetY, float alpha) {
         float parentRotation = bone.parent == null ? 0 : bone.parent.getWorldRotationX();
         float rotation = bone.rotation;
@@ -54,12 +46,6 @@ public class IkConstraint implements Updatable {
                 bone.appliedScaleY);
     }
 
-    /**
-     * Adjusts the parent and child bone rotations so the tip of the child is as close to the target position as possible. The
-     * target is specified in the world coordinate system.
-     *
-     * @param child A direct descendant of the parent bone.
-     */
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, float alpha) {
         if (alpha == 0) return;
         float px = parent.x, py = parent.y, psx = parent.appliedScaleX, psy = parent.appliedScaleY;

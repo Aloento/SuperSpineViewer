@@ -12,7 +12,6 @@ public class SkeletonMeshRenderer extends SkeletonRenderer<PolygonSpriteBatch> {
     public void draw(PolygonSpriteBatch batch, Skeleton skeleton) {
         boolean premultipliedAlpha = this.premultipliedAlpha;
         BlendMode blendMode = null;
-
         float[] vertices = null;
         short[] triangles = null;
         Array<Slot> drawOrder = skeleton.drawOrder;
@@ -25,19 +24,16 @@ public class SkeletonMeshRenderer extends SkeletonRenderer<PolygonSpriteBatch> {
                 vertices = region.updateWorldVertices(slot, premultipliedAlpha);
                 triangles = quadTriangles;
                 texture = region.getRegion().getTexture();
-
             } else if (attachment instanceof MeshAttachment) {
                 MeshAttachment mesh = (MeshAttachment) attachment;
                 vertices = mesh.updateWorldVertices(slot, premultipliedAlpha);
                 triangles = mesh.getTriangles();
                 texture = mesh.getRegion().getTexture();
-
             } else if (attachment instanceof WeightedMeshAttachment) {
                 WeightedMeshAttachment mesh = (WeightedMeshAttachment) attachment;
                 vertices = mesh.updateWorldVertices(slot, premultipliedAlpha);
                 triangles = mesh.getTriangles();
                 texture = mesh.getRegion().getTexture();
-
             } else if (attachment instanceof SkeletonAttachment) {
                 Skeleton attachmentSkeleton = ((SkeletonAttachment) attachment).getSkeleton();
                 if (attachmentSkeleton == null) continue;
@@ -49,15 +45,12 @@ public class SkeletonMeshRenderer extends SkeletonRenderer<PolygonSpriteBatch> {
                 attachmentSkeleton.setPosition(skeleton.getX() + bone.getWorldX(), skeleton.getY() + bone.getWorldY());
                 rootBone.setRotation(oldRotation + bone.getWorldRotationX());
                 attachmentSkeleton.updateWorldTransform();
-
                 draw(batch, attachmentSkeleton);
-
                 attachmentSkeleton.setPosition(0, 0);
                 rootBone.setScaleX(oldScaleX);
                 rootBone.setScaleY(oldScaleY);
                 rootBone.setRotation(oldRotation);
             }
-
             if (texture != null) {
                 BlendMode slotBlendMode = slot.data.getBlendMode();
                 if (slotBlendMode != blendMode) {

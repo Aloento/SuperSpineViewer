@@ -11,7 +11,6 @@ import com.esotericsoftware.spine21.Slot;
 
 import static com.badlogic.gdx.graphics.g2d.Batch.*;
 
-
 public class RegionAttachment extends Attachment {
     static public final int BLX = 0;
     static public final int BLY = 1;
@@ -125,32 +124,27 @@ public class RegionAttachment extends Attachment {
                         | ((int) (skeletonColor.b * slotColor.b * regionColor.b * multiplier) << 16)
                         | ((int) (skeletonColor.g * slotColor.g * regionColor.g * multiplier) << 8)
                         | (int) (skeletonColor.r * slotColor.r * regionColor.r * multiplier));
-
         float[] vertices = this.vertices;
         float[] offset = this.offset;
         Bone bone = slot.getBone();
         float x = skeleton.getX() + bone.getWorldX(), y = skeleton.getY() + bone.getWorldY();
         float m00 = bone.getM00(), m01 = bone.getM01(), m10 = bone.getM10(), m11 = bone.getM11();
         float offsetX, offsetY;
-
         offsetX = offset[BRX];
         offsetY = offset[BRY];
         vertices[X1] = offsetX * m00 + offsetY * m01 + x;
         vertices[Y1] = offsetX * m10 + offsetY * m11 + y;
         vertices[C1] = color;
-
         offsetX = offset[BLX];
         offsetY = offset[BLY];
         vertices[X2] = offsetX * m00 + offsetY * m01 + x;
         vertices[Y2] = offsetX * m10 + offsetY * m11 + y;
         vertices[C2] = color;
-
         offsetX = offset[ULX];
         offsetY = offset[ULY];
         vertices[X3] = offsetX * m00 + offsetY * m01 + x;
         vertices[Y3] = offsetX * m10 + offsetY * m11 + y;
         vertices[C3] = color;
-
         offsetX = offset[URX];
         offsetY = offset[URY];
         vertices[X4] = offsetX * m00 + offsetY * m01 + x;

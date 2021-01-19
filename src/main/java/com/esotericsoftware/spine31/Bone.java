@@ -12,7 +12,6 @@ public class Bone implements Updatable {
     final Bone parent;
     float x, y, rotation, scaleX, scaleY;
     float appliedRotation, appliedScaleX, appliedScaleY;
-
     float a, b, worldX;
     float c, d, worldY;
     float worldSignX, worldSignY;
@@ -23,9 +22,6 @@ public class Bone implements Updatable {
         skeleton = null;
     }
 
-    /**
-     * @param parent May be null.
-     */
     public Bone(BoneData data, Skeleton skeleton, Bone parent) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -35,11 +31,6 @@ public class Bone implements Updatable {
         setToSetupPose();
     }
 
-    /**
-     * Copy constructor.
-     *
-     * @param parent May be null.
-     */
     public Bone(Bone bone, Skeleton skeleton, Bone parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
         this.skeleton = skeleton;
@@ -52,32 +43,22 @@ public class Bone implements Updatable {
         scaleY = bone.scaleY;
     }
 
-    /**
-     * Same as {@link #updateWorldTransform()}. This method exists for Bone to implement {@link Updatable}.
-     */
     public void update() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY);
     }
 
-    /**
-     * Computes the world SRT using the parent bone and this bone's local SRT.
-     */
     public void updateWorldTransform() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY);
     }
 
-    /**
-     * Computes the world SRT using the parent bone and the specified local SRT.
-     */
     public void updateWorldTransform(float x, float y, float rotation, float scaleX, float scaleY) {
         appliedRotation = rotation;
         appliedScaleX = scaleX;
         appliedScaleY = scaleY;
-
         float cos = MathUtils.cosDeg(rotation), sin = MathUtils.sinDeg(rotation);
         float la = cos * scaleX, lb = -sin * scaleY, lc = sin * scaleX, ld = cos * scaleY;
         Bone parent = this.parent;
-        if (parent == null) { // Root bone.
+        if (parent == null) {
             Skeleton skeleton = this.skeleton;
             if (skeleton.flipX) {
                 x = -x;
@@ -99,20 +80,18 @@ public class Bone implements Updatable {
             worldSignY = Math.signum(scaleY);
             return;
         }
-
         float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
         worldX = pa * x + pb * y + parent.worldX;
         worldY = pc * x + pd * y + parent.worldY;
         worldSignX = parent.worldSignX * Math.signum(scaleX);
         worldSignY = parent.worldSignY * Math.signum(scaleY);
-
         if (data.inheritRotation && data.inheritScale) {
             a = pa * la + pb * lc;
             b = pa * lb + pb * ld;
             c = pc * la + pd * lc;
             d = pc * lb + pd * ld;
         } else {
-            if (data.inheritRotation) { // No scale inheritance.
+            if (data.inheritRotation) {
                 pa = 1;
                 pb = 0;
                 pc = 0;
@@ -126,7 +105,6 @@ public class Bone implements Updatable {
                     temp = pc * cos + pd * sin;
                     pd = pc * -sin + pd * cos;
                     pc = temp;
-
                     if (!parent.data.inheritRotation) break;
                     parent = parent.parent;
                 } while (parent != null);
@@ -134,7 +112,7 @@ public class Bone implements Updatable {
                 b = pa * lb + pb * ld;
                 c = pc * la + pd * lc;
                 d = pc * lb + pd * ld;
-            } else if (data.inheritScale) { // No rotation inheritance.
+            } else if (data.inheritScale) {
                 pa = 1;
                 pb = 0;
                 pc = 0;
@@ -151,7 +129,6 @@ public class Bone implements Updatable {
                     temp = pc * za + pd * zc;
                     pd = pc * zb + pd * zd;
                     pc = temp;
-
                     if (psx < 0) r = -r;
                     cos = MathUtils.cosDeg(-r);
                     sin = MathUtils.sinDeg(-r);
@@ -161,7 +138,6 @@ public class Bone implements Updatable {
                     temp = pc * cos + pd * sin;
                     pd = pc * -sin + pd * cos;
                     pc = temp;
-
                     if (!parent.data.inheritScale) break;
                     parent = parent.parent;
                 } while (parent != null);
@@ -228,9 +204,6 @@ public class Bone implements Updatable {
         this.y = y;
     }
 
-    /**
-     * Returns the forward kinetics rotation.
-     */
     public float getRotation() {
         return rotation;
     }

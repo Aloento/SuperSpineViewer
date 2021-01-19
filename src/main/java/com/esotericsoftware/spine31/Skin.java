@@ -6,12 +6,8 @@ import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
 import com.esotericsoftware.spine31.attachments.Attachment;
 
-/**
- * Stores attachments by slot index and attachment name.
- */
 public class Skin {
     static private final Key lookup = new Key();
-
     final String name;
     final ObjectMap<Key, Attachment> attachments = new ObjectMap();
     final Pool<Key> keyPool = new Pool(64) {
@@ -33,9 +29,6 @@ public class Skin {
         attachments.put(key, attachment);
     }
 
-    /**
-     * @return May be null.
-     */
     public Attachment getAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
         lookup.set(slotIndex, name);
@@ -70,9 +63,6 @@ public class Skin {
         return name;
     }
 
-    /**
-     * Attach each attachment in this skin if the corresponding attachment in the old skin is currently attached.
-     */
     void attachAll(Skeleton skeleton, Skin oldSkin) {
         for (Entry<Key, Attachment> entry : oldSkin.attachments.entries()) {
             int slotIndex = entry.key.slotIndex;

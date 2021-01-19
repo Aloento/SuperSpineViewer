@@ -9,7 +9,6 @@ import com.esotericsoftware.spine21.Bone;
 import com.esotericsoftware.spine21.Skeleton;
 import com.esotericsoftware.spine21.Slot;
 
-
 public class MeshAttachment extends Attachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -18,8 +17,6 @@ public class MeshAttachment extends Attachment {
     private short[] triangles;
     private float[] worldVertices;
     private int hullLength;
-
-
     private int[] edges;
     private float width, height;
 
@@ -42,7 +39,6 @@ public class MeshAttachment extends Attachment {
         int worldVerticesLength = verticesLength / 2 * 5;
         if (worldVertices == null || worldVertices.length != worldVerticesLength)
             worldVertices = new float[worldVerticesLength];
-
         float u, v, width, height;
         if (region == null) {
             u = v = 0;
@@ -79,7 +75,6 @@ public class MeshAttachment extends Attachment {
                         | ((int) (skeletonColor.b * slotColor.b * meshColor.b * multiplier) << 16)
                         | ((int) (skeletonColor.g * slotColor.g * meshColor.g * multiplier) << 8)
                         | (int) (skeletonColor.r * slotColor.r * meshColor.r * multiplier));
-
         float[] worldVertices = this.worldVertices;
         FloatArray slotVertices = slot.getAttachmentVertices();
         float[] vertices = this.vertices;

@@ -9,7 +9,6 @@ import com.esotericsoftware.spine21.Bone;
 import com.esotericsoftware.spine21.Skeleton;
 import com.esotericsoftware.spine21.Slot;
 
-
 public class SkinnedMeshAttachment extends Attachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -19,8 +18,6 @@ public class SkinnedMeshAttachment extends Attachment {
     private short[] triangles;
     private float[] worldVertices;
     private int hullLength;
-
-
     private int[] edges;
     private float width, height;
 
@@ -44,7 +41,6 @@ public class SkinnedMeshAttachment extends Attachment {
         int worldVerticesLength = verticesLength / 2 * 5;
         if (worldVertices == null || worldVertices.length != worldVerticesLength)
             worldVertices = new float[worldVerticesLength];
-
         float u, v, width, height;
         if (region == null) {
             u = v = 0;
@@ -80,13 +76,11 @@ public class SkinnedMeshAttachment extends Attachment {
                         | ((int) (skeletonColor.b * meshColor.b * regionColor.b * multiplier) << 16)
                         | ((int) (skeletonColor.g * meshColor.g * regionColor.g * multiplier) << 8)
                         | (int) (skeletonColor.r * meshColor.r * regionColor.r * multiplier));
-
         float[] worldVertices = this.worldVertices;
         float x = skeleton.getX(), y = skeleton.getY();
         Object[] skeletonBones = skeleton.getBones().items;
         float[] weights = this.weights;
         int[] bones = this.bones;
-
         FloatArray ffdArray = slot.getAttachmentVertices();
         if (ffdArray.size == 0) {
             for (int w = 0, v = 0, b = 0, n = bones.length; v < n; w += 5) {
@@ -128,7 +122,6 @@ public class SkinnedMeshAttachment extends Attachment {
         return bones;
     }
 
-
     public void setBones(int[] bones) {
         this.bones = bones;
     }
@@ -136,7 +129,6 @@ public class SkinnedMeshAttachment extends Attachment {
     public float[] getWeights() {
         return weights;
     }
-
 
     public void setWeights(float[] weights) {
         this.weights = weights;
@@ -146,7 +138,6 @@ public class SkinnedMeshAttachment extends Attachment {
         return triangles;
     }
 
-
     public void setTriangles(short[] triangles) {
         this.triangles = triangles;
     }
@@ -154,7 +145,6 @@ public class SkinnedMeshAttachment extends Attachment {
     public float[] getRegionUVs() {
         return regionUVs;
     }
-
 
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;

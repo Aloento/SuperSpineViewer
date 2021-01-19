@@ -2,7 +2,6 @@ package com.esotericsoftware.spine21;
 
 import com.badlogic.gdx.utils.ObjectFloatMap;
 
-
 public class AnimationStateData {
     final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap();
     final Key tempKey = new Key();

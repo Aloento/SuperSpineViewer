@@ -14,7 +14,6 @@ public class SkeletonRenderer<T extends Batch> {
     public void draw(T batch, Skeleton skeleton) {
         boolean premultipliedAlpha = this.premultipliedAlpha;
         BlendMode blendMode = null;
-
         Array<Slot> drawOrder = skeleton.drawOrder;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
@@ -28,10 +27,8 @@ public class SkeletonRenderer<T extends Batch> {
                     batch.setBlendFunction(blendMode.getSource(premultipliedAlpha), blendMode.getDest());
                 }
                 batch.draw(regionAttachment.getRegion().getTexture(), vertices, 0, 20);
-
             } else if (attachment instanceof MeshAttachment || attachment instanceof WeightedMeshAttachment) {
                 throw new RuntimeException("SkeletonMeshRenderer is required to render meshes.");
-
             } else if (attachment instanceof SkeletonAttachment) {
                 Skeleton attachmentSkeleton = ((SkeletonAttachment) attachment).getSkeleton();
                 if (attachmentSkeleton == null) continue;
@@ -43,9 +40,7 @@ public class SkeletonRenderer<T extends Batch> {
                 attachmentSkeleton.setPosition(skeleton.getX() + bone.getWorldX(), skeleton.getY() + bone.getWorldY());
                 rootBone.setRotation(oldRotation + bone.getWorldRotationX());
                 attachmentSkeleton.updateWorldTransform();
-
                 draw(batch, attachmentSkeleton);
-
                 attachmentSkeleton.setX(0);
                 attachmentSkeleton.setY(0);
                 rootBone.setScaleX(oldScaleX);

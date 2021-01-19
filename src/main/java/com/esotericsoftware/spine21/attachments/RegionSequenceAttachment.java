@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.spine21.Slot;
 
-
 public class RegionSequenceAttachment extends RegionAttachment {
     private Mode mode;
     private float frameTime;
@@ -16,7 +15,6 @@ public class RegionSequenceAttachment extends RegionAttachment {
 
     public void updateWorldVertices(Slot slot, boolean premultipliedAlpha) {
         if (regions == null) throw new IllegalStateException("Regions have not been set: " + this);
-
         int frameIndex = (int) (slot.getAttachmentTime() / frameTime);
         switch (mode) {
             case forward -> frameIndex = Math.min(regions.length - 1, frameIndex);
@@ -33,7 +31,6 @@ public class RegionSequenceAttachment extends RegionAttachment {
             }
         }
         setRegion(regions[frameIndex]);
-
         super.updateWorldVertices(slot, premultipliedAlpha);
     }
 
@@ -45,7 +42,6 @@ public class RegionSequenceAttachment extends RegionAttachment {
     public void setRegions(TextureRegion[] regions) {
         this.regions = regions;
     }
-
 
     public void setFrameTime(float frameTime) {
         this.frameTime = frameTime;

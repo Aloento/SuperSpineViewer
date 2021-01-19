@@ -9,7 +9,6 @@ import com.esotericsoftware.spine21.attachments.*;
 
 public class SkeletonRenderer {
     static private final short[] quadTriangles = {0, 1, 2, 2, 3, 0};
-
     private boolean premultipliedAlpha;
 
     @SuppressWarnings("null")
@@ -17,9 +16,7 @@ public class SkeletonRenderer {
         boolean premultipliedAlpha = this.premultipliedAlpha;
         int srcFunc = premultipliedAlpha ? GL20.GL_ONE : GL20.GL_SRC_ALPHA;
         batch.setBlendFunction(srcFunc, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
         boolean additive = false;
-
         float[] vertices = null;
         short[] triangles = null;
         Array<Slot> drawOrder = skeleton.drawOrder;
@@ -33,21 +30,18 @@ public class SkeletonRenderer {
                 vertices = region.getWorldVertices();
                 triangles = quadTriangles;
                 texture = region.getRegion().getTexture();
-
             } else if (attachment instanceof MeshAttachment) {
                 MeshAttachment mesh = (MeshAttachment) attachment;
                 mesh.updateWorldVertices(slot, premultipliedAlpha);
                 vertices = mesh.getWorldVertices();
                 triangles = mesh.getTriangles();
                 texture = mesh.getRegion().getTexture();
-
             } else if (attachment instanceof SkinnedMeshAttachment) {
                 SkinnedMeshAttachment mesh = (SkinnedMeshAttachment) attachment;
                 mesh.updateWorldVertices(slot, premultipliedAlpha);
                 vertices = mesh.getWorldVertices();
                 triangles = mesh.getTriangles();
                 texture = mesh.getRegion().getTexture();
-
             } else if (attachment instanceof SkeletonAttachment) {
                 Skeleton attachmentSkeleton = ((SkeletonAttachment) attachment).getSkeleton();
                 if (attachmentSkeleton == null) continue;
@@ -61,15 +55,12 @@ public class SkeletonRenderer {
                 rootBone.setScaleY(1 + bone.getWorldScaleY() - oldScaleY);
                 rootBone.setRotation(oldRotation + bone.getWorldRotation());
                 attachmentSkeleton.updateWorldTransform();
-
                 draw(batch, attachmentSkeleton);
-
                 attachmentSkeleton.setPosition(0, 0);
                 rootBone.setScaleX(oldScaleX);
                 rootBone.setScaleY(oldScaleY);
                 rootBone.setRotation(oldRotation);
             }
-
             if (texture != null) {
                 if (slot.data.getAdditiveBlending() != additive) {
                     additive = !additive;
@@ -87,9 +78,7 @@ public class SkeletonRenderer {
         boolean premultipliedAlpha = this.premultipliedAlpha;
         int srcFunc = premultipliedAlpha ? GL20.GL_ONE : GL20.GL_SRC_ALPHA;
         batch.setBlendFunction(srcFunc, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
         boolean additive = false;
-
         Array<Slot> drawOrder = skeleton.drawOrder;
         for (int i = 0, n = drawOrder.size; i < n; i++) {
             Slot slot = drawOrder.get(i);
@@ -106,10 +95,8 @@ public class SkeletonRenderer {
                         batch.setBlendFunction(srcFunc, GL20.GL_ONE_MINUS_SRC_ALPHA);
                 }
                 batch.draw(regionAttachment.getRegion().getTexture(), vertices, 0, 20);
-
             } else if (attachment instanceof MeshAttachment || attachment instanceof SkinnedMeshAttachment) {
                 throw new RuntimeException("PolygonSpriteBatch is required to render meshes.");
-
             } else if (attachment instanceof SkeletonAttachment) {
                 Skeleton attachmentSkeleton = ((SkeletonAttachment) attachment).getSkeleton();
                 if (attachmentSkeleton == null) continue;
@@ -123,9 +110,7 @@ public class SkeletonRenderer {
                 rootBone.setScaleY(1 + bone.getWorldScaleY() - oldScaleY);
                 rootBone.setRotation(oldRotation + bone.getWorldRotation());
                 attachmentSkeleton.updateWorldTransform();
-
                 draw(batch, attachmentSkeleton);
-
                 attachmentSkeleton.setX(0);
                 attachmentSkeleton.setY(0);
                 rootBone.setScaleX(oldScaleX);

@@ -84,9 +84,7 @@ public class RuntimesLoader extends Controller {
         switch (spineVersion) {
             case 40 -> new LwjglFXApplication(new Spine40(), spineRender, config);
             case 38, 37, 36, 35, 34 -> new LwjglFXApplication(new Standard(), spineRender, config);
-            case 32 -> new LwjglFXApplication(new Spine32(), spineRender, config);
-            case 31 -> new LwjglFXApplication(new Spine31(), spineRender, config);
-            case 21 -> new LwjglFXApplication(new Spine21(), spineRender, config);
+            case 32, 31, 21 -> new LwjglFXApplication(new Latency(), spineRender, config);
             default -> {
                 return false;
             }

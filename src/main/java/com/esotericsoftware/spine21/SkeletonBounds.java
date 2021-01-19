@@ -21,28 +21,23 @@ public class SkeletonBounds {
         Array<FloatArray> polygons = this.polygons;
         Array<Slot> slots = skeleton.slots;
         int slotCount = slots.size;
-
         boundingBoxes.clear();
         polygonPool.freeAll(polygons);
         polygons.clear();
-
         for (int i = 0; i < slotCount; i++) {
             Slot slot = slots.get(i);
             Attachment attachment = slot.attachment;
             if (attachment instanceof BoundingBoxAttachment) {
                 BoundingBoxAttachment boundingBox = (BoundingBoxAttachment) attachment;
                 boundingBoxes.add(boundingBox);
-
                 FloatArray polygon = polygonPool.obtain();
                 polygons.add(polygon);
                 int vertexCount = boundingBox.getVertices().length;
                 polygon.ensureCapacity(vertexCount);
                 polygon.size = vertexCount;
-
                 boundingBox.computeWorldVertices(slot.bone, polygon.items);
             }
         }
-
         if (updateAabb) aabbCompute();
     }
 
@@ -67,11 +62,9 @@ public class SkeletonBounds {
         this.maxY = maxY;
     }
 
-
     public boolean aabbContainsPoint(float x, float y) {
         return x >= minX && x <= maxX && y >= minY && y <= maxY;
     }
-
 
     public boolean aabbIntersectsSegment(float x1, float y1, float x2, float y2) {
         float minX = this.minX;
@@ -91,11 +84,9 @@ public class SkeletonBounds {
         return x > minX && x < maxX;
     }
 
-
     public boolean aabbIntersectsSkeleton(SkeletonBounds bounds) {
         return minX < bounds.maxX && maxX > bounds.minX && minY < bounds.maxY && maxY > bounds.minY;
     }
-
 
     public BoundingBoxAttachment containsPoint(float x, float y) {
         Array<FloatArray> polygons = this.polygons;
@@ -104,11 +95,9 @@ public class SkeletonBounds {
         return null;
     }
 
-
     public boolean containsPoint(FloatArray polygon, float x, float y) {
         float[] vertices = polygon.items;
         int nn = polygon.size;
-
         int prevIndex = nn - 2;
         boolean inside = false;
         for (int ii = 0; ii < nn; ii += 2) {
@@ -123,7 +112,6 @@ public class SkeletonBounds {
         return inside;
     }
 
-
     public BoundingBoxAttachment intersectsSegment(float x1, float y1, float x2, float y2) {
         Array<FloatArray> polygons = this.polygons;
         for (int i = 0, n = polygons.size; i < n; i++)
@@ -131,11 +119,9 @@ public class SkeletonBounds {
         return null;
     }
 
-
     public boolean intersectsSegment(FloatArray polygon, float x1, float y1, float x2, float y2) {
         float[] vertices = polygon.items;
         int nn = polygon.size;
-
         float width12 = x1 - x2, height12 = y1 - y2;
         float det1 = x1 * y2 - y1 * x2;
         float x3 = vertices[nn - 2], y3 = vertices[nn - 1];
@@ -187,7 +173,6 @@ public class SkeletonBounds {
     public Array<FloatArray> getPolygons() {
         return polygons;
     }
-
 
     public FloatArray getPolygon(BoundingBoxAttachment boundingBox) {
         int index = boundingBoxes.indexOf(boundingBox, true);
