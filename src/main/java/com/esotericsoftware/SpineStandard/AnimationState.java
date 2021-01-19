@@ -1358,10 +1358,17 @@ public class AnimationState {
         }
 
         public float getAnimationEnd() {
+            if (RuntimesLoader.spineVersion < 35) return 1;
             return animationEnd;
         }
 
         public float getAnimationTime() {
+            if (RuntimesLoader.spineVersion < 35) {
+                float percent = time / endTime;
+                if (loop) percent %= 1;
+                return percent;
+            }
+
             if (loop) {
                 float duration = animationEnd - animationStart;
                 if (duration == 0) return animationStart;
