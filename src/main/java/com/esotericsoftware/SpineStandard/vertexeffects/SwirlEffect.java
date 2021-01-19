@@ -10,12 +10,8 @@ import com.esotericsoftware.SpineStandard.utils.SpineUtils;
 
 public class SwirlEffect implements VertexEffect {
     private float worldX, worldY, radius, angle;
-    private Interpolation interpolation = Interpolation.pow2Out;
+    private final Interpolation interpolation = Interpolation.pow2Out;
     private float centerX, centerY;
-
-    public SwirlEffect(float radius) {
-        this.radius = radius;
-    }
 
     public void begin(Skeleton skeleton) {
         worldX = skeleton.getX() + centerX;
@@ -37,32 +33,8 @@ public class SwirlEffect implements VertexEffect {
     public void end() {
     }
 
-    public void setRadius(float radius) {
-        this.radius = radius;
-    }
-
-    public void setCenter(float centerX, float centerY) {
-        this.centerX = centerX;
-        this.centerY = centerY;
-    }
-
-    public void setCenterX(float centerX) {
-        this.centerX = centerX;
-    }
-
-    public void setCenterY(float centerY) {
-        this.centerY = centerY;
-    }
-
     public void setAngle(float degrees) {
         this.angle = degrees * MathUtils.degRad;
     }
 
-    public Interpolation getInterpolation() {
-        return interpolation;
-    }
-
-    public void setInterpolation(Interpolation interpolation) {
-        this.interpolation = interpolation;
-    }
 }
