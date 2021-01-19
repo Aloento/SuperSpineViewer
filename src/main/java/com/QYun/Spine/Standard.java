@@ -23,12 +23,10 @@ public class Standard extends SuperSpine {
     private Skeleton skeleton;
     private AnimationState state;
 
-    private void skins(Array<Skin> skins) {
+    private void lists(Array<Skin> skins, Array<Animation> animations) {
         for (Skin skin : skins)
             skinsList.add(skin.getName());
-    }
 
-    private void animates(Array<Animation> animations) {
         for (Animation animation : animations)
             animatesList.add(animation.getName());
     }
@@ -80,10 +78,9 @@ public class Standard extends SuperSpine {
         spineVersion.set(skeletonData.getVersion());
         projectName.set(skeletonData.getName());
 
-        if (skinsList.isEmpty()) {
-            skins(skeletonData.getSkins());
-            animates(skeletonData.getAnimations());
-        }
+        if (skinsList.isEmpty())
+            lists(skeletonData.getSkins(), skeletonData.getAnimations());
+
         return true;
     }
 
@@ -233,5 +230,4 @@ public class Standard extends SuperSpine {
         camera.setToOrtho(false);
         camera.position.set(x, y, 0);
     }
-
 }
