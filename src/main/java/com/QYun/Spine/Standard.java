@@ -23,7 +23,7 @@ public class Standard extends SuperSpine {
     private Skeleton skeleton;
     private AnimationState state;
     private ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
-        if (Universal.Range == 1 && skeleton != null) {
+        if (skeleton != null) {
             if (newValue == null)
                 skeleton.setSkin((Skin) null);
             else skeleton.setSkin(newValue);
@@ -31,7 +31,7 @@ public class Standard extends SuperSpine {
         }
     };
     private ChangeListener<String> animateListener = (observable, oldValue, newValue) -> {
-        if (state != null && Universal.Range == 1) {
+        if (state != null) {
             if (newValue != null) {
                 state.setAnimation(0, newValue, isLoop.get());
                 isPlay.set(true);
@@ -42,7 +42,7 @@ public class Standard extends SuperSpine {
         }
     };
     private ChangeListener<Boolean> isLoopListener = (observable, oldValue, newValue) -> {
-        if (state != null && Universal.Range == 1) {
+        if (state != null) {
             if (animate.get() == null) {
                 state.setEmptyAnimation(0, 0);
                 isPlay.set(false);
@@ -53,20 +53,18 @@ public class Standard extends SuperSpine {
         }
     };
     private ChangeListener<Boolean> isPlayListener = (observable, oldValue, newValue) -> {
-        if (!newValue.equals(oldValue)) {
-            if (state != null && Universal.Range == 1) {
-                if (newValue) {
-                    if (animate.get() == null)
-                        state.setAnimation(0, animatesList.get(0), isLoop.get());
-                    else if (!isLoop.get())
-                        state.setAnimation(0, animate.get(), isLoop.get());
-                    state.setTimeScale(speed.get());
-                } else state.setTimeScale(0);
-            }
+        if (!newValue.equals(oldValue) && state != null) {
+            if (newValue) {
+                if (animate.get() == null)
+                    state.setAnimation(0, animatesList.get(0), isLoop.get());
+                else if (!isLoop.get())
+                    state.setAnimation(0, animate.get(), isLoop.get());
+                state.setTimeScale(speed.get());
+            } else state.setTimeScale(0);
         }
     };
     private ChangeListener<Number> scaleListener = (observable, oldValue, newValue) -> {
-        if (state != null && Universal.Range == 1) {
+        if (state != null) {
             Gdx.app.postRunnable(this::loadSkel);
             if (animate.get() != null) {
                 state.setAnimation(0, animate.get(), isLoop.get());
@@ -75,7 +73,7 @@ public class Standard extends SuperSpine {
         }
     };
     private ChangeListener<Number> XListener = (observable, oldValue, newValue) -> {
-        if (state != null && Universal.Range == 1) {
+        if (state != null) {
             Gdx.app.postRunnable(this::loadSkel);
             if (animate.get() != null) {
                 state.setAnimation(0, animate.get(), isLoop.get());
@@ -84,7 +82,7 @@ public class Standard extends SuperSpine {
         }
     };
     private ChangeListener<Number> YListener = (observable, oldValue, newValue) -> {
-        if (state != null && Universal.Range == 1) {
+        if (state != null) {
             Gdx.app.postRunnable(this::loadSkel);
             if (animate.get() != null) {
                 state.setAnimation(0, animate.get(), isLoop.get());
@@ -93,7 +91,7 @@ public class Standard extends SuperSpine {
         }
     };
     private ChangeListener<Number> speedListener = (observable, oldValue, newValue) -> {
-        if (state != null && Universal.Range == 1)
+        if (state != null)
             state.setTimeScale(speed.get());
     };
 
