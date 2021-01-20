@@ -6,16 +6,13 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -24,8 +21,7 @@ public class RecordFX {
     private static volatile boolean exporting = false;
     private final Node node;
     private final SnapshotParameters parameters = new SnapshotParameters();
-    private final ObservableList<Image> framesList = FXCollections.observableArrayList();
-    private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(framesList);
+    private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final SuperSpine spine = new SuperSpine();
     private final byte FPS = 60;
     private boolean recording = false;
@@ -57,12 +53,6 @@ public class RecordFX {
         });
     }
 
-    private void addFrame() {
-        WritableImage imgShot = new WritableImage((int) node.getBoundsInParent().getWidth(), (int) node.getBoundsInParent().getHeight());
-        node.snapshot(parameters, imgShot);
-        recordFrames.add(imgShot);
-    }
-
     private void recorderFX() {
         Thread recodeThread = new Thread("RecordFX_Capturing") {
             @Override
@@ -70,9 +60,10 @@ public class RecordFX {
                 System.out.println("录制开始");
                 do {
                     Platform.runLater(() -> {
-                        if (spine.getPercent() <= 1)
-                            addFrame();
-                        System.out.println("捕获的帧：" + timer++ + "\t" + spine.getPercent());
+                        if (spine.getPercent() <= 1) {
+                            recordFrames.add(node.snapshot(parameters, null));
+                            System.out.println("捕获的帧：" + timer++ + "\t" + spine.getPercent());
+                        }
                     });
                     try {
                         Thread.sleep((1000 / FPS));
@@ -105,10 +96,9 @@ public class RecordFX {
     }
 
     private void saveToArray(Image image) {
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        File video = new File((rootPath + "Sequence" + File.separator + fileName) + "_" + counter++ + ".png");
         try {
-            ImageIO.write(bufferedImage, "png", video);
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png",
+                    new File((rootPath + "Sequence" + File.separator + fileName) + "_" + counter++ + ".png"));
         } catch (IOException e) {
             System.out.println("保存PNG文件失败");
             e.printStackTrace();
@@ -128,19 +118,15 @@ public class RecordFX {
             });
             new File((rootPath + fileName) + ".mov").delete();
 
-            Process ffmpeg = Runtime.getRuntime().exec(new String[]{
+            if (Runtime.getRuntime().exec(new String[]{
                     "ffmpeg", "-r", String.valueOf(FPS),
                     "-i", rootPath + "Sequence" + File.separator + fileName + "_%d.png",
                     "-c:v", "png", "-pix_fmt", "rgba",
                     "-filter:v", "\"setpts=0.5*PTS\"",
                     rootPath + fileName + ".mov"
-            });
-
-            short status = (short) ffmpeg.waitFor();
-            if (status == 0) {
+            }).waitFor() == 0) {
                 File sequence = new File(rootPath + "Sequence" + File.separator);
-                String[] files = sequence.list();
-                for (String file : Objects.requireNonNull(files))
+                for (String file : Objects.requireNonNull(sequence.list()))
                     new File(sequence, file).delete();
                 sequence.delete();
                 Platform.runLater(() -> {
