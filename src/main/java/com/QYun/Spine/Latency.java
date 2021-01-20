@@ -168,11 +168,8 @@ public class Latency extends SuperSpine {
     }
 
     void reload() {
-        skinsList.clear();
-        animatesList.clear();
-        skin.set(null);
-        animate.set(null);
-        if (Universal.Range != 1) {
+        super.reload();
+        if (Universal.Range != 0) {
             batch = null;
             camera = null;
             renderer = null;

@@ -172,10 +172,7 @@ public class Standard extends SuperSpine {
     }
 
     void reload() {
-        skinsList.clear();
-        animatesList.clear();
-        skin.set(null);
-        animate.set(null);
+        super.reload();
         if (Universal.Range != 1) {
             batch = null;
             camera = null;

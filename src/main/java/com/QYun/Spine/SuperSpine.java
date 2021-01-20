@@ -18,12 +18,12 @@ public class SuperSpine {
     static final SimpleFloatProperty X = new SimpleFloatProperty(0.0f);
     static final SimpleFloatProperty Y = new SimpleFloatProperty(-200f);
     static final SimpleFloatProperty speed = new SimpleFloatProperty(1);
+    static final ObservableList<String> skinsList = FXCollections.observableArrayList();
+    static final ObservableList<String> animatesList = FXCollections.observableArrayList();
     static double percent = -1;
     static FileHandle skelFile;
     static FileHandle atlasFile;
     static boolean isBinary = true;
-    static ObservableList<String> skinsList = FXCollections.observableArrayList();
-    static ObservableList<String> animatesList = FXCollections.observableArrayList();
 
     public String getSpineVersion() {
         return spineVersion.get();
@@ -151,6 +151,9 @@ public class SuperSpine {
     }
 
     void reload() {
+        skin.set(null);
+        animate.set(null);
+        skinsList.clear();
+        animatesList.clear();
     }
-
 }
