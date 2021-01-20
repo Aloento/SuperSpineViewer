@@ -74,10 +74,12 @@ public class ExporterController extends Controller implements Initializable {
             openPath = file.getAbsolutePath();
             if (isLoad.get()) {
                 requestReload = true;
-                if (runtimesLoader.init(file))
-                    System.out.println("请求重载成功");
-            } else if (runtimesLoader.init(file))
-                System.out.println("初始化成功");
+                runtimesLoader.init(file);
+                System.out.println("请求重载");
+            } else {
+                runtimesLoader.init(file);
+                System.out.println("请求初始化");
+            }
         }
     }
 
@@ -119,7 +121,6 @@ public class ExporterController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         FPS = L_FPS;
         Skel = L_Skel;
         Atlas = L_Atlas;
@@ -129,10 +130,9 @@ public class ExporterController extends Controller implements Initializable {
         if (openPath != null) {
             Platform.runLater(() -> {
                 File file = new File(openPath);
-                if (runtimesLoader.init(file)) {
-                    System.out.println("初始化成功");
-                    openPath = null;
-                }
+                runtimesLoader.init(file);
+                System.out.println("从命令行加载");
+                openPath = null;
             });
         }
     }

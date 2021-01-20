@@ -79,11 +79,10 @@ public class RuntimesLoader extends Controller {
         return true;
     }
 
-    private boolean initLibDGX() {
+    private void initLibDGX() {
         config.samples = 16;
         new LwjglFXApplication(new Universal(), spineRender, config);
         isLoad.set(true);
-        return true;
     }
 
     private FileHandle atlasFile(FileHandle skelFile, String baseName) {
@@ -110,7 +109,7 @@ public class RuntimesLoader extends Controller {
         return atlasFile(skelFile, baseName);
     }
 
-    public boolean init(File file) {
+    public void init(File file) {
         FileHandle skelFile = new FileHandle(new File(file.getAbsolutePath()));
         spine.setAtlasFile(atlasFile(skelFile));
         spine.setSkelFile(skelFile);
@@ -124,10 +123,10 @@ public class RuntimesLoader extends Controller {
         if (!requestReload) {
             if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt")) {
                 if (jsonVersion(file))
-                    return initLibDGX();
+                    initLibDGX();
             } else {
                 if (binaryVersion(file))
-                    return initLibDGX();
+                    initLibDGX();
             }
         } else {
             if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt"))
@@ -136,8 +135,6 @@ public class RuntimesLoader extends Controller {
 
             new SuperSpine().setIsReload(true);
             requestReload = false;
-            return true;
         }
-        return false;
     }
 }
