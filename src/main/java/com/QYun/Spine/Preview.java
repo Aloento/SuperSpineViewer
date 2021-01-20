@@ -83,7 +83,7 @@ public class Preview extends SuperSpine {
 
     private void listeners() {
         skin.addListener((observable, oldValue, newValue) -> {
-            if (skeleton != null) {
+            if (skeleton != null && Universal.Range == 2) {
                 if (newValue == null)
                     skeleton.setSkin((Skin) null);
                 else skeleton.setSkin(newValue);
@@ -92,7 +92,7 @@ public class Preview extends SuperSpine {
         });
 
         animate.addListener((observable, oldValue, newValue) -> {
-            if (state != null) {
+            if (state != null && Universal.Range == 2) {
                 if (newValue != null) {
                     state.setAnimation(0, newValue, isLoop.get());
                     isPlay.set(true);
@@ -104,7 +104,7 @@ public class Preview extends SuperSpine {
         });
 
         isLoop.addListener((observable, oldValue, newValue) -> {
-            if (state != null) {
+            if (state != null && Universal.Range == 2) {
                 if (animate.get() == null) {
                     state.setEmptyAnimation(0, 0);
                     isPlay.set(false);
@@ -116,7 +116,7 @@ public class Preview extends SuperSpine {
         });
 
         isPlay.addListener((observable, oldValue, newValue) -> {
-            if (!newValue.equals(oldValue)) {
+            if (!newValue.equals(oldValue) && Universal.Range == 2) {
                 if (state != null) {
                     if (newValue) {
                         if (animate.get() == null)
@@ -130,7 +130,7 @@ public class Preview extends SuperSpine {
         });
 
         scale.addListener((observable, oldValue, newValue) -> {
-            if (state != null) {
+            if (state != null && Universal.Range == 2) {
                 Gdx.app.postRunnable(this::loadSkel);
                 if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
@@ -140,7 +140,7 @@ public class Preview extends SuperSpine {
         });
 
         X.addListener((observable, oldValue, newValue) -> {
-            if (state != null) {
+            if (state != null && Universal.Range == 2) {
                 Gdx.app.postRunnable(this::loadSkel);
                 if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
@@ -150,7 +150,7 @@ public class Preview extends SuperSpine {
         });
 
         Y.addListener((observable, oldValue, newValue) -> {
-            if (state != null) {
+            if (state != null && Universal.Range == 2) {
                 Gdx.app.postRunnable(this::loadSkel);
                 if (animate.get() != null) {
                     state.setAnimation(0, animate.get(), isLoop.get());
@@ -160,12 +160,12 @@ public class Preview extends SuperSpine {
         });
 
         speed.addListener((observable, oldValue, newValue) -> {
-            if (state != null)
+            if (state != null && Universal.Range == 2)
                 state.setTimeScale(speed.get());
         });
 
         isReload.addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+            if (newValue && Universal.Range == 2) {
                 skinsList.clear();
                 animatesList.clear();
                 skin.set(null);

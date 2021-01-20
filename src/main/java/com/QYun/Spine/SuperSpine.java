@@ -8,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class SuperSpine {
-
     static final SimpleBooleanProperty isReload = new SimpleBooleanProperty(false);
     static final SimpleStringProperty spineVersion = new SimpleStringProperty(null);
     static final SimpleStringProperty projectName = new SimpleStringProperty(null);

@@ -1,18 +1,24 @@
 package com.QYun.Spine;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.badlogic.gdx.ApplicationAdapter;
 
 public class Universal extends ApplicationAdapter {
     private SuperSpine Runtimes;
+    public static byte Range;
 
     @Override
     public void create() {
-        if (RuntimesLoader.spineVersion > 38)
+        if (Universal.Range == 2)
             Runtimes = new Preview();
-        else if (RuntimesLoader.spineVersion < 34)
+        else if (Universal.Range == 0)
             Runtimes = new Latency();
         else Runtimes = new Standard();
+
+        SuperSpine.skinsList.clear();
+        SuperSpine.animatesList.clear();
+        SuperSpine.skin.set(null);
+        SuperSpine.animate.set(null);
+        System.gc();
 
         Runtimes.create();
     }

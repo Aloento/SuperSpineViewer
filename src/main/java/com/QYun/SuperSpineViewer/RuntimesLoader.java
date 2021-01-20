@@ -22,6 +22,7 @@ public class RuntimesLoader extends Controller {
     private final String[] dataSuffixes = {"", ".json", ".skel"};
     private final String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas", "-pma.atlas"};
     private final SuperSpine spine = new SuperSpine();
+    private LwjglFXApplication gdxApp;
 
     private void whichVersion(String skel) {
         if (skel.contains("4.0."))
@@ -66,12 +67,20 @@ public class RuntimesLoader extends Controller {
             e.printStackTrace();
             return false;
         }
+
+        if (spineVersion > 38)
+            Universal.Range = 2;
+        else if (spineVersion < 34)
+            Universal.Range = 0;
+        else Universal.Range = 1;
+
         return true;
     }
 
     private void initLibDGX() {
         config.samples = 16;
-        new LwjglFXApplication(new Universal(), spineRender, config);
+        LwjglApplicationConfiguration.disableAudio = true;
+        gdxApp = new LwjglFXApplication(new Universal(), spineRender, config);
         isLoad.set(true);
     }
 
@@ -115,8 +124,12 @@ public class RuntimesLoader extends Controller {
             if (skelVersion(file))
                 initLibDGX();
         } else {
+            byte tmp = Universal.Range;
             skelVersion(file);
-            spine.setIsReload(true);
+            if (tmp != Universal.Range) {
+                gdxApp.exit();
+                gdxApp = new LwjglFXApplication(new Universal(), spineRender, config);
+            } else spine.setIsReload(true);
             requestReload = false;
         }
     }
