@@ -3,13 +3,13 @@
 一个拿来加载与导出Spine动画的工具  
 至少需要Java15才能运行  
 或使用打包好的exe程序  
-当前版本：0.1.22  
+当前版本：0.1.23  
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
 ## 获得SuperSpineViewer
 
-[**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases)
+[**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases/latest)
 
 [![Windows x64](https://github.com/Aloento/SuperSpineViewer/workflows/Windows%20x64/badge.svg "Windows x64自动构建")](https://github.com/Aloento/SuperSpineViewer/actions?query=workflow%3A%22Windows+x64%22)
 

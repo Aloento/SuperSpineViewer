@@ -21,17 +21,81 @@ public class Standard extends SuperSpine {
     private OrthographicCamera camera;
     private SkeletonRenderer renderer;
     private Skeleton skeleton;
-    private final ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
-        if (Universal.Range == 1) {
-            if (skeleton != null) {
-                if (newValue == null)
-                    skeleton.setSkin((Skin) null);
-                else skeleton.setSkin(newValue);
-                skeleton.setSlotsToSetupPose();
-            }
-        } else skin.removeListener(this.skinListener);
-    };
     private AnimationState state;
+    private ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
+        if (Universal.Range == 1 && skeleton != null) {
+            if (newValue == null)
+                skeleton.setSkin((Skin) null);
+            else skeleton.setSkin(newValue);
+            skeleton.setSlotsToSetupPose();
+        }
+    };
+    private ChangeListener<String> animateListener = (observable, oldValue, newValue) -> {
+        if (state != null && Universal.Range == 1) {
+            if (newValue != null) {
+                state.setAnimation(0, newValue, isLoop.get());
+                isPlay.set(true);
+            } else {
+                state.setEmptyAnimation(0, 0);
+                isPlay.set(false);
+            }
+        }
+    };
+    private ChangeListener<Boolean> isLoopListener = (observable, oldValue, newValue) -> {
+        if (state != null && Universal.Range == 1) {
+            if (animate.get() == null) {
+                state.setEmptyAnimation(0, 0);
+                isPlay.set(false);
+            } else {
+                state.setAnimation(0, animate.get(), newValue);
+                if (newValue) isPlay.set(true);
+            }
+        }
+    };
+    private ChangeListener<Boolean> isPlayListener = (observable, oldValue, newValue) -> {
+        if (!newValue.equals(oldValue)) {
+            if (state != null && Universal.Range == 1) {
+                if (newValue) {
+                    if (animate.get() == null)
+                        state.setAnimation(0, animatesList.get(0), isLoop.get());
+                    else if (!isLoop.get())
+                        state.setAnimation(0, animate.get(), isLoop.get());
+                    state.setTimeScale(speed.get());
+                } else state.setTimeScale(0);
+            }
+        }
+    };
+    private ChangeListener<Number> scaleListener = (observable, oldValue, newValue) -> {
+        if (state != null && Universal.Range == 1) {
+            Gdx.app.postRunnable(this::loadSkel);
+            if (animate.get() != null) {
+                state.setAnimation(0, animate.get(), isLoop.get());
+                isPlay.set(true);
+            }
+        }
+    };
+    private ChangeListener<Number> XListener = (observable, oldValue, newValue) -> {
+        if (state != null && Universal.Range == 1) {
+            Gdx.app.postRunnable(this::loadSkel);
+            if (animate.get() != null) {
+                state.setAnimation(0, animate.get(), isLoop.get());
+                isPlay.set(true);
+            }
+        }
+    };
+    private ChangeListener<Number> YListener = (observable, oldValue, newValue) -> {
+        if (state != null && Universal.Range == 1) {
+            Gdx.app.postRunnable(this::loadSkel);
+            if (animate.get() != null) {
+                state.setAnimation(0, animate.get(), isLoop.get());
+                isPlay.set(true);
+            }
+        }
+    };
+    private ChangeListener<Number> speedListener = (observable, oldValue, newValue) -> {
+        if (state != null && Universal.Range == 1)
+            state.setTimeScale(speed.get());
+    };
 
     private void lists(Array<Skin> skins, Array<Animation> animations) {
         for (Skin skin : skins)
@@ -42,8 +106,7 @@ public class Standard extends SuperSpine {
     }
 
     private boolean loadSkel() {
-        TextureAtlasData atlasData;
-        atlasData = new TextureAtlasData(atlasFile, atlasFile.parent(), false);
+        TextureAtlasData atlasData = new TextureAtlasData(atlasFile, atlasFile.parent(), false);
 
         TextureAtlas atlas = new TextureAtlas(atlasData) {
             public AtlasRegion findRegion(String name) {
@@ -96,79 +159,13 @@ public class Standard extends SuperSpine {
 
     private void listeners() {
         skin.addListener(skinListener);
-
-        animate.addListener((observable, oldValue, newValue) -> {
-            if (state != null && Universal.Range == 1) {
-                if (newValue != null) {
-                    state.setAnimation(0, newValue, isLoop.get());
-                    isPlay.set(true);
-                } else {
-                    state.setEmptyAnimation(0, 0);
-                    isPlay.set(false);
-                }
-            }
-        });
-
-        isLoop.addListener((observable, oldValue, newValue) -> {
-            if (state != null && Universal.Range == 1) {
-                if (animate.get() == null) {
-                    state.setEmptyAnimation(0, 0);
-                    isPlay.set(false);
-                } else {
-                    state.setAnimation(0, animate.get(), newValue);
-                    if (newValue) isPlay.set(true);
-                }
-            }
-        });
-
-        isPlay.addListener((observable, oldValue, newValue) -> {
-            if (!newValue.equals(oldValue)) {
-                if (state != null && Universal.Range == 1) {
-                    if (newValue) {
-                        if (animate.get() == null)
-                            state.setAnimation(0, animatesList.get(0), isLoop.get());
-                        else if (!isLoop.get())
-                            state.setAnimation(0, animate.get(), isLoop.get());
-                        state.setTimeScale(speed.get());
-                    } else state.setTimeScale(0);
-                }
-            }
-        });
-
-        scale.addListener((observable, oldValue, newValue) -> {
-            if (state != null && Universal.Range == 1) {
-                Gdx.app.postRunnable(this::loadSkel);
-                if (animate.get() != null) {
-                    state.setAnimation(0, animate.get(), isLoop.get());
-                    isPlay.set(true);
-                }
-            }
-        });
-
-        X.addListener((observable, oldValue, newValue) -> {
-            if (state != null && Universal.Range == 1) {
-                Gdx.app.postRunnable(this::loadSkel);
-                if (animate.get() != null) {
-                    state.setAnimation(0, animate.get(), isLoop.get());
-                    isPlay.set(true);
-                }
-            }
-        });
-
-        Y.addListener((observable, oldValue, newValue) -> {
-            if (state != null && Universal.Range == 1) {
-                Gdx.app.postRunnable(this::loadSkel);
-                if (animate.get() != null) {
-                    state.setAnimation(0, animate.get(), isLoop.get());
-                    isPlay.set(true);
-                }
-            }
-        });
-
-        speed.addListener((observable, oldValue, newValue) -> {
-            if (state != null && Universal.Range == 1)
-                state.setTimeScale(speed.get());
-        });
+        animate.addListener(animateListener);
+        isLoop.addListener(isLoopListener);
+        isPlay.addListener(isPlayListener);
+        scale.addListener(scaleListener);
+        X.addListener(XListener);
+        Y.addListener(YListener);
+        speed.addListener(speedListener);
     }
 
     void reload() {
@@ -179,6 +176,24 @@ public class Standard extends SuperSpine {
             renderer = null;
             skeleton = null;
             state = null;
+
+            skin.removeListener(skinListener);
+            animate.removeListener(animateListener);
+            isLoop.removeListener(isLoopListener);
+            isPlay.removeListener(isPlayListener);
+            scale.removeListener(scaleListener);
+            X.removeListener(XListener);
+            Y.removeListener(YListener);
+            speed.removeListener(speedListener);
+
+            skinListener = null;
+            animateListener = null;
+            isLoopListener = null;
+            isPlayListener = null;
+            scaleListener = null;
+            XListener = null;
+            YListener = null;
+            speedListener = null;
         } else Gdx.app.postRunnable(this::loadSkel);
     }
 
