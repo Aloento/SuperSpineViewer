@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PrimaryController extends Controller implements Initializable {
-
     @FXML
     private JFXRippler optionsRippler;
 
@@ -177,5 +176,4 @@ public class PrimaryController extends Controller implements Initializable {
                 Platform.runLater(() -> System.exit(0));
         }
     }
-
 }

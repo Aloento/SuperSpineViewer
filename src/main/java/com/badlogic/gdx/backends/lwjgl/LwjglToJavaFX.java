@@ -20,9 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL30.GL_MAX_SAMPLES;
 
-
 public class LwjglToJavaFX {
-
     static Drawable drawable;
     private final ConcurrentLinkedQueue<Runnable> pendingRunnables;
     private final Pbuffer pbuffer;

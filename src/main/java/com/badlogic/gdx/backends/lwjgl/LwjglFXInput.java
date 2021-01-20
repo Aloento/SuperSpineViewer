@@ -80,6 +80,7 @@ final public class LwjglFXInput implements Input {
             lastKeyCharPressed = keyChar;
             keyRepeatTimer = keyRepeatInitialTime;
         });
+
         this.target.getScene().addEventHandler(javafx.scene.input.KeyEvent.KEY_RELEASED, e -> {
             if (!hasFocus) return;
             lastKeyCode = null;
@@ -93,7 +94,6 @@ final public class LwjglFXInput implements Input {
             pressedKeys--;
             lastKeyCharPressed = 0;
         });
-
 
         this.target.addEventHandler(MouseEvent.ANY, e -> {
             TouchEvent event = usedTouchEvents.obtain();
@@ -122,7 +122,6 @@ final public class LwjglFXInput implements Input {
             mouseX = event.x;
             mouseY = event.y;
         });
-
 
         this.target.addEventHandler(ScrollEvent.SCROLL, e -> {
             TouchEvent event = usedTouchEvents.obtain();

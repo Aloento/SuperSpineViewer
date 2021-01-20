@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Main extends Application {
-
     @Override
     public void start(Stage primaryStage) {
 
@@ -58,7 +57,5 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         icon.requestFocus();
-
     }
-
 }

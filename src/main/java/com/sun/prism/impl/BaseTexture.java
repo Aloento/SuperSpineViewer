@@ -7,20 +7,14 @@ import com.sun.prism.Texture;
 import java.nio.Buffer;
 
 public abstract class BaseTexture<T extends ManagedResource> implements Texture {
-
     protected final T resource;
-
     private final PixelFormat format;
     private final int physicalWidth;
     private final int physicalHeight;
     private final int contentX;
     private final int contentY;
-    //maximum possible user pixels of a texture (in case of POW2 texture allocation size)
-    //currently only matters with RTT's
     private final int maxContentWidth;
     private final int maxContentHeight;
-    // We do not provide a default wrapMode because it is so dependent on
-    // how the texture will be used.
     private final WrapMode wrapMode;
     private final boolean useMipmap;
     protected int contentWidth;
@@ -186,15 +180,6 @@ public abstract class BaseTexture<T extends ManagedResource> implements Texture 
         return altTex;
     }
 
-    /**
-     * Create a new version of this texture which shares the same
-     * {@code ManagedResource} reference.
-     * The lock counts for the shared resource reference are not
-     * changed in the processing of this method.
-     *
-     * @param newMode the {@code WrapMode} to use for the new texture.
-     * @return a new {@code Texture} object sharing the underlying resource.
-     */
     protected abstract Texture createSharedTexture(WrapMode newMode);
 
     @Override

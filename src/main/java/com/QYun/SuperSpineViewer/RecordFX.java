@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class RecordFX {
-
     private static volatile boolean exporting = false;
     private final Node node;
     private final SnapshotParameters parameters = new SnapshotParameters();
@@ -184,5 +183,4 @@ public class RecordFX {
         saveVideoThread.setDaemon(true);
         saveVideoThread.start();
     }
-
 }

@@ -13,7 +13,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.stream.StreamUtil;
 
 public class LwjglFXApplication extends LwjglApplication {
-
     final LwjglFXInput input;
     private boolean shouldRender;
 
@@ -120,5 +119,4 @@ public class LwjglFXApplication extends LwjglApplication {
         if (audio != null) audio.dispose();
         // if (graphics.config.forceExit) System.exit(-1);
     }
-
 }

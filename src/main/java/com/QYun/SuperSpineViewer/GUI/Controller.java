@@ -29,5 +29,4 @@ public class Controller {
         }
         Application.launch(Main.class, args);
     }
-
 }

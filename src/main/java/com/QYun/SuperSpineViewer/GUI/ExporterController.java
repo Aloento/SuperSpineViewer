@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ExporterController extends Controller implements Initializable {
-
     private final RecordFX recordFX = new RecordFX(Objects.requireNonNull(spineRender));
     private final RuntimesLoader runtimesLoader = new RuntimesLoader();
     private final SuperSpine spine = new SuperSpine();
@@ -129,5 +128,4 @@ public class ExporterController extends Controller implements Initializable {
             });
         }
     }
-
 }

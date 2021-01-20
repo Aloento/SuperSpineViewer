@@ -36,7 +36,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import static javafx.animation.Interpolator.EASE_BOTH;
 
 public class SpineController extends Controller implements Initializable {
-
     @FXML
     private StackPane spinePane;
 

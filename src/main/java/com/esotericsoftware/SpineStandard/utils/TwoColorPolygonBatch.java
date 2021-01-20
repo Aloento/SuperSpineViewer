@@ -27,9 +27,9 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private final Matrix4 combinedMatrix = new Matrix4();
     private final Color light = new Color(1, 1, 1, 1);
     private final Color dark = new Color(0, 0, 0, 1);
+    private final ShaderProgram shader;
     public byte totalRenderCalls = 0;
     private boolean blendingDisabled;
-    private final ShaderProgram shader;
     private int vertexIndex, triangleIndex;
     private Texture lastTexture;
     private boolean drawing;

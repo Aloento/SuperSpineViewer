@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class AboutController implements Initializable {
-
     @FXML
     private StackPane aboutPane;
 
