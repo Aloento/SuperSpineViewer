@@ -7,20 +7,19 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.SpineLatency.*;
-import com.esotericsoftware.SpineLatency.AnimationState.TrackEntry;
+import com.esotericsoftware.SpinePreview.*;
+import com.esotericsoftware.SpinePreview.AnimationState.TrackEntry;
+import com.esotericsoftware.SpinePreview.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 
-public class Latency extends SuperSpine {
+public class Preview extends SuperSpine {
 
-    private PolygonSpriteBatch batch;
-    private SkeletonMeshRenderer renderer;
-
+    private TwoColorPolygonBatch batch;
     private OrthographicCamera camera;
+    private SkeletonRenderer renderer;
     private Skeleton skeleton;
     private AnimationState state;
 
@@ -52,16 +51,13 @@ public class Latency extends SuperSpine {
             }
         };
 
-        SkeletonData skeletonData;
-        if (isBinary) {
-            SkeletonBinary binary = new SkeletonBinary(atlas);
-            binary.setScale(scale.get());
-            skeletonData = binary.readSkeletonData(skelFile);
-        } else {
-            SkeletonJson json = new SkeletonJson(atlas);
-            json.setScale(scale.get());
-            skeletonData = json.readSkeletonData(skelFile);
-        }
+        SkeletonLoader loader;
+        if (isBinary)
+            loader = new SkeletonBinary(atlas);
+        else loader = new SkeletonJson(atlas);
+
+        loader.setScale(scale.get());
+        SkeletonData skeletonData = loader.readSkeletonData(skelFile);
         if (skeletonData.getBones().size == 0) {
             System.out.println("骨骼为空");
             return false;
@@ -73,6 +69,9 @@ public class Latency extends SuperSpine {
         skeleton.setPosition(X.get(), Y.get());
 
         state = new AnimationState(new AnimationStateData(skeletonData));
+        if (animate.get() == null)
+            state.setEmptyAnimation(0, 0);
+
         spineVersion.set(skeletonData.getVersion());
         projectName.set(skeletonData.getName());
 
@@ -98,6 +97,7 @@ public class Latency extends SuperSpine {
                     state.setAnimation(0, newValue, isLoop.get());
                     isPlay.set(true);
                 } else {
+                    state.setEmptyAnimation(0, 0);
                     isPlay.set(false);
                 }
             }
@@ -106,6 +106,7 @@ public class Latency extends SuperSpine {
         isLoop.addListener((observable, oldValue, newValue) -> {
             if (state != null) {
                 if (animate.get() == null) {
+                    state.setEmptyAnimation(0, 0);
                     isPlay.set(false);
                 } else {
                     state.setAnimation(0, animate.get(), newValue);
@@ -179,9 +180,9 @@ public class Latency extends SuperSpine {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
-        batch = new PolygonSpriteBatch();
+        batch = new TwoColorPolygonBatch(3100);
         camera = new OrthographicCamera(w, h);
-        renderer = new SkeletonMeshRenderer();
+        renderer = new SkeletonRenderer();
         renderer.setPremultipliedAlpha(true);
 
         if (loadSkel())
@@ -195,7 +196,9 @@ public class Latency extends SuperSpine {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle("FPS : " + Gdx.graphics.getFramesPerSecond());
+
         renderer.setPremultipliedAlpha(Controller.preA);
+        batch.setPremultipliedAlpha(Controller.preA);
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);
@@ -206,9 +209,7 @@ public class Latency extends SuperSpine {
         if (state != null) {
             TrackEntry entry = state.getCurrent(0);
             if (entry != null) {
-                percent = entry.getTime() / entry.getEndTime();
-                if (entry.getLoop())
-                    percent %= 1;
+                percent = entry.getAnimationTime() / entry.getAnimationEnd();
                 if (isPlay.get())
                     Platform.runLater(() -> Controller.progressBar.setProgress(percent));
                 if (percent >= 1 && !isLoop.get())
@@ -223,4 +224,5 @@ public class Latency extends SuperSpine {
         camera.setToOrtho(false);
         camera.position.set(x, y, 0);
     }
+
 }

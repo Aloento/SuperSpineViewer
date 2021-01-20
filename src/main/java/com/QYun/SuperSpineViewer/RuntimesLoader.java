@@ -81,14 +81,7 @@ public class RuntimesLoader extends Controller {
 
     private boolean initLibDGX() {
         config.samples = 16;
-        switch (spineVersion) {
-            case 40 -> new LwjglFXApplication(new Spine40(), spineRender, config);
-            case 38, 37, 36, 35, 34 -> new LwjglFXApplication(new Standard(), spineRender, config);
-            case 32, 31, 21 -> new LwjglFXApplication(new Latency(), spineRender, config);
-            default -> {
-                return false;
-            }
-        }
+        new LwjglFXApplication(new Universal(), spineRender, config);
         isLoad.set(true);
         return true;
     }

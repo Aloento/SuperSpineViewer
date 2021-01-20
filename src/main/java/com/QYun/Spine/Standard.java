@@ -179,8 +179,7 @@ public class Standard extends SuperSpine {
         });
     }
 
-    @Override
-    public void create() {
+    void create() {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
@@ -193,8 +192,7 @@ public class Standard extends SuperSpine {
             listeners();
     }
 
-    @Override
-    public void render() {
+    void render() {
         state.update(Gdx.graphics.getDeltaTime());
         state.apply(skeleton);
         skeleton.updateWorldTransform();
@@ -223,8 +221,7 @@ public class Standard extends SuperSpine {
         }
     }
 
-    @Override
-    public void resize(int width, int height) {
+    void resize() {
         float x = camera.position.x;
         float y = camera.position.y;
         camera.setToOrtho(false);
