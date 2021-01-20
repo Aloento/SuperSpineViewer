@@ -229,7 +229,8 @@ public class Latency extends SuperSpine {
     }
 
     void resize() {
+        float x = camera.position.x, y = camera.position.y;
         camera.setToOrtho(false);
-        camera.position.set(camera.position.x, camera.position.y, 0);
+        camera.position.set(x, y, 0);
     }
 }

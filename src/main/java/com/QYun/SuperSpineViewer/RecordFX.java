@@ -124,7 +124,7 @@ public class RecordFX {
                     "-c:v", "png", "-pix_fmt", "rgba",
                     "-filter:v", "\"setpts=0.5*PTS\"",
                     rootPath + fileName + ".mov"
-            }).waitFor() == 0) {
+            }, new String[]{System.getProperty("user.dir")}).waitFor() == 0) {
                 File sequence = new File(rootPath + "Sequence" + File.separator);
                 for (String file : Objects.requireNonNull(sequence.list()))
                     new File(sequence, file).delete();
