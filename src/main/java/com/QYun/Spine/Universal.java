@@ -1,11 +1,15 @@
 package com.QYun.Spine;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import javafx.application.Platform;
 
 public class Universal extends ApplicationAdapter {
-    private SuperSpine Runtimes;
     public static byte Range;
+    private static SuperSpine Runtimes;
+
+    public void reload() {
+        if (Runtimes != null)
+            Runtimes.reload();
+    }
 
     @Override
     public void create() {
@@ -14,14 +18,6 @@ public class Universal extends ApplicationAdapter {
         else if (Universal.Range == 0)
             Runtimes = new Latency();
         else Runtimes = new Standard();
-
-        Platform.runLater(() -> {
-            SuperSpine.skinsList.clear();
-            SuperSpine.animatesList.clear();
-            SuperSpine.skin.set(null);
-            SuperSpine.animate.set(null);
-            System.gc();
-        });
 
         Runtimes.create();
     }

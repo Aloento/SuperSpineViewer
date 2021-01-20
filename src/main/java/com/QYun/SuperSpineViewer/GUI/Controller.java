@@ -3,13 +3,11 @@ package com.QYun.SuperSpineViewer.GUI;
 import com.QYun.SuperSpineViewer.Main;
 import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Application;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
 public class Controller {
-
-    public static final SimpleBooleanProperty isLoad = new SimpleBooleanProperty(false);
+    public static boolean isLoad = false;
     public static SpineController spineController;
     public static ExporterController exporterController;
     public static ImageView spineRender;
@@ -21,7 +19,6 @@ public class Controller {
     public static int height;
     public static boolean sequence = false;
     public static boolean isFX = true;
-    public static boolean requestReload = false;
     public static boolean preA = true;
     public static String outPath = null;
     public static String openPath = null;

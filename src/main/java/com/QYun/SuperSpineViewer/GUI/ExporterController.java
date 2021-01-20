@@ -72,14 +72,9 @@ public class ExporterController extends Controller implements Initializable {
         File file = fileChooser.showOpenDialog(new Stage());
         if (file != null) {
             openPath = file.getAbsolutePath();
-            if (isLoad.get()) {
-                requestReload = true;
-                runtimesLoader.init(file);
-                System.out.println("请求重载");
-            } else {
-                runtimesLoader.init(file);
-                System.out.println("请求初始化");
-            }
+            runtimesLoader.init();
+            if (isLoad) System.out.println("请求重载");
+            else System.out.println("请求初始化");
         }
     }
 
@@ -129,10 +124,8 @@ public class ExporterController extends Controller implements Initializable {
 
         if (openPath != null) {
             Platform.runLater(() -> {
-                File file = new File(openPath);
-                runtimesLoader.init(file);
+                runtimesLoader.init();
                 System.out.println("从命令行加载");
-                openPath = null;
             });
         }
     }

@@ -219,7 +219,7 @@ public class SpineController extends Controller implements Initializable {
         C_Animate.setItems(spine.getAnimatesList());
 
         playButton.setOnAction(event -> {
-            if (isLoad.get()) {
+            if (isLoad) {
                 if (spine.isIsPlay()) {
                     spine.setIsPlay(false);
                     playButton.setGraphic(playIcon);
@@ -299,45 +299,45 @@ public class SpineController extends Controller implements Initializable {
         C_Skins.setOnAction(event -> spine.setSkin(C_Skins.getValue()));
 
         C_Animate.setOnAction(event -> spine.setAnimate(C_Animate.getValue()));
+    }
 
-        isLoad.addListener((observable, oldValue, newValue) -> new Thread(() -> {
-            if (newValue) {
-                try {
-                    setProgressAnimate(purpleSpinner);
-                    Thread.sleep(100);
-                    setProgressAnimate(blueSpinner);
-                    Thread.sleep(100);
-                    setProgressAnimate(cyanSpinner);
-                    Thread.sleep(100);
-                    setProgressAnimate(greenSpinner);
-                    Thread.sleep(100);
-                    setProgressAnimate(yellowSpinner);
-                    Thread.sleep(100);
-                    setProgressAnimate(orangeSpinner);
-                    Thread.sleep(100);
-                    setProgressAnimate(redSpinner);
-                    Thread.sleep(1000);
-                    Timeline paneLine = new Timeline(
-                            new KeyFrame(
-                                    Duration.seconds(1),
-                                    new KeyValue(loadPane.opacityProperty(), 0)
-                            )
-                    );
-                    paneLine.play();
-                    Thread.sleep(500);
-                    Timeline viewerLine = new Timeline(
-                            new KeyFrame(
-                                    Duration.seconds(1),
-                                    new KeyValue(SpineRender.opacityProperty(), 1)
-                            )
-                    );
-                    viewerLine.play();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    public void isLoaded() {
+        new Thread(() -> {
+            isLoad = true;
+            try {
+                setProgressAnimate(purpleSpinner);
+                Thread.sleep(100);
+                setProgressAnimate(blueSpinner);
+                Thread.sleep(100);
+                setProgressAnimate(cyanSpinner);
+                Thread.sleep(100);
+                setProgressAnimate(greenSpinner);
+                Thread.sleep(100);
+                setProgressAnimate(yellowSpinner);
+                Thread.sleep(100);
+                setProgressAnimate(orangeSpinner);
+                Thread.sleep(100);
+                setProgressAnimate(redSpinner);
+                Thread.sleep(1000);
+                Timeline paneLine = new Timeline(
+                        new KeyFrame(
+                                Duration.seconds(1),
+                                new KeyValue(loadPane.opacityProperty(), 0)
+                        )
+                );
+                paneLine.play();
+                Thread.sleep(500);
+                Timeline viewerLine = new Timeline(
+                        new KeyFrame(
+                                Duration.seconds(1),
+                                new KeyValue(SpineRender.opacityProperty(), 1)
+                        )
+                );
+                viewerLine.play();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }).start());
-
+        }).start();
     }
 
     private void setProgressAnimate(JFXSpinner spinner) {

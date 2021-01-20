@@ -14,14 +14,24 @@ import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.SpineLatency.*;
 import com.esotericsoftware.SpineLatency.AnimationState.TrackEntry;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 
 public class Latency extends SuperSpine {
 
     private PolygonSpriteBatch batch;
     private SkeletonMeshRenderer renderer;
-
     private OrthographicCamera camera;
     private Skeleton skeleton;
+    private final ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
+        if (Universal.Range == 1) {
+            if (skeleton != null) {
+                if (newValue == null)
+                    skeleton.setSkin((Skin) null);
+                else skeleton.setSkin(newValue);
+                skeleton.setSlotsToSetupPose();
+            }
+        } else skin.removeListener(this.skinListener);
+    };
     private AnimationState state;
 
     private void lists(Array<Skin> skins, Array<Animation> animations) {
@@ -83,14 +93,7 @@ public class Latency extends SuperSpine {
     }
 
     private void listeners() {
-        skin.addListener((observable, oldValue, newValue) -> {
-            if (skeleton != null && Universal.Range == 0) {
-                if (newValue == null)
-                    skeleton.setSkin((Skin) null);
-                else skeleton.setSkin(newValue);
-                skeleton.setSlotsToSetupPose();
-            }
-        });
+        skin.addListener(skinListener);
 
         animate.addListener((observable, oldValue, newValue) -> {
             if (state != null && Universal.Range == 0) {
@@ -162,25 +165,25 @@ public class Latency extends SuperSpine {
             if (state != null && Universal.Range == 0)
                 state.setTimeScale(speed.get());
         });
+    }
 
-        isReload.addListener((observable, oldValue, newValue) -> {
-            if (newValue && Universal.Range == 0) {
-                skinsList.clear();
-                animatesList.clear();
-                skin.set(null);
-                animate.set(null);
-                Gdx.app.postRunnable(this::loadSkel);
-                isReload.set(false);
-            }
-        });
+    void reload() {
+        skinsList.clear();
+        animatesList.clear();
+        skin.set(null);
+        animate.set(null);
+        if (Universal.Range != 1) {
+            batch = null;
+            camera = null;
+            renderer = null;
+            skeleton = null;
+            state = null;
+        } else Gdx.app.postRunnable(this::loadSkel);
     }
 
     void create() {
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-
         batch = new PolygonSpriteBatch();
-        camera = new OrthographicCamera(w, h);
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         renderer = new SkeletonMeshRenderer();
         renderer.setPremultipliedAlpha(true);
 
@@ -218,9 +221,7 @@ public class Latency extends SuperSpine {
     }
 
     void resize() {
-        float x = camera.position.x;
-        float y = camera.position.y;
         camera.setToOrtho(false);
-        camera.position.set(x, y, 0);
+        camera.position.set(camera.position.x, camera.position.y, 0);
     }
 }

@@ -8,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class SuperSpine {
-    static final SimpleBooleanProperty isReload = new SimpleBooleanProperty(false);
     static final SimpleStringProperty spineVersion = new SimpleStringProperty(null);
     static final SimpleStringProperty projectName = new SimpleStringProperty(null);
     static final SimpleStringProperty skin = new SimpleStringProperty(null);
@@ -25,10 +24,6 @@ public class SuperSpine {
     static boolean isBinary = true;
     static ObservableList<String> skinsList = FXCollections.observableArrayList();
     static ObservableList<String> animatesList = FXCollections.observableArrayList();
-
-    public void setIsReload(boolean isReload) {
-        SuperSpine.isReload.set(isReload);
-    }
 
     public String getSpineVersion() {
         return spineVersion.get();
@@ -130,12 +125,12 @@ public class SuperSpine {
         SuperSpine.atlasFile = atlasFile;
     }
 
-    public void setIsBinary(boolean isBinary) {
-        SuperSpine.isBinary = isBinary;
-    }
-
     public boolean isIsBinary() {
         return isBinary;
+    }
+
+    public void setIsBinary(boolean isBinary) {
+        SuperSpine.isBinary = isBinary;
     }
 
     public ObservableList<String> getSkinsList() {
@@ -153,6 +148,9 @@ public class SuperSpine {
     }
 
     void resize() {
+    }
+
+    void reload() {
     }
 
 }

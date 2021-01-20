@@ -22,6 +22,7 @@ public class RuntimesLoader extends Controller {
     private final String[] dataSuffixes = {"", ".json", ".skel"};
     private final String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas", "-pma.atlas"};
     private final SuperSpine spine = new SuperSpine();
+    private final Universal universal = new Universal();
     private LwjglFXApplication gdxApp;
 
     private void whichVersion(String skel) {
@@ -45,27 +46,24 @@ public class RuntimesLoader extends Controller {
             spineVersion = 21;
     }
 
-    private boolean skelVersion(File skelFile) {
+    private void skelVersion(File skelFile) {
         try {
             if (spine.isIsBinary()) {
                 whichVersion(new BufferedReader(new FileReader(skelFile)).readLine());
                 if (spineVersion < 20) {
                     System.out.println("Spine二进制版本判断失败");
-                    return false;
                 }
                 System.out.println("Spine二进制版本：" + spineVersion);
             } else {
                 whichVersion(Files.readString(skelFile.toPath()));
                 if (spineVersion < 20) {
                     System.out.println("SpineJson版本判断失败");
-                    return false;
                 }
                 System.out.println("SpineJson版本：" + spineVersion);
             }
         } catch (IOException e) {
             System.out.println("文件读取失败");
             e.printStackTrace();
-            return false;
         }
 
         if (spineVersion > 38)
@@ -73,15 +71,6 @@ public class RuntimesLoader extends Controller {
         else if (spineVersion < 34)
             Universal.Range = 0;
         else Universal.Range = 1;
-
-        return true;
-    }
-
-    private void initLibDGX() {
-        config.samples = 16;
-        LwjglApplicationConfiguration.disableAudio = true;
-        gdxApp = new LwjglFXApplication(new Universal(), spineRender, config);
-        isLoad.set(true);
     }
 
     private FileHandle atlasFile(FileHandle skelFile, String baseName) {
@@ -108,29 +97,30 @@ public class RuntimesLoader extends Controller {
         return atlasFile(skelFile, baseName);
     }
 
-    public void init(File file) {
-        FileHandle skelFile = new FileHandle(new File(file.getAbsolutePath()));
-        spine.setAtlasFile(atlasFile(skelFile));
-        spine.setSkelFile(skelFile);
-        String extension = skelFile.extension();
+    public void init() {
+        FileHandle handle = new FileHandle(new File(openPath));
+        spine.setAtlasFile(atlasFile(handle));
+        spine.setSkelFile(handle);
 
         Platform.runLater(() -> {
+            config.samples = 16;
+            LwjglApplicationConfiguration.disableAudio = true;
             Atlas.setText("Atlas : " + spine.getAtlasFile().name());
-            Skel.setText("Skel : " + skelFile.name());
+            Skel.setText("Skel : " + handle.name());
         });
 
-        spine.setIsBinary(!extension.equalsIgnoreCase("json") && !extension.equalsIgnoreCase("txt"));
-        if (!requestReload) {
-            if (skelVersion(file))
-                initLibDGX();
-        } else {
-            byte tmp = Universal.Range;
-            skelVersion(file);
+        spine.setIsBinary(!handle.extension().equalsIgnoreCase("json") && !handle.extension().equalsIgnoreCase("txt"));
+        byte tmp = Universal.Range;
+        skelVersion(new File(openPath));
+        universal.reload();
+        if (isLoad) {
             if (tmp != Universal.Range) {
                 gdxApp.exit();
-                gdxApp = new LwjglFXApplication(new Universal(), spineRender, config);
-            } else spine.setIsReload(true);
-            requestReload = false;
+                gdxApp = new LwjglFXApplication(universal, spineRender, config);
+            }
+        } else {
+            gdxApp = new LwjglFXApplication(universal, spineRender, config);
+            spineController.isLoaded();
         }
     }
 }
