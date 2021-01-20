@@ -1,6 +1,7 @@
 package com.QYun.SuperSpineViewer;
 
-import com.QYun.Spine.*;
+import com.QYun.Spine.SuperSpine;
+import com.QYun.Spine.Universal;
 import com.QYun.SuperSpineViewer.GUI.Controller;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
@@ -43,36 +44,25 @@ public class RuntimesLoader extends Controller {
             spineVersion = 21;
     }
 
-    private boolean binaryVersion(File skelFile) {
+    private boolean skelVersion(File skelFile) {
         try {
-            whichVersion(new BufferedReader(new FileReader(skelFile)).readLine());
-            if (spineVersion < 20) {
-                System.out.println("Spine二进制版本判断失败");
-                return false;
+            if (spine.isIsBinary()) {
+                whichVersion(new BufferedReader(new FileReader(skelFile)).readLine());
+                if (spineVersion < 20) {
+                    System.out.println("Spine二进制版本判断失败");
+                    return false;
+                }
+                System.out.println("Spine二进制版本：" + spineVersion);
+            } else {
+                whichVersion(Files.readString(skelFile.toPath()));
+                if (spineVersion < 20) {
+                    System.out.println("SpineJson版本判断失败");
+                    return false;
+                }
+                System.out.println("SpineJson版本：" + spineVersion);
             }
-
-            spine.setIsBinary(true);
-            System.out.println("Spine二进制版本：" + spineVersion);
         } catch (IOException e) {
-            System.out.println("Spine二进制读取失败");
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    private boolean jsonVersion(File skelFile) {
-        try {
-            whichVersion(Files.readString(skelFile.toPath()));
-            if (spineVersion < 20) {
-                System.out.println("SpineJson版本判断失败");
-                return false;
-            }
-
-            spine.setIsBinary(false);
-            System.out.println("SpineJson版本：" + spineVersion);
-        } catch (IOException e) {
-            System.out.println("SpineJson读取失败");
+            System.out.println("文件读取失败");
             e.printStackTrace();
             return false;
         }
@@ -120,20 +110,13 @@ public class RuntimesLoader extends Controller {
             Skel.setText("Skel : " + skelFile.name());
         });
 
+        spine.setIsBinary(!extension.equalsIgnoreCase("json") && !extension.equalsIgnoreCase("txt"));
         if (!requestReload) {
-            if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt")) {
-                if (jsonVersion(file))
-                    initLibDGX();
-            } else {
-                if (binaryVersion(file))
-                    initLibDGX();
-            }
+            if (skelVersion(file))
+                initLibDGX();
         } else {
-            if (extension.equalsIgnoreCase("json") || extension.equalsIgnoreCase("txt"))
-                jsonVersion(file);
-            else binaryVersion(file);
-
-            new SuperSpine().setIsReload(true);
+            skelVersion(file);
+            spine.setIsReload(true);
             requestReload = false;
         }
     }

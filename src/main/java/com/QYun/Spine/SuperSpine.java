@@ -135,6 +135,10 @@ public class SuperSpine {
         SuperSpine.isBinary = isBinary;
     }
 
+    public boolean isIsBinary() {
+        return isBinary;
+    }
+
     public ObservableList<String> getSkinsList() {
         return skinsList;
     }
