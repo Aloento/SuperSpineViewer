@@ -9,7 +9,9 @@
 
 ## 获得SuperSpineViewer
 
-[**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases/latest)
+[**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases/latest)  
+
+[通用运行依赖](https://github.com/Aloento/SuperSpineViewer/releases/tag/R1.0.0)  
 
 [![Windows x64](https://github.com/Aloento/SuperSpineViewer/workflows/Windows%20x64/badge.svg "Windows x64自动构建")](https://github.com/Aloento/SuperSpineViewer/actions?query=workflow%3A%22Windows+x64%22)
 
