@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class RecordFX extends Controller {
     private static volatile boolean recording = false;
     private final ThreadPoolExecutor savePool = new ThreadPoolExecutor(0, 1,
-            0L, TimeUnit.MILLISECONDS,
+            1L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(),
             (r -> {
                 Thread save = new Thread(r, "SavePNG");
@@ -34,6 +34,7 @@ public class RecordFX extends Controller {
     private String fileName = null;
 
     public RecordFX() {
+        savePool.allowCoreThreadTimeOut(true);
         parameters.setFill(Color.TRANSPARENT);
         System.out.println("SuperSpineViewer已启动");
     }
@@ -67,9 +68,10 @@ public class RecordFX extends Controller {
     }
 
     public void startRecording(String fileName) {
-        this.fileName = fileName;
-
         if (!recording) {
+            this.fileName = fileName;
+            savePool.setMaximumPoolSize(perform);
+            savePool.setCorePoolSize(perform);
             spine.setPercent(0);
             recording = true;
             recorderFX();
@@ -85,7 +87,7 @@ public class RecordFX extends Controller {
                     "ffmpeg", "-r", String.valueOf(FPS),
                     "-i", outPath + "Sequence" + File.separator + fileName + "_%d.png",
                     "-c:v", "png", "-pix_fmt", "rgba",
-                    "-filter:v", "\"setpts=0.5*PTS\"",
+                    "-filter:v", "\"setpts=" + quality + "*PTS\"",
                     outPath + fileName + ".mov"
             }, new String[]{System.getProperty("user.dir")}).waitFor() == 0) {
                 File sequence = new File(outPath + "Sequence" + File.separator);
@@ -123,7 +125,6 @@ public class RecordFX extends Controller {
                 });
 
                 savePool.setCorePoolSize(0);
-                savePool.setMaximumPoolSize(1);
                 System.gc();
             }
         };

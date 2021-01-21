@@ -9,7 +9,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -32,10 +31,6 @@ public class ExporterController extends Controller implements Initializable {
     @FXML
     private Label L_FPS;
     @FXML
-    private ToggleGroup Render;
-    @FXML
-    private ToggleGroup Format;
-    @FXML
     private JFXTextField T_Path;
     @FXML
     private JFXProgressBar P_Export;
@@ -43,15 +38,11 @@ public class ExporterController extends Controller implements Initializable {
     @FXML
     void B_Export() {
         if (outPath != null && spine.getAnimate() != null) {
-            if (isFX) {
-                spine.setIsPlay(false);
-                spine.setIsLoop(false);
-                spine.setSpeed(0.5f);
-                recordFX.startRecording(spine.getProjectName() + "_" + spine.getAnimate());
-                spine.setIsPlay(true);
-            } else {
-                System.out.println("功能构建中");
-            }
+            spine.setIsPlay(false);
+            spine.setIsLoop(false);
+            spine.setSpeed(quality);
+            recordFX.startRecording(spine.getProjectName() + "_" + spine.getAnimate());
+            spine.setIsPlay(true);
         }
     }
 
@@ -85,18 +76,38 @@ public class ExporterController extends Controller implements Initializable {
     }
 
     @FXML
-    void RB_LibGDX() {
-        isFX = false;
+    void RB_S() {
+        quality = 0.5f;
+    }
+
+    @FXML
+    void RB_E() {
+        quality = 0.25f;
+    }
+
+    @FXML
+    void RB_F() {
+        quality = 1f;
+    }
+
+    @FXML
+    void RB_N() {
+        perform = 3;
+    }
+
+    @FXML
+    void RB_H() {
+        perform = 9;
+    }
+
+    @FXML
+    void RB_L() {
+        perform = 1;
     }
 
     @FXML
     void RB_MOV() {
         sequence = false;
-    }
-
-    @FXML
-    void RB_OpenJFX() {
-        isFX = true;
     }
 
     @FXML
