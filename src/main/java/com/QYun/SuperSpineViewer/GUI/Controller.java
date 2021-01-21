@@ -7,17 +7,17 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
 public class Controller {
-    public static boolean isLoad = false;
-    public static SpineController spineController;
     public static ExporterController exporterController;
-    public static ImageView spineRender;
+    public static SpineController spineController;
     public static JFXProgressBar progressBar;
+    public static ImageView spineRender;
     public static Label FPS;
     public static Label Skel;
     public static Label Atlas;
     public static int width;
     public static int height;
     public static boolean sequence = false;
+    public static boolean isLoad = false;
     public static boolean isFX = true;
     public static boolean preA = true;
     public static String outPath = null;

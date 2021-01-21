@@ -3,7 +3,7 @@
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="Spine" xmlns="http://javafx.com/javafx/15.0.1"
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
            fx:controller="com.QYun.SuperSpineViewer.GUI.SpineController">
     <BorderPane>
 
@@ -13,7 +13,7 @@
         </left>
 
         <center>
-            <StackPane fx:id="Viewer">
+            <StackPane>
                 <ImageView fx:id="SpineRender" opacity="0.0" scaleY="-1.0"/>
 
                 <StackPane fx:id="loadPane">

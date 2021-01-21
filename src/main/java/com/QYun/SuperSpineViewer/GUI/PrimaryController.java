@@ -1,6 +1,9 @@
 package com.QYun.SuperSpineViewer.GUI;
 
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXPopup;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -10,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -23,15 +25,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PrimaryController extends Controller implements Initializable {
-    @FXML
-    private JFXRippler optionsRippler;
-
-    @FXML
-    private StackPane Primary;
-
-    @FXML
-    private AnchorPane AnchorPane;
-
     @FXML
     private StackPane titleBurgerContainer;
 

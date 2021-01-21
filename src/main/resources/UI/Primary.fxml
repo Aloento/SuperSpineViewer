@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="Primary" xmlns="http://javafx.com/javafx/15.0.1"
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
            fx:controller="com.QYun.SuperSpineViewer.GUI.PrimaryController">
     <BorderPane>
         <top>
@@ -22,7 +22,7 @@
                         <Label>SuperSpineViewer</Label>
                     </leftItems>
                     <rightItems>
-                        <JFXRippler fx:id="optionsRippler" maskType="CIRCLE"
+                        <JFXRippler maskType="CIRCLE"
                                     style="-fx-ripple-color:WHITE;">
                             <StackPane fx:id="optionsBurger">
                                 <JFXHamburger styleClass="jfx-options-burger">

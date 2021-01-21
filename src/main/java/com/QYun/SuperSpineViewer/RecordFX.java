@@ -4,7 +4,6 @@ import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.GUI.Controller;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -19,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 
 public class RecordFX extends Controller {
     private static volatile boolean recording = false;
-    private final Node node;
     private final ThreadPoolExecutor savePool = new ThreadPoolExecutor(0, 1,
             0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(),
@@ -35,8 +33,7 @@ public class RecordFX extends Controller {
     private short counter;
     private String fileName = null;
 
-    public RecordFX(Node node) {
-        this.node = node;
+    public RecordFX() {
         parameters.setFill(Color.TRANSPARENT);
         System.out.println("SuperSpineViewer已启动");
     }
@@ -50,7 +47,7 @@ public class RecordFX extends Controller {
                 do {
                     Platform.runLater(() -> {
                         if (spine.getPercent() < 1) {
-                            savePool.submit(new savePNG(node.snapshot(parameters, null), counter++));
+                            savePool.submit(new savePNG(spineRender.snapshot(parameters, null), counter++));
                             System.out.println("捕获：" + counter + "\t" + spine.getPercent());
                         } else recording = false;
                     });
@@ -63,7 +60,6 @@ public class RecordFX extends Controller {
                 encodeFX();
                 savePool.setMaximumPoolSize(Integer.MAX_VALUE);
                 savePool.setCorePoolSize(Integer.MAX_VALUE);
-                System.out.println("请求：停止录制");
             }
         };
         recodeThread.setDaemon(true);
@@ -111,6 +107,7 @@ public class RecordFX extends Controller {
         Thread ffmpeg = new Thread("RecordFX_Encoding") {
             @Override
             public void run() {
+                System.out.println("请求：停止录制");
                 Platform.runLater(() -> Controller.progressBar.setProgress(-1));
                 while (savePool.getActiveCount() != 0)
                     Thread.onSpinWait();

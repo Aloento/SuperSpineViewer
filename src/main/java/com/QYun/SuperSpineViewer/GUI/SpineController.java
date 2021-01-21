@@ -40,12 +40,6 @@ public class SpineController extends Controller implements Initializable {
     private StackPane spinePane;
 
     @FXML
-    private StackPane Spine;
-
-    @FXML
-    private StackPane Viewer;
-
-    @FXML
     private ImageView SpineRender;
 
     @FXML

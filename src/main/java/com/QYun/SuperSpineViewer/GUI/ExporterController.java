@@ -10,23 +10,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ExporterController extends Controller implements Initializable {
-    private final RecordFX recordFX = new RecordFX(Objects.requireNonNull(spineRender));
     private final RuntimesLoader runtimesLoader = new RuntimesLoader();
     private final SuperSpine spine = new SuperSpine();
+    private final RecordFX recordFX = new RecordFX();
 
-    @FXML
-    private StackPane Exporter;
     @FXML
     private Label L_Version;
     @FXML
