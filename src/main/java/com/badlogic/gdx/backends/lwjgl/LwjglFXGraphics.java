@@ -34,7 +34,7 @@ public class LwjglFXGraphics extends LwjglGraphics {
     }
 
     private static void extractExtensions() {
-        extensions = new Array();
+        extensions = new Array<>();
         if (glVersion.isVersionEqualToOrHigher(3, 2)) {
             int numExtensions = GL11.glGetInteger(33309);
 

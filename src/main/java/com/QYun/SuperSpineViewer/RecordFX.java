@@ -3,9 +3,6 @@ package com.QYun.SuperSpineViewer;
 import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.GUI.Controller;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -16,12 +13,18 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RecordFX {
-    private static volatile boolean exporting = false;
     private final Node node;
+    private final ExecutorService savePool = Executors.newCachedThreadPool(r -> {
+        Thread save = new Thread(r, "SavePNG");
+        save.setPriority(Thread.MIN_PRIORITY);
+        save.setDaemon(true);
+        return save;
+    });
     private final SnapshotParameters parameters = new SnapshotParameters();
-    private final SimpleListProperty<Image> recordFrames = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final SuperSpine spine = new SuperSpine();
     private final byte FPS = 60;
     private boolean recording = false;
@@ -35,34 +38,19 @@ public class RecordFX {
         this.node = node;
         parameters.setFill(Color.TRANSPARENT);
         System.out.println("SuperSpineViewer已启动");
-        recordFrames.addListener((InvalidationListener) observable -> {
-            if (!exporting) {
-                exporting = true;
-                new Thread("RecordFX_Saving") {
-                    @Override
-                    public void run() {
-                        new File(rootPath + "Sequence" + File.separator).mkdirs();
-                        while (recordFrames.size() != 0) {
-                            saveToArray(recordFrames.get(0));
-                            recordFrames.remove(0);
-                        }
-                        exporting = false;
-                    }
-                }.start();
-            }
-        });
     }
 
     private void recorderFX() {
         Thread recodeThread = new Thread("RecordFX_Capturing") {
             @Override
             public void run() {
+                new File(rootPath + "Sequence").mkdirs();
                 System.out.println("录制开始");
                 do {
                     Platform.runLater(() -> {
                         if (spine.getPercent() <= 1) {
-                            recordFrames.add(node.snapshot(parameters, null));
-                            System.out.println("捕获的帧：" + timer++ + "\t" + spine.getPercent());
+                            savePool.submit(new savePNG(node.snapshot(parameters, null), counter++));
+                            System.out.println("捕获：" + timer++ + "\t" + spine.getPercent());
                         }
                     });
                     try {
@@ -88,26 +76,10 @@ public class RecordFX {
         this.saveSequence = saveSequence;
 
         if (!recording) {
-            recordFrames.clear();
             recorderFX();
             recording = true;
             System.out.println("请求：开始录制");
         }
-    }
-
-    private void saveToArray(Image image) {
-        try {
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png",
-                    new File((rootPath + "Sequence" + File.separator + fileName) + "_" + counter++ + ".png"));
-        } catch (IOException e) {
-            System.out.println("保存PNG文件失败");
-            e.printStackTrace();
-        }
-        Platform.runLater(() -> {
-            System.out.println("保存序列：" + counter);
-            if (!spine.isIsPlay())
-                Controller.progressBar.setProgress(((double) counter / (double) timer));
-        });
     }
 
     private void ffmpegFX() {
@@ -143,17 +115,9 @@ public class RecordFX {
     }
 
     private void encodeFX() {
-        Thread saveVideoThread = new Thread("RecordFX_Encoding") {
+        Thread ffmpeg = new Thread("RecordFX_Encoding") {
             @Override
             public void run() {
-                new File(rootPath + "Sequence" + File.separator).mkdirs();
-                while (exporting)
-                    Thread.onSpinWait();
-
-                while (recordFrames.size() != 0) {
-                    saveToArray(recordFrames.get(0));
-                    recordFrames.remove(0);
-                }
                 if (!saveSequence)
                     ffmpegFX();
 
@@ -166,7 +130,31 @@ public class RecordFX {
                 System.gc();
             }
         };
-        saveVideoThread.setDaemon(true);
-        saveVideoThread.start();
+        ffmpeg.setPriority(Thread.MIN_PRIORITY);
+        ffmpeg.setDaemon(true);
+        ffmpeg.start();
+    }
+
+    private class savePNG implements Runnable {
+        private final short index;
+        private Image image;
+
+        private savePNG(Image image, short index) {
+            this.image = image;
+            this.index = index;
+        }
+
+        @Override
+        public void run() {
+            try {
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png",
+                        new File((rootPath + "Sequence" + File.separator + fileName) + "_" + index + ".png"));
+                image = null;
+                System.out.println("保存序列：" + index);
+            } catch (IOException e) {
+                System.out.println("保存PNG文件失败");
+                e.printStackTrace();
+            }
+        }
     }
 }

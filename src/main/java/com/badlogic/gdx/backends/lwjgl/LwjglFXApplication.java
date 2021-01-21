@@ -22,6 +22,7 @@ public class LwjglFXApplication extends LwjglApplication {
 
     public LwjglFXApplication(ApplicationListener listener, LwjglApplicationConfiguration config, LwjglFXGraphics graphics) {
         super(listener, config, graphics);
+        mainLoopThread.setPriority(Thread.MAX_PRIORITY);
         input = new LwjglFXInput(graphics.target);
         Gdx.input = input;
     }
