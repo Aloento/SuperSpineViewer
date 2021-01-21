@@ -6,7 +6,7 @@
 
     <groupId>com.QYun</groupId>
     <artifactId>SuperSpineViewer</artifactId>
-    <version>0.1.24</version>
+    <version>0.1.25</version>
     <repositories>
         <repository>
             <id>sonatype</id>
