@@ -24,7 +24,7 @@ public class ExporterController extends Controller implements Initializable {
     private final RecordFX recordFX = new RecordFX(Objects.requireNonNull(spineRender));
     private final RuntimesLoader runtimesLoader = new RuntimesLoader();
     private final SuperSpine spine = new SuperSpine();
-    private boolean sequence = false;
+
     @FXML
     private StackPane Exporter;
     @FXML
@@ -51,7 +51,7 @@ public class ExporterController extends Controller implements Initializable {
                 spine.setIsPlay(false);
                 spine.setIsLoop(false);
                 spine.setSpeed(0.5f);
-                recordFX.startRecording(outPath, spine.getProjectName() + "_" + spine.getAnimate(), sequence);
+                recordFX.startRecording(spine.getProjectName() + "_" + spine.getAnimate());
                 spine.setIsPlay(true);
             } else {
                 System.out.println("功能构建中");
