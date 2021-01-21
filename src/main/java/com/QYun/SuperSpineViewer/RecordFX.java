@@ -81,6 +81,7 @@ public class RecordFX extends Controller {
 
     private void ffmpegFX() {
         try {
+            System.out.println("FFmpeg处理开始");
             new File((outPath + fileName) + ".mov").delete();
 
             if (Runtime.getRuntime().exec(new String[]{

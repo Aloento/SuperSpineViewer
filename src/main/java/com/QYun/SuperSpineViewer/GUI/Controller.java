@@ -16,7 +16,7 @@ public class Controller {
     public static Label Atlas;
     public static int width;
     public static int height;
-    public static byte perform = 3;
+    public static byte perform = 5;
     public static float quality = 0.5f;
     public static boolean sequence = false;
     public static boolean isLoad = false;

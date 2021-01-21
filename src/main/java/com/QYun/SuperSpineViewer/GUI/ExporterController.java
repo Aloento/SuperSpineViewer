@@ -92,17 +92,17 @@ public class ExporterController extends Controller implements Initializable {
 
     @FXML
     void RB_N() {
-        perform = 3;
+        perform = 5;
     }
 
     @FXML
     void RB_H() {
-        perform = 9;
+        perform = 10;
     }
 
     @FXML
     void RB_L() {
-        perform = 1;
+        perform = 2;
     }
 
     @FXML

@@ -3,15 +3,15 @@
 一个拿来加载与导出Spine动画的工具  
 至少需要Java15才能运行  
 或使用打包好的exe程序  
-当前版本：0.1.24  
+当前版本：0.1.24
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
 ## 获得SuperSpineViewer
 
-[**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases/latest)  
+[**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases/latest)
 
-[通用运行依赖](https://github.com/Aloento/SuperSpineViewer/releases/tag/R1.0.0)  
+[通用运行依赖](https://github.com/Aloento/SuperSpineViewer/releases/tag/R1.0.0)
 
 [![Windows x64](https://github.com/Aloento/SuperSpineViewer/workflows/Windows%20x64/badge.svg "Windows x64自动构建")](https://github.com/Aloento/SuperSpineViewer/actions?query=workflow%3A%22Windows+x64%22)
 
@@ -28,9 +28,34 @@ Spine Universal LibGDX Runtimes
 ### 已知问题
 
 目前渲染实现会占用大量不必要的带宽  
-在DriftFX稳定后会尝试迁移  
-如果你遇到渲染性能问题  
-请选择"**Standard**" & "**Low**"  
+在DriftFX稳定后会尝试迁移
+
+### 性能设置参考
+
+* 高分辨率(Camera) = 高内存需求
+* 高质量(Quality) = 成倍增加的内存需求
+* 高性能(Performance) = 更高的CPU需求，但内存占用随着性能的增加而减少
+
+**RAM**:
+
+    4G+ = Extreme
+    3G~ = Standard
+    2G~ = Fast
+
+**CPU**
+
+    高性能 = High
+    普通 = Normal
+    低压 = Low
+
+### 序列使用参考
+
+以导入After Effects为例  
+默认30FPS时，伸缩设置
+
+    Extreme = 800%
+    Standard = 400%
+    Fast = 200%
 
 ## 功能与兼容性
 
