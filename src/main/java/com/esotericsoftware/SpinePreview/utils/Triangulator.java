@@ -3,17 +3,17 @@ package com.esotericsoftware.SpinePreview.utils;
 import com.badlogic.gdx.utils.*;
 
 class Triangulator {
-    private final Array<FloatArray> convexPolygons = new Array(false, 16);
-    private final Array<ShortArray> convexPolygonsIndices = new Array(false, 16);
+    private final Array<FloatArray> convexPolygons = new Array<>(false, 16);
+    private final Array<ShortArray> convexPolygonsIndices = new Array<>(false, 16);
     private final ShortArray indicesArray = new ShortArray();
     private final BooleanArray isConcaveArray = new BooleanArray();
     private final ShortArray triangles = new ShortArray();
-    private final Pool<FloatArray> polygonPool = new Pool() {
+    private final Pool<FloatArray> polygonPool = new Pool<>() {
         protected FloatArray newObject() {
             return new FloatArray(16);
         }
     };
-    private final Pool<ShortArray> polygonIndicesPool = new Pool() {
+    private final Pool<ShortArray> polygonIndicesPool = new Pool<>() {
         protected ShortArray newObject() {
             return new ShortArray(16);
         }

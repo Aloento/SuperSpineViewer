@@ -8,9 +8,9 @@ import com.esotericsoftware.SpinePreview.attachments.MeshAttachment;
 
 public class Skin {
     final String name;
-    final OrderedSet<SkinEntry> attachments = new OrderedSet();
-    final Array<BoneData> bones = new Array(0);
-    final Array<ConstraintData> constraints = new Array(0);
+    final OrderedSet<SkinEntry> attachments = new OrderedSet<>();
+    final Array<BoneData> bones = new Array<>(0);
+    final Array<ConstraintData> constraints = new Array<>(0);
     private final SkinEntry lookup = new SkinEntry(0, "", null);
 
     public Skin(String name) {

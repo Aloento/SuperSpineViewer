@@ -449,7 +449,7 @@ public class SkeletonBinary extends SkeletonLoader {
     }
 
     private Animation readAnimation(SkeletonInput input, String name, SkeletonData skeletonData) throws IOException {
-        Array<Timeline> timelines = new Array(input.readInt(true));
+        Array<Timeline> timelines = new Array<>(input.readInt(true));
         float scale = this.scale;
         for (int i = 0, n = input.readInt(true); i < n; i++) {
             int slotIndex = input.readInt(true);

@@ -3,7 +3,7 @@ package com.esotericsoftware.SpinePreview;
 import com.badlogic.gdx.utils.Array;
 
 public class IkConstraintData extends ConstraintData {
-    final Array<BoneData> bones = new Array();
+    final Array<BoneData> bones = new Array<>();
     BoneData target;
     int bendDirection = 1;
     boolean compress, stretch, uniform;

@@ -7,23 +7,23 @@ import com.esotericsoftware.SpinePreview.Animation.*;
 import java.lang.StringBuilder;
 
 public class AnimationState {
-    static private final Animation emptyAnimation = new Animation("<empty>", new Array(0), 0);
+    static private final Animation emptyAnimation = new Animation("<empty>", new Array<>(0), 0);
     static private final int SUBSEQUENT = 0;
     static private final int FIRST = 1;
     static private final int HOLD_SUBSEQUENT = 2;
     static private final int HOLD_FIRST = 3;
     static private final int HOLD_MIX = 4;
     static private final int SETUP = 1, CURRENT = 2;
-    final Array<TrackEntry> tracks = new Array();
-    final SnapshotArray<AnimationStateListener> listeners = new SnapshotArray();
-    final Pool<TrackEntry> trackEntryPool = new Pool() {
-        protected Object newObject() {
+    final Array<TrackEntry> tracks = new Array<>();
+    final SnapshotArray<AnimationStateListener> listeners = new SnapshotArray<>();
+    final Pool<TrackEntry> trackEntryPool = new Pool<>() {
+        protected TrackEntry newObject() {
             return new TrackEntry();
         }
     };
-    private final Array<Event> events = new Array();
+    private final Array<Event> events = new Array<>();
     private final EventQueue queue = new EventQueue();
-    private final ObjectSet<String> propertyIds = new ObjectSet();
+    private final ObjectSet<String> propertyIds = new ObjectSet<>();
     boolean animationsChanged;
     private AnimationStateData data;
     private float timeScale = 1;
@@ -657,7 +657,7 @@ public class AnimationState {
 
     static public class TrackEntry implements Poolable {
         final IntArray timelineMode = new IntArray();
-        final Array<TrackEntry> timelineHoldMix = new Array();
+        final Array<TrackEntry> timelineHoldMix = new Array<>();
         final FloatArray timelinesRotation = new FloatArray();
         Animation animation;
         @Null
@@ -916,7 +916,7 @@ public class AnimationState {
     }
 
     class EventQueue {
-        private final Array objects = new Array();
+        private final Array objects = new Array<>();
         boolean drainDisabled;
 
         void start(TrackEntry entry) {

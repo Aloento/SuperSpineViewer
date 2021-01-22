@@ -14,7 +14,7 @@ public class Bone implements Updatable {
     final Skeleton skeleton;
     @Null
     final Bone parent;
-    final Array<Bone> children = new Array();
+    final Array<Bone> children = new Array<>();
     float x, y, rotation, scaleX, scaleY, shearX, shearY;
     float ax, ay, arotation, ascaleX, ascaleY, ashearX, ashearY;
     boolean appliedValid;

@@ -4,14 +4,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Null;
 
 public class SkeletonData {
-    final Array<BoneData> bones = new Array();
-    final Array<SlotData> slots = new Array();
-    final Array<Skin> skins = new Array();
-    final Array<EventData> events = new Array();
-    final Array<Animation> animations = new Array();
-    final Array<IkConstraintData> ikConstraints = new Array();
-    final Array<TransformConstraintData> transformConstraints = new Array();
-    final Array<PathConstraintData> pathConstraints = new Array();
+    final Array<BoneData> bones = new Array<>();
+    final Array<SlotData> slots = new Array<>();
+    final Array<Skin> skins = new Array<>();
+    final Array<EventData> events = new Array<>();
+    final Array<Animation> animations = new Array<>();
+    final Array<IkConstraintData> ikConstraints = new Array<>();
+    final Array<TransformConstraintData> transformConstraints = new Array<>();
+    final Array<PathConstraintData> pathConstraints = new Array<>();
     @Null
     String name;
     @Null

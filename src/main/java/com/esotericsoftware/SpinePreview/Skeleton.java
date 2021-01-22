@@ -20,7 +20,7 @@ public class Skeleton {
     final Array<IkConstraint> ikConstraints;
     final Array<TransformConstraint> transformConstraints;
     final Array<PathConstraint> pathConstraints;
-    final Array<Updatable> updateCache = new Array();
+    final Array<Updatable> updateCache = new Array<>();
     final Color color;
     Array<Slot> drawOrder;
     @Null
@@ -32,7 +32,7 @@ public class Skeleton {
     public Skeleton(SkeletonData data) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         this.data = data;
-        bones = new Array(data.bones.size);
+        bones = new Array<>(data.bones.size);
         Object[] bones = this.bones.items;
         for (BoneData boneData : data.bones) {
             Bone bone;
@@ -45,21 +45,21 @@ public class Skeleton {
             }
             this.bones.add(bone);
         }
-        slots = new Array(data.slots.size);
-        drawOrder = new Array(data.slots.size);
+        slots = new Array<>(data.slots.size);
+        drawOrder = new Array<>(data.slots.size);
         for (SlotData slotData : data.slots) {
             Bone bone = (Bone) bones[slotData.boneData.index];
             Slot slot = new Slot(slotData, bone);
             slots.add(slot);
             drawOrder.add(slot);
         }
-        ikConstraints = new Array(data.ikConstraints.size);
+        ikConstraints = new Array<>(data.ikConstraints.size);
         for (IkConstraintData ikConstraintData : data.ikConstraints)
             ikConstraints.add(new IkConstraint(ikConstraintData, this));
-        transformConstraints = new Array(data.transformConstraints.size);
+        transformConstraints = new Array<>(data.transformConstraints.size);
         for (TransformConstraintData transformConstraintData : data.transformConstraints)
             transformConstraints.add(new TransformConstraint(transformConstraintData, this));
-        pathConstraints = new Array(data.pathConstraints.size);
+        pathConstraints = new Array<>(data.pathConstraints.size);
         for (PathConstraintData pathConstraintData : data.pathConstraints)
             pathConstraints.add(new PathConstraint(pathConstraintData, this));
         color = new Color(1, 1, 1, 1);
@@ -69,7 +69,7 @@ public class Skeleton {
     public Skeleton(Skeleton skeleton) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         data = skeleton.data;
-        bones = new Array(skeleton.bones.size);
+        bones = new Array<>(skeleton.bones.size);
         for (Bone bone : skeleton.bones) {
             Bone newBone;
             if (bone.parent == null)
@@ -81,21 +81,21 @@ public class Skeleton {
             }
             bones.add(newBone);
         }
-        slots = new Array(skeleton.slots.size);
+        slots = new Array<>(skeleton.slots.size);
         for (Slot slot : skeleton.slots) {
             Bone bone = bones.get(slot.bone.data.index);
             slots.add(new Slot(slot, bone));
         }
-        drawOrder = new Array(slots.size);
+        drawOrder = new Array<>(slots.size);
         for (Slot slot : skeleton.drawOrder)
             drawOrder.add(slots.get(slot.data.index));
-        ikConstraints = new Array(skeleton.ikConstraints.size);
+        ikConstraints = new Array<>(skeleton.ikConstraints.size);
         for (IkConstraint ikConstraint : skeleton.ikConstraints)
             ikConstraints.add(new IkConstraint(ikConstraint, this));
-        transformConstraints = new Array(skeleton.transformConstraints.size);
+        transformConstraints = new Array<>(skeleton.transformConstraints.size);
         for (TransformConstraint transformConstraint : skeleton.transformConstraints)
             transformConstraints.add(new TransformConstraint(transformConstraint, this));
-        pathConstraints = new Array(skeleton.pathConstraints.size);
+        pathConstraints = new Array<>(skeleton.pathConstraints.size);
         for (PathConstraint pathConstraint : skeleton.pathConstraints)
             pathConstraints.add(new PathConstraint(pathConstraint, this));
         skin = skeleton.skin;

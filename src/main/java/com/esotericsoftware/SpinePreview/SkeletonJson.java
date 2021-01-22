@@ -361,7 +361,7 @@ public class SkeletonJson extends SkeletonLoader {
 
     private void readAnimation(JsonValue map, String name, SkeletonData skeletonData) {
         float scale = this.scale;
-        Array<Timeline> timelines = new Array();
+        Array<Timeline> timelines = new Array<>();
         for (JsonValue slotMap = map.getChild("slots"); slotMap != null; slotMap = slotMap.next) {
             SlotData slot = skeletonData.findSlot(slotMap.name);
             if (slot == null) throw new SerializationException("Slot not found: " + slotMap.name);

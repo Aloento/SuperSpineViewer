@@ -15,7 +15,7 @@ import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
 
 public class Animation {
     final String name;
-    final ObjectSet<String> timelineIds = new ObjectSet();
+    final ObjectSet<String> timelineIds = new ObjectSet<>();
     Array<Timeline> timelines;
     float duration;
 

@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.ObjectFloatMap;
 
 public class AnimationStateData {
     final SkeletonData skeletonData;
-    final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap(51, 0.8f);
+    final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap<>(51, 0.8f);
     final Key tempKey = new Key();
     float defaultMix;
 
