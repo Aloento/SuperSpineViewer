@@ -32,8 +32,10 @@ Spine Universal LibGDX Runtimes
 
 如果出现 [（这其实是JDK的一个Bug）](https://bugs.openjdk.java.net/browse/JDK-8192647)  
 `[warning][gc,alloc] SavePNG: Retried waiting for GCLocker too often allocating &d words`  
-则说明内存可能不足  
-这种情况下有很大概率丢帧，卡顿  
+则说明内存回收时出现问题  
+这种情况下一定会丢帧，卡顿  
+并且FFmpeg处理时会卡住  
+这时只能重启程序解决  
 请调整JVM参数以允许更多内存分配  
 或者降低分辨率或质量与提高性能  
 
@@ -79,7 +81,7 @@ Spine Universal LibGDX Runtimes
 * 播放暂停
 * 导出透明MOV
 * 导出透明PNG
-* 调整性能
+* 调整性能质量
 
 ### 支持的版本
 
