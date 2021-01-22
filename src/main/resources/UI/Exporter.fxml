@@ -87,7 +87,7 @@
                   <String fx:value="BOLD" />
                </styleClass>
             </Label>
-                <HBox layoutX="18.0" layoutY="72.0" spacing="25.0">
+                <HBox layoutX="18.0" layoutY="72.0" spacing="26.0">
                     <JFXRadioButton onAction="#RB_N" selected="true" text="Normal">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button" />

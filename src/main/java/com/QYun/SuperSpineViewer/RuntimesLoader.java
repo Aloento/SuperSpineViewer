@@ -17,9 +17,10 @@ import java.nio.file.Files;
 public class RuntimesLoader extends Controller {
     public static byte spineVersion = 0;
     private final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-    private final String[] extraSuffixes = {"", ".txt", ".bytes"};
-    private final String[] dataSuffixes = {"", ".json", ".skel"};
-    private final String[] atlasSuffixes = {".atlas", "-pro.atlas", "-ess.atlas", "-pma.atlas"};
+    private final String[] startSuffixes = {"", "-pro", "-ess"};
+    private final String[] dataSuffixes = {".json", ".skel"};
+    private final String[] endSuffixes = {"", ".txt", ".bytes"};
+    private final String[] atlasSuffixes = {".atlas", "-pma.atlas"};
     private final SuperSpine spine = new SuperSpine();
     private final Universal universal = new Universal();
     private LwjglFXApplication gdxApp;
@@ -68,28 +69,32 @@ public class RuntimesLoader extends Controller {
         else Universal.Range = 1;
     }
 
-    private FileHandle atlasFile(FileHandle skelFile, String baseName) {
-        for (String extraSuffix : extraSuffixes) {
-            for (String suffix : atlasSuffixes) {
-                FileHandle file = skelFile.sibling(baseName + suffix + extraSuffix);
-                if (file.exists()) return file;
-            }
-        }
-        return null;
-    }
-
-    private FileHandle atlasFile(FileHandle skelFile) {
-        String baseName = skelFile.name();
-        for (String extraSuffix : extraSuffixes) {
-            for (String dataSuffix : dataSuffixes) {
-                String suffix = dataSuffix + extraSuffix;
-                if (baseName.endsWith(suffix)) {
-                    FileHandle file = atlasFile(skelFile, baseName.substring(0, baseName.length() - suffix.length()));
-                    if (file != null) return file;
+    private FileHandle atlasFile(FileHandle skeletonFile) {
+        String baseName = skeletonFile.name();
+        for (String startSuffix : startSuffixes) {
+            for (String endSuffix : endSuffixes) {
+                for (String dataSuffix : dataSuffixes) {
+                    String suffix = startSuffix + dataSuffix + endSuffix;
+                    if (baseName.endsWith(suffix)) {
+                        FileHandle file = findAtlasFile(skeletonFile, baseName.substring(0, baseName.length() - suffix.length()));
+                        if (file != null) return file;
+                    }
                 }
             }
         }
-        return atlasFile(skelFile, baseName);
+        return findAtlasFile(skeletonFile, baseName);
+    }
+
+    private FileHandle findAtlasFile(FileHandle skeletonFile, String baseName) {
+        for (String startSuffix : startSuffixes) {
+            for (String endSuffix : endSuffixes) {
+                for (String suffix : atlasSuffixes) {
+                    FileHandle file = skeletonFile.sibling(baseName + startSuffix + suffix + endSuffix);
+                    if (file.exists()) return file;
+                }
+            }
+        }
+        return null;
     }
 
     public void init() {

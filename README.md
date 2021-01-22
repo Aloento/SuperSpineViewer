@@ -3,7 +3,7 @@
 一个拿来加载与导出Spine动画的工具  
 至少需要Java15才能运行  
 或使用打包好的exe程序  
-当前版本：0.1.25
+当前版本：0.1.26
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
@@ -84,7 +84,7 @@ Spine Universal LibGDX Runtimes
 * 调整性能质量
 
 ### 支持的版本
-
+* Spine 2.x ×
 * Spine 3.1 √
 * Spine 3.2 √
 * Spine 3.3 √
@@ -93,7 +93,7 @@ Spine Universal LibGDX Runtimes
 * Spine 3.6 √
 * Spine 3.7 √
 * Spine 3.8 √
-* Spine 4.0 ●
+* Spine 4.0 √
 
 ## 画廊
 

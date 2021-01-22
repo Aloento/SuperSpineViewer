@@ -236,5 +236,4 @@ public class Preview extends SuperSpine {
         camera.setToOrtho(false);
         camera.position.set(x, y, 0);
     }
-
 }
