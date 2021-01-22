@@ -16,7 +16,7 @@ public class Universal extends ApplicationAdapter {
         if (Universal.Range == 2)
             Runtimes = new Preview();
         else if (Universal.Range == 0)
-            Runtimes = new Latency();
+            Runtimes = new Legacy();
         else Runtimes = new Standard();
 
         Runtimes.create();
