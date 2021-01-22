@@ -89,7 +89,6 @@ public class PrimaryController extends Controller implements Initializable {
         try {
             FXMLLoader exporterLoader = new FXMLLoader(getClass().getResource("/UI/Exporter.fxml"));
             Exporter = exporterLoader.load();
-            exporterController = exporterLoader.getController();
         } catch (IOException e) {
             e.printStackTrace();
         }

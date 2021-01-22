@@ -25,14 +25,6 @@ public class SuperSpine {
     static FileHandle atlasFile;
     static boolean isBinary = true;
 
-    public String getSpineVersion() {
-        return spineVersion.get();
-    }
-
-    public void setSpineVersion(String spineVersion) {
-        SuperSpine.spineVersion.set(spineVersion);
-    }
-
     public SimpleStringProperty spineVersionProperty() {
         return spineVersion;
     }
@@ -43,10 +35,6 @@ public class SuperSpine {
 
     public SimpleStringProperty projectNameProperty() {
         return projectName;
-    }
-
-    public String getSkin() {
-        return skin.get();
     }
 
     public void setSkin(String skin) {
@@ -77,24 +65,12 @@ public class SuperSpine {
         return isPlay;
     }
 
-    public float getScale() {
-        return scale.get();
-    }
-
     public void setScale(float scale) {
         SuperSpine.scale.set(scale);
     }
 
-    public float getX() {
-        return X.get();
-    }
-
     public void setX(float x) {
         X.set(x);
-    }
-
-    public float getY() {
-        return Y.get();
     }
 
     public void setY(float y) {
