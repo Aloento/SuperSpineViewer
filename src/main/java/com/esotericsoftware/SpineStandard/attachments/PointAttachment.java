@@ -10,25 +10,25 @@ public class PointAttachment extends Attachment {
         super(name);
     }
 
-    public float getX() {
-        return x;
-    }
+    // public float getX() {
+    //     return x;
+    // }
 
     public void setX(float x) {
         this.x = x;
     }
 
-    public float getY() {
-        return y;
-    }
+    // public float getY() {
+    //     return y;
+    // }
 
     public void setY(float y) {
         this.y = y;
     }
 
-    public float getRotation() {
-        return rotation;
-    }
+    // public float getRotation() {
+    //     return rotation;
+    // }
 
     public void setRotation(float rotation) {
         this.rotation = rotation;
@@ -38,12 +38,12 @@ public class PointAttachment extends Attachment {
         return color;
     }
 
-    public Attachment copy() {
-        PointAttachment copy = new PointAttachment(name);
-        copy.x = x;
-        copy.y = y;
-        copy.rotation = rotation;
-        copy.color.set(color);
-        return copy;
-    }
+    // public Attachment copy() {
+    //     PointAttachment copy = new PointAttachment(name);
+    //     copy.x = x;
+    //     copy.y = y;
+    //     copy.rotation = rotation;
+    //     copy.color.set(color);
+    //     return copy;
+    // }
 }

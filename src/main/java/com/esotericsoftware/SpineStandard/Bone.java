@@ -29,20 +29,20 @@ public class Bone implements Updatable {
         setToSetupPose();
     }
 
-    public Bone(Bone bone, Skeleton skeleton, Bone parent) {
-        if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        this.skeleton = skeleton;
-        this.parent = parent;
-        data = bone.data;
-        x = bone.x;
-        y = bone.y;
-        rotation = bone.rotation;
-        scaleX = bone.scaleX;
-        scaleY = bone.scaleY;
-        shearX = bone.shearX;
-        shearY = bone.shearY;
-    }
+    // public Bone(Bone bone, Skeleton skeleton, Bone parent) {
+    //     if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
+    //     if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+    //     this.skeleton = skeleton;
+    //     this.parent = parent;
+    //     data = bone.data;
+    //     x = bone.x;
+    //     y = bone.y;
+    //     rotation = bone.rotation;
+    //     scaleX = bone.scaleX;
+    //     scaleY = bone.scaleY;
+    //     shearX = bone.shearX;
+    //     shearY = bone.shearY;
+    // }
 
     public void update() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
@@ -309,42 +309,42 @@ public class Bone implements Updatable {
         shearY = data.shearY;
     }
 
-    public BoneData getData() {
-        return data;
-    }
+    // public BoneData getData() {
+    //     return data;
+    // }
 
-    public Skeleton getSkeleton() {
-        return skeleton;
-    }
+    // public Skeleton getSkeleton() {
+    //     return skeleton;
+    // }
 
-    public Bone getParent() {
-        return parent;
-    }
+    // public Bone getParent() {
+    //     return parent;
+    // }
 
-    public boolean isActive() {
-        return active;
-    }
+    // public boolean isActive() {
+    //     return active;
+    // }
 
-    public float getX() {
-        return x;
-    }
+    // public float getX() {
+    //     return x;
+    // }
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    // public void setX(float x) {
+    //     this.x = x;
+    // }
 
-    public float getY() {
-        return y;
-    }
+    // public float getY() {
+    //     return y;
+    // }
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    // public void setY(float y) {
+    //     this.y = y;
+    // }
 
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
+    // public void setPosition(float x, float y) {
+    //     this.x = x;
+    //     this.y = y;
+    // }
 
     public float getRotation() {
         return rotation;
@@ -370,31 +370,31 @@ public class Bone implements Updatable {
         this.scaleY = scaleY;
     }
 
-    public void setScale(float scaleX, float scaleY) {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-    }
+    // public void setScale(float scaleX, float scaleY) {
+    //     this.scaleX = scaleX;
+    //     this.scaleY = scaleY;
+    // }
 
-    public void setScale(float scale) {
-        scaleX = scale;
-        scaleY = scale;
-    }
+    // public void setScale(float scale) {
+    //     scaleX = scale;
+    //     scaleY = scale;
+    // }
 
-    public float getShearX() {
-        return shearX;
-    }
+    // public float getShearX() {
+    //     return shearX;
+    // }
 
-    public void setShearX(float shearX) {
-        this.shearX = shearX;
-    }
+    // public void setShearX(float shearX) {
+    //     this.shearX = shearX;
+    // }
 
-    public float getShearY() {
-        return shearY;
-    }
+    // public float getShearY() {
+    //     return shearY;
+    // }
 
-    public void setShearY(float shearY) {
-        this.shearY = shearY;
-    }
+    // public void setShearY(float shearY) {
+    //     this.shearY = shearY;
+    // }
 
     public void updateAppliedTransform() {
         appliedValid = true;
@@ -441,33 +441,33 @@ public class Bone implements Updatable {
         return a;
     }
 
-    public void setA(float a) {
-        this.a = a;
-    }
+    // public void setA(float a) {
+    //     this.a = a;
+    // }
 
     public float getB() {
         return b;
     }
 
-    public void setB(float b) {
-        this.b = b;
-    }
+    // public void setB(float b) {
+    //     this.b = b;
+    // }
 
     public float getC() {
         return c;
     }
 
-    public void setC(float c) {
-        this.c = c;
-    }
+    // public void setC(float c) {
+    //     this.c = c;
+    // }
 
     public float getD() {
         return d;
     }
 
-    public void setD(float d) {
-        this.d = d;
-    }
+    // public void setD(float d) {
+    //     this.d = d;
+    // }
 
     public float getWorldX() {
         if (RuntimesLoader.spineVersion < 35)
@@ -475,9 +475,9 @@ public class Bone implements Updatable {
         return worldX;
     }
 
-    public void setWorldX(float worldX) {
-        this.worldX = worldX;
-    }
+    // public void setWorldX(float worldX) {
+    //     this.worldX = worldX;
+    // }
 
     public float getWorldY() {
         if (RuntimesLoader.spineVersion < 35)
@@ -485,9 +485,9 @@ public class Bone implements Updatable {
         return worldY;
     }
 
-    public void setWorldY(float worldY) {
-        this.worldY = worldY;
-    }
+    // public void setWorldY(float worldY) {
+    //     this.worldY = worldY;
+    // }
 
     public float getWorldRotationX() {
         return atan2(c, a) * radDeg;

@@ -8,13 +8,13 @@ abstract public class Attachment {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
+    // public String getName() {
+    //     return name;
+    // }
 
     public String toString() {
         return name;
     }
 
-    abstract public Attachment copy();
+    // abstract public Attachment copy();
 }

@@ -11,7 +11,6 @@ import com.esotericsoftware.SpineStandard.Skeleton;
 import com.esotericsoftware.SpineStandard.Slot;
 
 import static com.badlogic.gdx.graphics.g2d.Batch.*;
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class RegionAttachment extends Attachment {
     static public final byte BLX = 0;
@@ -181,10 +180,6 @@ public class RegionAttachment extends Attachment {
         return vertices;
     }
 
-    public float[] getWorldVertices() { // Spine 35
-        return vertices;
-    }
-
     public void computeWorldVertices(Bone bone, float[] worldVertices, int offset, int stride) {
         float[] vertexOffset = this.offset;
         float x = bone.getWorldX(), y = bone.getWorldY();
@@ -215,9 +210,9 @@ public class RegionAttachment extends Attachment {
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
     }
 
-    public float[] getOffset() {
-        return offset;
-    }
+    // public float[] getOffset() {
+    //     return offset;
+    // }
 
     public float[] getUVs() {
         return uvs;
@@ -283,28 +278,28 @@ public class RegionAttachment extends Attachment {
         return color;
     }
 
-    public String getPath() {
-        return path;
-    }
+    // public String getPath() {
+    //     return path;
+    // }
 
     public void setPath(String path) {
         this.path = path;
     }
 
-    public Attachment copy() {
-        RegionAttachment copy = new RegionAttachment(name);
-        copy.region = region;
-        copy.path = path;
-        copy.x = x;
-        copy.y = y;
-        copy.scaleX = scaleX;
-        copy.scaleY = scaleY;
-        copy.rotation = rotation;
-        copy.width = width;
-        copy.height = height;
-        arraycopy(uvs, 0, copy.uvs, 0, 8);
-        arraycopy(offset, 0, copy.offset, 0, 8);
-        copy.color.set(color);
-        return copy;
-    }
+    // public Attachment copy() {
+    //     RegionAttachment copy = new RegionAttachment(name);
+    //     copy.region = region;
+    //     copy.path = path;
+    //     copy.x = x;
+    //     copy.y = y;
+    //     copy.scaleX = scaleX;
+    //     copy.scaleY = scaleY;
+    //     copy.rotation = rotation;
+    //     copy.width = width;
+    //     copy.height = height;
+    //     arraycopy(uvs, 0, copy.uvs, 0, 8);
+    //     arraycopy(offset, 0, copy.offset, 0, 8);
+    //     copy.color.set(color);
+    //     return copy;
+    // }
 }

@@ -64,9 +64,9 @@ public class Animation {
         }
     }
 
-    public Array<Timeline> getTimelines() {
-        return timelines;
-    }
+    // public Array<Timeline> getTimelines() {
+    //     return timelines;
+    // }
 
     public void setTimelines(Array<Timeline> timelines) {
         if (timelines == null) throw new IllegalArgumentException("timelines cannot be null.");
@@ -84,9 +84,9 @@ public class Animation {
         return duration;
     }
 
-    public void setDuration(float duration) {
-        this.duration = duration;
-    }
+    // public void setDuration(float duration) {
+    //     this.duration = duration;
+    // }
 
     public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events, float alpha,
                       MixBlend blend, MixDirection direction) {
@@ -200,15 +200,13 @@ public class Animation {
     }
 
     public interface BoneTimeline extends Timeline {
-        int getBoneIndex();
 
-        void setBoneIndex(int index);
     }
 
     public interface SlotTimeline extends Timeline {
-        int getSlotIndex();
-
-        void setSlotIndex(int index);
+        // int getSlotIndex();
+        //
+        // void setSlotIndex(int index);
     }
 
     abstract static public class CurveTimeline implements Timeline {
@@ -298,15 +296,6 @@ public class Animation {
 
         public int getPropertyId() {
             return (TimelineType.rotate.ordinal() << 24) + boneIndex;
-        }
-
-        public int getBoneIndex() {
-            return boneIndex;
-        }
-
-        public void setBoneIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.boneIndex = index;
         }
 
         public float[] getFrames() {
@@ -505,15 +494,6 @@ public class Animation {
 
         public int getPropertyId() {
             return (TimelineType.translate.ordinal() << 24) + boneIndex;
-        }
-
-        public int getBoneIndex() {
-            return boneIndex;
-        }
-
-        public void setBoneIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.boneIndex = index;
         }
 
         public float[] getFrames() {
@@ -1094,14 +1074,14 @@ public class Animation {
             return (TimelineType.color.ordinal() << 24) + slotIndex;
         }
 
-        public int getSlotIndex() {
-            return slotIndex;
-        }
+        // public int getSlotIndex() {
+        //     return slotIndex;
+        // }
 
-        public void setSlotIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.slotIndex = index;
-        }
+        // public void setSlotIndex(int index) {
+        //     if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
+        //     this.slotIndex = index;
+        // }
 
         public float[] getFrames() {
             return frames;
@@ -1309,14 +1289,14 @@ public class Animation {
             return (TimelineType.twoColor.ordinal() << 24) + slotIndex;
         }
 
-        public int getSlotIndex() {
-            return slotIndex;
-        }
+        // public int getSlotIndex() {
+        //     return slotIndex;
+        // }
 
-        public void setSlotIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.slotIndex = index;
-        }
+        // public void setSlotIndex(int index) {
+        //     if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
+        //     this.slotIndex = index;
+        // }
 
         public float[] getFrames() {
             return frames;
@@ -1496,14 +1476,14 @@ public class Animation {
             return frames.length;
         }
 
-        public int getSlotIndex() {
-            return slotIndex;
-        }
+        // public int getSlotIndex() {
+        //     return slotIndex;
+        // }
 
-        public void setSlotIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.slotIndex = index;
-        }
+        // public void setSlotIndex(int index) {
+        //     if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
+        //     this.slotIndex = index;
+        // }
 
         public float[] getFrames() {
             return frames;
@@ -1653,30 +1633,30 @@ public class Animation {
             };
         }
 
-        public int getSlotIndex() {
-            return slotIndex;
-        }
+        // public int getSlotIndex() {
+        //     return slotIndex;
+        // }
 
-        public void setSlotIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.slotIndex = index;
-        }
+        // public void setSlotIndex(int index) {
+        //     if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
+        //     this.slotIndex = index;
+        // }
 
-        public VertexAttachment getAttachment() {
-            return attachment;
-        }
+        // public VertexAttachment getAttachment() {
+        //     return attachment;
+        // }
 
-        public void setAttachment(VertexAttachment attachment) {
-            this.attachment = attachment;
-        }
+        // public void setAttachment(VertexAttachment attachment) {
+        //     this.attachment = attachment;
+        // }
 
         public float[] getFrames() {
             return frames;
         }
 
-        public float[][] getVertices() {
-            return frameVertices;
-        }
+        // public float[][] getVertices() {
+        //     return frameVertices;
+        // }
 
         public void setFrame(int frameIndex, float time, float[] vertices) {
             frames[frameIndex] = time;
@@ -2242,9 +2222,9 @@ public class Animation {
             return frames;
         }
 
-        public Event[] getEvents() {
-            return events;
-        }
+        // public Event[] getEvents() {
+        //     return events;
+        // }
 
         public void setFrame(int frameIndex, Event event) {
             frames[frameIndex] = event.time;
@@ -2562,15 +2542,6 @@ public class Animation {
 
         public int getPropertyId() {
             return (TimelineType.ikConstraint.ordinal() << 24) + ikConstraintIndex;
-        }
-
-        public int getIkConstraintIndex() {
-            return ikConstraintIndex;
-        }
-
-        public void setIkConstraintIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.ikConstraintIndex = index;
         }
 
         public float[] getFrames() {
@@ -3035,11 +3006,6 @@ public class Animation {
             return (TimelineType.pathConstraintPosition.ordinal() << 24) + pathConstraintIndex;
         }
 
-        public void setPathConstraintIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.pathConstraintIndex = index;
-        }
-
         public float[] getFrames() {
             return frames;
         }
@@ -3307,11 +3273,6 @@ public class Animation {
 
         public int getPropertyId() {
             return (TimelineType.pathConstraintMix.ordinal() << 24) + pathConstraintIndex;
-        }
-
-        public void setPathConstraintIndex(int index) {
-            if (index < 0) throw new IllegalArgumentException("index must be >= 0.");
-            this.pathConstraintIndex = index;
         }
 
         public float[] getFrames() {

@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.NumberUtils;
@@ -18,14 +17,14 @@ public class SkeletonRenderer {
     static private final short[] quadTriangles = {0, 1, 2, 2, 3, 0};
     private final FloatArray vertices = new FloatArray(32);
     private final SkeletonClipping clipper = new SkeletonClipping();
-    private final Vector2 temp = new Vector2();
-    private final Vector2 temp2 = new Vector2();
-    private final Color temp3 = new Color();
-    private final Color temp4 = new Color();
-    private final Color temp5 = new Color();
-    private final Color temp6 = new Color();
+    // private final Vector2 temp = new Vector2();
+    // private final Vector2 temp2 = new Vector2();
+    // private final Color temp3 = new Color();
+    // private final Color temp4 = new Color();
+    // private final Color temp5 = new Color();
+    // private final Color temp6 = new Color();
     private boolean premultipliedAlpha;
-    private VertexEffect vertexEffect;
+    // private VertexEffect vertexEffect;
 
     public void draw(Batch batch, Skeleton skeleton) {
         // if (batch instanceof TwoColorPolygonBatch) {
@@ -236,16 +235,16 @@ public class SkeletonRenderer {
         if (RuntimesLoader.spineVersion > 35) {
             if (batch == null) throw new IllegalArgumentException("batch cannot be null.");
             if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-            Vector2 tempPosition = this.temp, tempUV = this.temp2;
-            Color tempLight1 = this.temp3, tempDark1 = this.temp4;
-            Color tempLight2 = this.temp5, tempDark2 = this.temp6;
-            // Spine37/6
-            Vector2 tempPos = this.temp, tempUv = this.temp2;
-            Color tempLight = this.temp3, tempDark = this.temp4;
-            Color temp5 = this.temp5, temp6 = this.temp6;
+            // Vector2 tempPosition = this.temp, tempUV = this.temp2;
+            // Color tempLight1 = this.temp3, tempDark1 = this.temp4;
+            // Color tempLight2 = this.temp5, tempDark2 = this.temp6;
+            // // Spine37/6
+            // Vector2 tempPos = this.temp, tempUv = this.temp2;
+            // Color tempLight = this.temp3, tempDark = this.temp4;
+            // Color temp5 = this.temp5, temp6 = this.temp6;
 
-            VertexEffect vertexEffect = this.vertexEffect;
-            if (vertexEffect != null) vertexEffect.begin(skeleton);
+            // VertexEffect vertexEffect = this.vertexEffect;
+            // if (vertexEffect != null) vertexEffect.begin(skeleton);
             boolean premultipliedAlpha = this.premultipliedAlpha;
             batch.setPremultipliedAlpha(premultipliedAlpha);
             BlendMode blendMode = null;
@@ -320,64 +319,64 @@ public class SkeletonRenderer {
                         clipper.clipTriangles(vertices, verticesLength, triangles, triangles.length, uvs, light, dark, true);
                         FloatArray clippedVertices = clipper.getClippedVertices();
                         ShortArray clippedTriangles = clipper.getClippedTriangles();
-                        if (vertexEffect != null)
-                            applyVertexEffect(clippedVertices.items, clippedVertices.size, light, dark);
+                        // if (vertexEffect != null)
+                        //     applyVertexEffect(clippedVertices.items, clippedVertices.size, light, dark);
                         batch.drawTwoColor(texture, clippedVertices.items, 0, clippedVertices.size, clippedTriangles.items, 0,
                                 clippedTriangles.size);
                     } else {
-                        if (vertexEffect != null) {
-                            if (RuntimesLoader.spineVersion > 37) {
-                                tempLight1.set(NumberUtils.floatToIntColor(light));
-                                tempDark1.set(NumberUtils.floatToIntColor(dark));
-                                for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
-                                    tempPosition.x = vertices[v];
-                                    tempPosition.y = vertices[v + 1];
-                                    tempLight2.set(tempLight1);
-                                    tempDark2.set(tempDark1);
-                                    tempUV.x = uvs[u];
-                                    tempUV.y = uvs[u + 1];
-                                    vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
-                                    vertices[v] = tempPosition.x;
-                                    vertices[v + 1] = tempPosition.y;
-                                    vertices[v + 2] = tempLight2.toFloatBits();
-                                    vertices[v + 3] = tempDark2.toFloatBits();
-                                    vertices[v + 4] = tempUV.x;
-                                    vertices[v + 5] = tempUV.y;
-                                }
-                            } else {
-                                temp5.set(NumberUtils.floatToIntColor(light));
-                                temp6.set(NumberUtils.floatToIntColor(dark));
-                                for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
-                                    tempPos.x = vertices[v];
-                                    tempPos.y = vertices[v + 1];
-                                    tempLight.set(temp5);
-                                    tempDark.set(temp6);
-                                    tempUv.x = uvs[u];
-                                    tempUv.y = uvs[u + 1];
-                                    vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
-                                    vertices[v] = tempPos.x;
-                                    vertices[v + 1] = tempPos.y;
-                                    vertices[v + 2] = tempLight.toFloatBits();
-                                    vertices[v + 3] = tempDark.toFloatBits();
-                                    vertices[v + 4] = tempUv.x;
-                                    vertices[v + 5] = tempUv.y;
-                                }
-                            }
-                        } else {
+                        // if (vertexEffect != null) {
+                            // if (RuntimesLoader.spineVersion > 37) {
+                            //     tempLight1.set(NumberUtils.floatToIntColor(light));
+                            //     tempDark1.set(NumberUtils.floatToIntColor(dark));
+                            //     for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
+                            //         tempPosition.x = vertices[v];
+                            //         tempPosition.y = vertices[v + 1];
+                            //         tempLight2.set(tempLight1);
+                            //         tempDark2.set(tempDark1);
+                            //         tempUV.x = uvs[u];
+                            //         tempUV.y = uvs[u + 1];
+                            //         vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
+                            //         vertices[v] = tempPosition.x;
+                            //         vertices[v + 1] = tempPosition.y;
+                            //         vertices[v + 2] = tempLight2.toFloatBits();
+                            //         vertices[v + 3] = tempDark2.toFloatBits();
+                            //         vertices[v + 4] = tempUV.x;
+                            //         vertices[v + 5] = tempUV.y;
+                            //     }
+                            // } else {
+                            //     temp5.set(NumberUtils.floatToIntColor(light));
+                            //     temp6.set(NumberUtils.floatToIntColor(dark));
+                            //     for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
+                            //         tempPos.x = vertices[v];
+                            //         tempPos.y = vertices[v + 1];
+                            //         tempLight.set(temp5);
+                            //         tempDark.set(temp6);
+                            //         tempUv.x = uvs[u];
+                            //         tempUv.y = uvs[u + 1];
+                            //         vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
+                            //         vertices[v] = tempPos.x;
+                            //         vertices[v + 1] = tempPos.y;
+                            //         vertices[v + 2] = tempLight.toFloatBits();
+                            //         vertices[v + 3] = tempDark.toFloatBits();
+                            //         vertices[v + 4] = tempUv.x;
+                            //         vertices[v + 5] = tempUv.y;
+                            //     }
+                            // }
+                        // } else {
                             for (int v = 2, u = 0; v < verticesLength; v += 6, u += 2) {
                                 vertices[v] = light;
                                 vertices[v + 1] = dark;
                                 vertices[v + 2] = uvs[u];
                                 vertices[v + 3] = uvs[u + 1];
                             }
-                        }
+                        // }
                         batch.drawTwoColor(texture, vertices, 0, verticesLength, triangles, 0, triangles.length);
                     }
                 }
                 clipper.clipEnd(slot);
             }
             clipper.clipEnd();
-            if (vertexEffect != null) vertexEffect.end();
+            // if (vertexEffect != null) vertexEffect.end();
         } else {
             boolean premultipliedAlpha = this.premultipliedAlpha;
             BlendMode blendMode = null;
@@ -433,65 +432,65 @@ public class SkeletonRenderer {
         }
     }
 
-    private void applyVertexEffect(float[] vertices, int verticesLength, float light, float dark) {
-        Vector2 tempPos = this.temp, tempUv = this.temp2;
-        Color tempLight = this.temp3, tempDark = this.temp4;
-        Color temp5 = this.temp5, temp6 = this.temp6;
-        VertexEffect vertexEffect = this.vertexEffect;
-        temp5.set(NumberUtils.floatToIntColor(light));
-        temp6.set(NumberUtils.floatToIntColor(dark));
-        // Spine38
-        Vector2 tempPosition = this.temp, tempUV = this.temp2;
-        Color tempLight1 = this.temp3, tempDark1 = this.temp4;
-        Color tempLight2 = this.temp5, tempDark2 = this.temp6;
-        tempLight1.set(NumberUtils.floatToIntColor(light));
-        tempDark1.set(NumberUtils.floatToIntColor(dark));
-        for (int v = 0; v < verticesLength; v += 6) {
-            if (RuntimesLoader.spineVersion > 37) {
-                tempPosition.x = vertices[v];
-                tempPosition.y = vertices[v + 1];
-                tempUV.x = vertices[v + 4];
-                tempUV.y = vertices[v + 5];
-                tempLight2.set(tempLight1);
-                tempDark2.set(tempDark1);
-                vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
-                vertices[v] = tempPosition.x;
-                vertices[v + 1] = tempPosition.y;
-                vertices[v + 2] = tempLight2.toFloatBits();
-                vertices[v + 3] = tempDark2.toFloatBits();
-                vertices[v + 4] = tempUV.x;
-                vertices[v + 5] = tempUV.y;
-            } else {
-                tempPos.x = vertices[v];
-                tempPos.y = vertices[v + 1];
-                tempUv.x = vertices[v + 4];
-                tempUv.y = vertices[v + 5];
-                tempLight.set(temp5);
-                tempDark.set(temp6);
-                vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
-                vertices[v] = tempPos.x;
-                vertices[v + 1] = tempPos.y;
-                vertices[v + 2] = tempLight.toFloatBits();
-                vertices[v + 3] = tempDark.toFloatBits();
-                vertices[v + 4] = tempUv.x;
-                vertices[v + 5] = tempUv.y;
-            }
-        }
-    }
+    // private void applyVertexEffect(float[] vertices, int verticesLength, float light, float dark) {
+    //     Vector2 tempPos = this.temp, tempUv = this.temp2;
+    //     Color tempLight = this.temp3, tempDark = this.temp4;
+    //     Color temp5 = this.temp5, temp6 = this.temp6;
+    //     // VertexEffect vertexEffect = this.vertexEffect;
+    //     temp5.set(NumberUtils.floatToIntColor(light));
+    //     temp6.set(NumberUtils.floatToIntColor(dark));
+    //     // Spine38
+    //     Vector2 tempPosition = this.temp, tempUV = this.temp2;
+    //     Color tempLight1 = this.temp3, tempDark1 = this.temp4;
+    //     Color tempLight2 = this.temp5, tempDark2 = this.temp6;
+    //     tempLight1.set(NumberUtils.floatToIntColor(light));
+    //     tempDark1.set(NumberUtils.floatToIntColor(dark));
+    //     for (int v = 0; v < verticesLength; v += 6) {
+    //         if (RuntimesLoader.spineVersion > 37) {
+    //             tempPosition.x = vertices[v];
+    //             tempPosition.y = vertices[v + 1];
+    //             tempUV.x = vertices[v + 4];
+    //             tempUV.y = vertices[v + 5];
+    //             tempLight2.set(tempLight1);
+    //             tempDark2.set(tempDark1);
+    //             vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
+    //             vertices[v] = tempPosition.x;
+    //             vertices[v + 1] = tempPosition.y;
+    //             vertices[v + 2] = tempLight2.toFloatBits();
+    //             vertices[v + 3] = tempDark2.toFloatBits();
+    //             vertices[v + 4] = tempUV.x;
+    //             vertices[v + 5] = tempUV.y;
+    //         } else {
+    //             tempPos.x = vertices[v];
+    //             tempPos.y = vertices[v + 1];
+    //             tempUv.x = vertices[v + 4];
+    //             tempUv.y = vertices[v + 5];
+    //             tempLight.set(temp5);
+    //             tempDark.set(temp6);
+    //             vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
+    //             vertices[v] = tempPos.x;
+    //             vertices[v + 1] = tempPos.y;
+    //             vertices[v + 2] = tempLight.toFloatBits();
+    //             vertices[v + 3] = tempDark.toFloatBits();
+    //             vertices[v + 4] = tempUv.x;
+    //             vertices[v + 5] = tempUv.y;
+    //         }
+    //     }
+    // }
 
-    public boolean getPremultipliedAlpha() {
-        return premultipliedAlpha;
-    }
+    // public boolean getPremultipliedAlpha() {
+    //     return premultipliedAlpha;
+    // }
 
     public void setPremultipliedAlpha(boolean premultipliedAlpha) {
         this.premultipliedAlpha = premultipliedAlpha;
     }
 
-    public interface VertexEffect {
-        void begin(Skeleton skeleton);
-
-        void transform(Vector2 position, Vector2 uv, Color color, Color darkColor);
-
-        void end();
-    }
+    // public interface VertexEffect {
+    //     void begin(Skeleton skeleton);
+    //
+    //     void transform(Vector2 position, Vector2 uv, Color color, Color darkColor);
+    //
+    //     void end();
+    // }
 }

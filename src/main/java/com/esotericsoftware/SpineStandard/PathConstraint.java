@@ -36,23 +36,23 @@ public class PathConstraint implements Constraint {
         translateMix = data.translateMix;
     }
 
-    public PathConstraint(PathConstraint constraint, Skeleton skeleton) {
-        if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        data = constraint.data;
-        bones = new Array<>(constraint.bones.size);
-        for (Bone bone : constraint.bones)
-            bones.add(skeleton.bones.get(bone.data.index));
-        target = skeleton.slots.get(constraint.target.data.index);
-        position = constraint.position;
-        spacing = constraint.spacing;
-        rotateMix = constraint.rotateMix;
-        translateMix = constraint.translateMix;
-    }
+    // public PathConstraint(PathConstraint constraint, Skeleton skeleton) {
+    //     if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
+    //     if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+    //     data = constraint.data;
+    //     bones = new Array<>(constraint.bones.size);
+    //     for (Bone bone : constraint.bones)
+    //         bones.add(skeleton.bones.get(bone.data.index));
+    //     target = skeleton.slots.get(constraint.target.data.index);
+    //     position = constraint.position;
+    //     spacing = constraint.spacing;
+    //     rotateMix = constraint.rotateMix;
+    //     translateMix = constraint.translateMix;
+    // }
 
-    public void apply() {
-        update();
-    }
+    // public void apply() {
+    //     update();
+    // }
 
     @SuppressWarnings("null")
     public void update() {
@@ -413,62 +413,62 @@ public class PathConstraint implements Constraint {
         }
     }
 
-    public int getOrder() {
-        return data.order;
-    }
+    // public int getOrder() {
+    //     return data.order;
+    // }
 
-    public float getPosition() {
-        return position;
-    }
+    // public float getPosition() {
+    //     return position;
+    // }
 
-    public void setPosition(float position) {
-        this.position = position;
-    }
+    // public void setPosition(float position) {
+    //     this.position = position;
+    // }
 
-    public float getSpacing() {
-        return spacing;
-    }
+    // public float getSpacing() {
+    //     return spacing;
+    // }
 
-    public void setSpacing(float spacing) {
-        this.spacing = spacing;
-    }
+    // public void setSpacing(float spacing) {
+    //     this.spacing = spacing;
+    // }
 
-    public float getRotateMix() {
-        return rotateMix;
-    }
+    // public float getRotateMix() {
+    //     return rotateMix;
+    // }
 
-    public void setRotateMix(float rotateMix) {
-        this.rotateMix = rotateMix;
-    }
+    // public void setRotateMix(float rotateMix) {
+    //     this.rotateMix = rotateMix;
+    // }
 
-    public float getTranslateMix() {
-        return translateMix;
-    }
+    // public float getTranslateMix() {
+    //     return translateMix;
+    // }
 
-    public void setTranslateMix(float translateMix) {
-        this.translateMix = translateMix;
-    }
+    // public void setTranslateMix(float translateMix) {
+    //     this.translateMix = translateMix;
+    // }
 
-    public Array<Bone> getBones() {
-        return bones;
-    }
+    // public Array<Bone> getBones() {
+    //     return bones;
+    // }
 
-    public Slot getTarget() {
-        return target;
-    }
+    // public Slot getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(Slot target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
-        this.target = target;
-    }
+    // public void setTarget(Slot target) {
+    //     if (target == null) throw new IllegalArgumentException("target cannot be null.");
+    //     this.target = target;
+    // }
 
-    public boolean isActive() {
-        return active;
-    }
+    // public boolean isActive() {
+    //     return active;
+    // }
 
-    public PathConstraintData getData() {
-        return data;
-    }
+    // public PathConstraintData getData() {
+    //     return data;
+    // }
 
     public String toString() {
         return data.name;

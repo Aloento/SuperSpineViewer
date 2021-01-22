@@ -60,33 +60,29 @@ public class Skin {
         }
     }
 
-    public Array<SkinEntry> getAttachments() {
-        return attachments.orderedKeys();
-    }
+    // public Array<SkinEntry> getAttachments() {
+    //     return attachments.orderedKeys();
+    // }
 
-    public void clear() {
-        if (RuntimesLoader.spineVersion > 37) {
-            bones.clear();
-            constraints.clear();
-            attachments.clear(1024);
-        } else {
-            for (Key key : O_attachments.keys())
-                keyPool.free(key);
-            O_attachments.clear(1024);
-        }
-    }
+    // public void clear() {
+    //     if (RuntimesLoader.spineVersion > 37) {
+    //         bones.clear();
+    //         constraints.clear();
+    //         attachments.clear(1024);
+    //     } else {
+    //         for (Key key : O_attachments.keys())
+    //             keyPool.free(key);
+    //         O_attachments.clear(1024);
+    //     }
+    // }
 
-    public int size() {
-        return O_attachments.size;
-    }
+    // public int size() {
+    //     return O_attachments.size;
+    // }
 
-    public Array<BoneData> getBones() {
-        return bones;
-    }
-
-    public Array<ConstraintData> getConstraints() {
-        return constraints;
-    }
+    // public Array<BoneData> getBones() {
+    //     return bones;
+    // }
 
     public String getName() {
         return name;
@@ -140,17 +136,17 @@ public class Skin {
             this.hashCode = name.hashCode() + slotIndex * 37;
         }
 
-        public int getSlotIndex() {
-            return slotIndex;
-        }
+        // public int getSlotIndex() {
+        //     return slotIndex;
+        // }
 
-        public String getName() {
-            return name;
-        }
+        // public String getName() {
+        //     return name;
+        // }
 
-        public Attachment getAttachment() {
-            return attachment;
-        }
+        // public Attachment getAttachment() {
+        //     return attachment;
+        // }
 
         public int hashCode() {
             return hashCode;

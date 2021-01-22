@@ -14,10 +14,10 @@ public class BoundingBoxAttachment extends VertexAttachment {
         return color;
     }
 
-    public Attachment copy() {
-        BoundingBoxAttachment copy = new BoundingBoxAttachment(name);
-        copyTo(copy);
-        copy.color.set(color);
-        return copy;
-    }
+    // public Attachment copy() {
+    //     BoundingBoxAttachment copy = new BoundingBoxAttachment(name);
+    //     copyTo(copy);
+    //     copy.color.set(color);
+    //     return copy;
+    // }
 }

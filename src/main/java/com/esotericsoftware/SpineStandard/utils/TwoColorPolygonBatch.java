@@ -16,8 +16,8 @@ import com.badlogic.gdx.utils.NumberUtils;
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class TwoColorPolygonBatch implements PolygonBatch {
-    static final byte VERTEX_SIZE = 2 + 1 + 1 + 2;
-    static final byte SPRITE_SIZE = 4 * VERTEX_SIZE;
+    // static final byte VERTEX_SIZE = 2 + 1 + 1 + 2;
+    // static final byte SPRITE_SIZE = 4 * VERTEX_SIZE;
 
     private final Mesh mesh;
     private final float[] vertices;
@@ -26,7 +26,7 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private final Matrix4 projectionMatrix = new Matrix4();
     private final Matrix4 combinedMatrix = new Matrix4();
     private final Color light = new Color(1, 1, 1, 1);
-    private final Color dark = new Color(0, 0, 0, 1);
+    // private final Color dark = new Color(0, 0, 0, 1);
     private final ShaderProgram shader;
     public byte totalRenderCalls = 0;
     private boolean blendingDisabled;
@@ -109,14 +109,14 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         lightPacked = packedColor;
     }
 
-    public Color getDarkColor() {
-        return dark;
-    }
+    // public Color getDarkColor() {
+    //     return dark;
+    // }
 
-    public void setDarkColor(Color tint) {
-        dark.set(tint);
-        float darkPacked = tint.toFloatBits();
-    }
+    // public void setDarkColor(Color tint) {
+    //     dark.set(tint);
+    //     float darkPacked = tint.toFloatBits();
+    // }
 
     public void draw(PolygonRegion region, float x, float y) {
         // if (!drawing) throw new IllegalStateException("begin must be called before draw.");
@@ -1251,8 +1251,8 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private void switchTexture(Texture texture) {
         flush();
         lastTexture = texture;
-        float invTexWidth = 1.0f / texture.getWidth();
-        float invTexHeight = 1.0f / texture.getHeight();
+        // float invTexWidth = 1.0f / texture.getWidth();
+        // float invTexHeight = 1.0f / texture.getHeight();
     }
 
     @Override

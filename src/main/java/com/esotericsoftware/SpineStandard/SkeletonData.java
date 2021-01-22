@@ -32,9 +32,9 @@ public class SkeletonData {
         return null;
     }
 
-    public Array<SlotData> getSlots() {
-        return slots;
-    }
+    // public Array<SlotData> getSlots() {
+    //     return slots;
+    // }
 
     public SlotData findSlot(String slotName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
@@ -50,9 +50,9 @@ public class SkeletonData {
         return defaultSkin;
     }
 
-    public void setDefaultSkin(Skin defaultSkin) {
-        this.defaultSkin = defaultSkin;
-    }
+    // public void setDefaultSkin(Skin defaultSkin) {
+    //     this.defaultSkin = defaultSkin;
+    // }
 
     public Skin findSkin(String skinName) {
         if (skinName == null) throw new IllegalArgumentException("skinName cannot be null.");
@@ -72,9 +72,9 @@ public class SkeletonData {
         return null;
     }
 
-    public Array<EventData> getEvents() {
-        return events;
-    }
+    // public Array<EventData> getEvents() {
+    //     return events;
+    // }
 
     public Array<Animation> getAnimations() {
         return animations;
@@ -118,9 +118,9 @@ public class SkeletonData {
         return null;
     }
 
-    public Array<PathConstraintData> getPathConstraints() {
-        return pathConstraints;
-    }
+    // public Array<PathConstraintData> getPathConstraints() {
+    //     return pathConstraints;
+    // }
 
     public PathConstraintData findPathConstraint(String constraintName) {
         if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
@@ -136,73 +136,65 @@ public class SkeletonData {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    // public void setName(String name) {
+    //     this.name = name;
+    // }
 
-    public float getX() {
-        return x;
-    }
+    // public float getX() {
+    //     return x;
+    // }
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    // public void setX(float x) {
+    //     this.x = x;
+    // }
 
-    public float getY() {
-        return y;
-    }
+    // public float getY() {
+    //     return y;
+    // }
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    // public void setY(float y) {
+    //     this.y = y;
+    // }
 
-    public float getWidth() {
-        return width;
-    }
+    // public float getWidth() {
+    //     return width;
+    // }
 
-    public void setWidth(float width) {
-        this.width = width;
-    }
+    // public void setWidth(float width) {
+    //     this.width = width;
+    // }
 
-    public float getHeight() {
-        return height;
-    }
+    // public float getHeight() {
+    //     return height;
+    // }
 
-    public void setHeight(float height) {
-        this.height = height;
-    }
+    // public void setHeight(float height) {
+    //     this.height = height;
+    // }
 
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+    // public void setVersion(String version) {
+    //     this.version = version;
+    // }
 
-    public String getHash() {
-        return hash;
-    }
+    // public String getHash() {
+    //     return hash;
+    // }
 
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
+    // public void setHash(String hash) {
+    //     this.hash = hash;
+    // }
 
-    public String getImagesPath() {
-        return imagesPath;
-    }
+    // public float getFps() {
+    //     return fps;
+    // }
 
-    public void setImagesPath(String imagesPath) {
-        this.imagesPath = imagesPath;
-    }
-
-    public float getFps() {
-        return fps;
-    }
-
-    public void setFps(float fps) {
-        this.fps = fps;
-    }
+    // public void setFps(float fps) {
+    //     this.fps = fps;
+    // }
 
     public String toString() {
         return name != null ? name : super.toString();

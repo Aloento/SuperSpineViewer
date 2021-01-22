@@ -2,8 +2,6 @@ package com.esotericsoftware.SpineStandard.attachments;
 
 import com.badlogic.gdx.graphics.Color;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
-
 public class PathAttachment extends VertexAttachment {
 
     final Color color = new Color(1, 0.5f, 0, 1);
@@ -42,14 +40,14 @@ public class PathAttachment extends VertexAttachment {
         return color;
     }
 
-    public Attachment copy() {
-        PathAttachment copy = new PathAttachment(name);
-        copyTo(copy);
-        copy.lengths = new float[lengths.length];
-        arraycopy(lengths, 0, copy.lengths, 0, lengths.length);
-        copy.closed = closed;
-        copy.constantSpeed = constantSpeed;
-        copy.color.set(color);
-        return copy;
-    }
+    // public Attachment copy() {
+    //     PathAttachment copy = new PathAttachment(name);
+    //     copyTo(copy);
+    //     copy.lengths = new float[lengths.length];
+    //     arraycopy(lengths, 0, copy.lengths, 0, lengths.length);
+    //     copy.closed = closed;
+    //     copy.constantSpeed = constantSpeed;
+    //     copy.color.set(color);
+    //     return copy;
+    // }
 }

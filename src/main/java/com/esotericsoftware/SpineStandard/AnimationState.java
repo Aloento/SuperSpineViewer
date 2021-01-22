@@ -32,9 +32,6 @@ public class AnimationState {
     private float timeScale = 1;
     private int unKeyedState;
 
-    public AnimationState() {
-    }
-
     public AnimationState(AnimationStateData data) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         this.data = data;
@@ -1132,27 +1129,18 @@ public class AnimationState {
         return tracks.get(trackIndex);
     }
 
-    public void addListener(AnimationStateListener listener) {
-        if (listener == null) throw new IllegalArgumentException("listener cannot be null.");
-        listeners.add(listener);
-    }
-
-    public float getTimeScale() {
-        return timeScale;
-    }
-
     public void setTimeScale(float timeScale) {
         this.timeScale = timeScale;
     }
 
-    public AnimationStateData getData() {
-        return data;
-    }
+    // public AnimationStateData getData() {
+    //     return data;
+    // }
 
-    public void setData(AnimationStateData data) {
-        if (data == null) throw new IllegalArgumentException("data cannot be null.");
-        this.data = data;
-    }
+    // public void setData(AnimationStateData data) {
+    //     if (data == null) throw new IllegalArgumentException("data cannot be null.");
+    //     this.data = data;
+    // }
 
     public String toString() {
         StringBuilder buffer = new StringBuilder(64);
@@ -1275,46 +1263,30 @@ public class AnimationState {
             return true;
         }
 
-        public Animation getAnimation() {
-            return animation;
-        }
+        // public Animation getAnimation() {
+        //     return animation;
+        // }
 
-        public void setAnimation(Animation animation) {
-            if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
-            this.animation = animation;
-        }
+        // public void setAnimation(Animation animation) {
+        //     if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
+        //     this.animation = animation;
+        // }
 
-        public boolean getLoop() {
-            return loop;
-        }
+        // public float getTime() {
+        //     return time;
+        // }
 
-        public void setLoop(boolean loop) {
-            this.loop = loop;
-        }
+        // public void setTime(float time) {
+        //     this.time = time;
+        // }
 
-        public float getTime() {
-            return time;
-        }
+        // public float getMix() {
+        //     return mix;
+        // }
 
-        public void setTime(float time) {
-            this.time = time;
-        }
-
-        public float getLastTime() {
-            return lastTime;
-        }
-
-        public void setLastTime(float lastTime) {
-            this.lastTime = lastTime;
-        }
-
-        public float getMix() {
-            return mix;
-        }
-
-        public void setMix(float mix) {
-            this.mix = mix;
-        }
+        // public void setMix(float mix) {
+        //     this.mix = mix;
+        // }
 
         public float getAnimationEnd() {
             if (RuntimesLoader.spineVersion < 35) return 1;
@@ -1336,37 +1308,13 @@ public class AnimationState {
             return Math.min(trackTime + animationStart, animationEnd);
         }
 
-        public float getTimeScale() {
-            return timeScale;
-        }
+        // public float getAlpha() {
+        //     return alpha;
+        // }
 
-        public void setTimeScale(float timeScale) {
-            this.timeScale = timeScale;
-        }
-
-        public float getAlpha() {
-            return alpha;
-        }
-
-        public void setAlpha(float alpha) {
-            this.alpha = alpha;
-        }
-
-        public TrackEntry getNext() {
-            return next;
-        }
-
-        public void setNext(TrackEntry next) {
-            this.next = next;
-        }
-
-        public boolean isComplete() {
-            return switch (RuntimesLoader.spineVersion) {
-                case 38, 37, 36, 35 -> trackTime >= animationEnd - animationStart;
-                case 34 -> time >= endTime;
-                default -> throw new IllegalStateException("Unexpected value: " + RuntimesLoader.spineVersion);
-            };
-        }
+        // public void setAlpha(float alpha) {
+        //     this.alpha = alpha;
+        // }
 
         public String toString() {
             return animation == null ? "<none>" : animation.name;

@@ -21,122 +21,106 @@ public class BoneData {
         this.parent = parent;
     }
 
-    public BoneData(BoneData bone, BoneData parent) {
-        if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
-        index = bone.index;
-        name = bone.name;
-        this.parent = parent;
-        length = bone.length;
-        x = bone.x;
-        y = bone.y;
-        rotation = bone.rotation;
-        scaleX = bone.scaleX;
-        scaleY = bone.scaleY;
-        shearX = bone.shearX;
-        shearY = bone.shearY;
-    }
+    // public BoneData(BoneData bone, BoneData parent) {
+    //     if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
+    //     index = bone.index;
+    //     name = bone.name;
+    //     this.parent = parent;
+    //     length = bone.length;
+    //     x = bone.x;
+    //     y = bone.y;
+    //     rotation = bone.rotation;
+    //     scaleX = bone.scaleX;
+    //     scaleY = bone.scaleY;
+    //     shearX = bone.shearX;
+    //     shearY = bone.shearY;
+    // }
 
-    public int getIndex() {
-        return index;
-    }
+    // public int getIndex() {
+    //     return index;
+    // }
 
-    public String getName() {
-        return name;
-    }
+    // public String getName() {
+    //     return name;
+    // }
 
-    public BoneData getParent() {
-        return parent;
-    }
+    // public BoneData getParent() {
+    //     return parent;
+    // }
 
-    public float getLength() {
-        return length;
-    }
+    // public float getLength() {
+    //     return length;
+    // }
 
-    public void setLength(float length) {
-        this.length = length;
-    }
+    // public void setLength(float length) {
+    //     this.length = length;
+    // }
 
-    public float getX() {
-        return x;
-    }
+    // public float getX() {
+    //     return x;
+    // }
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    // public void setX(float x) {
+    //     this.x = x;
+    // }
 
-    public float getY() {
-        return y;
-    }
+    // public float getY() {
+    //     return y;
+    // }
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    // public void setY(float y) {
+    //     this.y = y;
+    // }
 
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
+    // public void setPosition(float x, float y) {
+    //     this.x = x;
+    //     this.y = y;
+    // }
 
-    public float getRotation() {
-        return rotation;
-    }
+    // public float getRotation() {
+    //     return rotation;
+    // }
 
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
-    }
+    // public void setRotation(float rotation) {
+    //     this.rotation = rotation;
+    // }
 
-    public float getScaleX() {
-        return scaleX;
-    }
+    // public float getScaleX() {
+    //     return scaleX;
+    // }
 
-    public void setScaleX(float scaleX) {
-        this.scaleX = scaleX;
-    }
+    // public void setScaleX(float scaleX) {
+    //     this.scaleX = scaleX;
+    // }
 
-    public float getScaleY() {
-        return scaleY;
-    }
+    // public float getScaleY() {
+    //     return scaleY;
+    // }
 
-    public void setScaleY(float scaleY) {
-        this.scaleY = scaleY;
-    }
+    // public void setScaleY(float scaleY) {
+    //     this.scaleY = scaleY;
+    // }
 
-    public void setScale(float scaleX, float scaleY) {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-    }
+    // public void setScale(float scaleX, float scaleY) {
+    //     this.scaleX = scaleX;
+    //     this.scaleY = scaleY;
+    // }
 
-    public float getShearX() {
-        return shearX;
-    }
+    // public float getShearX() {
+    //     return shearX;
+    // }
 
-    public void setShearX(float shearX) {
-        this.shearX = shearX;
-    }
+    // public void setShearX(float shearX) {
+    //     this.shearX = shearX;
+    // }
 
-    public float getShearY() {
-        return shearY;
-    }
+    // public float getShearY() {
+    //     return shearY;
+    // }
 
-    public void setShearY(float shearY) {
-        this.shearY = shearY;
-    }
-
-    public boolean getInheritRotation() {
-        return inheritRotation;
-    }
-
-    public void setInheritRotation(boolean inheritRotation) {
-        this.inheritRotation = inheritRotation;
-    }
-
-    public boolean getInheritScale() {
-        return inheritScale;
-    }
-
-    public void setInheritScale(boolean inheritScale) {
-        this.inheritScale = inheritScale;
-    }
+    // public void setShearY(float shearY) {
+    //     this.shearY = shearY;
+    // }
 
     public Color getColor() {
         return color;

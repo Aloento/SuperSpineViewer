@@ -11,17 +11,17 @@ abstract public class ConstraintData {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
+    // public String getName() {
+    //     return name;
+    // }
 
-    public int getOrder() {
-        return order;
-    }
+    // public int getOrder() {
+    //     return order;
+    // }
 
-    public void setOrder(int order) {
-        this.order = order;
-    }
+    // public void setOrder(int order) {
+    //     this.order = order;
+    // }
 
     public String toString() {
         return name;

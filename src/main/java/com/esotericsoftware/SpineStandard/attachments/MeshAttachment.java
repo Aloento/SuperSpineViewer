@@ -10,8 +10,6 @@ import com.esotericsoftware.SpineStandard.Bone;
 import com.esotericsoftware.SpineStandard.Skeleton;
 import com.esotericsoftware.SpineStandard.Slot;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
-
 public class MeshAttachment extends VertexAttachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -265,10 +263,6 @@ public class MeshAttachment extends VertexAttachment {
         return worldVertices;
     }
 
-    public float[] getWorldVertices() { // Spine35
-        return worldVertices;
-    }
-
     public short[] getTriangles() {
         return triangles;
     }
@@ -285,49 +279,37 @@ public class MeshAttachment extends VertexAttachment {
         return uvs;
     }
 
-    public void setUVs(float[] uvs) {
-        this.uvs = uvs;
-    }
-
     public Color getColor() {
         return color;
     }
 
-    public String getPath() {
-        return path;
-    }
+    // public String getPath() {
+    //     return path;
+    // }
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public int getHullLength() {
-        return hullLength;
     }
 
     public void setHullLength(int hullLength) {
         this.hullLength = hullLength;
     }
 
-    public short[] getEdges() {
-        return edges;
-    }
-
     public void setEdges(short[] edges) {
         this.edges = edges;
     }
 
-    public float getWidth() {
-        return width;
-    }
+    // public float getWidth() {
+    //     return width;
+    // }
 
     public void setWidth(float width) {
         this.width = width;
     }
 
-    public float getHeight() {
-        return height;
-    }
+    // public float getHeight() {
+    //     return height;
+    // }
 
     public void setHeight(float height) {
         this.height = height;
@@ -348,44 +330,44 @@ public class MeshAttachment extends VertexAttachment {
         }
     }
 
-    public Attachment copy() {
-        if (parentMesh != null) return newLinkedMesh();
-
-        MeshAttachment copy = new MeshAttachment(name);
-        copy.region = region;
-        copy.path = path;
-        copy.color.set(color);
-
-        copyTo(copy);
-        copy.regionUVs = new float[regionUVs.length];
-        arraycopy(regionUVs, 0, copy.regionUVs, 0, regionUVs.length);
-        copy.uvs = new float[uvs.length];
-        arraycopy(uvs, 0, copy.uvs, 0, uvs.length);
-        copy.triangles = new short[triangles.length];
-        arraycopy(triangles, 0, copy.triangles, 0, triangles.length);
-        copy.hullLength = hullLength;
-
-        if (edges != null) {
-            copy.edges = new short[edges.length];
-            arraycopy(edges, 0, copy.edges, 0, edges.length);
-        }
-        copy.width = width;
-        copy.height = height;
-        return copy;
-    }
+    // public Attachment copy() {
+    //     if (parentMesh != null) return newLinkedMesh();
+    //
+    //     MeshAttachment copy = new MeshAttachment(name);
+    //     copy.region = region;
+    //     copy.path = path;
+    //     copy.color.set(color);
+    //
+    //     copyTo(copy);
+    //     copy.regionUVs = new float[regionUVs.length];
+    //     arraycopy(regionUVs, 0, copy.regionUVs, 0, regionUVs.length);
+    //     copy.uvs = new float[uvs.length];
+    //     arraycopy(uvs, 0, copy.uvs, 0, uvs.length);
+    //     copy.triangles = new short[triangles.length];
+    //     arraycopy(triangles, 0, copy.triangles, 0, triangles.length);
+    //     copy.hullLength = hullLength;
+    //
+    //     if (edges != null) {
+    //         copy.edges = new short[edges.length];
+    //         arraycopy(edges, 0, copy.edges, 0, edges.length);
+    //     }
+    //     copy.width = width;
+    //     copy.height = height;
+    //     return copy;
+    // }
 
     public void setInheritDeform(boolean inheritDeform) {
         this.inheritDeform = inheritDeform;
     }
 
-    public MeshAttachment newLinkedMesh() {
-        MeshAttachment mesh = new MeshAttachment(name);
-        mesh.region = region;
-        mesh.path = path;
-        mesh.color.set(color);
-        mesh.deformAttachment = deformAttachment;
-        mesh.setParentMesh(parentMesh != null ? parentMesh : this);
-        mesh.updateUVs();
-        return mesh;
-    }
+    // public MeshAttachment newLinkedMesh() {
+    //     MeshAttachment mesh = new MeshAttachment(name);
+    //     mesh.region = region;
+    //     mesh.path = path;
+    //     mesh.color.set(color);
+    //     mesh.deformAttachment = deformAttachment;
+    //     mesh.setParentMesh(parentMesh != null ? parentMesh : this);
+    //     mesh.updateUVs();
+    //     return mesh;
+    // }
 }

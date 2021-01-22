@@ -41,9 +41,9 @@ public class TransformConstraint implements Constraint {
     //     shearMix = constraint.shearMix;
     // }
 
-    public void apply() {
-        update();
-    }
+    // public void apply() {
+    //     update();
+    // }
 
     public void update() {
         if (data.local) {
@@ -234,62 +234,62 @@ public class TransformConstraint implements Constraint {
         }
     }
 
-    public int getOrder() {
-        return data.order;
-    }
+    // public int getOrder() {
+    //     return data.order;
+    // }
 
-    public Array<Bone> getBones() {
-        return bones;
-    }
+    // public Array<Bone> getBones() {
+    //     return bones;
+    // }
 
-    public Bone getTarget() {
-        return target;
-    }
+    // public Bone getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(Bone target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
-        this.target = target;
-    }
+    // public void setTarget(Bone target) {
+    //     if (target == null) throw new IllegalArgumentException("target cannot be null.");
+    //     this.target = target;
+    // }
 
-    public float getRotateMix() {
-        return rotateMix;
-    }
+    // public float getRotateMix() {
+    //     return rotateMix;
+    // }
 
-    public void setRotateMix(float rotateMix) {
-        this.rotateMix = rotateMix;
-    }
+    // public void setRotateMix(float rotateMix) {
+    //     this.rotateMix = rotateMix;
+    // }
 
-    public float getTranslateMix() {
-        return translateMix;
-    }
+    // public float getTranslateMix() {
+    //     return translateMix;
+    // }
 
-    public void setTranslateMix(float translateMix) {
-        this.translateMix = translateMix;
-    }
+    // public void setTranslateMix(float translateMix) {
+    //     this.translateMix = translateMix;
+    // }
 
-    public float getScaleMix() {
-        return scaleMix;
-    }
+    // public float getScaleMix() {
+    //     return scaleMix;
+    // }
 
-    public void setScaleMix(float scaleMix) {
-        this.scaleMix = scaleMix;
-    }
+    // public void setScaleMix(float scaleMix) {
+    //     this.scaleMix = scaleMix;
+    // }
 
-    public float getShearMix() {
-        return shearMix;
-    }
+    // public float getShearMix() {
+    //     return shearMix;
+    // }
 
-    public void setShearMix(float shearMix) {
-        this.shearMix = shearMix;
-    }
+    // public void setShearMix(float shearMix) {
+    //     this.shearMix = shearMix;
+    // }
 
-    public boolean isActive() {
-        return active;
-    }
+    // public boolean isActive() {
+    //     return active;
+    // }
 
-    public TransformConstraintData getData() {
-        return data;
-    }
+    // public TransformConstraintData getData() {
+    //     return data;
+    // }
 
     public String toString() {
         return data.name;

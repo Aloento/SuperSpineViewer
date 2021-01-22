@@ -15,58 +15,58 @@ public class PathConstraintData extends ConstraintData {
         super(name);
     }
 
-    public Array<BoneData> getBones() {
-        return bones;
-    }
+    // public Array<BoneData> getBones() {
+    //     return bones;
+    // }
 
-    public SlotData getTarget() {
-        return target;
-    }
+    // public SlotData getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(SlotData target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
-        this.target = target;
-    }
+    // public void setTarget(SlotData target) {
+    //     if (target == null) throw new IllegalArgumentException("target cannot be null.");
+    //     this.target = target;
+    // }
 
-    public float getOffsetRotation() {
-        return offsetRotation;
-    }
+    // public float getOffsetRotation() {
+    //     return offsetRotation;
+    // }
 
-    public void setOffsetRotation(float offsetRotation) {
-        this.offsetRotation = offsetRotation;
-    }
+    // public void setOffsetRotation(float offsetRotation) {
+    //     this.offsetRotation = offsetRotation;
+    // }
 
-    public float getPosition() {
-        return position;
-    }
+    // public float getPosition() {
+    //     return position;
+    // }
 
-    public void setPosition(float position) {
-        this.position = position;
-    }
+    // public void setPosition(float position) {
+    //     this.position = position;
+    // }
 
-    public float getSpacing() {
-        return spacing;
-    }
+    // public float getSpacing() {
+    //     return spacing;
+    // }
 
-    public void setSpacing(float spacing) {
-        this.spacing = spacing;
-    }
+    // public void setSpacing(float spacing) {
+    //     this.spacing = spacing;
+    // }
 
-    public float getRotateMix() {
-        return rotateMix;
-    }
+    // public float getRotateMix() {
+    //     return rotateMix;
+    // }
 
-    public void setRotateMix(float rotateMix) {
-        this.rotateMix = rotateMix;
-    }
+    // public void setRotateMix(float rotateMix) {
+    //     this.rotateMix = rotateMix;
+    // }
 
-    public float getTranslateMix() {
-        return translateMix;
-    }
+    // public float getTranslateMix() {
+    //     return translateMix;
+    // }
 
-    public void setTranslateMix(float translateMix) {
-        this.translateMix = translateMix;
-    }
+    // public void setTranslateMix(float translateMix) {
+    //     this.translateMix = translateMix;
+    // }
 
     public enum PositionMode {
         fixed, percent;
