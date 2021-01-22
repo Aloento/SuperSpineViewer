@@ -85,7 +85,6 @@ Spine Universal LibGDX Runtimes
 
 ### 支持的版本
 
-* Spine 2.1 ●
 * Spine 3.1 √
 * Spine 3.2 √
 * Spine 3.3 √

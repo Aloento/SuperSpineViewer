@@ -41,23 +41,19 @@ public class RuntimesLoader extends Controller {
             spineVersion = 32;
         else if (skel.contains("3.1."))
             spineVersion = 31;
-        else if (skel.contains("2.1."))
-            spineVersion = 21;
+        else {
+            spineVersion = 31;
+            System.out.println("Spine版本过老或判断失败");
+        }
     }
 
     private void skelVersion(File skelFile) {
         try {
             if (spine.isIsBinary()) {
                 whichVersion(new BufferedReader(new FileReader(skelFile)).readLine());
-                if (spineVersion < 20) {
-                    System.out.println("Spine二进制版本判断失败");
-                }
                 System.out.println("Spine二进制版本：" + spineVersion);
             } else {
                 whichVersion(Files.readString(skelFile.toPath()));
-                if (spineVersion < 20) {
-                    System.out.println("SpineJson版本判断失败");
-                }
                 System.out.println("SpineJson版本：" + spineVersion);
             }
         } catch (IOException e) {

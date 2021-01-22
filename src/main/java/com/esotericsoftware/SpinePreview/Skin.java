@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.OrderedSet;
 import com.esotericsoftware.SpinePreview.attachments.Attachment;
 import com.esotericsoftware.SpinePreview.attachments.MeshAttachment;
 
-
 public class Skin {
     final String name;
     final OrderedSet<SkinEntry> attachments = new OrderedSet();
@@ -20,37 +19,28 @@ public class Skin {
         attachments.orderedItems().ordered = false;
     }
 
-
     public void setAttachment(int slotIndex, String name, Attachment attachment) {
         if (attachment == null) throw new IllegalArgumentException("attachment cannot be null.");
         SkinEntry entry = new SkinEntry(slotIndex, name, attachment);
         if (!attachments.add(entry)) attachments.get(entry).attachment = attachment;
     }
 
-
     public void addSkin(Skin skin) {
         if (skin == null) throw new IllegalArgumentException("skin cannot be null.");
-
         for (BoneData data : skin.bones)
             if (!bones.contains(data, true)) bones.add(data);
-
         for (ConstraintData data : skin.constraints)
             if (!constraints.contains(data, true)) constraints.add(data);
-
         for (SkinEntry entry : skin.attachments.orderedItems())
             setAttachment(entry.slotIndex, entry.name, entry.attachment);
     }
 
-
     public void copySkin(Skin skin) {
         if (skin == null) throw new IllegalArgumentException("skin cannot be null.");
-
         for (BoneData data : skin.bones)
             if (!bones.contains(data, true)) bones.add(data);
-
         for (ConstraintData data : skin.constraints)
             if (!constraints.contains(data, true)) constraints.add(data);
-
         for (SkinEntry entry : skin.attachments.orderedItems()) {
             if (entry.attachment instanceof MeshAttachment)
                 setAttachment(entry.slotIndex, entry.name, ((MeshAttachment) entry.attachment).newLinkedMesh());
@@ -59,7 +49,6 @@ public class Skin {
         }
     }
 
-
     public @Null
     Attachment getAttachment(int slotIndex, String name) {
         lookup.set(slotIndex, name);
@@ -67,17 +56,14 @@ public class Skin {
         return entry != null ? entry.attachment : null;
     }
 
-
     public void removeAttachment(int slotIndex, String name) {
         lookup.set(slotIndex, name);
         attachments.remove(lookup);
     }
 
-
     public Array<SkinEntry> getAttachments() {
         return attachments.orderedItems();
     }
-
 
     public void getAttachments(int slotIndex, Array<SkinEntry> attachments) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
@@ -85,7 +71,6 @@ public class Skin {
         for (SkinEntry entry : this.attachments.orderedItems())
             if (entry.slotIndex == slotIndex) attachments.add(entry);
     }
-
 
     public void clear() {
         attachments.clear(1024);
@@ -101,7 +86,6 @@ public class Skin {
         return constraints;
     }
 
-
     public String getName() {
         return name;
     }
@@ -109,7 +93,6 @@ public class Skin {
     public String toString() {
         return name;
     }
-
 
     void attachAll(Skeleton skeleton, Skin oldSkin) {
         Object[] slots = skeleton.slots.items;
@@ -122,7 +105,6 @@ public class Skin {
             }
         }
     }
-
 
     static public class SkinEntry {
         int slotIndex;
@@ -147,7 +129,6 @@ public class Skin {
         public int getSlotIndex() {
             return slotIndex;
         }
-
 
         public String getName() {
             return name;

@@ -5,17 +5,14 @@ import com.badlogic.gdx.utils.*;
 class Triangulator {
     private final Array<FloatArray> convexPolygons = new Array(false, 16);
     private final Array<ShortArray> convexPolygonsIndices = new Array(false, 16);
-
     private final ShortArray indicesArray = new ShortArray();
     private final BooleanArray isConcaveArray = new BooleanArray();
     private final ShortArray triangles = new ShortArray();
-
     private final Pool<FloatArray> polygonPool = new Pool() {
         protected FloatArray newObject() {
             return new FloatArray(16);
         }
     };
-
     private final Pool<ShortArray> polygonIndicesPool = new Pool() {
         protected ShortArray newObject() {
             return new ShortArray(16);
@@ -42,24 +39,19 @@ class Triangulator {
     public ShortArray triangulate(FloatArray verticesArray) {
         float[] vertices = verticesArray.items;
         int vertexCount = verticesArray.size >> 1;
-
         ShortArray indicesArray = this.indicesArray;
         indicesArray.clear();
         short[] indices = indicesArray.setSize(vertexCount);
         for (short i = 0; i < vertexCount; i++)
             indices[i] = i;
-
         BooleanArray isConcaveArray = this.isConcaveArray;
         boolean[] isConcave = isConcaveArray.setSize(vertexCount);
         for (int i = 0, n = vertexCount; i < n; ++i)
             isConcave[i] = isConcave(i, vertexCount, vertices, indices);
-
         ShortArray triangles = this.triangles;
         triangles.clear();
         triangles.ensureCapacity(Math.max(0, vertexCount - 2) << 2);
-
         while (vertexCount > 3) {
-
             int previous = vertexCount - 1, i = 0, next = 1;
             while (true) {
                 outer:
@@ -80,7 +72,6 @@ class Triangulator {
                     }
                     break;
                 }
-
                 if (next == 0) {
                     do {
                         if (!isConcave[i]) break;
@@ -88,53 +79,41 @@ class Triangulator {
                     } while (i > 0);
                     break;
                 }
-
                 previous = i;
                 i = next;
                 next = (next + 1) % vertexCount;
             }
-
-
             triangles.add(indices[(vertexCount + i - 1) % vertexCount]);
             triangles.add(indices[i]);
             triangles.add(indices[(i + 1) % vertexCount]);
             indicesArray.removeIndex(i);
             isConcaveArray.removeIndex(i);
             vertexCount--;
-
             int previousIndex = (vertexCount + i - 1) % vertexCount;
             int nextIndex = i == vertexCount ? 0 : i;
             isConcave[previousIndex] = isConcave(previousIndex, vertexCount, vertices, indices);
             isConcave[nextIndex] = isConcave(nextIndex, vertexCount, vertices, indices);
         }
-
         if (vertexCount == 3) {
             triangles.add(indices[2]);
             triangles.add(indices[0]);
             triangles.add(indices[1]);
         }
-
         return triangles;
     }
 
     public Array<FloatArray> decompose(FloatArray verticesArray, ShortArray triangles) {
         float[] vertices = verticesArray.items;
-
         Array<FloatArray> convexPolygons = this.convexPolygons;
         polygonPool.freeAll(convexPolygons);
         convexPolygons.clear();
-
         Array<ShortArray> convexPolygonsIndices = this.convexPolygonsIndices;
         polygonIndicesPool.freeAll(convexPolygonsIndices);
         convexPolygonsIndices.clear();
-
         ShortArray polygonIndices = polygonIndicesPool.obtain();
         polygonIndices.clear();
-
         FloatArray polygon = polygonPool.obtain();
         polygon.clear();
-
-
         int fanBaseIndex = -1, lastWinding = 0;
         short[] trianglesItems = triangles.items;
         for (int i = 0, n = triangles.size; i < n; i += 3) {
@@ -142,8 +121,6 @@ class Triangulator {
             float x1 = vertices[t1], y1 = vertices[t1 + 1];
             float x2 = vertices[t2], y2 = vertices[t2 + 1];
             float x3 = vertices[t3], y3 = vertices[t3 + 1];
-
-
             boolean merged = false;
             if (fanBaseIndex == t1) {
                 int o = polygon.size - 4;
@@ -157,8 +134,6 @@ class Triangulator {
                     merged = true;
                 }
             }
-
-
             if (!merged) {
                 if (polygon.size > 0) {
                     convexPolygons.add(polygon);
@@ -184,20 +159,16 @@ class Triangulator {
                 fanBaseIndex = t1;
             }
         }
-
         if (polygon.size > 0) {
             convexPolygons.add(polygon);
             convexPolygonsIndices.add(polygonIndices);
         }
-
-
         Object[] convexPolygonsIndicesItems = convexPolygonsIndices.items, convexPolygonsItems = convexPolygons.items;
         for (int i = 0, n = convexPolygons.size; i < n; i++) {
             polygonIndices = (ShortArray) convexPolygonsIndicesItems[i];
             if (polygonIndices.size == 0) continue;
             int firstIndex = polygonIndices.first();
             int lastIndex = polygonIndices.get(polygonIndices.size - 1);
-
             polygon = (FloatArray) convexPolygonsItems[i];
             int o = polygon.size - 4;
             float[] p = polygon.items;
@@ -206,7 +177,6 @@ class Triangulator {
             float firstX = p[0], firstY = p[1];
             float secondX = p[2], secondY = p[3];
             int winding = winding(prevPrevX, prevPrevY, prevX, prevY, firstX, firstY);
-
             for (int ii = 0; ii < n; ii++) {
                 if (ii == i) continue;
                 ShortArray otherIndices = (ShortArray) convexPolygonsIndicesItems[ii];
@@ -214,10 +184,8 @@ class Triangulator {
                 int otherFirstIndex = otherIndices.first();
                 int otherSecondIndex = otherIndices.get(1);
                 int otherLastIndex = otherIndices.get(2);
-
                 FloatArray otherPoly = (FloatArray) convexPolygonsItems[ii];
                 float x3 = otherPoly.get(otherPoly.size - 2), y3 = otherPoly.get(otherPoly.size - 1);
-
                 if (otherFirstIndex != firstIndex || otherSecondIndex != lastIndex) continue;
                 int winding1 = winding(prevPrevX, prevPrevY, prevX, prevY, x3, y3);
                 int winding2 = winding(x3, y3, firstX, firstY, secondX, secondY);
@@ -235,8 +203,6 @@ class Triangulator {
                 }
             }
         }
-
-
         for (int i = convexPolygons.size - 1; i >= 0; i--) {
             polygon = (FloatArray) convexPolygonsItems[i];
             if (polygon.size == 0) {
@@ -246,7 +212,6 @@ class Triangulator {
                 polygonIndicesPool.free(polygonIndices);
             }
         }
-
         return convexPolygons;
     }
 }

@@ -2,7 +2,6 @@ package com.esotericsoftware.SpinePreview;
 
 import com.badlogic.gdx.utils.Array;
 
-
 public class PathConstraintData extends ConstraintData {
     final Array<BoneData> bones = new Array();
     SlotData target;
@@ -16,11 +15,9 @@ public class PathConstraintData extends ConstraintData {
         super(name);
     }
 
-
     public Array<BoneData> getBones() {
         return bones;
     }
-
 
     public SlotData getTarget() {
         return target;
@@ -31,7 +28,6 @@ public class PathConstraintData extends ConstraintData {
         this.target = target;
     }
 
-
     public PositionMode getPositionMode() {
         return positionMode;
     }
@@ -40,7 +36,6 @@ public class PathConstraintData extends ConstraintData {
         if (positionMode == null) throw new IllegalArgumentException("positionMode cannot be null.");
         this.positionMode = positionMode;
     }
-
 
     public SpacingMode getSpacingMode() {
         return spacingMode;
@@ -51,7 +46,6 @@ public class PathConstraintData extends ConstraintData {
         this.spacingMode = spacingMode;
     }
 
-
     public RotateMode getRotateMode() {
         return rotateMode;
     }
@@ -61,7 +55,6 @@ public class PathConstraintData extends ConstraintData {
         this.rotateMode = rotateMode;
     }
 
-
     public float getOffsetRotation() {
         return offsetRotation;
     }
@@ -69,7 +62,6 @@ public class PathConstraintData extends ConstraintData {
     public void setOffsetRotation(float offsetRotation) {
         this.offsetRotation = offsetRotation;
     }
-
 
     public float getPosition() {
         return position;
@@ -79,7 +71,6 @@ public class PathConstraintData extends ConstraintData {
         this.position = position;
     }
 
-
     public float getSpacing() {
         return spacing;
     }
@@ -87,7 +78,6 @@ public class PathConstraintData extends ConstraintData {
     public void setSpacing(float spacing) {
         this.spacing = spacing;
     }
-
 
     public float getMixRotate() {
         return mixRotate;
@@ -97,7 +87,6 @@ public class PathConstraintData extends ConstraintData {
         this.mixRotate = mixRotate;
     }
 
-
     public float getMixX() {
         return mixX;
     }
@@ -105,7 +94,6 @@ public class PathConstraintData extends ConstraintData {
     public void setMixX(float mixX) {
         this.mixX = mixX;
     }
-
 
     public float getMixY() {
         return mixY;
@@ -115,24 +103,18 @@ public class PathConstraintData extends ConstraintData {
         this.mixY = mixY;
     }
 
-
     public enum PositionMode {
         fixed, percent;
-
         static public final PositionMode[] values = PositionMode.values();
     }
 
-
     public enum SpacingMode {
         length, fixed, percent, proportional;
-
         static public final SpacingMode[] values = SpacingMode.values();
     }
 
-
     public enum RotateMode {
         tangent, chain, chainScale;
-
         static public final RotateMode[] values = RotateMode.values();
     }
 }

@@ -4,9 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
 
-
 public class PathAttachment extends VertexAttachment {
-
     final Color color = new Color(1, 0.5f, 0, 1);
     float[] lengths;
     boolean closed, constantSpeed;
@@ -14,7 +12,6 @@ public class PathAttachment extends VertexAttachment {
     public PathAttachment(String name) {
         super(name);
     }
-
 
     public boolean getClosed() {
         return closed;
@@ -24,7 +21,6 @@ public class PathAttachment extends VertexAttachment {
         this.closed = closed;
     }
 
-
     public boolean getConstantSpeed() {
         return constantSpeed;
     }
@@ -33,7 +29,6 @@ public class PathAttachment extends VertexAttachment {
         this.constantSpeed = constantSpeed;
     }
 
-
     public float[] getLengths() {
         return lengths;
     }
@@ -41,7 +36,6 @@ public class PathAttachment extends VertexAttachment {
     public void setLengths(float[] lengths) {
         this.lengths = lengths;
     }
-
 
     public Color getColor() {
         return color;

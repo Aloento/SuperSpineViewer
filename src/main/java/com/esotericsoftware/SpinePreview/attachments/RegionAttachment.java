@@ -8,7 +8,6 @@ import com.esotericsoftware.SpinePreview.Bone;
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.degRad;
 
-
 public class RegionAttachment extends Attachment {
     static public final int BLX = 0;
     static public final int BLY = 1;
@@ -28,7 +27,6 @@ public class RegionAttachment extends Attachment {
     public RegionAttachment(String name) {
         super(name);
     }
-
 
     public void updateOffset() {
         float width = getWidth();
@@ -109,37 +107,31 @@ public class RegionAttachment extends Attachment {
         }
     }
 
-
     public void computeWorldVertices(Bone bone, float[] worldVertices, int offset, int stride) {
         float[] vertexOffset = this.offset;
         float x = bone.getWorldX(), y = bone.getWorldY();
         float a = bone.getA(), b = bone.getB(), c = bone.getC(), d = bone.getD();
         float offsetX, offsetY;
-
         offsetX = vertexOffset[BRX];
         offsetY = vertexOffset[BRY];
         worldVertices[offset] = offsetX * a + offsetY * b + x;
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
         offset += stride;
-
         offsetX = vertexOffset[BLX];
         offsetY = vertexOffset[BLY];
         worldVertices[offset] = offsetX * a + offsetY * b + x;
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
         offset += stride;
-
         offsetX = vertexOffset[ULX];
         offsetY = vertexOffset[ULY];
         worldVertices[offset] = offsetX * a + offsetY * b + x;
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
         offset += stride;
-
         offsetX = vertexOffset[URX];
         offsetY = vertexOffset[URY];
         worldVertices[offset] = offsetX * a + offsetY * b + x;
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
     }
-
 
     public float[] getOffset() {
         return offset;
@@ -149,7 +141,6 @@ public class RegionAttachment extends Attachment {
         return uvs;
     }
 
-
     public float getX() {
         return x;
     }
@@ -157,7 +148,6 @@ public class RegionAttachment extends Attachment {
     public void setX(float x) {
         this.x = x;
     }
-
 
     public float getY() {
         return y;
@@ -167,7 +157,6 @@ public class RegionAttachment extends Attachment {
         this.y = y;
     }
 
-
     public float getScaleX() {
         return scaleX;
     }
@@ -175,7 +164,6 @@ public class RegionAttachment extends Attachment {
     public void setScaleX(float scaleX) {
         this.scaleX = scaleX;
     }
-
 
     public float getScaleY() {
         return scaleY;
@@ -185,7 +173,6 @@ public class RegionAttachment extends Attachment {
         this.scaleY = scaleY;
     }
 
-
     public float getRotation() {
         return rotation;
     }
@@ -193,7 +180,6 @@ public class RegionAttachment extends Attachment {
     public void setRotation(float rotation) {
         this.rotation = rotation;
     }
-
 
     public float getWidth() {
         return width;
@@ -203,7 +189,6 @@ public class RegionAttachment extends Attachment {
         this.width = width;
     }
 
-
     public float getHeight() {
         return height;
     }
@@ -212,11 +197,9 @@ public class RegionAttachment extends Attachment {
         this.height = height;
     }
 
-
     public Color getColor() {
         return color;
     }
-
 
     public String getPath() {
         return path;

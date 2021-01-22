@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class RecordFX extends Controller {
     private static volatile boolean recording = false;
     private final ThreadPoolExecutor savePool = new ThreadPoolExecutor(0, 1,
-            1L, TimeUnit.SECONDS,
+            1L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<>(),
             (r -> {
                 Thread save = new Thread(r, "SavePNG");

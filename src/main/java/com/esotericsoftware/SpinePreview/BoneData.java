@@ -3,13 +3,11 @@ package com.esotericsoftware.SpinePreview;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Null;
 
-
 public class BoneData {
     final int index;
     final String name;
     @Null
     final BoneData parent;
-
     final Color color = new Color(0.61f, 0.61f, 0.61f, 1);
     float length;
     float x, y, rotation, scaleX = 1, scaleY = 1, shearX, shearY;
@@ -23,7 +21,6 @@ public class BoneData {
         this.name = name;
         this.parent = parent;
     }
-
 
     public BoneData(BoneData bone, @Null BoneData parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
@@ -40,11 +37,9 @@ public class BoneData {
         shearY = bone.shearY;
     }
 
-
     public int getIndex() {
         return index;
     }
-
 
     public String getName() {
         return name;
@@ -55,7 +50,6 @@ public class BoneData {
         return parent;
     }
 
-
     public float getLength() {
         return length;
     }
@@ -64,7 +58,6 @@ public class BoneData {
         this.length = length;
     }
 
-
     public float getX() {
         return x;
     }
@@ -72,7 +65,6 @@ public class BoneData {
     public void setX(float x) {
         this.x = x;
     }
-
 
     public float getY() {
         return y;
@@ -87,7 +79,6 @@ public class BoneData {
         this.y = y;
     }
 
-
     public float getRotation() {
         return rotation;
     }
@@ -96,7 +87,6 @@ public class BoneData {
         this.rotation = rotation;
     }
 
-
     public float getScaleX() {
         return scaleX;
     }
@@ -104,7 +94,6 @@ public class BoneData {
     public void setScaleX(float scaleX) {
         this.scaleX = scaleX;
     }
-
 
     public float getScaleY() {
         return scaleY;
@@ -119,7 +108,6 @@ public class BoneData {
         this.scaleY = scaleY;
     }
 
-
     public float getShearX() {
         return shearX;
     }
@@ -128,7 +116,6 @@ public class BoneData {
         this.shearX = shearX;
     }
 
-
     public float getShearY() {
         return shearY;
     }
@@ -136,7 +123,6 @@ public class BoneData {
     public void setShearY(float shearY) {
         this.shearY = shearY;
     }
-
 
     public TransformMode getTransformMode() {
         return transformMode;
@@ -147,7 +133,6 @@ public class BoneData {
         this.transformMode = transformMode;
     }
 
-
     public boolean getSkinRequired() {
         return skinRequired;
     }
@@ -155,7 +140,6 @@ public class BoneData {
     public void setSkinRequired(boolean skinRequired) {
         this.skinRequired = skinRequired;
     }
-
 
     public Color getColor() {
         return color;
@@ -165,10 +149,8 @@ public class BoneData {
         return name;
     }
 
-
     public enum TransformMode {
         normal, onlyTranslation, noRotationOrReflection, noScale, noScaleOrReflection;
-
         static public final TransformMode[] values = TransformMode.values();
     }
 }

@@ -6,9 +6,7 @@ import com.esotericsoftware.SpinePreview.Bone;
 
 import static com.badlogic.gdx.math.MathUtils.*;
 
-
 public class PointAttachment extends Attachment {
-
     final Color color = new Color(0.9451f, 0.9451f, 0, 1);
     float x, y, rotation;
 
@@ -39,7 +37,6 @@ public class PointAttachment extends Attachment {
     public void setRotation(float rotation) {
         this.rotation = rotation;
     }
-
 
     public Color getColor() {
         return color;

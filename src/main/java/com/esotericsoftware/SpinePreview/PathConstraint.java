@@ -11,11 +11,9 @@ import com.esotericsoftware.SpinePreview.utils.SpineUtils;
 
 import java.util.Arrays;
 
-
 public class PathConstraint implements Updatable {
     static private final int NONE = -1, BEFORE = -2, AFTER = -3;
     static private final float epsilon = 0.00001f;
-
     final PathConstraintData data;
     final Array<Bone> bones;
     private final FloatArray spaces = new FloatArray(), positions = new FloatArray();
@@ -40,7 +38,6 @@ public class PathConstraint implements Updatable {
         mixY = data.mixY;
     }
 
-
     public PathConstraint(PathConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -56,21 +53,17 @@ public class PathConstraint implements Updatable {
         mixY = constraint.mixY;
     }
 
-
     public void update() {
         Attachment attachment = target.attachment;
         if (!(attachment instanceof PathAttachment)) return;
-
         float mixRotate = this.mixRotate, mixX = this.mixX, mixY = this.mixY;
         if (mixRotate == 0 && mixX == 0 && mixY == 0) return;
-
         PathConstraintData data = this.data;
         boolean tangents = data.rotateMode == RotateMode.tangent, scale = data.rotateMode == RotateMode.chainScale;
         int boneCount = this.bones.size, spacesCount = tangents ? boneCount : boneCount + 1;
         Object[] bones = this.bones.items;
         float[] spaces = this.spaces.setSize(spacesCount), lengths = scale ? this.lengths.setSize(boneCount) : null;
         float spacing = this.spacing;
-
         switch (data.spacingMode) {
             case percent -> {
                 if (scale) {
@@ -126,7 +119,6 @@ public class PathConstraint implements Updatable {
                 }
             }
         }
-
         float[] positions = computeWorldPositions((PathAttachment) attachment, spacesCount, tangents);
         float boneX = positions[0], boneY = positions[1], offsetRotation = data.offsetRotation;
         boolean tip;
@@ -191,26 +183,21 @@ public class PathConstraint implements Updatable {
         float[] spaces = this.spaces.items, out = this.positions.setSize(spacesCount * 3 + 2), world;
         boolean closed = path.getClosed();
         int verticesLength = path.getWorldVerticesLength(), curveCount = verticesLength / 6, prevCurve = NONE;
-
         if (!path.getConstantSpeed()) {
             float[] lengths = path.getLengths();
             curveCount -= closed ? 1 : 2;
             float pathLength = lengths[curveCount];
-
             if (data.positionMode == PositionMode.percent) position *= pathLength;
-
             float multiplier = switch (data.spacingMode) {
                 case percent -> pathLength;
                 case proportional -> pathLength / spacesCount;
                 default -> 1;
             };
-
             world = this.world.setSize(8);
             for (int i = 0, o = 0, curve = 0; i < spacesCount; i++, o += 3) {
                 float space = spaces[i] * multiplier;
                 position += space;
                 float p = position;
-
                 if (closed) {
                     p %= pathLength;
                     if (p < 0) p += pathLength;
@@ -230,8 +217,6 @@ public class PathConstraint implements Updatable {
                     addAfterPosition(p - pathLength, world, 0, out, o);
                     continue;
                 }
-
-
                 for (; ; curve++) {
                     float length = lengths[curve];
                     if (p > length) continue;
@@ -256,8 +241,6 @@ public class PathConstraint implements Updatable {
             }
             return out;
         }
-
-
         if (closed) {
             verticesLength += 2;
             world = this.world.setSize(verticesLength);
@@ -271,8 +254,6 @@ public class PathConstraint implements Updatable {
             world = this.world.setSize(verticesLength);
             path.computeWorldVertices(target, 2, verticesLength, world, 0, 2);
         }
-
-
         float[] curves = this.curves.setSize(curveCount);
         float pathLength = 0;
         float x1 = world[0], y1 = world[1], cx1 = 0, cy1 = 0, cx2 = 0, cy2 = 0, x2 = 0, y2 = 0;
@@ -308,22 +289,18 @@ public class PathConstraint implements Updatable {
             x1 = x2;
             y1 = y2;
         }
-
         if (data.positionMode == PositionMode.percent) position *= pathLength;
-
         float multiplier = switch (data.spacingMode) {
             case percent -> pathLength;
             case proportional -> pathLength / spacesCount;
             default -> 1;
         };
-
         float[] segments = this.segments;
         float curveLength = 0;
         for (int i = 0, o = 0, curve = 0, segment = 0; i < spacesCount; i++, o += 3) {
             float space = spaces[i] * multiplier;
             position += space;
             float p = position;
-
             if (closed) {
                 p %= pathLength;
                 if (p < 0) p += pathLength;
@@ -335,8 +312,6 @@ public class PathConstraint implements Updatable {
                 addAfterPosition(p - pathLength, world, verticesLength - 4, out, o);
                 continue;
             }
-
-
             for (; ; curve++) {
                 float length = curves[curve];
                 if (p > length) continue;
@@ -348,8 +323,6 @@ public class PathConstraint implements Updatable {
                 }
                 break;
             }
-
-
             if (curve != prevCurve) {
                 prevCurve = curve;
                 int ii = curve * 6;
@@ -389,8 +362,6 @@ public class PathConstraint implements Updatable {
                 segments[9] = curveLength;
                 segment = 0;
             }
-
-
             p *= curveLength;
             for (; ; segment++) {
                 float length = segments[segment];
@@ -443,7 +414,6 @@ public class PathConstraint implements Updatable {
         }
     }
 
-
     public float getPosition() {
         return position;
     }
@@ -451,7 +421,6 @@ public class PathConstraint implements Updatable {
     public void setPosition(float position) {
         this.position = position;
     }
-
 
     public float getSpacing() {
         return spacing;
@@ -461,7 +430,6 @@ public class PathConstraint implements Updatable {
         this.spacing = spacing;
     }
 
-
     public float getMixRotate() {
         return mixRotate;
     }
@@ -469,7 +437,6 @@ public class PathConstraint implements Updatable {
     public void setMixRotate(float mixRotate) {
         this.mixRotate = mixRotate;
     }
-
 
     public float getMixX() {
         return mixX;
@@ -479,7 +446,6 @@ public class PathConstraint implements Updatable {
         this.mixX = mixX;
     }
 
-
     public float getMixY() {
         return mixY;
     }
@@ -488,11 +454,9 @@ public class PathConstraint implements Updatable {
         this.mixY = mixY;
     }
 
-
     public Array<Bone> getBones() {
         return bones;
     }
-
 
     public Slot getTarget() {
         return target;
@@ -506,7 +470,6 @@ public class PathConstraint implements Updatable {
     public boolean isActive() {
         return active;
     }
-
 
     public PathConstraintData getData() {
         return data;

@@ -3,7 +3,6 @@ package com.esotericsoftware.SpinePreview;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Null;
 
-
 public class SkeletonData {
     final Array<BoneData> bones = new Array();
     final Array<SlotData> slots = new Array();
@@ -20,22 +19,17 @@ public class SkeletonData {
     float x, y, width, height;
     @Null
     String version, hash;
-
-
     float fps = 30;
     @Null
     String imagesPath, audioPath;
-
 
     public SkeletonData() {
         super();
     }
 
-
     public Array<BoneData> getBones() {
         return bones;
     }
-
 
     public @Null
     BoneData findBone(String boneName) {
@@ -48,11 +42,9 @@ public class SkeletonData {
         return null;
     }
 
-
     public Array<SlotData> getSlots() {
         return slots;
     }
-
 
     public @Null
     SlotData findSlot(String slotName) {
@@ -65,7 +57,6 @@ public class SkeletonData {
         return null;
     }
 
-
     public @Null
     Skin getDefaultSkin() {
         return defaultSkin;
@@ -75,7 +66,6 @@ public class SkeletonData {
         this.defaultSkin = defaultSkin;
     }
 
-
     public @Null
     Skin findSkin(String skinName) {
         if (skinName == null) throw new IllegalArgumentException("skinName cannot be null.");
@@ -84,11 +74,9 @@ public class SkeletonData {
         return null;
     }
 
-
     public Array<Skin> getSkins() {
         return skins;
     }
-
 
     public @Null
     EventData findEvent(String eventDataName) {
@@ -98,16 +86,13 @@ public class SkeletonData {
         return null;
     }
 
-
     public Array<EventData> getEvents() {
         return events;
     }
 
-
     public Array<Animation> getAnimations() {
         return animations;
     }
-
 
     public @Null
     Animation findAnimation(String animationName) {
@@ -120,11 +105,9 @@ public class SkeletonData {
         return null;
     }
 
-
     public Array<IkConstraintData> getIkConstraints() {
         return ikConstraints;
     }
-
 
     public @Null
     IkConstraintData findIkConstraint(String constraintName) {
@@ -137,11 +120,9 @@ public class SkeletonData {
         return null;
     }
 
-
     public Array<TransformConstraintData> getTransformConstraints() {
         return transformConstraints;
     }
-
 
     public @Null
     TransformConstraintData findTransformConstraint(String constraintName) {
@@ -154,11 +135,9 @@ public class SkeletonData {
         return null;
     }
 
-
     public Array<PathConstraintData> getPathConstraints() {
         return pathConstraints;
     }
-
 
     public @Null
     PathConstraintData findPathConstraint(String constraintName) {
@@ -171,7 +150,6 @@ public class SkeletonData {
         return null;
     }
 
-
     public @Null
     String getName() {
         return name;
@@ -181,7 +159,6 @@ public class SkeletonData {
         this.name = name;
     }
 
-
     public float getX() {
         return x;
     }
@@ -189,7 +166,6 @@ public class SkeletonData {
     public void setX(float x) {
         this.x = x;
     }
-
 
     public float getY() {
         return y;
@@ -199,7 +175,6 @@ public class SkeletonData {
         this.y = y;
     }
 
-
     public float getWidth() {
         return width;
     }
@@ -208,7 +183,6 @@ public class SkeletonData {
         this.width = width;
     }
 
-
     public float getHeight() {
         return height;
     }
@@ -216,7 +190,6 @@ public class SkeletonData {
     public void setHeight(float height) {
         this.height = height;
     }
-
 
     public @Null
     String getVersion() {
@@ -227,7 +200,6 @@ public class SkeletonData {
         this.version = version;
     }
 
-
     public @Null
     String getHash() {
         return hash;
@@ -236,7 +208,6 @@ public class SkeletonData {
     public void setHash(@Null String hash) {
         this.hash = hash;
     }
-
 
     public @Null
     String getImagesPath() {
@@ -247,7 +218,6 @@ public class SkeletonData {
         this.imagesPath = imagesPath;
     }
 
-
     public @Null
     String getAudioPath() {
         return audioPath;
@@ -256,7 +226,6 @@ public class SkeletonData {
     public void setAudioPath(@Null String audioPath) {
         this.audioPath = audioPath;
     }
-
 
     public float getFps() {
         return fps;

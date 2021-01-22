@@ -2,7 +2,6 @@ package com.esotericsoftware.SpinePreview;
 
 import com.badlogic.gdx.utils.ObjectFloatMap;
 
-
 public class AnimationStateData {
     final SkeletonData skeletonData;
     final ObjectFloatMap<Key> animationToMixTime = new ObjectFloatMap(51, 0.8f);
@@ -14,11 +13,9 @@ public class AnimationStateData {
         this.skeletonData = skeletonData;
     }
 
-
     public SkeletonData getSkeletonData() {
         return skeletonData;
     }
-
 
     public void setMix(String fromName, String toName, float duration) {
         Animation from = skeletonData.findAnimation(fromName);
@@ -27,7 +24,6 @@ public class AnimationStateData {
         if (to == null) throw new IllegalArgumentException("Animation not found: " + toName);
         setMix(from, to, duration);
     }
-
 
     public void setMix(Animation from, Animation to, float duration) {
         if (from == null) throw new IllegalArgumentException("from cannot be null.");
@@ -38,7 +34,6 @@ public class AnimationStateData {
         animationToMixTime.put(key, duration);
     }
 
-
     public float getMix(Animation from, Animation to) {
         if (from == null) throw new IllegalArgumentException("from cannot be null.");
         if (to == null) throw new IllegalArgumentException("to cannot be null.");
@@ -46,7 +41,6 @@ public class AnimationStateData {
         tempKey.a2 = to;
         return animationToMixTime.get(tempKey, defaultMix);
     }
-
 
     public float getDefaultMix() {
         return defaultMix;

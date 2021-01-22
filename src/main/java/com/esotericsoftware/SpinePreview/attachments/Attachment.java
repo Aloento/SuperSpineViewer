@@ -1,6 +1,5 @@
 package com.esotericsoftware.SpinePreview.attachments;
 
-
 abstract public class Attachment {
     String name;
 
@@ -9,7 +8,6 @@ abstract public class Attachment {
         this.name = name;
     }
 
-
     public String getName() {
         return name;
     }
@@ -17,7 +15,6 @@ abstract public class Attachment {
     public String toString() {
         return name;
     }
-
 
     abstract public Attachment copy();
 }

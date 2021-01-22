@@ -7,23 +7,19 @@ import com.esotericsoftware.SpinePreview.SkeletonJson.LinkedMesh;
 import com.esotericsoftware.SpinePreview.attachments.AtlasAttachmentLoader;
 import com.esotericsoftware.SpinePreview.attachments.AttachmentLoader;
 
-
 abstract public class SkeletonLoader {
     final AttachmentLoader attachmentLoader;
-    final Array<LinkedMesh> linkedMeshes = new Array();
+    final Array<LinkedMesh> linkedMeshes = new Array<>();
     float scale = 1;
-
 
     public SkeletonLoader(TextureAtlas atlas) {
         attachmentLoader = new AtlasAttachmentLoader(atlas);
     }
 
-
     public SkeletonLoader(AttachmentLoader attachmentLoader) {
         if (attachmentLoader == null) throw new IllegalArgumentException("attachmentLoader cannot be null.");
         this.attachmentLoader = attachmentLoader;
     }
-
 
     public float getScale() {
         return scale;

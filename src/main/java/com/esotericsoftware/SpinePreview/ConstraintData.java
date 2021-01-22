@@ -1,6 +1,5 @@
 package com.esotericsoftware.SpinePreview;
 
-
 abstract public class ConstraintData {
     final String name;
     int order;
@@ -11,11 +10,9 @@ abstract public class ConstraintData {
         this.name = name;
     }
 
-
     public String getName() {
         return name;
     }
-
 
     public int getOrder() {
         return order;
@@ -24,7 +21,6 @@ abstract public class ConstraintData {
     public void setOrder(int order) {
         this.order = order;
     }
-
 
     public boolean getSkinRequired() {
         return skinRequired;

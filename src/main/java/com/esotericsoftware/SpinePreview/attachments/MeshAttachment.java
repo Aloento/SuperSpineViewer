@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.Null;
 
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
 
-
 public class MeshAttachment extends VertexAttachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -17,8 +16,6 @@ public class MeshAttachment extends VertexAttachment {
     private int hullLength;
     private @Null
     MeshAttachment parentMesh;
-
-
     private @Null
     short[] edges;
     private float width, height;
@@ -36,7 +33,6 @@ public class MeshAttachment extends VertexAttachment {
         if (region == null) throw new IllegalArgumentException("region cannot be null.");
         this.region = region;
     }
-
 
     public void updateUVs() {
         float[] regionUVs = this.regionUVs;
@@ -103,7 +99,6 @@ public class MeshAttachment extends VertexAttachment {
         }
     }
 
-
     public short[] getTriangles() {
         return triangles;
     }
@@ -112,16 +107,13 @@ public class MeshAttachment extends VertexAttachment {
         this.triangles = triangles;
     }
 
-
     public float[] getRegionUVs() {
         return regionUVs;
     }
 
-
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;
     }
-
 
     public float[] getUVs() {
         return uvs;
@@ -131,11 +123,9 @@ public class MeshAttachment extends VertexAttachment {
         this.uvs = uvs;
     }
 
-
     public Color getColor() {
         return color;
     }
-
 
     public String getPath() {
         return path;
@@ -145,7 +135,6 @@ public class MeshAttachment extends VertexAttachment {
         this.path = path;
     }
 
-
     public int getHullLength() {
         return hullLength;
     }
@@ -153,7 +142,6 @@ public class MeshAttachment extends VertexAttachment {
     public void setHullLength(int hullLength) {
         this.hullLength = hullLength;
     }
-
 
     public @Null
     short[] getEdges() {
@@ -164,7 +152,6 @@ public class MeshAttachment extends VertexAttachment {
         this.edges = edges;
     }
 
-
     public float getWidth() {
         return width;
     }
@@ -173,7 +160,6 @@ public class MeshAttachment extends VertexAttachment {
         this.width = width;
     }
 
-
     public float getHeight() {
         return height;
     }
@@ -181,7 +167,6 @@ public class MeshAttachment extends VertexAttachment {
     public void setHeight(float height) {
         this.height = height;
     }
-
 
     public @Null
     MeshAttachment getParentMesh() {
@@ -205,12 +190,10 @@ public class MeshAttachment extends VertexAttachment {
 
     public Attachment copy() {
         if (parentMesh != null) return newLinkedMesh();
-
         MeshAttachment copy = new MeshAttachment(name);
         copy.region = region;
         copy.path = path;
         copy.color.set(color);
-
         copyTo(copy);
         copy.regionUVs = new float[regionUVs.length];
         arraycopy(regionUVs, 0, copy.regionUVs, 0, regionUVs.length);
@@ -219,8 +202,6 @@ public class MeshAttachment extends VertexAttachment {
         copy.triangles = new short[triangles.length];
         arraycopy(triangles, 0, copy.triangles, 0, triangles.length);
         copy.hullLength = hullLength;
-
-
         if (edges != null) {
             copy.edges = new short[edges.length];
             arraycopy(edges, 0, copy.edges, 0, edges.length);
@@ -229,7 +210,6 @@ public class MeshAttachment extends VertexAttachment {
         copy.height = height;
         return copy;
     }
-
 
     public MeshAttachment newLinkedMesh() {
         MeshAttachment mesh = new MeshAttachment(name);

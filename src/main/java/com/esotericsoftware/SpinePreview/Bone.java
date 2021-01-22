@@ -9,7 +9,6 @@ import com.esotericsoftware.SpinePreview.BoneData.TransformMode;
 import static com.badlogic.gdx.math.Matrix3.*;
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.*;
 
-
 public class Bone implements Updatable {
     final BoneData data;
     final Skeleton skeleton;
@@ -21,7 +20,6 @@ public class Bone implements Updatable {
     boolean appliedValid;
     float a, b, worldX;
     float c, d, worldY;
-
     boolean sorted, active;
 
     public Bone(BoneData data, Skeleton skeleton, @Null Bone parent) {
@@ -32,7 +30,6 @@ public class Bone implements Updatable {
         this.parent = parent;
         setToSetupPose();
     }
-
 
     public Bone(Bone bone, Skeleton skeleton, @Null Bone parent) {
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
@@ -49,16 +46,13 @@ public class Bone implements Updatable {
         shearY = bone.shearY;
     }
 
-
     public void update() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
     }
 
-
     public void updateWorldTransform() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
     }
-
 
     public void updateWorldTransform(float x, float y, float rotation, float scaleX, float scaleY, float shearX, float shearY) {
         ax = x;
@@ -69,7 +63,6 @@ public class Bone implements Updatable {
         ashearX = shearX;
         ashearY = shearY;
         appliedValid = true;
-
         Bone parent = this.parent;
         if (parent == null) {
             Skeleton skeleton = this.skeleton;
@@ -82,11 +75,9 @@ public class Bone implements Updatable {
             worldY = y * sy + skeleton.y;
             return;
         }
-
         float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
         worldX = pa * x + pb * y + parent.worldX;
         worldY = pc * x + pd * y + parent.worldY;
-
         switch (data.transformMode) {
             case normal -> {
                 float rotationY = rotation + 90 + shearY;
@@ -162,7 +153,6 @@ public class Bone implements Updatable {
         d *= skeleton.scaleY;
     }
 
-
     public void setToSetupPose() {
         BoneData data = this.data;
         x = data.x;
@@ -174,32 +164,26 @@ public class Bone implements Updatable {
         shearY = data.shearY;
     }
 
-
     public BoneData getData() {
         return data;
     }
 
-
     public Skeleton getSkeleton() {
         return skeleton;
     }
-
 
     public @Null
     Bone getParent() {
         return parent;
     }
 
-
     public Array<Bone> getChildren() {
         return children;
     }
 
-
     public boolean isActive() {
         return active;
     }
-
 
     public float getX() {
         return x;
@@ -208,7 +192,6 @@ public class Bone implements Updatable {
     public void setX(float x) {
         this.x = x;
     }
-
 
     public float getY() {
         return y;
@@ -223,7 +206,6 @@ public class Bone implements Updatable {
         this.y = y;
     }
 
-
     public float getRotation() {
         return rotation;
     }
@@ -232,7 +214,6 @@ public class Bone implements Updatable {
         this.rotation = rotation;
     }
 
-
     public float getScaleX() {
         return scaleX;
     }
@@ -240,7 +221,6 @@ public class Bone implements Updatable {
     public void setScaleX(float scaleX) {
         this.scaleX = scaleX;
     }
-
 
     public float getScaleY() {
         return scaleY;
@@ -260,7 +240,6 @@ public class Bone implements Updatable {
         scaleY = scale;
     }
 
-
     public float getShearX() {
         return shearX;
     }
@@ -268,7 +247,6 @@ public class Bone implements Updatable {
     public void setShearX(float shearX) {
         this.shearX = shearX;
     }
-
 
     public float getShearY() {
         return shearY;
@@ -278,7 +256,6 @@ public class Bone implements Updatable {
         this.shearY = shearY;
     }
 
-
     public float getAX() {
         return ax;
     }
@@ -286,7 +263,6 @@ public class Bone implements Updatable {
     public void setAX(float ax) {
         this.ax = ax;
     }
-
 
     public float getAY() {
         return ay;
@@ -296,7 +272,6 @@ public class Bone implements Updatable {
         this.ay = ay;
     }
 
-
     public float getARotation() {
         return arotation;
     }
@@ -304,7 +279,6 @@ public class Bone implements Updatable {
     public void setARotation(float arotation) {
         this.arotation = arotation;
     }
-
 
     public float getAScaleX() {
         return ascaleX;
@@ -314,7 +288,6 @@ public class Bone implements Updatable {
         this.ascaleX = ascaleX;
     }
 
-
     public float getAScaleY() {
         return ascaleY;
     }
@@ -322,7 +295,6 @@ public class Bone implements Updatable {
     public void setAScaleY(float ascaleY) {
         this.ascaleY = ascaleY;
     }
-
 
     public float getAShearX() {
         return ashearX;
@@ -332,7 +304,6 @@ public class Bone implements Updatable {
         this.ashearX = ashearX;
     }
 
-
     public float getAShearY() {
         return ashearY;
     }
@@ -341,7 +312,6 @@ public class Bone implements Updatable {
         this.ashearY = ashearY;
     }
 
-
     public boolean isAppliedValid() {
         return appliedValid;
     }
@@ -349,7 +319,6 @@ public class Bone implements Updatable {
     public void setAppliedValid(boolean appliedValid) {
         this.appliedValid = appliedValid;
     }
-
 
     public void updateAppliedTransform() {
         appliedValid = true;
@@ -392,7 +361,6 @@ public class Bone implements Updatable {
         }
     }
 
-
     public float getA() {
         return a;
     }
@@ -400,7 +368,6 @@ public class Bone implements Updatable {
     public void setA(float a) {
         this.a = a;
     }
-
 
     public float getB() {
         return b;
@@ -410,7 +377,6 @@ public class Bone implements Updatable {
         this.b = b;
     }
 
-
     public float getC() {
         return c;
     }
@@ -418,7 +384,6 @@ public class Bone implements Updatable {
     public void setC(float c) {
         this.c = c;
     }
-
 
     public float getD() {
         return d;
@@ -428,7 +393,6 @@ public class Bone implements Updatable {
         this.d = d;
     }
 
-
     public float getWorldX() {
         return worldX;
     }
@@ -436,7 +400,6 @@ public class Bone implements Updatable {
     public void setWorldX(float worldX) {
         this.worldX = worldX;
     }
-
 
     public float getWorldY() {
         return worldY;
@@ -446,21 +409,17 @@ public class Bone implements Updatable {
         this.worldY = worldY;
     }
 
-
     public float getWorldRotationX() {
         return atan2(c, a) * radDeg;
     }
-
 
     public float getWorldRotationY() {
         return atan2(d, b) * radDeg;
     }
 
-
     public float getWorldScaleX() {
         return (float) Math.sqrt(a * a + c * c);
     }
-
 
     public float getWorldScaleY() {
         return (float) Math.sqrt(b * b + d * d);
@@ -481,7 +440,6 @@ public class Bone implements Updatable {
         return worldTransform;
     }
 
-
     public Vector2 worldToLocal(Vector2 world) {
         if (world == null) throw new IllegalArgumentException("world cannot be null.");
         float det = a * d - b * c;
@@ -491,7 +449,6 @@ public class Bone implements Updatable {
         return world;
     }
 
-
     public Vector2 localToWorld(Vector2 local) {
         if (local == null) throw new IllegalArgumentException("local cannot be null.");
         float x = local.x, y = local.y;
@@ -500,19 +457,16 @@ public class Bone implements Updatable {
         return local;
     }
 
-
     public float worldToLocalRotation(float worldRotation) {
         float sin = sinDeg(worldRotation), cos = cosDeg(worldRotation);
         return atan2(a * sin - c * cos, d * cos - b * sin) * radDeg + rotation - shearX;
     }
-
 
     public float localToWorldRotation(float localRotation) {
         localRotation -= rotation - shearX;
         float sin = sinDeg(localRotation), cos = cosDeg(localRotation);
         return atan2(cos * c + sin * d, cos * a + sin * b) * radDeg;
     }
-
 
     public void rotateWorld(float degrees) {
         float cos = cosDeg(degrees), sin = sinDeg(degrees);
@@ -522,7 +476,6 @@ public class Bone implements Updatable {
         d = sin * b + cos * d;
         appliedValid = false;
     }
-
 
     public String toString() {
         return data.name;

@@ -1,6 +1,5 @@
 package com.esotericsoftware.SpinePreview;
 
-
 public class EventData {
     final String name;
     int intValue;
@@ -62,7 +61,6 @@ public class EventData {
     public void setBalance(float balance) {
         this.balance = balance;
     }
-
 
     public String getName() {
         return name;

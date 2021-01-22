@@ -2,7 +2,6 @@ package com.esotericsoftware.SpinePreview;
 
 import com.badlogic.gdx.utils.Array;
 
-
 public class TransformConstraintData extends ConstraintData {
     final Array<BoneData> bones = new Array();
     BoneData target;
@@ -14,11 +13,9 @@ public class TransformConstraintData extends ConstraintData {
         super(name);
     }
 
-
     public Array<BoneData> getBones() {
         return bones;
     }
-
 
     public BoneData getTarget() {
         return target;
@@ -29,7 +26,6 @@ public class TransformConstraintData extends ConstraintData {
         this.target = target;
     }
 
-
     public float getMixRotate() {
         return mixRotate;
     }
@@ -37,7 +33,6 @@ public class TransformConstraintData extends ConstraintData {
     public void setMixRotate(float mixRotate) {
         this.mixRotate = mixRotate;
     }
-
 
     public float getMixX() {
         return mixX;
@@ -47,7 +42,6 @@ public class TransformConstraintData extends ConstraintData {
         this.mixX = mixX;
     }
 
-
     public float getMixY() {
         return mixY;
     }
@@ -55,7 +49,6 @@ public class TransformConstraintData extends ConstraintData {
     public void setMixY(float mixY) {
         this.mixY = mixY;
     }
-
 
     public float getMixScaleX() {
         return mixScaleX;
@@ -65,7 +58,6 @@ public class TransformConstraintData extends ConstraintData {
         this.mixScaleX = mixScaleX;
     }
 
-
     public float getMixScaleY() {
         return mixScaleY;
     }
@@ -73,7 +65,6 @@ public class TransformConstraintData extends ConstraintData {
     public void setMixScaleY(float mixScaleY) {
         this.mixScaleY = mixScaleY;
     }
-
 
     public float getMixShearY() {
         return mixShearY;
@@ -83,7 +74,6 @@ public class TransformConstraintData extends ConstraintData {
         this.mixShearY = mixShearY;
     }
 
-
     public float getOffsetRotation() {
         return offsetRotation;
     }
@@ -91,7 +81,6 @@ public class TransformConstraintData extends ConstraintData {
     public void setOffsetRotation(float offsetRotation) {
         this.offsetRotation = offsetRotation;
     }
-
 
     public float getOffsetX() {
         return offsetX;
@@ -101,7 +90,6 @@ public class TransformConstraintData extends ConstraintData {
         this.offsetX = offsetX;
     }
 
-
     public float getOffsetY() {
         return offsetY;
     }
@@ -109,7 +97,6 @@ public class TransformConstraintData extends ConstraintData {
     public void setOffsetY(float offsetY) {
         this.offsetY = offsetY;
     }
-
 
     public float getOffsetScaleX() {
         return offsetScaleX;
@@ -119,7 +106,6 @@ public class TransformConstraintData extends ConstraintData {
         this.offsetScaleX = offsetScaleX;
     }
 
-
     public float getOffsetScaleY() {
         return offsetScaleY;
     }
@@ -127,7 +113,6 @@ public class TransformConstraintData extends ConstraintData {
     public void setOffsetScaleY(float offsetScaleY) {
         this.offsetScaleY = offsetScaleY;
     }
-
 
     public float getOffsetShearY() {
         return offsetShearY;

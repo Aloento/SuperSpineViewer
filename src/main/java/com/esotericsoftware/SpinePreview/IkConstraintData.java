@@ -2,7 +2,6 @@ package com.esotericsoftware.SpinePreview;
 
 import com.badlogic.gdx.utils.Array;
 
-
 public class IkConstraintData extends ConstraintData {
     final Array<BoneData> bones = new Array();
     BoneData target;
@@ -14,11 +13,9 @@ public class IkConstraintData extends ConstraintData {
         super(name);
     }
 
-
     public Array<BoneData> getBones() {
         return bones;
     }
-
 
     public BoneData getTarget() {
         return target;
@@ -29,7 +26,6 @@ public class IkConstraintData extends ConstraintData {
         this.target = target;
     }
 
-
     public float getMix() {
         return mix;
     }
@@ -37,7 +33,6 @@ public class IkConstraintData extends ConstraintData {
     public void setMix(float mix) {
         this.mix = mix;
     }
-
 
     public float getSoftness() {
         return softness;
@@ -47,7 +42,6 @@ public class IkConstraintData extends ConstraintData {
         this.softness = softness;
     }
 
-
     public int getBendDirection() {
         return bendDirection;
     }
@@ -55,7 +49,6 @@ public class IkConstraintData extends ConstraintData {
     public void setBendDirection(int bendDirection) {
         this.bendDirection = bendDirection;
     }
-
 
     public boolean getCompress() {
         return compress;
@@ -65,7 +58,6 @@ public class IkConstraintData extends ConstraintData {
         this.compress = compress;
     }
 
-
     public boolean getStretch() {
         return stretch;
     }
@@ -73,7 +65,6 @@ public class IkConstraintData extends ConstraintData {
     public void setStretch(boolean stretch) {
         this.stretch = stretch;
     }
-
 
     public boolean getUniform() {
         return uniform;

@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Null;
 import com.esotericsoftware.SpinePreview.attachments.Attachment;
 
-
 public class Slot {
     final SlotData data;
     final Bone bone;
@@ -27,7 +26,6 @@ public class Slot {
         setToSetupPose();
     }
 
-
     public Slot(Slot slot, Bone bone) {
         if (slot == null) throw new IllegalArgumentException("slot cannot be null.");
         if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
@@ -40,38 +38,31 @@ public class Slot {
         deform.addAll(slot.deform);
     }
 
-
     public SlotData getData() {
         return data;
     }
-
 
     public Bone getBone() {
         return bone;
     }
 
-
     public Skeleton getSkeleton() {
         return bone.skeleton;
     }
 
-
     public Color getColor() {
         return color;
     }
-
 
     public @Null
     Color getDarkColor() {
         return darkColor;
     }
 
-
     public @Null
     Attachment getAttachment() {
         return attachment;
     }
-
 
     public void setAttachment(@Null Attachment attachment) {
         if (this.attachment == attachment) return;
@@ -79,7 +70,6 @@ public class Slot {
         attachmentTime = bone.skeleton.time;
         deform.clear();
     }
-
 
     public float getAttachmentTime() {
         return bone.skeleton.time - attachmentTime;
@@ -89,7 +79,6 @@ public class Slot {
         attachmentTime = bone.skeleton.time - time;
     }
 
-
     public FloatArray getDeform() {
         return deform;
     }
@@ -98,7 +87,6 @@ public class Slot {
         if (deform == null) throw new IllegalArgumentException("deform cannot be null.");
         this.deform = deform;
     }
-
 
     public void setToSetupPose() {
         color.set(data.color);

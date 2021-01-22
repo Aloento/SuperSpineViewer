@@ -27,7 +27,6 @@ public class SkeletonRenderer {
     private @Null
     VertexEffect vertexEffect;
 
-
     public void draw(Batch batch, Skeleton skeleton) {
         if (batch instanceof TwoColorPolygonBatch) {
             draw((TwoColorPolygonBatch) batch, skeleton);
@@ -39,10 +38,8 @@ public class SkeletonRenderer {
         }
         if (batch == null) throw new IllegalArgumentException("batch cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-
         VertexEffect vertexEffect = this.vertexEffect;
         if (vertexEffect != null) vertexEffect.begin(skeleton);
-
         boolean pmaColors = this.pmaColors, pmaBlendModes = this.pmaBlendModes;
         BlendMode blendMode = null;
         float[] vertices = this.vertices.items;
@@ -62,7 +59,6 @@ public class SkeletonRenderer {
                 Color color = region.getColor(), slotColor = slot.getColor();
                 float alpha = a * slotColor.a * color.a * 255;
                 float multiplier = pmaColors ? alpha : 255;
-
                 BlendMode slotBlendMode = slot.data.getBlendMode();
                 if (slotBlendMode != blendMode) {
                     if (slotBlendMode == BlendMode.additive && pmaColors) {
@@ -72,7 +68,6 @@ public class SkeletonRenderer {
                     blendMode = slotBlendMode;
                     blendMode.apply(batch, pmaBlendModes);
                 }
-
                 float c = NumberUtils.intToFloatColor((int) alpha << 24
                         | (int) (b * slotColor.b * color.b * multiplier) << 16
                         | (int) (g * slotColor.g * color.g * multiplier) << 8
@@ -83,41 +78,32 @@ public class SkeletonRenderer {
                     vertices[v + 1] = uvs[u];
                     vertices[v + 2] = uvs[u + 1];
                 }
-
                 if (vertexEffect != null) applyVertexEffect(vertices, 20, 5, c, 0);
-
                 batch.draw(region.getRegion().getTexture(), vertices, 0, 20);
-
             } else if (attachment instanceof ClippingAttachment) {
                 clipper.clipStart(slot, (ClippingAttachment) attachment);
                 continue;
-
             } else if (attachment instanceof MeshAttachment) {
                 throw new RuntimeException(batch.getClass().getSimpleName()
                         + " cannot render meshes, PolygonSpriteBatch or TwoColorPolygonBatch is required.");
-
             } else if (attachment instanceof SkeletonAttachment) {
                 Skeleton attachmentSkeleton = ((SkeletonAttachment) attachment).getSkeleton();
                 if (attachmentSkeleton != null) draw(batch, attachmentSkeleton);
             }
-
             clipper.clipEnd(slot);
         }
         clipper.clipEnd();
         if (vertexEffect != null) vertexEffect.end();
     }
 
-
     public void draw(PolygonSpriteBatch batch, Skeleton skeleton) {
         if (batch == null) throw new IllegalArgumentException("batch cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-
         Vector2 tempPosition = this.temp, tempUV = this.temp2;
         Color tempLight1 = this.temp3, tempDark1 = this.temp4;
         Color tempLight2 = this.temp5, tempDark2 = this.temp6;
         VertexEffect vertexEffect = this.vertexEffect;
         if (vertexEffect != null) vertexEffect.begin(skeleton);
-
         boolean pmaColors = this.pmaColors, pmaBlendModes = this.pmaBlendModes;
         BlendMode blendMode = null;
         int verticesLength = 0;
@@ -144,7 +130,6 @@ public class SkeletonRenderer {
                 texture = region.getRegion().getTexture();
                 uvs = region.getUVs();
                 color = region.getColor();
-
             } else if (attachment instanceof MeshAttachment) {
                 MeshAttachment mesh = (MeshAttachment) attachment;
                 int count = mesh.getWorldVerticesLength();
@@ -155,22 +140,18 @@ public class SkeletonRenderer {
                 texture = mesh.getRegion().getTexture();
                 uvs = mesh.getUVs();
                 color = mesh.getColor();
-
             } else if (attachment instanceof ClippingAttachment) {
                 ClippingAttachment clip = (ClippingAttachment) attachment;
                 clipper.clipStart(slot, clip);
                 continue;
-
             } else if (attachment instanceof SkeletonAttachment) {
                 Skeleton attachmentSkeleton = ((SkeletonAttachment) attachment).getSkeleton();
                 if (attachmentSkeleton != null) draw(batch, attachmentSkeleton);
             }
-
             if (texture != null) {
                 Color slotColor = slot.getColor();
                 float alpha = a * slotColor.a * color.a * 255;
                 float multiplier = pmaColors ? alpha : 255;
-
                 BlendMode slotBlendMode = slot.data.getBlendMode();
                 if (slotBlendMode != blendMode) {
                     if (slotBlendMode == BlendMode.additive && pmaColors) {
@@ -180,12 +161,10 @@ public class SkeletonRenderer {
                     blendMode = slotBlendMode;
                     blendMode.apply(batch, pmaBlendModes);
                 }
-
                 float c = NumberUtils.intToFloatColor((int) alpha << 24
                         | (int) (b * slotColor.b * color.b * multiplier) << 16
                         | (int) (g * slotColor.g * color.g * multiplier) << 8
                         | (int) (r * slotColor.r * color.r * multiplier));
-
                 if (clipper.isClipping()) {
                     clipper.clipTriangles(vertices, verticesLength, triangles, triangles.length, uvs, c, 0, false);
                     FloatArray clippedVertices = clipper.getClippedVertices();
@@ -221,24 +200,20 @@ public class SkeletonRenderer {
                     batch.draw(texture, vertices, 0, verticesLength, triangles, 0, triangles.length);
                 }
             }
-
             clipper.clipEnd(slot);
         }
         clipper.clipEnd();
         if (vertexEffect != null) vertexEffect.end();
     }
 
-
     public void draw(TwoColorPolygonBatch batch, Skeleton skeleton) {
         if (batch == null) throw new IllegalArgumentException("batch cannot be null.");
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-
         Vector2 tempPosition = this.temp, tempUV = this.temp2;
         Color tempLight1 = this.temp3, tempDark1 = this.temp4;
         Color tempLight2 = this.temp5, tempDark2 = this.temp6;
         VertexEffect vertexEffect = this.vertexEffect;
         if (vertexEffect != null) vertexEffect.begin(skeleton);
-
         boolean pmaColors = this.pmaColors, pmaBlendModes = this.pmaBlendModes;
         batch.setPremultipliedAlpha(pmaColors);
         BlendMode blendMode = null;
@@ -266,7 +241,6 @@ public class SkeletonRenderer {
                 texture = region.getRegion().getTexture();
                 uvs = region.getUVs();
                 color = region.getColor();
-
             } else if (attachment instanceof MeshAttachment) {
                 MeshAttachment mesh = (MeshAttachment) attachment;
                 int count = mesh.getWorldVerticesLength();
@@ -277,22 +251,18 @@ public class SkeletonRenderer {
                 texture = mesh.getRegion().getTexture();
                 uvs = mesh.getUVs();
                 color = mesh.getColor();
-
             } else if (attachment instanceof ClippingAttachment) {
                 ClippingAttachment clip = (ClippingAttachment) attachment;
                 clipper.clipStart(slot, clip);
                 continue;
-
             } else if (attachment instanceof SkeletonAttachment) {
                 Skeleton attachmentSkeleton = ((SkeletonAttachment) attachment).getSkeleton();
                 if (attachmentSkeleton != null) draw(batch, attachmentSkeleton);
             }
-
             if (texture != null) {
                 Color lightColor = slot.getColor();
                 float alpha = a * lightColor.a * color.a * 255;
                 float multiplier = pmaColors ? alpha : 255;
-
                 BlendMode slotBlendMode = slot.data.getBlendMode();
                 if (slotBlendMode != blendMode) {
                     if (slotBlendMode == BlendMode.additive && pmaColors) {
@@ -302,7 +272,6 @@ public class SkeletonRenderer {
                     blendMode = slotBlendMode;
                     blendMode.apply(batch, pmaBlendModes);
                 }
-
                 float red = r * color.r * multiplier;
                 float green = g * color.g * multiplier;
                 float blue = b * color.b * multiplier;
@@ -315,7 +284,6 @@ public class SkeletonRenderer {
                         : NumberUtils.intToFloatColor((int) (blue * darkColor.b) << 16
                         | (int) (green * darkColor.g) << 8
                         | (int) (red * darkColor.r));
-
                 if (clipper.isClipping()) {
                     clipper.clipTriangles(vertices, verticesLength, triangles, triangles.length, uvs, light, dark, true);
                     FloatArray clippedVertices = clipper.getClippedVertices();
@@ -354,7 +322,6 @@ public class SkeletonRenderer {
                     batch.drawTwoColor(texture, vertices, 0, verticesLength, triangles, 0, triangles.length);
                 }
             }
-
             clipper.clipEnd(slot);
         }
         clipper.clipEnd();
@@ -406,7 +373,6 @@ public class SkeletonRenderer {
         return pmaColors;
     }
 
-
     public void setPremultipliedAlphaColors(boolean pmaColors) {
         this.pmaColors = pmaColors;
     }
@@ -415,11 +381,9 @@ public class SkeletonRenderer {
         return pmaBlendModes;
     }
 
-
     public void setPremultipliedAlphaBlendModes(boolean pmaBlendModes) {
         this.pmaBlendModes = pmaBlendModes;
     }
-
 
     public void setPremultipliedAlpha(boolean pmaColorsAndBlendModes) {
         pmaColors = pmaColorsAndBlendModes;
@@ -434,7 +398,6 @@ public class SkeletonRenderer {
     public void setVertexEffect(@Null VertexEffect vertexEffect) {
         this.vertexEffect = vertexEffect;
     }
-
 
     public interface VertexEffect {
         void begin(Skeleton skeleton);

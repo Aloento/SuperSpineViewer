@@ -3,7 +3,6 @@ package com.esotericsoftware.SpinePreview;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Null;
 
-
 public class SlotData {
     final int index;
     final String name;
@@ -24,26 +23,21 @@ public class SlotData {
         this.boneData = boneData;
     }
 
-
     public int getIndex() {
         return index;
     }
-
 
     public String getName() {
         return name;
     }
 
-
     public BoneData getBoneData() {
         return boneData;
     }
 
-
     public Color getColor() {
         return color;
     }
-
 
     public @Null
     Color getDarkColor() {
@@ -54,7 +48,6 @@ public class SlotData {
         this.darkColor = darkColor;
     }
 
-
     public @Null
     String getAttachmentName() {
         return attachmentName;
@@ -63,7 +56,6 @@ public class SlotData {
     public void setAttachmentName(@Null String attachmentName) {
         this.attachmentName = attachmentName;
     }
-
 
     public BlendMode getBlendMode() {
         return blendMode;

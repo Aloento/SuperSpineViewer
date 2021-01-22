@@ -6,21 +6,13 @@ import com.esotericsoftware.SpinePreview.Animation.*;
 
 import java.lang.StringBuilder;
 
-
 public class AnimationState {
     static private final Animation emptyAnimation = new Animation("<empty>", new Array(0), 0);
-
-
     static private final int SUBSEQUENT = 0;
-
     static private final int FIRST = 1;
-
     static private final int HOLD_SUBSEQUENT = 2;
-
     static private final int HOLD_FIRST = 3;
-
     static private final int HOLD_MIX = 4;
-
     static private final int SETUP = 1, CURRENT = 2;
     final Array<TrackEntry> tracks = new Array();
     final SnapshotArray<AnimationStateListener> listeners = new SnapshotArray();
@@ -37,7 +29,6 @@ public class AnimationState {
     private float timeScale = 1;
     private int unkeyedState;
 
-
     public AnimationState() {
     }
 
@@ -46,29 +37,23 @@ public class AnimationState {
         this.data = data;
     }
 
-
     public void update(float delta) {
         delta *= timeScale;
         Object[] tracks = this.tracks.items;
         for (int i = 0, n = this.tracks.size; i < n; i++) {
             TrackEntry current = (TrackEntry) tracks[i];
             if (current == null) continue;
-
             current.animationLast = current.nextAnimationLast;
             current.trackLast = current.nextTrackLast;
-
             float currentDelta = delta * current.timeScale;
-
             if (current.delay > 0) {
                 current.delay -= currentDelta;
                 if (current.delay > 0) continue;
                 currentDelta = -current.delay;
                 current.delay = 0;
             }
-
             TrackEntry next = current.next;
             if (next != null) {
-
                 float nextTime = current.trackLast - next.delay;
                 if (nextTime >= 0) {
                     next.delay = 0;
@@ -82,14 +67,12 @@ public class AnimationState {
                     continue;
                 }
             } else if (current.trackLast >= current.trackEnd && current.mixingFrom == null) {
-
                 tracks[i] = null;
                 queue.end(current);
                 disposeNext(current);
                 continue;
             }
             if (current.mixingFrom != null && updateMixingFrom(current, delta)) {
-
                 TrackEntry from = current.mixingFrom;
                 current.mixingFrom = null;
                 if (from != null) from.mixingTo = null;
@@ -98,26 +81,18 @@ public class AnimationState {
                     from = from.mixingFrom;
                 }
             }
-
             current.trackTime += currentDelta;
         }
-
         queue.drain();
     }
-
 
     private boolean updateMixingFrom(TrackEntry to, float delta) {
         TrackEntry from = to.mixingFrom;
         if (from == null) return true;
-
         boolean finished = updateMixingFrom(from, delta);
-
         from.animationLast = from.nextAnimationLast;
         from.trackLast = from.nextTrackLast;
-
-
         if (to.mixTime > 0 && to.mixTime >= to.mixDuration) {
-
             if (from.totalAlpha == 0 || to.mixDuration == 0) {
                 to.mixingFrom = from.mixingFrom;
                 if (from.mixingFrom != null) from.mixingFrom.mixingTo = to;
@@ -126,17 +101,14 @@ public class AnimationState {
             }
             return finished;
         }
-
         from.trackTime += delta * from.timeScale;
         to.mixTime += delta;
         return false;
     }
 
-
     public boolean apply(Skeleton skeleton) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
         if (animationsChanged) animationsChanged();
-
         Array<Event> events = this.events;
         boolean applied = false;
         Object[] tracks = this.tracks.items;
@@ -144,18 +116,12 @@ public class AnimationState {
             TrackEntry current = (TrackEntry) tracks[i];
             if (current == null || current.delay > 0) continue;
             applied = true;
-
-
             MixBlend blend = i == 0 ? MixBlend.first : current.mixBlend;
-
-
             float mix = current.alpha;
             if (current.mixingFrom != null)
                 mix *= applyMixingFrom(current, skeleton, blend);
             else if (current.trackTime >= current.trackEnd && current.next == null)
                 mix = 0;
-
-
             float animationLast = current.animationLast, animationTime = current.getAnimationTime(), applyTime = animationTime;
             Array<Event> applyEvents = events;
             if (current.reverse) {
@@ -174,11 +140,9 @@ public class AnimationState {
                 }
             } else {
                 int[] timelineMode = current.timelineMode.items;
-
                 boolean firstFrame = current.timelinesRotation.size != timelineCount << 1;
                 if (firstFrame) current.timelinesRotation.setSize(timelineCount << 1);
                 float[] timelinesRotation = current.timelinesRotation.items;
-
                 for (int ii = 0; ii < timelineCount; ii++) {
                     Timeline timeline = (Timeline) timelines[ii];
                     MixBlend timelineBlend = timelineMode[ii] == SUBSEQUENT ? blend : MixBlend.setup;
@@ -196,8 +160,6 @@ public class AnimationState {
             current.nextAnimationLast = animationTime;
             current.nextTrackLast = current.trackTime;
         }
-
-
         int setupState = unkeyedState + SETUP;
         Object[] slots = skeleton.slots.items;
         for (int i = 0, n = skeleton.slots.size; i < n; i++) {
@@ -208,7 +170,6 @@ public class AnimationState {
             }
         }
         unkeyedState += 2;
-
         queue.drain();
         return applied;
     }
@@ -216,7 +177,6 @@ public class AnimationState {
     private float applyMixingFrom(TrackEntry to, Skeleton skeleton, MixBlend blend) {
         TrackEntry from = to.mixingFrom;
         if (from.mixingFrom != null) applyMixingFrom(from, skeleton, blend);
-
         float mix;
         if (to.mixDuration == 0) {
             mix = 1;
@@ -227,7 +187,6 @@ public class AnimationState {
             if (mix > 1) mix = 1;
             if (blend != MixBlend.first) blend = from.mixBlend;
         }
-
         boolean attachments = mix < from.attachmentThreshold, drawOrder = mix < from.drawOrderThreshold;
         int timelineCount = from.animation.timelines.size;
         Object[] timelines = from.animation.timelines.items;
@@ -239,18 +198,15 @@ public class AnimationState {
         else {
             if (mix < from.eventThreshold) events = this.events;
         }
-
         if (blend == MixBlend.add) {
             for (int i = 0; i < timelineCount; i++)
                 ((Timeline) timelines[i]).apply(skeleton, animationLast, applyTime, events, alphaMix, blend, MixDirection.out);
         } else {
             int[] timelineMode = from.timelineMode.items;
             Object[] timelineHoldMix = from.timelineHoldMix.items;
-
             boolean firstFrame = from.timelinesRotation.size != timelineCount << 1;
             if (firstFrame) from.timelinesRotation.setSize(timelineCount << 1);
             float[] timelinesRotation = from.timelinesRotation.items;
-
             from.totalAlpha = 0;
             for (int i = 0; i < timelineCount; i++) {
                 Timeline timeline = (Timeline) timelines[i];
@@ -275,7 +231,6 @@ public class AnimationState {
                         timelineBlend = MixBlend.setup;
                         alpha = alphaHold;
                     }
-
                     default -> {
                         timelineBlend = MixBlend.setup;
                         TrackEntry holdMix = (TrackEntry) timelineHoldMix[i];
@@ -295,30 +250,23 @@ public class AnimationState {
                 }
             }
         }
-
         if (to.mixDuration > 0) queueEvents(from, animationTime);
         this.events.clear();
         from.nextAnimationLast = animationTime;
         from.nextTrackLast = from.trackTime;
-
         return mix;
     }
 
-
     private void applyAttachmentTimeline(AttachmentTimeline timeline, Skeleton skeleton, float time, MixBlend blend,
                                          boolean attachments) {
-
         Slot slot = skeleton.slots.get(timeline.slotIndex);
         if (!slot.bone.active) return;
-
         float[] frames = timeline.frames;
         if (time < frames[0]) {
             if (blend == MixBlend.setup || blend == MixBlend.first)
                 setAttachment(skeleton, slot, slot.data.attachmentName, attachments);
         } else
             setAttachment(skeleton, slot, timeline.attachmentNames[Animation.search(frames, time)], attachments);
-
-
         if (slot.attachmentState <= unkeyedState) slot.attachmentState = unkeyedState + SETUP;
     }
 
@@ -327,17 +275,13 @@ public class AnimationState {
         if (attachments) slot.attachmentState = unkeyedState + CURRENT;
     }
 
-
     private void applyRotateTimeline(RotateTimeline timeline, Skeleton skeleton, float time, float alpha, MixBlend blend,
                                      float[] timelinesRotation, int i, boolean firstFrame) {
-
         if (firstFrame) timelinesRotation[i] = 0;
-
         if (alpha == 1) {
             timeline.apply(skeleton, 0, time, null, 1, blend, MixDirection.in);
             return;
         }
-
         Bone bone = skeleton.bones.get(timeline.boneIndex);
         if (!bone.active) return;
         float[] frames = timeline.frames;
@@ -346,7 +290,6 @@ public class AnimationState {
             switch (blend) {
                 case setup:
                     bone.rotation = bone.data.rotation;
-
                 default:
                     return;
                 case first:
@@ -357,8 +300,6 @@ public class AnimationState {
             r1 = blend == MixBlend.setup ? bone.data.rotation : bone.rotation;
             r2 = bone.data.rotation + timeline.getCurveValue(time);
         }
-
-
         float total, diff = r2 - r1;
         diff -= (16384 - (int) (16384.499999999996 - diff / 360)) * 360;
         if (diff == 0)
@@ -373,9 +314,7 @@ public class AnimationState {
                 lastDiff = timelinesRotation[i + 1];
             }
             boolean current = diff > 0, dir = lastTotal >= 0;
-
             if (Math.signum(lastDiff) != Math.signum(diff) && Math.abs(lastDiff) <= 90) {
-
                 if (Math.abs(lastTotal) > 180) lastTotal += 360 * Math.signum(lastTotal);
                 dir = current;
             }
@@ -391,8 +330,6 @@ public class AnimationState {
         float animationStart = entry.animationStart, animationEnd = entry.animationEnd;
         float duration = animationEnd - animationStart;
         float trackLastWrapped = entry.trackLast % duration;
-
-
         Object[] events = this.events.items;
         int i = 0, n = this.events.size;
         for (; i < n; i++) {
@@ -401,23 +338,18 @@ public class AnimationState {
             if (event.time > animationEnd) continue;
             queue.event(entry, event);
         }
-
-
         boolean complete;
         if (entry.loop)
             complete = duration == 0 || trackLastWrapped > entry.trackTime % duration;
         else
             complete = animationTime >= animationEnd && entry.animationLast < animationEnd;
         if (complete) queue.complete(entry);
-
-
         for (; i < n; i++) {
             Event event = (Event) events[i];
             if (event.time < animationStart) continue;
             queue.event(entry, event);
         }
     }
-
 
     public void clearTracks() {
         boolean oldDrainDisabled = queue.drainDisabled;
@@ -429,17 +361,13 @@ public class AnimationState {
         queue.drain();
     }
 
-
     public void clearTrack(int trackIndex) {
         if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (trackIndex >= tracks.size) return;
         TrackEntry current = tracks.get(trackIndex);
         if (current == null) return;
-
         queue.end(current);
-
         disposeNext(current);
-
         TrackEntry entry = current;
         while (true) {
             TrackEntry from = entry.mixingFrom;
@@ -449,12 +377,9 @@ public class AnimationState {
             entry.mixingTo = null;
             entry = from;
         }
-
         tracks.set(current.trackIndex, null);
-
         queue.drain();
     }
-
 
     public void clearNext(TrackEntry entry) {
         disposeNext(entry.next);
@@ -464,30 +389,23 @@ public class AnimationState {
         TrackEntry from = expandToIndex(index);
         tracks.set(index, current);
         current.previous = null;
-
         if (from != null) {
             if (interrupt) queue.interrupt(from);
             current.mixingFrom = from;
             from.mixingTo = current;
             current.mixTime = 0;
-
-
             if (from.mixingFrom != null && from.mixDuration > 0)
                 current.interruptAlpha *= Math.min(1, from.mixTime / from.mixDuration);
-
             from.timelinesRotation.clear();
         }
-
         queue.start(current);
     }
-
 
     public TrackEntry setAnimation(int trackIndex, String animationName, boolean loop) {
         Animation animation = data.skeletonData.findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return setAnimation(trackIndex, animation, loop);
     }
-
 
     public TrackEntry setAnimation(int trackIndex, Animation animation, boolean loop) {
         if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
@@ -496,7 +414,6 @@ public class AnimationState {
         TrackEntry current = expandToIndex(trackIndex);
         if (current != null) {
             if (current.nextTrackLast == -1) {
-
                 tracks.set(trackIndex, current.mixingFrom);
                 queue.interrupt(current);
                 queue.end(current);
@@ -512,26 +429,21 @@ public class AnimationState {
         return entry;
     }
 
-
     public TrackEntry addAnimation(int trackIndex, String animationName, boolean loop, float delay) {
         Animation animation = data.skeletonData.findAnimation(animationName);
         if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
         return addAnimation(trackIndex, animation, loop, delay);
     }
 
-
     public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
         if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
         if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
-
         TrackEntry last = expandToIndex(trackIndex);
         if (last != null) {
             while (last.next != null)
                 last = last.next;
         }
-
         TrackEntry entry = trackEntry(trackIndex, animation, loop, last);
-
         if (last == null) {
             setCurrent(trackIndex, entry, true);
             queue.drain();
@@ -540,11 +452,9 @@ public class AnimationState {
             entry.previous = last;
             if (delay <= 0) delay += last.getTrackComplete() - entry.mixDuration;
         }
-
         entry.delay = delay;
         return entry;
     }
-
 
     public TrackEntry setEmptyAnimation(int trackIndex, float mixDuration) {
         TrackEntry entry = setAnimation(trackIndex, emptyAnimation, false);
@@ -553,7 +463,6 @@ public class AnimationState {
         return entry;
     }
 
-
     public TrackEntry addEmptyAnimation(int trackIndex, float mixDuration, float delay) {
         TrackEntry entry = addAnimation(trackIndex, emptyAnimation, false, delay <= 0 ? 1 : delay);
         entry.mixDuration = mixDuration;
@@ -561,7 +470,6 @@ public class AnimationState {
         if (delay <= 0 && entry.previous != null) entry.delay = entry.previous.getTrackComplete() - entry.mixDuration;
         return entry;
     }
-
 
     public void setEmptyAnimations(float mixDuration) {
         boolean oldDrainDisabled = queue.drainDisabled;
@@ -588,23 +496,19 @@ public class AnimationState {
         entry.animation = animation;
         entry.loop = loop;
         entry.holdPrevious = false;
-
         entry.eventThreshold = 0;
         entry.attachmentThreshold = 0;
         entry.drawOrderThreshold = 0;
-
         entry.animationStart = 0;
         entry.animationEnd = animation.getDuration();
         entry.animationLast = -1;
         entry.nextAnimationLast = -1;
-
         entry.delay = 0;
         entry.trackTime = 0;
         entry.trackLast = -1;
         entry.nextTrackLast = -1;
         entry.trackEnd = Float.MAX_VALUE;
         entry.timeScale = 1;
-
         entry.alpha = 1;
         entry.interruptAlpha = 1;
         entry.mixTime = 0;
@@ -623,8 +527,6 @@ public class AnimationState {
 
     void animationsChanged() {
         animationsChanged = false;
-
-
         propertyIds.clear(2048);
         int n = tracks.size;
         Object[] tracks = this.tracks.items;
@@ -648,13 +550,11 @@ public class AnimationState {
         entry.timelineHoldMix.clear();
         Object[] timelineHoldMix = entry.timelineHoldMix.setSize(timelinesCount);
         ObjectSet<String> propertyIds = this.propertyIds;
-
         if (to != null && to.holdPrevious) {
             for (int i = 0; i < timelinesCount; i++)
                 timelineMode[i] = propertyIds.addAll(((Timeline) timelines[i]).getPropertyIds()) ? HOLD_FIRST : HOLD_SUBSEQUENT;
             return;
         }
-
         outer:
         for (int i = 0; i < timelinesCount; i++) {
             Timeline timeline = (Timeline) timelines[i];
@@ -679,7 +579,6 @@ public class AnimationState {
         }
     }
 
-
     public @Null
     TrackEntry getCurrent(int trackIndex) {
         if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
@@ -687,27 +586,22 @@ public class AnimationState {
         return tracks.get(trackIndex);
     }
 
-
     public void addListener(AnimationStateListener listener) {
         if (listener == null) throw new IllegalArgumentException("listener cannot be null.");
         listeners.add(listener);
     }
 
-
     public void removeListener(AnimationStateListener listener) {
         listeners.removeValue(listener, true);
     }
-
 
     public void clearListeners() {
         listeners.clear();
     }
 
-
     public void clearListenerNotifications() {
         queue.clear();
     }
-
 
     public float getTimeScale() {
         return timeScale;
@@ -717,7 +611,6 @@ public class AnimationState {
         this.timeScale = timeScale;
     }
 
-
     public AnimationStateData getData() {
         return data;
     }
@@ -726,7 +619,6 @@ public class AnimationState {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
         this.data = data;
     }
-
 
     public Array<TrackEntry> getTracks() {
         return tracks;
@@ -749,27 +641,19 @@ public class AnimationState {
         start, interrupt, end, dispose, complete, event
     }
 
-
     public interface AnimationStateListener {
-
         void start(TrackEntry entry);
-
 
         void interrupt(TrackEntry entry);
 
-
         void end(TrackEntry entry);
-
 
         void dispose(TrackEntry entry);
 
-
         void complete(TrackEntry entry);
-
 
         void event(TrackEntry entry, Event event);
     }
-
 
     static public class TrackEntry implements Poolable {
         final IntArray timelineMode = new IntArray();
@@ -800,11 +684,9 @@ public class AnimationState {
             timelinesRotation.clear();
         }
 
-
         public int getTrackIndex() {
             return trackIndex;
         }
-
 
         public Animation getAnimation() {
             return animation;
@@ -815,7 +697,6 @@ public class AnimationState {
             this.animation = animation;
         }
 
-
         public boolean getLoop() {
             return loop;
         }
@@ -823,7 +704,6 @@ public class AnimationState {
         public void setLoop(boolean loop) {
             this.loop = loop;
         }
-
 
         public float getDelay() {
             return delay;
@@ -833,7 +713,6 @@ public class AnimationState {
             this.delay = delay;
         }
 
-
         public float getTrackTime() {
             return trackTime;
         }
@@ -842,7 +721,6 @@ public class AnimationState {
             this.trackTime = trackTime;
         }
 
-
         public float getTrackEnd() {
             return trackEnd;
         }
@@ -850,7 +728,6 @@ public class AnimationState {
         public void setTrackEnd(float trackEnd) {
             this.trackEnd = trackEnd;
         }
-
 
         public float getTrackComplete() {
             float duration = animationEnd - animationStart;
@@ -861,7 +738,6 @@ public class AnimationState {
             return trackTime;
         }
 
-
         public float getAnimationStart() {
             return animationStart;
         }
@@ -870,7 +746,6 @@ public class AnimationState {
             this.animationStart = animationStart;
         }
 
-
         public float getAnimationEnd() {
             return animationEnd;
         }
@@ -878,7 +753,6 @@ public class AnimationState {
         public void setAnimationEnd(float animationEnd) {
             this.animationEnd = animationEnd;
         }
-
 
         public float getAnimationLast() {
             return animationLast;
@@ -889,7 +763,6 @@ public class AnimationState {
             nextAnimationLast = animationLast;
         }
 
-
         public float getAnimationTime() {
             if (loop) {
                 float duration = animationEnd - animationStart;
@@ -899,7 +772,6 @@ public class AnimationState {
             return Math.min(trackTime + animationStart, animationEnd);
         }
 
-
         public float getTimeScale() {
             return timeScale;
         }
@@ -907,7 +779,6 @@ public class AnimationState {
         public void setTimeScale(float timeScale) {
             this.timeScale = timeScale;
         }
-
 
         public @Null
         AnimationStateListener getListener() {
@@ -918,7 +789,6 @@ public class AnimationState {
             this.listener = listener;
         }
 
-
         public float getAlpha() {
             return alpha;
         }
@@ -926,7 +796,6 @@ public class AnimationState {
         public void setAlpha(float alpha) {
             this.alpha = alpha;
         }
-
 
         public float getEventThreshold() {
             return eventThreshold;
@@ -936,7 +805,6 @@ public class AnimationState {
             this.eventThreshold = eventThreshold;
         }
 
-
         public float getAttachmentThreshold() {
             return attachmentThreshold;
         }
@@ -944,7 +812,6 @@ public class AnimationState {
         public void setAttachmentThreshold(float attachmentThreshold) {
             this.attachmentThreshold = attachmentThreshold;
         }
-
 
         public float getDrawOrderThreshold() {
             return drawOrderThreshold;
@@ -954,23 +821,19 @@ public class AnimationState {
             this.drawOrderThreshold = drawOrderThreshold;
         }
 
-
         public @Null
         TrackEntry getNext() {
             return next;
         }
-
 
         public @Null
         TrackEntry getPrevious() {
             return previous;
         }
 
-
         public boolean isComplete() {
             return trackTime >= animationEnd - animationStart;
         }
-
 
         public float getMixTime() {
             return mixTime;
@@ -980,7 +843,6 @@ public class AnimationState {
             this.mixTime = mixTime;
         }
 
-
         public float getMixDuration() {
             return mixDuration;
         }
@@ -988,7 +850,6 @@ public class AnimationState {
         public void setMixDuration(float mixDuration) {
             this.mixDuration = mixDuration;
         }
-
 
         public MixBlend getMixBlend() {
             return mixBlend;
@@ -999,18 +860,15 @@ public class AnimationState {
             this.mixBlend = mixBlend;
         }
 
-
         public @Null
         TrackEntry getMixingFrom() {
             return mixingFrom;
         }
 
-
         public @Null
         TrackEntry getMixingTo() {
             return mixingTo;
         }
-
 
         public boolean getHoldPrevious() {
             return holdPrevious;
@@ -1020,11 +878,9 @@ public class AnimationState {
             this.holdPrevious = holdPrevious;
         }
 
-
         public void resetRotationDirections() {
             timelinesRotation.clear();
         }
-
 
         public boolean getReverse() {
             return reverse;
@@ -1099,7 +955,6 @@ public class AnimationState {
         void drain() {
             if (drainDisabled) return;
             drainDisabled = true;
-
             SnapshotArray<AnimationStateListener> listenersArray = AnimationState.this.listeners;
             for (int i = 0; i < this.objects.size; i += 2) {
                 EventType type = (EventType) objects.get(i);
@@ -1121,7 +976,6 @@ public class AnimationState {
                         if (entry.listener != null) entry.listener.end(entry);
                         for (int ii = 0; ii < listenersCount; ii++)
                             ((AnimationStateListener) listeners[ii]).end(entry);
-
                     case dispose:
                         if (entry.listener != null) entry.listener.dispose(entry);
                         for (int ii = 0; ii < listenersCount; ii++)
@@ -1143,7 +997,6 @@ public class AnimationState {
                 listenersArray.end();
             }
             clear();
-
             drainDisabled = false;
         }
 

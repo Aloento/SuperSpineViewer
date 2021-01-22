@@ -55,11 +55,9 @@ public class Event {
         this.balance = balance;
     }
 
-
     public float getTime() {
         return time;
     }
-
 
     public EventData getData() {
         return data;

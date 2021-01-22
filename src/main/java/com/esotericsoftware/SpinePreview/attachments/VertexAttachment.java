@@ -8,10 +8,8 @@ import com.esotericsoftware.SpinePreview.Slot;
 
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
 
-
 abstract public class VertexAttachment extends Attachment {
     static private int nextID;
-
     private final int id = nextID();
     @Null
     int[] bones;
@@ -27,7 +25,6 @@ abstract public class VertexAttachment extends Attachment {
     static private synchronized int nextID() {
         return nextID++;
     }
-
 
     public void computeWorldVertices(Slot slot, int start, int count, float[] worldVertices, int offset, int stride) {
         count = offset + (count >> 1) * stride;
@@ -86,28 +83,23 @@ abstract public class VertexAttachment extends Attachment {
         }
     }
 
-
     public @Null
     VertexAttachment getDeformAttachment() {
         return deformAttachment;
     }
 
-
     public void setDeformAttachment(@Null VertexAttachment deformAttachment) {
         this.deformAttachment = deformAttachment;
     }
-
 
     public @Null
     int[] getBones() {
         return bones;
     }
 
-
     public void setBones(@Null int[] bones) {
         this.bones = bones;
     }
-
 
     public float[] getVertices() {
         return vertices;
@@ -117,7 +109,6 @@ abstract public class VertexAttachment extends Attachment {
         this.vertices = vertices;
     }
 
-
     public int getWorldVerticesLength() {
         return worldVerticesLength;
     }
@@ -126,11 +117,9 @@ abstract public class VertexAttachment extends Attachment {
         this.worldVerticesLength = worldVerticesLength;
     }
 
-
     public int getId() {
         return id;
     }
-
 
     void copyTo(VertexAttachment attachment) {
         if (bones != null) {
@@ -138,13 +127,11 @@ abstract public class VertexAttachment extends Attachment {
             arraycopy(bones, 0, attachment.bones, 0, bones.length);
         } else
             attachment.bones = null;
-
         if (vertices != null) {
             attachment.vertices = new float[vertices.length];
             arraycopy(vertices, 0, attachment.vertices, 0, vertices.length);
         } else
             attachment.vertices = null;
-
         attachment.worldVerticesLength = worldVerticesLength;
         attachment.deformAttachment = deformAttachment;
     }

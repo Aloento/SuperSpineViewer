@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Array;
 
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.*;
 
-
 public class IkConstraint implements Updatable {
     final IkConstraintData data;
     final Array<Bone> bones;
@@ -12,7 +11,6 @@ public class IkConstraint implements Updatable {
     int bendDirection;
     boolean compress, stretch;
     float mix, softness;
-
     boolean active;
 
     public IkConstraint(IkConstraintData data, Skeleton skeleton) {
@@ -24,13 +22,11 @@ public class IkConstraint implements Updatable {
         bendDirection = data.bendDirection;
         compress = data.compress;
         stretch = data.stretch;
-
         bones = new Array(data.bones.size);
         for (BoneData boneData : data.bones)
             bones.add(skeleton.findBone(boneData.name));
         target = skeleton.findBone(data.target.name);
     }
-
 
     public IkConstraint(IkConstraint constraint, Skeleton skeleton) {
         if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
@@ -46,7 +42,6 @@ public class IkConstraint implements Updatable {
         compress = constraint.compress;
         stretch = constraint.stretch;
     }
-
 
     static public void apply(Bone bone, float targetX, float targetY, boolean compress, boolean stretch, boolean uniform,
                              float alpha) {
@@ -67,7 +62,6 @@ public class IkConstraint implements Updatable {
                 pb = -sc * s * bone.skeleton.scaleX;
                 pd = sa * s * bone.skeleton.scaleY;
                 rotationIK += atan2(sc, sa) * radDeg;
-
             default:
                 float x = targetX - p.worldX, y = targetY - p.worldY;
                 float d = pa * pd - pb * pc;
@@ -97,7 +91,6 @@ public class IkConstraint implements Updatable {
         }
         bone.updateWorldTransform(bone.ax, bone.ay, bone.arotation + rotationIK * alpha, sx, sy, bone.ashearX, bone.ashearY);
     }
-
 
     static public void apply(Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float softness,
                              float alpha) {
@@ -241,7 +234,6 @@ public class IkConstraint implements Updatable {
         child.updateWorldTransform(cx, cy, rotation + a2 * alpha, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
     }
 
-
     public void update() {
         if (mix == 0) return;
         Bone target = this.target;
@@ -252,11 +244,9 @@ public class IkConstraint implements Updatable {
         }
     }
 
-
     public Array<Bone> getBones() {
         return bones;
     }
-
 
     public Bone getTarget() {
         return target;
@@ -267,7 +257,6 @@ public class IkConstraint implements Updatable {
         this.target = target;
     }
 
-
     public float getMix() {
         return mix;
     }
@@ -275,7 +264,6 @@ public class IkConstraint implements Updatable {
     public void setMix(float mix) {
         this.mix = mix;
     }
-
 
     public float getSoftness() {
         return softness;
@@ -285,7 +273,6 @@ public class IkConstraint implements Updatable {
         this.softness = softness;
     }
 
-
     public int getBendDirection() {
         return bendDirection;
     }
@@ -294,7 +281,6 @@ public class IkConstraint implements Updatable {
         this.bendDirection = bendDirection;
     }
 
-
     public boolean getCompress() {
         return compress;
     }
@@ -302,7 +288,6 @@ public class IkConstraint implements Updatable {
     public void setCompress(boolean compress) {
         this.compress = compress;
     }
-
 
     public boolean getStretch() {
         return stretch;
@@ -315,7 +300,6 @@ public class IkConstraint implements Updatable {
     public boolean isActive() {
         return active;
     }
-
 
     public IkConstraintData getData() {
         return data;
