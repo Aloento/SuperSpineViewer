@@ -48,9 +48,9 @@ Spine Universal LibGDX Runtimes
 
 **RAM**:
 
-    4G+ = Extreme (60FPS)
+    4G+ = Extreme (240FPS)
     3G~ = Standard (120FPS)
-    2G~ = Fast (240FPS)
+    2G~ = Fast (60FPS)
 
 **CPU**
 
@@ -98,11 +98,21 @@ Spine Universal LibGDX Runtimes
 
 ## 画廊
 
-![首屏](https://i0.hdslb.com/bfs/album/73fdec47d907dc42e96a2d0d21482680fd7efb3f.png "首屏加载画面")
-![信息](https://i0.hdslb.com/bfs/album/697ebe690460ee8a1f50a7bb4c4f973331b244dd.png "Spine信息页")
-![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png  "明日方舟 - 霜叶")
-![德克萨斯](https://i0.hdslb.com/bfs/album/79dbdaee161130460b77411f4664b4ecbd53d68e.png "明日方舟 - 德克萨斯")
-![闪灵](https://i0.hdslb.com/bfs/album/56d918333fd302f9c221680008d7109fe090fb39.png "明日方舟 - 闪灵")
-![凯留](https://i0.hdslb.com/bfs/album/8ad8f6ca661f68909b30edce518d47614162a78f.png "公主连结 - 凯留")
-![湊阿库娅](https://i0.hdslb.com/bfs/album/51ee6aa61652191d4ab6c27a6e18bf8dc1997fdc.png "方舟指令 - 湊阿库娅")
-![万象物语](https://i0.hdslb.com/bfs/album/0919e8d269e355c9b451d52e887c314a84f47faa.png "万象物语")
+<html>
+    <table style="margin-left: auto; margin-right: auto;">
+        <tr>
+            <td>
+                <img src="https://i0.hdslb.com/bfs/album/73fdec47d907dc42e96a2d0d21482680fd7efb3f.png" alt="首屏加载画面">
+                <img src="https://i0.hdslb.com/bfs/album/697ebe690460ee8a1f50a7bb4c4f973331b244dd.png" alt="Spine信息与导出">
+                <img src="https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png" alt="明日方舟 - 霜叶">
+                <img src="https://i0.hdslb.com/bfs/album/79dbdaee161130460b77411f4664b4ecbd53d68e.png" alt="明日方舟 - 德克萨斯">
+            </td>
+            <td>
+                <img src="https://i0.hdslb.com/bfs/album/56d918333fd302f9c221680008d7109fe090fb39.png" alt="明日方舟 - 闪灵">
+                <img src="https://i0.hdslb.com/bfs/album/8ad8f6ca661f68909b30edce518d47614162a78f.png" alt="公主连结 - 凯留">
+                <img src="https://i0.hdslb.com/bfs/album/51ee6aa61652191d4ab6c27a6e18bf8dc1997fdc.png" alt="方舟指令 - 湊阿库娅">
+                <img src="https://i0.hdslb.com/bfs/album/0919e8d269e355c9b451d52e887c314a84f47faa.png" alt="万象物语">
+            </td>
+        </tr>
+    </table>
+</html>
