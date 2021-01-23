@@ -48,9 +48,9 @@ Spine Universal LibGDX Runtimes
 
 **RAM**:
 
-    4G+ = Extreme
-    3G~ = Standard
-    2G~ = Fast
+    4G+ = Extreme (60FPS)
+    3G~ = Standard (120FPS)
+    2G~ = Fast (240FPS)
 
 **CPU**
 
@@ -99,6 +99,7 @@ Spine Universal LibGDX Runtimes
 ## 画廊
 
 ![首屏](https://i0.hdslb.com/bfs/album/73fdec47d907dc42e96a2d0d21482680fd7efb3f.png "首屏加载画面")
+![信息](https://i0.hdslb.com/bfs/album/697ebe690460ee8a1f50a7bb4c4f973331b244dd.png "Spine信息页")
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png  "明日方舟 - 霜叶")
 ![德克萨斯](https://i0.hdslb.com/bfs/album/79dbdaee161130460b77411f4664b4ecbd53d68e.png "明日方舟 - 德克萨斯")
 ![闪灵](https://i0.hdslb.com/bfs/album/56d918333fd302f9c221680008d7109fe090fb39.png "明日方舟 - 闪灵")
