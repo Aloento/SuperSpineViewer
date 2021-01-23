@@ -325,50 +325,50 @@ public class SkeletonRenderer {
                                 clippedTriangles.size);
                     } else {
                         // if (vertexEffect != null) {
-                            // if (Loader.spineVersion > 37) {
-                            //     tempLight1.set(NumberUtils.floatToIntColor(light));
-                            //     tempDark1.set(NumberUtils.floatToIntColor(dark));
-                            //     for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
-                            //         tempPosition.x = vertices[v];
-                            //         tempPosition.y = vertices[v + 1];
-                            //         tempLight2.set(tempLight1);
-                            //         tempDark2.set(tempDark1);
-                            //         tempUV.x = uvs[u];
-                            //         tempUV.y = uvs[u + 1];
-                            //         vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
-                            //         vertices[v] = tempPosition.x;
-                            //         vertices[v + 1] = tempPosition.y;
-                            //         vertices[v + 2] = tempLight2.toFloatBits();
-                            //         vertices[v + 3] = tempDark2.toFloatBits();
-                            //         vertices[v + 4] = tempUV.x;
-                            //         vertices[v + 5] = tempUV.y;
-                            //     }
-                            // } else {
-                            //     temp5.set(NumberUtils.floatToIntColor(light));
-                            //     temp6.set(NumberUtils.floatToIntColor(dark));
-                            //     for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
-                            //         tempPos.x = vertices[v];
-                            //         tempPos.y = vertices[v + 1];
-                            //         tempLight.set(temp5);
-                            //         tempDark.set(temp6);
-                            //         tempUv.x = uvs[u];
-                            //         tempUv.y = uvs[u + 1];
-                            //         vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
-                            //         vertices[v] = tempPos.x;
-                            //         vertices[v + 1] = tempPos.y;
-                            //         vertices[v + 2] = tempLight.toFloatBits();
-                            //         vertices[v + 3] = tempDark.toFloatBits();
-                            //         vertices[v + 4] = tempUv.x;
-                            //         vertices[v + 5] = tempUv.y;
-                            //     }
-                            // }
+                        // if (Loader.spineVersion > 37) {
+                        //     tempLight1.set(NumberUtils.floatToIntColor(light));
+                        //     tempDark1.set(NumberUtils.floatToIntColor(dark));
+                        //     for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
+                        //         tempPosition.x = vertices[v];
+                        //         tempPosition.y = vertices[v + 1];
+                        //         tempLight2.set(tempLight1);
+                        //         tempDark2.set(tempDark1);
+                        //         tempUV.x = uvs[u];
+                        //         tempUV.y = uvs[u + 1];
+                        //         vertexEffect.transform(tempPosition, tempUV, tempLight2, tempDark2);
+                        //         vertices[v] = tempPosition.x;
+                        //         vertices[v + 1] = tempPosition.y;
+                        //         vertices[v + 2] = tempLight2.toFloatBits();
+                        //         vertices[v + 3] = tempDark2.toFloatBits();
+                        //         vertices[v + 4] = tempUV.x;
+                        //         vertices[v + 5] = tempUV.y;
+                        //     }
                         // } else {
-                            for (int v = 2, u = 0; v < verticesLength; v += 6, u += 2) {
-                                vertices[v] = light;
-                                vertices[v + 1] = dark;
-                                vertices[v + 2] = uvs[u];
-                                vertices[v + 3] = uvs[u + 1];
-                            }
+                        //     temp5.set(NumberUtils.floatToIntColor(light));
+                        //     temp6.set(NumberUtils.floatToIntColor(dark));
+                        //     for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
+                        //         tempPos.x = vertices[v];
+                        //         tempPos.y = vertices[v + 1];
+                        //         tempLight.set(temp5);
+                        //         tempDark.set(temp6);
+                        //         tempUv.x = uvs[u];
+                        //         tempUv.y = uvs[u + 1];
+                        //         vertexEffect.transform(tempPos, tempUv, tempLight, tempDark);
+                        //         vertices[v] = tempPos.x;
+                        //         vertices[v + 1] = tempPos.y;
+                        //         vertices[v + 2] = tempLight.toFloatBits();
+                        //         vertices[v + 3] = tempDark.toFloatBits();
+                        //         vertices[v + 4] = tempUv.x;
+                        //         vertices[v + 5] = tempUv.y;
+                        //     }
+                        // }
+                        // } else {
+                        for (int v = 2, u = 0; v < verticesLength; v += 6, u += 2) {
+                            vertices[v] = light;
+                            vertices[v + 1] = dark;
+                            vertices[v + 2] = uvs[u];
+                            vertices[v + 3] = uvs[u + 1];
+                        }
                         // }
                         batch.drawTwoColor(texture, vertices, 0, verticesLength, triangles, 0, triangles.length);
                     }

@@ -12,7 +12,7 @@ public class Slot {
     Attachment attachment;
     int attachmentState;
     private float attachmentTime;
-    private FloatArray deform = new FloatArray();
+    private final FloatArray deform = new FloatArray();
 
     public Slot(SlotData data, Bone bone) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");

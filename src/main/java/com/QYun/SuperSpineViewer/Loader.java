@@ -15,13 +15,13 @@ import java.nio.file.Files;
 
 public class Loader extends Main {
     public static byte spineVersion = 0;
+    private static LwjglFXApplication gdxApp;
     private final String[] startSuffixes = {"", "-pro", "-ess"};
     private final String[] dataSuffixes = {".json", ".skel"};
     private final String[] endSuffixes = {"", ".txt", ".bytes"};
     private final String[] atlasSuffixes = {".atlas", "-pma.atlas"};
     private final SuperSpine spine = new SuperSpine();
     private final Universal universal = new Universal();
-    private static LwjglFXApplication gdxApp;
 
     private void whichVersion(String skel) {
         if (skel.contains("4.0."))

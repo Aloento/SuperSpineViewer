@@ -13,10 +13,10 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.stream.StreamUtil;
 
 public class LwjglFXApplication extends LwjglApplication {
-    final LwjglFXInput input;
+    // final LwjglFXInput input;
     private boolean shouldRender;
 
-    public LwjglFXApplication (ApplicationListener listener, ImageView target) {
+    public LwjglFXApplication(ApplicationListener listener, ImageView target) {
         this(listener, target, new LwjglApplicationConfiguration());
     }
 
@@ -27,8 +27,8 @@ public class LwjglFXApplication extends LwjglApplication {
     public LwjglFXApplication(ApplicationListener listener, LwjglApplicationConfiguration config, LwjglFXGraphics graphics) {
         super(listener, config, graphics);
         mainLoopThread.setPriority(Thread.MAX_PRIORITY);
-        input = new LwjglFXInput(graphics.target);
-        Gdx.input = input;
+        // input = new LwjglFXInput(graphics.target);
+        // Gdx.input = input;
     }
 
     private void resize() {
@@ -93,7 +93,7 @@ public class LwjglFXApplication extends LwjglApplication {
             // If one of the runnables set running to false, for example after an exit().
             if (!running) break;
             shouldRender |= graphics.shouldRender();
-            input.processEvents();
+            // input.processEvents();
             if (audio != null) audio.update();
 
             if (!isActive && graphics.config.backgroundFPS == -1) shouldRender = false;
