@@ -1,4 +1,4 @@
-package com.QYun.SuperSpineViewer.GUI;
+package com.QYun.SuperSpineViewer.Controller;
 
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class PrimaryController extends Controller implements Initializable {
+public class Primary extends Main implements Initializable {
     @FXML
     private StackPane titleBurgerContainer;
 

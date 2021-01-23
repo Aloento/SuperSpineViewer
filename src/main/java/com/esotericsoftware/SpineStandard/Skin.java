@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.SuperSpineViewer.Loader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
@@ -25,7 +25,7 @@ public class Skin {
     public Skin(String name) {
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
         this.name = name;
-        if (RuntimesLoader.spineVersion == 38)
+        if (Loader.spineVersion == 38)
             this.attachments.orderedKeys().ordered = false;
     }
 
@@ -34,7 +34,7 @@ public class Skin {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
         Key key = keyPool.obtain();
         key.set(slotIndex, name);
-        if (RuntimesLoader.spineVersion < 38)
+        if (Loader.spineVersion < 38)
             O_attachments.put(key, attachment);
     }
 
@@ -50,7 +50,7 @@ public class Skin {
 
     public Attachment getAttachment(int slotIndex, String name) {
         if (slotIndex < 0) throw new IllegalArgumentException("slotIndex must be >= 0.");
-        if (RuntimesLoader.spineVersion > 37) {
+        if (Loader.spineVersion > 37) {
             lookup.set(slotIndex, name);
             SkinEntry entry = attachments.get(lookup);
             return entry != null ? entry.attachment : null;
@@ -65,7 +65,7 @@ public class Skin {
     // }
 
     // public void clear() {
-    //     if (RuntimesLoader.spineVersion > 37) {
+    //     if (Loader.spineVersion > 37) {
     //         bones.clear();
     //         constraints.clear();
     //         attachments.clear(1024);
@@ -93,7 +93,7 @@ public class Skin {
     }
 
     void attachAll(Skeleton skeleton, Skin oldSkin) {
-        if (RuntimesLoader.spineVersion > 37) {
+        if (Loader.spineVersion > 37) {
             for (SkinEntry entry : oldSkin.attachments.keys()) {
                 int slotIndex = entry.slotIndex;
                 Slot slot = skeleton.slots.get(slotIndex);
@@ -173,7 +173,7 @@ public class Skin {
             if (name == null) throw new IllegalArgumentException("name cannot be null.");
             this.slotIndex = slotIndex;
             this.name = name;
-            if (RuntimesLoader.spineVersion > 36)
+            if (Loader.spineVersion > 36)
                 hashCode = name.hashCode() + slotIndex * 37;
             else hashCode = 31 * (31 + name.hashCode()) + slotIndex;
         }

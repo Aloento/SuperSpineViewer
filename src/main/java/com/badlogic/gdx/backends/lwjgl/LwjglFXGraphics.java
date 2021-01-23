@@ -1,6 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import com.QYun.SuperSpineViewer.GUI.Controller;
+import com.QYun.SuperSpineViewer.Controller.Main;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -178,6 +178,6 @@ public class LwjglFXGraphics extends LwjglGraphics {
 
     @Override
     public void setTitle(String FPS) {
-        Platform.runLater(() -> Controller.FPS.setText(FPS));
+        Platform.runLater(() -> Main.FPS.setText(FPS));
     }
 }

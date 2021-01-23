@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.QYun.SuperSpineViewer.GUI.ExporterController">
+<StackPane xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.QYun.SuperSpineViewer.Controller.Exporter">
     <ScrollPane hbarPolicy="NEVER" styleClass="side-menu">
         <VBox spacing="20.0">
             <padding>

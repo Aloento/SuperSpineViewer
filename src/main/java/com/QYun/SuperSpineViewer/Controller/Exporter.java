@@ -1,8 +1,8 @@
-package com.QYun.SuperSpineViewer.GUI;
+package com.QYun.SuperSpineViewer.Controller;
 
 import com.QYun.Spine.SuperSpine;
+import com.QYun.SuperSpineViewer.Loader;
 import com.QYun.SuperSpineViewer.RecordFX;
-import com.QYun.SuperSpineViewer.RuntimesLoader;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
@@ -17,8 +17,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ExporterController extends Controller implements Initializable {
-    private final RuntimesLoader runtimesLoader = new RuntimesLoader();
+public class Exporter extends Main implements Initializable {
     private final SuperSpine spine = new SuperSpine();
     private final RecordFX recordFX = new RecordFX();
 
@@ -58,7 +57,7 @@ public class ExporterController extends Controller implements Initializable {
         File file = fileChooser.showOpenDialog(new Stage());
         if (file != null) {
             openPath = file.getAbsolutePath();
-            runtimesLoader.init();
+            new Loader().init();
             if (isLoad) System.out.println("请求重载");
             else System.out.println("请求初始化");
         }
@@ -130,7 +129,7 @@ public class ExporterController extends Controller implements Initializable {
 
         if (openPath != null) {
             Platform.runLater(() -> {
-                runtimesLoader.init();
+                new Loader().init();
                 System.out.println("从命令行加载");
             });
         }

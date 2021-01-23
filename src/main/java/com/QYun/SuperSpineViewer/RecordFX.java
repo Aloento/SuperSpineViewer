@@ -1,7 +1,7 @@
 package com.QYun.SuperSpineViewer;
 
 import com.QYun.Spine.SuperSpine;
-import com.QYun.SuperSpineViewer.GUI.Controller;
+import com.QYun.SuperSpineViewer.Controller.Main;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class RecordFX extends Controller {
+public class RecordFX extends Main {
     private static volatile boolean recording = false;
     private final ThreadPoolExecutor savePool = new ThreadPoolExecutor(0, 1,
             1L, TimeUnit.MILLISECONDS,
@@ -98,7 +98,7 @@ public class RecordFX extends Controller {
 
                 System.out.println("视频导出成功");
             } else Platform.runLater(() -> {
-                Controller.progressBar.setProgress(0);
+                Main.progressBar.setProgress(0);
                 System.out.println("FFMPEG错误，序列已导出");
             });
 
@@ -111,7 +111,7 @@ public class RecordFX extends Controller {
             @Override
             public void run() {
                 System.out.println("请求：停止录制");
-                Platform.runLater(() -> Controller.progressBar.setProgress(-1));
+                Platform.runLater(() -> Main.progressBar.setProgress(-1));
                 while (savePool.getActiveCount() != 0)
                     Thread.onSpinWait();
 
@@ -121,7 +121,7 @@ public class RecordFX extends Controller {
                 Platform.runLater(() -> {
                     spine.setSpeed(1);
                     counter = 0;
-                    Controller.progressBar.setProgress(1);
+                    Main.progressBar.setProgress(1);
                     System.out.println("导出结束");
                 });
 

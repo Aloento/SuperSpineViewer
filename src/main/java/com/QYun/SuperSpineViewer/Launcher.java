@@ -18,7 +18,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Main extends Application {
+public class Launcher extends Application {
     @Override
     public void start(Stage primaryStage) {
         System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
@@ -48,7 +48,7 @@ public class Main extends Application {
         ObservableList<String> styleSheets = scene.getStylesheets();
         styleSheets.addAll(JFoenixResources.load("css/jfoenix-fonts.css").toExternalForm(),
                 JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
-                Main.class.getResource("/UI/Main.css").toExternalForm());
+                Launcher.class.getResource("/UI/Main.css").toExternalForm());
 
         primaryStage.getIcons().add(new Image("UI/SuperSpineViewer.png"));
         primaryStage.setWidth(1280);

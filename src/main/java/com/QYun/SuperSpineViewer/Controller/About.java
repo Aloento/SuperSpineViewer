@@ -1,4 +1,4 @@
-package com.QYun.SuperSpineViewer.GUI;
+package com.QYun.SuperSpineViewer.Controller;
 
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class AboutController implements Initializable {
+public class About implements Initializable {
     @FXML
     private StackPane aboutPane;
 

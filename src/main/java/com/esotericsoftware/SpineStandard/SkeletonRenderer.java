@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.SuperSpineViewer.Loader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -47,7 +47,7 @@ public class SkeletonRenderer {
         // Array<Slot> drawOrder = skeleton.drawOrder;
         // for (int i = 0, n = drawOrder.size; i < n; i++) {
         //     Slot slot = drawOrder.get(i);
-        //     if (!slot.bone.active && RuntimesLoader.spineVersion == 38) {
+        //     if (!slot.bone.active && Loader.spineVersion == 38) {
         //         clipper.clipEnd(slot);
         //         continue;
         //     }
@@ -118,7 +118,7 @@ public class SkeletonRenderer {
         // Array<Slot> drawOrder = skeleton.drawOrder;
         // for (int i = 0, n = drawOrder.size; i < n; i++) {
         //     Slot slot = drawOrder.get(i);
-        //     if (!slot.bone.active && RuntimesLoader.spineVersion == 38) {
+        //     if (!slot.bone.active && Loader.spineVersion == 38) {
         //         clipper.clipEnd(slot);
         //         continue;
         //     }
@@ -179,7 +179,7 @@ public class SkeletonRenderer {
         //                     clippedTriangles.size);
         //         } else {
         //             if (vertexEffect != null) {
-        //                 if (RuntimesLoader.spineVersion > 37) {
+        //                 if (Loader.spineVersion > 37) {
         //                     tempLight1.set(NumberUtils.floatToIntColor(c));
         //                     tempDark1.set(0);
         //                     for (int v = 0, u = 0; v < verticesLength; v += 5, u += 2) {
@@ -232,7 +232,7 @@ public class SkeletonRenderer {
 
     @SuppressWarnings("null")
     public void draw(TwoColorPolygonBatch batch, Skeleton skeleton) {
-        if (RuntimesLoader.spineVersion > 35) {
+        if (Loader.spineVersion > 35) {
             if (batch == null) throw new IllegalArgumentException("batch cannot be null.");
             if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
             // Vector2 tempPosition = this.temp, tempUV = this.temp2;
@@ -256,7 +256,7 @@ public class SkeletonRenderer {
             Array<Slot> drawOrder = skeleton.drawOrder;
             for (int i = 0, n = drawOrder.size; i < n; i++) {
                 Slot slot = drawOrder.get(i);
-                if (!slot.bone.active && RuntimesLoader.spineVersion == 38) {
+                if (!slot.bone.active && Loader.spineVersion == 38) {
                     clipper.clipEnd(slot);
                     continue;
                 }
@@ -325,7 +325,7 @@ public class SkeletonRenderer {
                                 clippedTriangles.size);
                     } else {
                         // if (vertexEffect != null) {
-                            // if (RuntimesLoader.spineVersion > 37) {
+                            // if (Loader.spineVersion > 37) {
                             //     tempLight1.set(NumberUtils.floatToIntColor(light));
                             //     tempDark1.set(NumberUtils.floatToIntColor(dark));
                             //     for (int v = 0, u = 0; v < verticesLength; v += 6, u += 2) {
@@ -446,7 +446,7 @@ public class SkeletonRenderer {
     //     tempLight1.set(NumberUtils.floatToIntColor(light));
     //     tempDark1.set(NumberUtils.floatToIntColor(dark));
     //     for (int v = 0; v < verticesLength; v += 6) {
-    //         if (RuntimesLoader.spineVersion > 37) {
+    //         if (Loader.spineVersion > 37) {
     //             tempPosition.x = vertices[v];
     //             tempPosition.y = vertices[v + 1];
     //             tempUV.x = vertices[v + 4];

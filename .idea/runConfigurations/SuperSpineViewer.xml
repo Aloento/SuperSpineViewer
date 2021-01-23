@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="SuperSpineViewer" type="Application" factoryName="Application" singleton="true">
-    <option name="MAIN_CLASS_NAME" value="com.QYun.SuperSpineViewer.GUI.Controller" />
+    <option name="MAIN_CLASS_NAME" value="com.QYun.SuperSpineViewer.Controller.Main" />
     <module name="SuperSpineViewer" />
     <option name="VM_PARAMETERS" value="-server" />
     <method v="2">

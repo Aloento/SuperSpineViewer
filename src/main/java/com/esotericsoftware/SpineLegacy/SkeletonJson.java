@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineLegacy;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.SuperSpineViewer.Loader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -57,7 +57,7 @@ public class SkeletonJson {
             boneData.rotation = boneMap.getFloat("rotation", 0);
             boneData.scaleX = boneMap.getFloat("scaleX", 1);
             boneData.scaleY = boneMap.getFloat("scaleY", 1);
-            if (RuntimesLoader.spineVersion > 31) {
+            if (Loader.spineVersion > 31) {
                 boneData.shearX = boneMap.getFloat("shearX", 0);
                 boneData.shearY = boneMap.getFloat("shearY", 0);
             }
@@ -92,7 +92,7 @@ public class SkeletonJson {
             transformConstraintData.target = skeletonData.findBone(targetName);
             if (transformConstraintData.target == null)
                 throw new SerializationException("Target bone not found: " + targetName);
-            if (RuntimesLoader.spineVersion > 31) {
+            if (Loader.spineVersion > 31) {
                 transformConstraintData.offsetRotation = transformMap.getFloat("rotation", 0);
                 transformConstraintData.offsetX = transformMap.getFloat("x", 0) * scale;
                 transformConstraintData.offsetY = transformMap.getFloat("y", 0) * scale;
@@ -173,7 +173,7 @@ public class SkeletonJson {
         float scale = this.scale;
         name = map.getString("name", name);
         String path;
-        if (RuntimesLoader.spineVersion > 31)
+        if (Loader.spineVersion > 31)
             path = map.getString("outPath", name);
         else path = map.getString("path", name);
         String type = map.getString("type", AttachmentType.region.name());
@@ -362,7 +362,7 @@ public class SkeletonJson {
             timelines.add(timeline);
             duration = Math.max(duration, timeline.getFrames()[timeline.getFrameCount() * 3 - 3]);
         }
-        if (RuntimesLoader.spineVersion > 31) {
+        if (Loader.spineVersion > 31) {
             for (JsonValue constraintMap = map.getChild("transform"); constraintMap != null; constraintMap = constraintMap.next) {
                 TransformConstraintData constraint = skeletonData.findTransformConstraint(constraintMap.name);
                 TransformConstraintTimeline timeline = new TransformConstraintTimeline(constraintMap.size);

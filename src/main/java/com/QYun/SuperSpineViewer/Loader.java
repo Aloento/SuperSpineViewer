@@ -2,7 +2,7 @@ package com.QYun.SuperSpineViewer;
 
 import com.QYun.Spine.SuperSpine;
 import com.QYun.Spine.Universal;
-import com.QYun.SuperSpineViewer.GUI.Controller;
+import com.QYun.SuperSpineViewer.Controller.Main;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
@@ -14,7 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class RuntimesLoader extends Controller {
+public class Loader extends Main {
     public static byte spineVersion = 0;
     private final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
     private final String[] startSuffixes = {"", "-pro", "-ess"};
@@ -23,7 +23,7 @@ public class RuntimesLoader extends Controller {
     private final String[] atlasSuffixes = {".atlas", "-pma.atlas"};
     private final SuperSpine spine = new SuperSpine();
     private final Universal universal = new Universal();
-    private LwjglFXApplication gdxApp;
+    private static LwjglFXApplication gdxApp;
 
     private void whichVersion(String skel) {
         if (skel.contains("4.0."))

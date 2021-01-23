@@ -1,13 +1,13 @@
-package com.QYun.SuperSpineViewer.GUI;
+package com.QYun.SuperSpineViewer.Controller;
 
-import com.QYun.SuperSpineViewer.Main;
+import com.QYun.SuperSpineViewer.Launcher;
 import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Application;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
-public class Controller {
-    public static SpineController spineController;
+public class Main {
+    public static Spine spineController;
     public static JFXProgressBar progressBar;
     public static ImageView spineRender;
     public static Label FPS;
@@ -27,6 +27,6 @@ public class Controller {
         if (args.length > 0) {
             openPath = args[0];
         }
-        Application.launch(Main.class, args);
+        Application.launch(Launcher.class, args);
     }
 }

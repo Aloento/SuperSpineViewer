@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.SuperSpineViewer.Loader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.esotericsoftware.SpineStandard.PathConstraintData.PositionMode;
@@ -168,7 +168,7 @@ public class PathConstraint implements Constraint {
             float pathLength = lengths[curveCount];
             if (percentPosition) position *= pathLength;
             if (percentSpacing) {
-                switch (RuntimesLoader.spineVersion) {
+                switch (Loader.spineVersion) {
                     case 38, 37 -> {
                         for (int i = 1; i < spacesCount; i++)
                             spaces[i] *= pathLength;
@@ -278,7 +278,7 @@ public class PathConstraint implements Constraint {
         if (percentPosition) position *= pathLength;
         else position *= pathLength / path.getLengths()[curveCount - 1];
         if (percentSpacing) {
-            switch (RuntimesLoader.spineVersion) {
+            switch (Loader.spineVersion) {
                 case 38, 37 -> {
                     for (int i = 1; i < spacesCount; i++)
                         spaces[i] *= pathLength;
@@ -391,7 +391,7 @@ public class PathConstraint implements Constraint {
                                   float[] out, int o, boolean tangents) {
         double atan2 = Math.atan2(cy1 - y1, cx1 - x1);
         if (p < epsilon || Float.isNaN(p)) {
-            switch (RuntimesLoader.spineVersion) {
+            switch (Loader.spineVersion) {
                 case 38, 37 -> {
                     out[o] = x1;
                     out[o + 1] = y1;

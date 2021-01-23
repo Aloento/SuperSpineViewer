@@ -1,7 +1,8 @@
-package com.QYun.SuperSpineViewer.GUI;
+package com.QYun.SuperSpineViewer.Controller;
 
 import com.QYun.Spine.SuperSpine;
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.Spine.Universal;
+import com.QYun.SuperSpineViewer.Loader;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.JFXButton.ButtonType;
 import com.jfoenix.effects.JFXDepthManager;
@@ -35,7 +36,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static javafx.animation.Interpolator.EASE_BOTH;
 
-public class SpineController extends Controller implements Initializable {
+public class Spine extends Main implements Initializable {
     @FXML
     private StackPane spinePane;
 
@@ -277,7 +278,10 @@ public class SpineController extends Controller implements Initializable {
 
         T_Loop.setOnAction(event -> spine.setIsLoop(T_Loop.isSelected()));
 
-        B_Reload.setOnAction(event -> RuntimesLoader.spineVersion = -1);
+        B_Reload.setOnAction(event -> {
+            Universal.Range = -1;
+            new Loader().init();
+        });
 
         B_Reset.setOnAction(event -> {
             spine.setScale(1);

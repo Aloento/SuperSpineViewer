@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.SuperSpineViewer.Loader;
 import com.badlogic.gdx.utils.Array;
 
 import static com.badlogic.gdx.math.MathUtils.radDeg;
@@ -21,7 +21,7 @@ public class IkConstraint implements Constraint {
         this.data = data;
         mix = data.mix;
         bendDirection = data.bendDirection;
-        switch (RuntimesLoader.spineVersion) {
+        switch (Loader.spineVersion) {
             case 38:
                 softness = data.softness;
             case 37, 36:
@@ -44,7 +44,7 @@ public class IkConstraint implements Constraint {
     //     target = skeleton.bones.get(constraint.target.data.index);
     //     mix = constraint.mix;
     //     bendDirection = constraint.bendDirection;
-    //     switch (RuntimesLoader.spineVersion) {
+    //     switch (Loader.spineVersion) {
     //         case 38:
     //             softness = constraint.softness;
     //         case 37, 36:
@@ -60,7 +60,7 @@ public class IkConstraint implements Constraint {
         Bone p = bone.parent;
 
         float rotationIK, tx, ty;
-        if (RuntimesLoader.spineVersion == 38) {
+        if (Loader.spineVersion == 38) {
             float pa = p.a, pb = p.b, pc = p.c, pd = p.d;
             rotationIK = -bone.ashearX - bone.arotation;
             switch (bone.data.transformMode) {
@@ -97,7 +97,7 @@ public class IkConstraint implements Constraint {
             rotationIK += 360;
         float sx = bone.ascaleX, sy = bone.ascaleY;
         if (compress || stretch) {
-            if (RuntimesLoader.spineVersion == 38) {
+            if (Loader.spineVersion == 38) {
                 switch (bone.data.transformMode) {
                     case noScale, noScaleOrReflection -> {
                         tx = targetX - bone.worldX;
@@ -167,7 +167,7 @@ public class IkConstraint implements Constraint {
         y = cwy - pp.worldY;
         float dx = (x * d - y * b) * id - px, dy = (y * a - x * c) * id - py;
         float l1 = (float) Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1, a2;
-        if (RuntimesLoader.spineVersion == 38) {
+        if (Loader.spineVersion == 38) {
             if (l1 < 0.0001f) {
                 apply(parent, targetX, targetY, false, stretch, false, alpha);
                 child.updateWorldTransform(cx, cy, 0, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
@@ -193,7 +193,7 @@ public class IkConstraint implements Constraint {
                 cos = -1;
             else if (cos > 1) {
                 cos = 1;
-                switch (RuntimesLoader.spineVersion) {
+                switch (Loader.spineVersion) {
                     case 38 -> {
                         if (stretch) sx *= ((float) Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
                     }
@@ -271,11 +271,11 @@ public class IkConstraint implements Constraint {
     }
 
     static public void apply(Bone bone, float targetX, float targetY, float alpha) { // Spine36/5/4
-        if (!bone.appliedValid && RuntimesLoader.spineVersion != 34) bone.updateAppliedTransform();
+        if (!bone.appliedValid && Loader.spineVersion != 34) bone.updateAppliedTransform();
         Bone p = bone.parent;
         float id = 1 / (p.a * p.d - p.b * p.c), rotationIK;
         float x = targetX - p.worldX, y = targetY - p.worldY;
-        if (RuntimesLoader.spineVersion > 34) {
+        if (Loader.spineVersion > 34) {
             float tx = (x * p.d - y * p.b) * id - bone.ax, ty = (y * p.a - x * p.c) * id - bone.ay;
             rotationIK = atan2(ty, tx) * radDeg - bone.ashearX - bone.arotation;
             if (bone.ascaleX < 0) rotationIK += 180;
@@ -286,7 +286,7 @@ public class IkConstraint implements Constraint {
         }
         if (rotationIK > 180) rotationIK -= 360;
         else if (rotationIK < -180) rotationIK += 360;
-        if (RuntimesLoader.spineVersion > 34)
+        if (Loader.spineVersion > 34)
             bone.updateWorldTransform(bone.ax, bone.ay, bone.arotation + rotationIK * alpha, bone.ascaleX, bone.ascaleY, bone.ashearX, bone.ashearY);
         else
             bone.updateWorldTransform(bone.x, bone.y, bone.rotation + rotationIK * alpha, bone.scaleX, bone.scaleY, bone.shearX, bone.shearY);
@@ -298,7 +298,7 @@ public class IkConstraint implements Constraint {
             return;
         }
         float px, py, psx, psy, csx;
-        if (RuntimesLoader.spineVersion > 34) {
+        if (Loader.spineVersion > 34) {
             if (!parent.appliedValid) parent.updateAppliedTransform();
             if (!child.appliedValid) child.updateAppliedTransform();
             px = parent.ax;
@@ -332,7 +332,7 @@ public class IkConstraint implements Constraint {
         } else
             os2 = 0;
         float cx = child.ax;
-        if (RuntimesLoader.spineVersion == 34) cx = child.x;
+        if (Loader.spineVersion == 34) cx = child.x;
         float cy, cwx, cwy, a = parent.a, b = parent.b, c = parent.c, d = parent.d;
         boolean u = Math.abs(psx - psy) <= 0.0001f;
         if (!u) {
@@ -340,7 +340,7 @@ public class IkConstraint implements Constraint {
             cwx = a * cx + parent.worldX;
             cwy = c * cx + parent.worldY;
         } else {
-            if (RuntimesLoader.spineVersion > 34)
+            if (Loader.spineVersion > 34)
                 cy = child.ay;
             else cy = child.y;
             cwx = a * cx + b * cy + parent.worldX;
@@ -388,7 +388,7 @@ public class IkConstraint implements Constraint {
                     break outer;
                 }
             }
-            if (RuntimesLoader.spineVersion > 35) {
+            if (Loader.spineVersion > 35) {
                 float minAngle = PI, minX = l1 - a, minDist = minX * minX, minY = 0;
                 float maxAngle = 0, maxX = l1 + a, maxDist = maxX * maxX, maxY = 0;
                 c = -a * l1 / (aa - bb);
@@ -460,7 +460,7 @@ public class IkConstraint implements Constraint {
             }
         }
         float os = atan2(cy, cx) * s2;
-        if (RuntimesLoader.spineVersion > 34) {
+        if (Loader.spineVersion > 34) {
             float rotation = parent.arotation;
             a1 = (a1 - os) * radDeg + os1 - rotation;
             if (a1 > 180)
@@ -500,7 +500,7 @@ public class IkConstraint implements Constraint {
     public void update() {
         Bone target = this.target;
         Array<Bone> bones = this.bones;
-        switch (RuntimesLoader.spineVersion) {
+        switch (Loader.spineVersion) {
             case 38 -> {
                 switch (bones.size) {
                     case 1 -> apply(bones.first(), target.worldX, target.worldY, compress, stretch, data.uniform, mix);

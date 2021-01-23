@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.SuperSpineViewer.Loader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -28,7 +28,7 @@ public class Animation {
         if (timelines == null) throw new IllegalArgumentException("timelines cannot be null.");
         this.name = name;
         this.duration = duration;
-        if (RuntimesLoader.spineVersion > 37) {
+        if (Loader.spineVersion > 37) {
             timelineIDs = new IntSet();
             setTimelines(timelines);
         } else this.timelines = timelines;
@@ -260,7 +260,7 @@ public class Animation {
             for (int start = i, n = i + BEZIER_SIZE - 1; i < n; i += 2) {
                 x = curves[i];
                 if (x >= percent) {
-                    if (RuntimesLoader.spineVersion > 34) {
+                    if (Loader.spineVersion > 34) {
                         if (i == start) return curves[i + 1] * percent / x;
                         float prevX = curves[i - 2], prevY = curves[i - 1];
                         return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
@@ -311,7 +311,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active && RuntimesLoader.spineVersion == 38) return;
+            if (!bone.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -510,7 +510,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active && RuntimesLoader.spineVersion == 38) return;
+            if (!bone.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -673,7 +673,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active && RuntimesLoader.spineVersion == 38) return;
+            if (!bone.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -908,7 +908,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Bone bone = skeleton.bones.get(boneIndex);
-            if (!bone.active && RuntimesLoader.spineVersion == 38) return;
+            if (!bone.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -1099,7 +1099,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             // Slot slot = skeleton.slots.get(slotIndex);
-            // if (!slot.bone.active && RuntimesLoader.spineVersion == 38) return;
+            // if (!slot.bone.active && Loader.spineVersion == 38) return;
             // float[] frames = this.frames;
             // if (time < frames[0]) {
             //     switch (blend) {
@@ -1317,7 +1317,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
-            if (!slot.bone.active && RuntimesLoader.spineVersion == 38) return;
+            if (!slot.bone.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -1497,7 +1497,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             Slot slot = skeleton.slots.get(slotIndex);
-            if (RuntimesLoader.spineVersion == 38) {
+            if (Loader.spineVersion == 38) {
                 if (!slot.bone.active) return;
                 if (direction == out) {
                     if (blend == setup)
@@ -1513,10 +1513,10 @@ public class Animation {
             }
             float[] frames = this.frames;
             if (time < frames[0]) {
-                if (RuntimesLoader.spineVersion == 38) {
+                if (Loader.spineVersion == 38) {
                     if (blend == setup || blend == first) setAttachment(skeleton, slot, slot.data.attachmentName);
                     return;
-                } else if (RuntimesLoader.spineVersion == 37) {
+                } else if (Loader.spineVersion == 37) {
                     if (blend == setup || blend == first) {
                         String attachmentName = slot.data.attachmentName;
                         slot.setAttachment(attachmentName == null ? null : skeleton.getAttachment(slotIndex, attachmentName));
@@ -1529,7 +1529,7 @@ public class Animation {
                 frameIndex = frames.length - 1;
             else
                 frameIndex = binarySearch(frames, time) - 1;
-            if (RuntimesLoader.spineVersion == 38) {
+            if (Loader.spineVersion == 38) {
                 setAttachment(skeleton, slot, attachmentNames[frameIndex]);
             } else {
                 String attachmentName = attachmentNames[frameIndex];
@@ -1626,10 +1626,10 @@ public class Animation {
         }
 
         public int getPropertyId() {
-            return switch (RuntimesLoader.spineVersion) {
+            return switch (Loader.spineVersion) {
                 case 38, 37, 36 -> (TimelineType.deform.ordinal() << 27) + attachment.getId() + slotIndex;
                 case 35 -> (TimelineType.deform.ordinal() << 24) + slotIndex;
-                default -> throw new IllegalStateException("Unexpected value: " + RuntimesLoader.spineVersion);
+                default -> throw new IllegalStateException("Unexpected value: " + Loader.spineVersion);
             };
         }
 
@@ -1669,7 +1669,7 @@ public class Animation {
             Attachment slotAttachment = slot.attachment;
             FloatArray deformArray = null;
             FloatArray verticesArray = null;
-            if (RuntimesLoader.spineVersion == 38) {
+            if (Loader.spineVersion == 38) {
                 if (!slot.bone.active) return;
                 if (!(slotAttachment instanceof VertexAttachment)
                         || ((VertexAttachment) slotAttachment).getDeformAttachment() != attachment) return;
@@ -1686,7 +1686,7 @@ public class Animation {
             float[] frames = this.frames;
             float[] deform = null;
             float[] vertices = null;
-            if (RuntimesLoader.spineVersion == 38) {
+            if (Loader.spineVersion == 38) {
                 if (time < frames[0]) {
                     VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
                     switch (blend) {
@@ -1850,7 +1850,7 @@ public class Animation {
             float[] nextVertices = frameVertices[frame];
             float frameTime = frames[frame];
             float percent = getCurvePercent(frame - 1, 1 - (time - frameTime) / (frames[frame - 1] - frameTime));
-            if (RuntimesLoader.spineVersion == 38) {
+            if (Loader.spineVersion == 38) {
                 if (alpha == 1) {
                     if (blend == add) {
                         VertexAttachment vertexAttachment = (VertexAttachment) slotAttachment;
@@ -2372,7 +2372,7 @@ public class Animation {
                           MixDirection direction) {
             // Array<Slot> drawOrder = skeleton.drawOrder;
             // Array<Slot> slots = skeleton.slots;
-            // if (RuntimesLoader.spineVersion == 38) {
+            // if (Loader.spineVersion == 38) {
             //     if (direction == out) {
             //         if (blend == setup) arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
             //         return;
@@ -2385,7 +2385,7 @@ public class Animation {
             // }
             // float[] frames = this.frames;
             // if (time < frames[0]) {
-            //     if (RuntimesLoader.spineVersion == 38) {
+            //     if (Loader.spineVersion == 38) {
             //         if (blend == setup || blend == first) arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
             //     } else {
             //         if (blend == setup || blend == first)
@@ -2400,9 +2400,9 @@ public class Animation {
             //     frame = binarySearch(frames, time) - 1;
             // int[] drawOrderToSetupIndex = drawOrders[frame];
             // if (drawOrderToSetupIndex == null) {
-            //     if (RuntimesLoader.spineVersion == 38)
+            //     if (Loader.spineVersion == 38)
             //         arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
-            //     else if (RuntimesLoader.spineVersion == 37)
+            //     else if (Loader.spineVersion == 37)
             //         System.arraycopy(slots.items, 0, drawOrder.items, 0, slots.size);
             // } else {
             //     for (int i = 0, n = drawOrderToSetupIndex.length; i < n; i++)
@@ -2501,7 +2501,7 @@ public class Animation {
 
         public IkConstraintTimeline(int frameCount) {
             super(frameCount);
-            switch (RuntimesLoader.spineVersion) {
+            switch (Loader.spineVersion) {
                 case 38 -> {
                     ENTRIES = 6;
                     PREV_TIME = -6;
@@ -2570,13 +2570,13 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             IkConstraint constraint = skeleton.ikConstraints.get(ikConstraintIndex);
-            if (!constraint.active && RuntimesLoader.spineVersion == 38) return;
+            if (!constraint.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
                     case setup -> {
                         constraint.mix = constraint.data.mix;
-                        if (RuntimesLoader.spineVersion == 38)
+                        if (Loader.spineVersion == 38)
                             constraint.softness = constraint.data.softness;
                         constraint.bendDirection = constraint.data.bendDirection;
                         constraint.compress = constraint.data.compress;
@@ -2585,7 +2585,7 @@ public class Animation {
                     }
                     case first -> {
                         constraint.mix += (constraint.data.mix - constraint.mix) * alpha;
-                        if (RuntimesLoader.spineVersion == 38)
+                        if (Loader.spineVersion == 38)
                             constraint.softness += (constraint.data.softness - constraint.softness) * alpha;
                         constraint.bendDirection = constraint.data.bendDirection;
                         constraint.compress = constraint.data.compress;
@@ -2597,7 +2597,7 @@ public class Animation {
             if (time >= frames[frames.length - ENTRIES]) {
                 if (blend == setup) {
                     constraint.mix = constraint.data.mix + (frames[frames.length + PREV_MIX] - constraint.data.mix) * alpha;
-                    if (RuntimesLoader.spineVersion == 38)
+                    if (Loader.spineVersion == 38)
                         constraint.softness = constraint.data.softness + (frames[frames.length + PREV_SOFTNESS] - constraint.data.softness) * alpha;
                     if (direction == out) {
                         constraint.bendDirection = constraint.data.bendDirection;
@@ -2610,7 +2610,7 @@ public class Animation {
                     }
                 } else {
                     constraint.mix += (frames[frames.length + PREV_MIX] - constraint.mix) * alpha;
-                    if (RuntimesLoader.spineVersion == 38)
+                    if (Loader.spineVersion == 38)
                         constraint.softness += (frames[frames.length + PREV_SOFTNESS] - constraint.softness) * alpha;
                     if (direction == in) {
                         constraint.bendDirection = (int) frames[frames.length + PREV_BEND_DIRECTION];
@@ -2627,7 +2627,7 @@ public class Animation {
             float percent = getCurvePercent(frame / ENTRIES - 1, 1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
             if (blend == setup) {
                 constraint.mix = constraint.data.mix + (mix + (frames[frame + MIX] - mix) * percent - constraint.data.mix) * alpha;
-                if (RuntimesLoader.spineVersion == 38)
+                if (Loader.spineVersion == 38)
                     constraint.softness = constraint.data.softness + (softness + (frames[frame + SOFTNESS] - softness) * percent - constraint.data.softness) * alpha;
                 if (direction == out) {
                     constraint.bendDirection = constraint.data.bendDirection;
@@ -2640,7 +2640,7 @@ public class Animation {
                 }
             } else {
                 constraint.mix += (mix + (frames[frame + MIX] - mix) * percent - constraint.mix) * alpha;
-                if (RuntimesLoader.spineVersion == 38)
+                if (Loader.spineVersion == 38)
                     constraint.softness += (softness + (frames[frame + SOFTNESS] - softness) * percent - constraint.softness) * alpha;
                 if (direction == in) {
                     constraint.bendDirection = (int) frames[frame + PREV_BEND_DIRECTION];
@@ -2789,7 +2789,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             TransformConstraint constraint = skeleton.transformConstraints.get(transformConstraintIndex);
-            if (!constraint.active && RuntimesLoader.spineVersion == 38) return;
+            if (!constraint.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 TransformConstraintData data = constraint.data;
@@ -3019,7 +3019,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (!constraint.active && RuntimesLoader.spineVersion == 38) return;
+            if (!constraint.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -3144,7 +3144,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (!constraint.active && RuntimesLoader.spineVersion == 38) return;
+            if (!constraint.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {
@@ -3289,7 +3289,7 @@ public class Animation {
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
             PathConstraint constraint = skeleton.pathConstraints.get(pathConstraintIndex);
-            if (!constraint.active && RuntimesLoader.spineVersion == 38) return;
+            if (!constraint.active && Loader.spineVersion == 38) return;
             float[] frames = this.frames;
             if (time < frames[0]) {
                 switch (blend) {

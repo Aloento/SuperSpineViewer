@@ -1,6 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import com.QYun.SuperSpineViewer.GUI.Controller;
+import com.QYun.SuperSpineViewer.Controller.Main;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
@@ -30,10 +30,10 @@ public class LwjglFXApplication extends LwjglApplication {
     private void resize() {
         Gdx.app.postRunnable(() -> {
             graphics.resize = false;
-            graphics.config.width = Controller.width;
-            graphics.config.height = Controller.height;
+            graphics.config.width = Main.width;
+            graphics.config.height = Main.height;
             if (listener != null)
-                listener.resize(Controller.width, Controller.height);
+                listener.resize(Main.width, Main.height);
             shouldRender = true;
             graphics.requestRendering();
         });

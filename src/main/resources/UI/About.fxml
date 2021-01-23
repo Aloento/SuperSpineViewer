@@ -9,7 +9,7 @@
 <StackPane xmlns:fx="http://javafx.com/fxml/1" fx:id="aboutPane" prefHeight="460" prefWidth="620"
            styleClass="shadow-pane"
            stylesheets="/UI/About.css" xmlns="http://javafx.com/javafx/15.0.1"
-           fx:controller="com.QYun.SuperSpineViewer.GUI.AboutController">
+           fx:controller="com.QYun.SuperSpineViewer.Controller.About">
     <VBox spacing="10" styleClass="background-pane">
         <HBox alignment="CENTER">
             <padding>

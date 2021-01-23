@@ -4,7 +4,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
-           fx:controller="com.QYun.SuperSpineViewer.GUI.SpineController">
+           fx:controller="com.QYun.SuperSpineViewer.Controller.Spine">
     <BorderPane>
 
         <left>

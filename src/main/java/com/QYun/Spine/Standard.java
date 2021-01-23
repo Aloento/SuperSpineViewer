@@ -1,6 +1,6 @@
 package com.QYun.Spine;
 
-import com.QYun.SuperSpineViewer.GUI.Controller;
+import com.QYun.SuperSpineViewer.Controller.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -213,8 +213,8 @@ public class Standard extends SuperSpine {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle("FPS : " + Gdx.graphics.getFramesPerSecond());
 
-        renderer.setPremultipliedAlpha(Controller.preA);
-        batch.setPremultipliedAlpha(Controller.preA);
+        renderer.setPremultipliedAlpha(Main.preA);
+        batch.setPremultipliedAlpha(Main.preA);
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);
@@ -227,7 +227,7 @@ public class Standard extends SuperSpine {
             if (entry != null) {
                 percent = entry.getAnimationTime() / entry.getAnimationEnd();
                 if (isPlay.get())
-                    Platform.runLater(() -> Controller.progressBar.setProgress(percent));
+                    Platform.runLater(() -> Main.progressBar.setProgress(percent));
                 if (percent >= 1 && !isLoop.get())
                     isPlay.set(false);
             }

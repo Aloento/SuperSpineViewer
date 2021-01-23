@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineLegacy;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.SuperSpineViewer.Loader;
 import com.badlogic.gdx.utils.Array;
 
 import static com.badlogic.gdx.math.MathUtils.*;
@@ -35,7 +35,7 @@ public class IkConstraint implements Updatable {
     }
 
     static public void apply(Bone bone, float targetX, float targetY, float alpha) {
-        if (RuntimesLoader.spineVersion == 32) {
+        if (Loader.spineVersion == 32) {
             Bone pp = bone.parent;
             float id = 1 / (pp.a * pp.d - pp.b * pp.c);
             float x = targetX - pp.worldX, y = targetY - pp.worldY;

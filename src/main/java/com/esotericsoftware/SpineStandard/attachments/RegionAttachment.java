@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard.attachments;
 
-import com.QYun.SuperSpineViewer.RuntimesLoader;
+import com.QYun.SuperSpineViewer.Loader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -89,7 +89,7 @@ public class RegionAttachment extends Attachment {
     public void setRegion(TextureRegion region) {
         if (region == null) throw new IllegalArgumentException("region cannot be null.");
         this.region = region;
-        if (RuntimesLoader.spineVersion > 35) {
+        if (Loader.spineVersion > 35) {
             float[] uvs = this.uvs;
             if (region instanceof AtlasRegion && ((AtlasRegion) region).rotate) {
                 uvs[URX] = region.getU();

@@ -31,9 +31,9 @@ public class Slot {
     //     color.set(slot.color);
     //     attachment = slot.attachment;
     //     attachmentTime = slot.attachmentTime;
-    //     if (RuntimesLoader.spineVersion > 37)
+    //     if (Loader.spineVersion > 37)
     //         deform.addAll(slot.deform);
-    //     else if (RuntimesLoader.spineVersion > 35)
+    //     else if (Loader.spineVersion > 35)
     //         darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
     // }
 
