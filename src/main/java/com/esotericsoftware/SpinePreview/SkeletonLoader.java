@@ -16,14 +16,14 @@ abstract public class SkeletonLoader {
         attachmentLoader = new AtlasAttachmentLoader(atlas);
     }
 
-    public SkeletonLoader(AttachmentLoader attachmentLoader) {
-        if (attachmentLoader == null) throw new IllegalArgumentException("attachmentLoader cannot be null.");
-        this.attachmentLoader = attachmentLoader;
-    }
+    // public SkeletonLoader(AttachmentLoader attachmentLoader) {
+    //     if (attachmentLoader == null) throw new IllegalArgumentException("attachmentLoader cannot be null.");
+    //     this.attachmentLoader = attachmentLoader;
+    // }
 
-    public float getScale() {
-        return scale;
-    }
+    // public float getScale() {
+    //     return scale;
+    // }
 
     public void setScale(float scale) {
         if (scale == 0) throw new IllegalArgumentException("scale cannot be 0.");

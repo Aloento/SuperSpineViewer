@@ -29,21 +29,21 @@ public class TransformConstraint implements Updatable {
         target = skeleton.findBone(data.target.name);
     }
 
-    public TransformConstraint(TransformConstraint constraint, Skeleton skeleton) {
-        if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        data = constraint.data;
-        bones = new Array<>(constraint.bones.size);
-        for (Bone bone : constraint.bones)
-            bones.add(skeleton.bones.get(bone.data.index));
-        target = skeleton.bones.get(constraint.target.data.index);
-        mixRotate = constraint.mixRotate;
-        mixX = constraint.mixX;
-        mixY = constraint.mixY;
-        mixScaleX = constraint.mixScaleX;
-        mixScaleY = constraint.mixScaleY;
-        mixShearY = constraint.mixShearY;
-    }
+    // public TransformConstraint(TransformConstraint constraint, Skeleton skeleton) {
+    //     if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
+    //     if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+    //     data = constraint.data;
+    //     bones = new Array<>(constraint.bones.size);
+    //     for (Bone bone : constraint.bones)
+    //         bones.add(skeleton.bones.get(bone.data.index));
+    //     target = skeleton.bones.get(constraint.target.data.index);
+    //     mixRotate = constraint.mixRotate;
+    //     mixX = constraint.mixX;
+    //     mixY = constraint.mixY;
+    //     mixScaleX = constraint.mixScaleX;
+    //     mixScaleY = constraint.mixScaleY;
+    //     mixShearY = constraint.mixShearY;
+    // }
 
     public void update() {
         if (mixRotate == 0 && mixX == 0 && mixY == 0 && mixScaleX == 0 && mixScaleX == 0 && mixShearY == 0) return;
@@ -229,74 +229,74 @@ public class TransformConstraint implements Updatable {
         }
     }
 
-    public Array<Bone> getBones() {
-        return bones;
-    }
+    // public Array<Bone> getBones() {
+    //     return bones;
+    // }
 
-    public Bone getTarget() {
-        return target;
-    }
+    // public Bone getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(Bone target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
-        this.target = target;
-    }
+    // public void setTarget(Bone target) {
+    //     if (target == null) throw new IllegalArgumentException("target cannot be null.");
+    //     this.target = target;
+    // }
 
-    public float getMixRotate() {
-        return mixRotate;
-    }
+    // public float getMixRotate() {
+    //     return mixRotate;
+    // }
 
-    public void setMixRotate(float mixRotate) {
-        this.mixRotate = mixRotate;
-    }
+    // public void setMixRotate(float mixRotate) {
+    //     this.mixRotate = mixRotate;
+    // }
 
-    public float getMixX() {
-        return mixX;
-    }
+    // public float getMixX() {
+    //     return mixX;
+    // }
 
-    public void setMixX(float mixX) {
-        this.mixX = mixX;
-    }
+    // public void setMixX(float mixX) {
+    //     this.mixX = mixX;
+    // }
 
-    public float getMixY() {
-        return mixY;
-    }
+    // public float getMixY() {
+    //     return mixY;
+    // }
 
-    public void setMixY(float mixY) {
-        this.mixY = mixY;
-    }
+    // public void setMixY(float mixY) {
+    //     this.mixY = mixY;
+    // }
 
-    public float getMixScaleX() {
-        return mixScaleX;
-    }
+    // public float getMixScaleX() {
+    //     return mixScaleX;
+    // }
 
-    public void setMixScaleX(float mixScaleX) {
-        this.mixScaleX = mixScaleX;
-    }
+    // public void setMixScaleX(float mixScaleX) {
+    //     this.mixScaleX = mixScaleX;
+    // }
 
-    public float getMixScaleY() {
-        return mixScaleY;
-    }
+    // public float getMixScaleY() {
+    //     return mixScaleY;
+    // }
 
-    public void setMixScaleY(float mixScaleY) {
-        this.mixScaleY = mixScaleY;
-    }
+    // public void setMixScaleY(float mixScaleY) {
+    //     this.mixScaleY = mixScaleY;
+    // }
 
-    public float getMixShearY() {
-        return mixShearY;
-    }
+    // public float getMixShearY() {
+    //     return mixShearY;
+    // }
 
-    public void setMixShearY(float mixShearY) {
-        this.mixShearY = mixShearY;
-    }
+    // public void setMixShearY(float mixShearY) {
+    //     this.mixShearY = mixShearY;
+    // }
 
     public boolean isActive() {
         return active;
     }
 
-    public TransformConstraintData getData() {
-        return data;
-    }
+    // public TransformConstraintData getData() {
+    //     return data;
+    // }
 
     public String toString() {
         return data.name;

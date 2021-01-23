@@ -1,12 +1,10 @@
 package com.esotericsoftware.SpinePreview;
 
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Null;
 import com.esotericsoftware.SpinePreview.BoneData.TransformMode;
 
-import static com.badlogic.gdx.math.Matrix3.*;
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.*;
 
 public class Bone implements Updatable {
@@ -50,9 +48,9 @@ public class Bone implements Updatable {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
     }
 
-    public void updateWorldTransform() {
-        updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
-    }
+    // public void updateWorldTransform() {
+    //     updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
+    // }
 
     public void updateWorldTransform(float x, float y, float rotation, float scaleX, float scaleY, float shearX, float shearY) {
         ax = x;
@@ -164,161 +162,160 @@ public class Bone implements Updatable {
         shearY = data.shearY;
     }
 
-    public BoneData getData() {
-        return data;
-    }
+    // public BoneData getData() {
+    //     return data;
+    // }
 
-    public Skeleton getSkeleton() {
-        return skeleton;
-    }
+    // public Skeleton getSkeleton() {
+    //     return skeleton;
+    // }
 
-    public @Null
-    Bone getParent() {
-        return parent;
-    }
+    // public @Null Bone getParent() {
+    //     return parent;
+    // }
 
-    public Array<Bone> getChildren() {
-        return children;
-    }
+    // public Array<Bone> getChildren() {
+    //     return children;
+    // }
 
     public boolean isActive() {
         return active;
     }
 
-    public float getX() {
-        return x;
-    }
+    // public float getX() {
+    //     return x;
+    // }
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    // public void setX(float x) {
+    //     this.x = x;
+    // }
 
-    public float getY() {
-        return y;
-    }
+    // public float getY() {
+    //     return y;
+    // }
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    // public void setY(float y) {
+    //     this.y = y;
+    // }
 
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
+    // public void setPosition(float x, float y) {
+    //     this.x = x;
+    //     this.y = y;
+    // }
 
-    public float getRotation() {
-        return rotation;
-    }
+    // public float getRotation() {
+    //     return rotation;
+    // }
 
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
-    }
+    // public void setRotation(float rotation) {
+    //     this.rotation = rotation;
+    // }
 
-    public float getScaleX() {
-        return scaleX;
-    }
+    // public float getScaleX() {
+    //     return scaleX;
+    // }
 
-    public void setScaleX(float scaleX) {
-        this.scaleX = scaleX;
-    }
+    // public void setScaleX(float scaleX) {
+    //     this.scaleX = scaleX;
+    // }
 
-    public float getScaleY() {
-        return scaleY;
-    }
+    // public float getScaleY() {
+    //     return scaleY;
+    // }
 
-    public void setScaleY(float scaleY) {
-        this.scaleY = scaleY;
-    }
+    // public void setScaleY(float scaleY) {
+    //     this.scaleY = scaleY;
+    // }
 
-    public void setScale(float scaleX, float scaleY) {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-    }
+    // public void setScale(float scaleX, float scaleY) {
+    //     this.scaleX = scaleX;
+    //     this.scaleY = scaleY;
+    // }
 
-    public void setScale(float scale) {
-        scaleX = scale;
-        scaleY = scale;
-    }
+    // public void setScale(float scale) {
+    //     scaleX = scale;
+    //     scaleY = scale;
+    // }
 
-    public float getShearX() {
-        return shearX;
-    }
+    // public float getShearX() {
+    //     return shearX;
+    // }
 
-    public void setShearX(float shearX) {
-        this.shearX = shearX;
-    }
+    // public void setShearX(float shearX) {
+    //     this.shearX = shearX;
+    // }
 
-    public float getShearY() {
-        return shearY;
-    }
+    // public float getShearY() {
+    //     return shearY;
+    // }
 
-    public void setShearY(float shearY) {
-        this.shearY = shearY;
-    }
+    // public void setShearY(float shearY) {
+    //     this.shearY = shearY;
+    // }
 
-    public float getAX() {
-        return ax;
-    }
+    // public float getAX() {
+    //     return ax;
+    // }
 
-    public void setAX(float ax) {
-        this.ax = ax;
-    }
+    // public void setAX(float ax) {
+    //     this.ax = ax;
+    // }
 
-    public float getAY() {
-        return ay;
-    }
+    // public float getAY() {
+    //     return ay;
+    // }
 
-    public void setAY(float ay) {
-        this.ay = ay;
-    }
+    // public void setAY(float ay) {
+    //     this.ay = ay;
+    // }
 
-    public float getARotation() {
-        return arotation;
-    }
+    // public float getARotation() {
+    //     return arotation;
+    // }
 
-    public void setARotation(float arotation) {
-        this.arotation = arotation;
-    }
+    // public void setARotation(float arotation) {
+    //     this.arotation = arotation;
+    // }
 
-    public float getAScaleX() {
-        return ascaleX;
-    }
+    // public float getAScaleX() {
+    //     return ascaleX;
+    // }
 
-    public void setAScaleX(float ascaleX) {
-        this.ascaleX = ascaleX;
-    }
+    // public void setAScaleX(float ascaleX) {
+    //     this.ascaleX = ascaleX;
+    // }
 
-    public float getAScaleY() {
-        return ascaleY;
-    }
+    // public float getAScaleY() {
+    //     return ascaleY;
+    // }
 
-    public void setAScaleY(float ascaleY) {
-        this.ascaleY = ascaleY;
-    }
+    // public void setAScaleY(float ascaleY) {
+    //     this.ascaleY = ascaleY;
+    // }
 
-    public float getAShearX() {
-        return ashearX;
-    }
+    // public float getAShearX() {
+    //     return ashearX;
+    // }
 
-    public void setAShearX(float ashearX) {
-        this.ashearX = ashearX;
-    }
+    // public void setAShearX(float ashearX) {
+    //     this.ashearX = ashearX;
+    // }
 
-    public float getAShearY() {
-        return ashearY;
-    }
+    // public float getAShearY() {
+    //     return ashearY;
+    // }
 
-    public void setAShearY(float ashearY) {
-        this.ashearY = ashearY;
-    }
+    // public void setAShearY(float ashearY) {
+    //     this.ashearY = ashearY;
+    // }
 
-    public boolean isAppliedValid() {
-        return appliedValid;
-    }
+    // public boolean isAppliedValid() {
+    //     return appliedValid;
+    // }
 
-    public void setAppliedValid(boolean appliedValid) {
-        this.appliedValid = appliedValid;
-    }
+    // public void setAppliedValid(boolean appliedValid) {
+    //     this.appliedValid = appliedValid;
+    // }
 
     public void updateAppliedTransform() {
         appliedValid = true;
@@ -365,89 +362,89 @@ public class Bone implements Updatable {
         return a;
     }
 
-    public void setA(float a) {
-        this.a = a;
-    }
+    // public void setA(float a) {
+    //     this.a = a;
+    // }
 
     public float getB() {
         return b;
     }
 
-    public void setB(float b) {
-        this.b = b;
-    }
+    // public void setB(float b) {
+    //     this.b = b;
+    // }
 
     public float getC() {
         return c;
     }
 
-    public void setC(float c) {
-        this.c = c;
-    }
+    // public void setC(float c) {
+    //     this.c = c;
+    // }
 
     public float getD() {
         return d;
     }
 
-    public void setD(float d) {
-        this.d = d;
-    }
+    // public void setD(float d) {
+    //     this.d = d;
+    // }
 
     public float getWorldX() {
         return worldX;
     }
 
-    public void setWorldX(float worldX) {
-        this.worldX = worldX;
-    }
+    // public void setWorldX(float worldX) {
+    //     this.worldX = worldX;
+    // }
 
     public float getWorldY() {
         return worldY;
     }
 
-    public void setWorldY(float worldY) {
-        this.worldY = worldY;
-    }
+    // public void setWorldY(float worldY) {
+    //     this.worldY = worldY;
+    // }
 
-    public float getWorldRotationX() {
-        return atan2(c, a) * radDeg;
-    }
+    // public float getWorldRotationX() {
+    //     return atan2(c, a) * radDeg;
+    // }
 
-    public float getWorldRotationY() {
-        return atan2(d, b) * radDeg;
-    }
+    // public float getWorldRotationY() {
+    //     return atan2(d, b) * radDeg;
+    // }
 
-    public float getWorldScaleX() {
-        return (float) Math.sqrt(a * a + c * c);
-    }
+    // public float getWorldScaleX() {
+    //     return (float) Math.sqrt(a * a + c * c);
+    // }
 
-    public float getWorldScaleY() {
-        return (float) Math.sqrt(b * b + d * d);
-    }
+    // public float getWorldScaleY() {
+    //     return (float) Math.sqrt(b * b + d * d);
+    // }
 
-    public Matrix3 getWorldTransform(Matrix3 worldTransform) {
-        if (worldTransform == null) throw new IllegalArgumentException("worldTransform cannot be null.");
-        float[] val = worldTransform.val;
-        val[M00] = a;
-        val[M01] = b;
-        val[M10] = c;
-        val[M11] = d;
-        val[M02] = worldX;
-        val[M12] = worldY;
-        val[M20] = 0;
-        val[M21] = 0;
-        val[M22] = 1;
-        return worldTransform;
-    }
+    // public Matrix3 getWorldTransform(Matrix3 worldTransform) {
+    //     if (worldTransform == null) throw new IllegalArgumentException("worldTransform cannot be null.");
+    //     float[] val = worldTransform.val;
+    //     val[M00] = a;
+    //     val[M01] = b;
+    //     val[M10] = c;
+    //     val[M11] = d;
+    //     val[M02] = worldX;
+    //     val[M12] = worldY;
+    //     val[M20] = 0;
+    //     val[M21] = 0;
+    //     val[M22] = 1;
+    //     return worldTransform;
+    // }
 
-    public Vector2 worldToLocal(Vector2 world) {
-        if (world == null) throw new IllegalArgumentException("world cannot be null.");
-        float det = a * d - b * c;
-        float x = world.x - worldX, y = world.y - worldY;
-        world.x = (x * d - y * b) / det;
-        world.y = (y * a - x * c) / det;
-        return world;
-    }
+    // public Vector2 worldToLocal(Vector2 world) {
+    //     if (world == null) throw new IllegalArgumentException("world cannot be null.");
+    //     float det = a * d - b * c;
+    //     float x = world.x - worldX, y = world.y - worldY;
+    //     world.x = (x * d - y * b) / det;
+    //     world.y = (y * a - x * c) / det;
+    //     return world;
+    // }
 
     public Vector2 localToWorld(Vector2 local) {
         if (local == null) throw new IllegalArgumentException("local cannot be null.");
@@ -457,25 +454,25 @@ public class Bone implements Updatable {
         return local;
     }
 
-    public float worldToLocalRotation(float worldRotation) {
-        float sin = sinDeg(worldRotation), cos = cosDeg(worldRotation);
-        return atan2(a * sin - c * cos, d * cos - b * sin) * radDeg + rotation - shearX;
-    }
+    // public float worldToLocalRotation(float worldRotation) {
+    //     float sin = sinDeg(worldRotation), cos = cosDeg(worldRotation);
+    //     return atan2(a * sin - c * cos, d * cos - b * sin) * radDeg + rotation - shearX;
+    // }
 
-    public float localToWorldRotation(float localRotation) {
-        localRotation -= rotation - shearX;
-        float sin = sinDeg(localRotation), cos = cosDeg(localRotation);
-        return atan2(cos * c + sin * d, cos * a + sin * b) * radDeg;
-    }
+    // public float localToWorldRotation(float localRotation) {
+    //     localRotation -= rotation - shearX;
+    //     float sin = sinDeg(localRotation), cos = cosDeg(localRotation);
+    //     return atan2(cos * c + sin * d, cos * a + sin * b) * radDeg;
+    // }
 
-    public void rotateWorld(float degrees) {
-        float cos = cosDeg(degrees), sin = sinDeg(degrees);
-        a = cos * a - sin * c;
-        b = cos * b - sin * d;
-        c = sin * a + cos * c;
-        d = sin * b + cos * d;
-        appliedValid = false;
-    }
+    // public void rotateWorld(float degrees) {
+    //     float cos = cosDeg(degrees), sin = sinDeg(degrees);
+    //     a = cos * a - sin * c;
+    //     b = cos * b - sin * d;
+    //     c = sin * a + cos * c;
+    //     d = sin * b + cos * d;
+    //     appliedValid = false;
+    // }
 
     public String toString() {
         return data.name;

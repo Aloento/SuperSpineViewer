@@ -15,93 +15,93 @@ public class PathConstraintData extends ConstraintData {
         super(name);
     }
 
-    public Array<BoneData> getBones() {
-        return bones;
-    }
+    // public Array<BoneData> getBones() {
+    //     return bones;
+    // }
 
-    public SlotData getTarget() {
-        return target;
-    }
+    // public SlotData getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(SlotData target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
-        this.target = target;
-    }
+    // public void setTarget(SlotData target) {
+    //     if (target == null) throw new IllegalArgumentException("target cannot be null.");
+    //     this.target = target;
+    // }
 
-    public PositionMode getPositionMode() {
-        return positionMode;
-    }
+    // public PositionMode getPositionMode() {
+    //     return positionMode;
+    // }
 
-    public void setPositionMode(PositionMode positionMode) {
-        if (positionMode == null) throw new IllegalArgumentException("positionMode cannot be null.");
-        this.positionMode = positionMode;
-    }
+    // public void setPositionMode(PositionMode positionMode) {
+    //     if (positionMode == null) throw new IllegalArgumentException("positionMode cannot be null.");
+    //     this.positionMode = positionMode;
+    // }
 
-    public SpacingMode getSpacingMode() {
-        return spacingMode;
-    }
+    // public SpacingMode getSpacingMode() {
+    //     return spacingMode;
+    // }
 
-    public void setSpacingMode(SpacingMode spacingMode) {
-        if (spacingMode == null) throw new IllegalArgumentException("spacingMode cannot be null.");
-        this.spacingMode = spacingMode;
-    }
+    // public void setSpacingMode(SpacingMode spacingMode) {
+    //     if (spacingMode == null) throw new IllegalArgumentException("spacingMode cannot be null.");
+    //     this.spacingMode = spacingMode;
+    // }
 
-    public RotateMode getRotateMode() {
-        return rotateMode;
-    }
+    // public RotateMode getRotateMode() {
+    //     return rotateMode;
+    // }
 
-    public void setRotateMode(RotateMode rotateMode) {
-        if (rotateMode == null) throw new IllegalArgumentException("rotateMode cannot be null.");
-        this.rotateMode = rotateMode;
-    }
+    // public void setRotateMode(RotateMode rotateMode) {
+    //     if (rotateMode == null) throw new IllegalArgumentException("rotateMode cannot be null.");
+    //     this.rotateMode = rotateMode;
+    // }
 
-    public float getOffsetRotation() {
-        return offsetRotation;
-    }
+    // public float getOffsetRotation() {
+    //     return offsetRotation;
+    // }
 
-    public void setOffsetRotation(float offsetRotation) {
-        this.offsetRotation = offsetRotation;
-    }
+    // public void setOffsetRotation(float offsetRotation) {
+    //     this.offsetRotation = offsetRotation;
+    // }
 
-    public float getPosition() {
-        return position;
-    }
+    // public float getPosition() {
+    //     return position;
+    // }
 
-    public void setPosition(float position) {
-        this.position = position;
-    }
+    // public void setPosition(float position) {
+    //     this.position = position;
+    // }
 
-    public float getSpacing() {
-        return spacing;
-    }
+    // public float getSpacing() {
+    //     return spacing;
+    // }
 
-    public void setSpacing(float spacing) {
-        this.spacing = spacing;
-    }
+    // public void setSpacing(float spacing) {
+    //     this.spacing = spacing;
+    // }
 
-    public float getMixRotate() {
-        return mixRotate;
-    }
+    // public float getMixRotate() {
+    //     return mixRotate;
+    // }
 
-    public void setMixRotate(float mixRotate) {
-        this.mixRotate = mixRotate;
-    }
+    // public void setMixRotate(float mixRotate) {
+    //     this.mixRotate = mixRotate;
+    // }
 
-    public float getMixX() {
-        return mixX;
-    }
+    // public float getMixX() {
+    //     return mixX;
+    // }
 
-    public void setMixX(float mixX) {
-        this.mixX = mixX;
-    }
+    // public void setMixX(float mixX) {
+    //     this.mixX = mixX;
+    // }
 
-    public float getMixY() {
-        return mixY;
-    }
+    // public float getMixY() {
+    //     return mixY;
+    // }
 
-    public void setMixY(float mixY) {
-        this.mixY = mixY;
-    }
+    // public void setMixY(float mixY) {
+    //     this.mixY = mixY;
+    // }
 
     public enum PositionMode {
         fixed, percent;

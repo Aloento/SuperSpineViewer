@@ -14,9 +14,9 @@ import com.esotericsoftware.SpinePreview.attachments.*;
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
 
 public class SkeletonJson extends SkeletonLoader {
-    public SkeletonJson(AttachmentLoader attachmentLoader) {
-        super(attachmentLoader);
-    }
+    // public SkeletonJson(AttachmentLoader attachmentLoader) {
+    //     super(attachmentLoader);
+    // }
 
     public SkeletonJson(TextureAtlas atlas) {
         super(atlas);

@@ -24,13 +24,13 @@ public class AnimationState {
     private final Array<Event> events = new Array<>();
     private final EventQueue queue = new EventQueue();
     private final ObjectSet<String> propertyIds = new ObjectSet<>();
+    private final AnimationStateData data;
     boolean animationsChanged;
-    private AnimationStateData data;
     private float timeScale = 1;
     private int unkeyedState;
 
-    public AnimationState() {
-    }
+    // public AnimationState() {
+    // }
 
     public AnimationState(AnimationStateData data) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
@@ -351,39 +351,39 @@ public class AnimationState {
         }
     }
 
-    public void clearTracks() {
-        boolean oldDrainDisabled = queue.drainDisabled;
-        queue.drainDisabled = true;
-        for (int i = 0, n = tracks.size; i < n; i++)
-            clearTrack(i);
-        tracks.clear();
-        queue.drainDisabled = oldDrainDisabled;
-        queue.drain();
-    }
+    // public void clearTracks() {
+    //     boolean oldDrainDisabled = queue.drainDisabled;
+    //     queue.drainDisabled = true;
+    //     for (int i = 0, n = tracks.size; i < n; i++)
+    //         clearTrack(i);
+    //     tracks.clear();
+    //     queue.drainDisabled = oldDrainDisabled;
+    //     queue.drain();
+    // }
 
-    public void clearTrack(int trackIndex) {
-        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
-        if (trackIndex >= tracks.size) return;
-        TrackEntry current = tracks.get(trackIndex);
-        if (current == null) return;
-        queue.end(current);
-        disposeNext(current);
-        TrackEntry entry = current;
-        while (true) {
-            TrackEntry from = entry.mixingFrom;
-            if (from == null) break;
-            queue.end(from);
-            entry.mixingFrom = null;
-            entry.mixingTo = null;
-            entry = from;
-        }
-        tracks.set(current.trackIndex, null);
-        queue.drain();
-    }
+    // public void clearTrack(int trackIndex) {
+    //     if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
+    //     if (trackIndex >= tracks.size) return;
+    //     TrackEntry current = tracks.get(trackIndex);
+    //     if (current == null) return;
+    //     queue.end(current);
+    //     disposeNext(current);
+    //     TrackEntry entry = current;
+    //     while (true) {
+    //         TrackEntry from = entry.mixingFrom;
+    //         if (from == null) break;
+    //         queue.end(from);
+    //         entry.mixingFrom = null;
+    //         entry.mixingTo = null;
+    //         entry = from;
+    //     }
+    //     tracks.set(current.trackIndex, null);
+    //     queue.drain();
+    // }
 
-    public void clearNext(TrackEntry entry) {
-        disposeNext(entry.next);
-    }
+    // public void clearNext(TrackEntry entry) {
+    //     disposeNext(entry.next);
+    // }
 
     private void setCurrent(int index, TrackEntry current, boolean interrupt) {
         TrackEntry from = expandToIndex(index);
@@ -429,32 +429,32 @@ public class AnimationState {
         return entry;
     }
 
-    public TrackEntry addAnimation(int trackIndex, String animationName, boolean loop, float delay) {
-        Animation animation = data.skeletonData.findAnimation(animationName);
-        if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
-        return addAnimation(trackIndex, animation, loop, delay);
-    }
+    // public TrackEntry addAnimation(int trackIndex, String animationName, boolean loop, float delay) {
+    //     Animation animation = data.skeletonData.findAnimation(animationName);
+    //     if (animation == null) throw new IllegalArgumentException("Animation not found: " + animationName);
+    //     return addAnimation(trackIndex, animation, loop, delay);
+    // }
 
-    public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
-        if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
-        if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
-        TrackEntry last = expandToIndex(trackIndex);
-        if (last != null) {
-            while (last.next != null)
-                last = last.next;
-        }
-        TrackEntry entry = trackEntry(trackIndex, animation, loop, last);
-        if (last == null) {
-            setCurrent(trackIndex, entry, true);
-            queue.drain();
-        } else {
-            last.next = entry;
-            entry.previous = last;
-            if (delay <= 0) delay += last.getTrackComplete() - entry.mixDuration;
-        }
-        entry.delay = delay;
-        return entry;
-    }
+    // public TrackEntry addAnimation(int trackIndex, Animation animation, boolean loop, float delay) {
+    //     if (trackIndex < 0) throw new IllegalArgumentException("trackIndex must be >= 0.");
+    //     if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
+    //     TrackEntry last = expandToIndex(trackIndex);
+    //     if (last != null) {
+    //         while (last.next != null)
+    //             last = last.next;
+    //     }
+    //     TrackEntry entry = trackEntry(trackIndex, animation, loop, last);
+    //     if (last == null) {
+    //         setCurrent(trackIndex, entry, true);
+    //         queue.drain();
+    //     } else {
+    //         last.next = entry;
+    //         entry.previous = last;
+    //         if (delay <= 0) delay += last.getTrackComplete() - entry.mixDuration;
+    //     }
+    //     entry.delay = delay;
+    //     return entry;
+    // }
 
     public TrackEntry setEmptyAnimation(int trackIndex, float mixDuration) {
         TrackEntry entry = setAnimation(trackIndex, emptyAnimation, false);
@@ -463,25 +463,25 @@ public class AnimationState {
         return entry;
     }
 
-    public TrackEntry addEmptyAnimation(int trackIndex, float mixDuration, float delay) {
-        TrackEntry entry = addAnimation(trackIndex, emptyAnimation, false, delay <= 0 ? 1 : delay);
-        entry.mixDuration = mixDuration;
-        entry.trackEnd = mixDuration;
-        if (delay <= 0 && entry.previous != null) entry.delay = entry.previous.getTrackComplete() - entry.mixDuration;
-        return entry;
-    }
+    // public TrackEntry addEmptyAnimation(int trackIndex, float mixDuration, float delay) {
+    //     TrackEntry entry = addAnimation(trackIndex, emptyAnimation, false, delay <= 0 ? 1 : delay);
+    //     entry.mixDuration = mixDuration;
+    //     entry.trackEnd = mixDuration;
+    //     if (delay <= 0 && entry.previous != null) entry.delay = entry.previous.getTrackComplete() - entry.mixDuration;
+    //     return entry;
+    // }
 
-    public void setEmptyAnimations(float mixDuration) {
-        boolean oldDrainDisabled = queue.drainDisabled;
-        queue.drainDisabled = true;
-        Object[] tracks = this.tracks.items;
-        for (int i = 0, n = this.tracks.size; i < n; i++) {
-            TrackEntry current = (TrackEntry) tracks[i];
-            if (current != null) setEmptyAnimation(current.trackIndex, mixDuration);
-        }
-        queue.drainDisabled = oldDrainDisabled;
-        queue.drain();
-    }
+    // public void setEmptyAnimations(float mixDuration) {
+    //     boolean oldDrainDisabled = queue.drainDisabled;
+    //     queue.drainDisabled = true;
+    //     Object[] tracks = this.tracks.items;
+    //     for (int i = 0, n = this.tracks.size; i < n; i++) {
+    //         TrackEntry current = (TrackEntry) tracks[i];
+    //         if (current != null) setEmptyAnimation(current.trackIndex, mixDuration);
+    //     }
+    //     queue.drainDisabled = oldDrainDisabled;
+    //     queue.drain();
+    // }
 
     private TrackEntry expandToIndex(int index) {
         if (index < tracks.size) return tracks.get(index);
@@ -586,43 +586,43 @@ public class AnimationState {
         return tracks.get(trackIndex);
     }
 
-    public void addListener(AnimationStateListener listener) {
-        if (listener == null) throw new IllegalArgumentException("listener cannot be null.");
-        listeners.add(listener);
-    }
+    // public void addListener(AnimationStateListener listener) {
+    //     if (listener == null) throw new IllegalArgumentException("listener cannot be null.");
+    //     listeners.add(listener);
+    // }
 
-    public void removeListener(AnimationStateListener listener) {
-        listeners.removeValue(listener, true);
-    }
+    // public void removeListener(AnimationStateListener listener) {
+    //     listeners.removeValue(listener, true);
+    // }
 
-    public void clearListeners() {
-        listeners.clear();
-    }
+    // public void clearListeners() {
+    //     listeners.clear();
+    // }
 
-    public void clearListenerNotifications() {
-        queue.clear();
-    }
+    // public void clearListenerNotifications() {
+    //     queue.clear();
+    // }
 
-    public float getTimeScale() {
-        return timeScale;
-    }
+    // public float getTimeScale() {
+    //     return timeScale;
+    // }
 
     public void setTimeScale(float timeScale) {
         this.timeScale = timeScale;
     }
 
-    public AnimationStateData getData() {
-        return data;
-    }
+    // public AnimationStateData getData() {
+    //     return data;
+    // }
 
-    public void setData(AnimationStateData data) {
-        if (data == null) throw new IllegalArgumentException("data cannot be null.");
-        this.data = data;
-    }
+    // public void setData(AnimationStateData data) {
+    //     if (data == null) throw new IllegalArgumentException("data cannot be null.");
+    //     this.data = data;
+    // }
 
-    public Array<TrackEntry> getTracks() {
-        return tracks;
-    }
+    // public Array<TrackEntry> getTracks() {
+    //     return tracks;
+    // }
 
     public String toString() {
         StringBuilder buffer = new StringBuilder(64);
@@ -684,50 +684,50 @@ public class AnimationState {
             timelinesRotation.clear();
         }
 
-        public int getTrackIndex() {
-            return trackIndex;
-        }
+        // public int getTrackIndex() {
+        //     return trackIndex;
+        // }
 
-        public Animation getAnimation() {
-            return animation;
-        }
+        // public Animation getAnimation() {
+        //     return animation;
+        // }
 
-        public void setAnimation(Animation animation) {
-            if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
-            this.animation = animation;
-        }
+        // public void setAnimation(Animation animation) {
+        //     if (animation == null) throw new IllegalArgumentException("animation cannot be null.");
+        //     this.animation = animation;
+        // }
 
-        public boolean getLoop() {
-            return loop;
-        }
+        // public boolean getLoop() {
+        //     return loop;
+        // }
 
-        public void setLoop(boolean loop) {
-            this.loop = loop;
-        }
+        // public void setLoop(boolean loop) {
+        //     this.loop = loop;
+        // }
 
-        public float getDelay() {
-            return delay;
-        }
+        // public float getDelay() {
+        //     return delay;
+        // }
 
-        public void setDelay(float delay) {
-            this.delay = delay;
-        }
+        // public void setDelay(float delay) {
+        //     this.delay = delay;
+        // }
 
-        public float getTrackTime() {
-            return trackTime;
-        }
+        // public float getTrackTime() {
+        //     return trackTime;
+        // }
 
-        public void setTrackTime(float trackTime) {
-            this.trackTime = trackTime;
-        }
+        // public void setTrackTime(float trackTime) {
+        //     this.trackTime = trackTime;
+        // }
 
-        public float getTrackEnd() {
-            return trackEnd;
-        }
+        // public float getTrackEnd() {
+        //     return trackEnd;
+        // }
 
-        public void setTrackEnd(float trackEnd) {
-            this.trackEnd = trackEnd;
-        }
+        // public void setTrackEnd(float trackEnd) {
+        //     this.trackEnd = trackEnd;
+        // }
 
         public float getTrackComplete() {
             float duration = animationEnd - animationStart;
@@ -738,30 +738,30 @@ public class AnimationState {
             return trackTime;
         }
 
-        public float getAnimationStart() {
-            return animationStart;
-        }
+        // public float getAnimationStart() {
+        //     return animationStart;
+        // }
 
-        public void setAnimationStart(float animationStart) {
-            this.animationStart = animationStart;
-        }
+        // public void setAnimationStart(float animationStart) {
+        //     this.animationStart = animationStart;
+        // }
 
         public float getAnimationEnd() {
             return animationEnd;
         }
 
-        public void setAnimationEnd(float animationEnd) {
-            this.animationEnd = animationEnd;
-        }
+        // public void setAnimationEnd(float animationEnd) {
+        //     this.animationEnd = animationEnd;
+        // }
 
-        public float getAnimationLast() {
-            return animationLast;
-        }
+        // public float getAnimationLast() {
+        //     return animationLast;
+        // }
 
-        public void setAnimationLast(float animationLast) {
-            this.animationLast = animationLast;
-            nextAnimationLast = animationLast;
-        }
+        // public void setAnimationLast(float animationLast) {
+        //     this.animationLast = animationLast;
+        //     nextAnimationLast = animationLast;
+        // }
 
         public float getAnimationTime() {
             if (loop) {
@@ -772,148 +772,143 @@ public class AnimationState {
             return Math.min(trackTime + animationStart, animationEnd);
         }
 
-        public float getTimeScale() {
-            return timeScale;
-        }
+        // public float getTimeScale() {
+        //     return timeScale;
+        // }
 
-        public void setTimeScale(float timeScale) {
-            this.timeScale = timeScale;
-        }
+        // public void setTimeScale(float timeScale) {
+        //     this.timeScale = timeScale;
+        // }
 
-        public @Null
-        AnimationStateListener getListener() {
-            return listener;
-        }
+        // public @Null AnimationStateListener getListener() {
+        //     return listener;
+        // }
 
-        public void setListener(@Null AnimationStateListener listener) {
-            this.listener = listener;
-        }
+        // public void setListener(@Null AnimationStateListener listener) {
+        //     this.listener = listener;
+        // }
 
-        public float getAlpha() {
-            return alpha;
-        }
+        // public float getAlpha() {
+        //     return alpha;
+        // }
 
-        public void setAlpha(float alpha) {
-            this.alpha = alpha;
-        }
+        // public void setAlpha(float alpha) {
+        //     this.alpha = alpha;
+        // }
 
-        public float getEventThreshold() {
-            return eventThreshold;
-        }
+        // public float getEventThreshold() {
+        //     return eventThreshold;
+        // }
 
-        public void setEventThreshold(float eventThreshold) {
-            this.eventThreshold = eventThreshold;
-        }
+        // public void setEventThreshold(float eventThreshold) {
+        //     this.eventThreshold = eventThreshold;
+        // }
 
-        public float getAttachmentThreshold() {
-            return attachmentThreshold;
-        }
+        // public float getAttachmentThreshold() {
+        //     return attachmentThreshold;
+        // }
 
-        public void setAttachmentThreshold(float attachmentThreshold) {
-            this.attachmentThreshold = attachmentThreshold;
-        }
+        // public void setAttachmentThreshold(float attachmentThreshold) {
+        //     this.attachmentThreshold = attachmentThreshold;
+        // }
 
-        public float getDrawOrderThreshold() {
-            return drawOrderThreshold;
-        }
+        // public float getDrawOrderThreshold() {
+        //     return drawOrderThreshold;
+        // }
 
-        public void setDrawOrderThreshold(float drawOrderThreshold) {
-            this.drawOrderThreshold = drawOrderThreshold;
-        }
+        // public void setDrawOrderThreshold(float drawOrderThreshold) {
+        //     this.drawOrderThreshold = drawOrderThreshold;
+        // }
 
-        public @Null
-        TrackEntry getNext() {
-            return next;
-        }
+        // public @Null TrackEntry getNext() {
+        //     return next;
+        // }
 
-        public @Null
-        TrackEntry getPrevious() {
-            return previous;
-        }
+        // public @Null TrackEntry getPrevious() {
+        //     return previous;
+        // }
 
-        public boolean isComplete() {
-            return trackTime >= animationEnd - animationStart;
-        }
+        // public boolean isComplete() {
+        //     return trackTime >= animationEnd - animationStart;
+        // }
 
-        public float getMixTime() {
-            return mixTime;
-        }
+        // public float getMixTime() {
+        //     return mixTime;
+        // }
 
-        public void setMixTime(float mixTime) {
-            this.mixTime = mixTime;
-        }
+        // public void setMixTime(float mixTime) {
+        //     this.mixTime = mixTime;
+        // }
 
-        public float getMixDuration() {
-            return mixDuration;
-        }
+        // public float getMixDuration() {
+        //     return mixDuration;
+        // }
 
-        public void setMixDuration(float mixDuration) {
-            this.mixDuration = mixDuration;
-        }
+        // public void setMixDuration(float mixDuration) {
+        //     this.mixDuration = mixDuration;
+        // }
 
-        public MixBlend getMixBlend() {
-            return mixBlend;
-        }
+        // public MixBlend getMixBlend() {
+        //     return mixBlend;
+        // }
 
-        public void setMixBlend(MixBlend mixBlend) {
-            if (mixBlend == null) throw new IllegalArgumentException("mixBlend cannot be null.");
-            this.mixBlend = mixBlend;
-        }
+        // public void setMixBlend(MixBlend mixBlend) {
+        //     if (mixBlend == null) throw new IllegalArgumentException("mixBlend cannot be null.");
+        //     this.mixBlend = mixBlend;
+        // }
 
-        public @Null
-        TrackEntry getMixingFrom() {
-            return mixingFrom;
-        }
+        // public @Null TrackEntry getMixingFrom() {
+        //     return mixingFrom;
+        // }
 
-        public @Null
-        TrackEntry getMixingTo() {
-            return mixingTo;
-        }
+        // public @Null TrackEntry getMixingTo() {
+        //     return mixingTo;
+        // }
 
-        public boolean getHoldPrevious() {
-            return holdPrevious;
-        }
+        // public boolean getHoldPrevious() {
+        //     return holdPrevious;
+        // }
 
-        public void setHoldPrevious(boolean holdPrevious) {
-            this.holdPrevious = holdPrevious;
-        }
+        // public void setHoldPrevious(boolean holdPrevious) {
+        //     this.holdPrevious = holdPrevious;
+        // }
 
-        public void resetRotationDirections() {
-            timelinesRotation.clear();
-        }
+        // public void resetRotationDirections() {
+        //     timelinesRotation.clear();
+        // }
 
-        public boolean getReverse() {
-            return reverse;
-        }
+        // public boolean getReverse() {
+        //     return reverse;
+        // }
 
-        public void setReverse(boolean reverse) {
-            this.reverse = reverse;
-        }
+        // public void setReverse(boolean reverse) {
+        //     this.reverse = reverse;
+        // }
 
         public String toString() {
             return animation == null ? "<none>" : animation.name;
         }
     }
 
-    static public abstract class AnimationStateAdapter implements AnimationStateListener {
-        public void start(TrackEntry entry) {
-        }
-
-        public void interrupt(TrackEntry entry) {
-        }
-
-        public void end(TrackEntry entry) {
-        }
-
-        public void dispose(TrackEntry entry) {
-        }
-
-        public void complete(TrackEntry entry) {
-        }
-
-        public void event(TrackEntry entry, Event event) {
-        }
-    }
+    // static public abstract class AnimationStateAdapter implements AnimationStateListener {
+    //     public void start(TrackEntry entry) {
+    //     }
+    //
+    //     public void interrupt(TrackEntry entry) {
+    //     }
+    //
+    //     public void end(TrackEntry entry) {
+    //     }
+    //
+    //     public void dispose(TrackEntry entry) {
+    //     }
+    //
+    //     public void complete(TrackEntry entry) {
+    //     }
+    //
+    //     public void event(TrackEntry entry, Event event) {
+    //     }
+    // }
 
     class EventQueue {
         private final Array objects = new Array<>();

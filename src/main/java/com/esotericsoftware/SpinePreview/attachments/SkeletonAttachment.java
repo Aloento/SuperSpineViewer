@@ -15,13 +15,13 @@ public class SkeletonAttachment extends Attachment {
         return skeleton;
     }
 
-    public void setSkeleton(@Null Skeleton skeleton) {
-        this.skeleton = skeleton;
-    }
+    // public void setSkeleton(@Null Skeleton skeleton) {
+    //     this.skeleton = skeleton;
+    // }
 
-    public Attachment copy() {
-        SkeletonAttachment copy = new SkeletonAttachment(name);
-        copy.skeleton = skeleton;
-        return copy;
-    }
+    // public Attachment copy() {
+    //     SkeletonAttachment copy = new SkeletonAttachment(name);
+    //     copy.skeleton = skeleton;
+    //     return copy;
+    // }
 }

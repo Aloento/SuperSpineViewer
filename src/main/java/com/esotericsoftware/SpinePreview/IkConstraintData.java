@@ -13,64 +13,64 @@ public class IkConstraintData extends ConstraintData {
         super(name);
     }
 
-    public Array<BoneData> getBones() {
-        return bones;
-    }
+    // public Array<BoneData> getBones() {
+    //     return bones;
+    // }
 
-    public BoneData getTarget() {
-        return target;
-    }
+    // public BoneData getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(BoneData target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
-        this.target = target;
-    }
+    // public void setTarget(BoneData target) {
+    //     if (target == null) throw new IllegalArgumentException("target cannot be null.");
+    //     this.target = target;
+    // }
 
-    public float getMix() {
-        return mix;
-    }
+    // public float getMix() {
+    //     return mix;
+    // }
 
-    public void setMix(float mix) {
-        this.mix = mix;
-    }
+    // public void setMix(float mix) {
+    //     this.mix = mix;
+    // }
 
-    public float getSoftness() {
-        return softness;
-    }
+    // public float getSoftness() {
+    //     return softness;
+    // }
 
-    public void setSoftness(float softness) {
-        this.softness = softness;
-    }
+    // public void setSoftness(float softness) {
+    //     this.softness = softness;
+    // }
 
-    public int getBendDirection() {
-        return bendDirection;
-    }
+    // public int getBendDirection() {
+    //     return bendDirection;
+    // }
 
-    public void setBendDirection(int bendDirection) {
-        this.bendDirection = bendDirection;
-    }
+    // public void setBendDirection(int bendDirection) {
+    //     this.bendDirection = bendDirection;
+    // }
 
-    public boolean getCompress() {
-        return compress;
-    }
+    // public boolean getCompress() {
+    //     return compress;
+    // }
 
-    public void setCompress(boolean compress) {
-        this.compress = compress;
-    }
+    // public void setCompress(boolean compress) {
+    //     this.compress = compress;
+    // }
 
-    public boolean getStretch() {
-        return stretch;
-    }
+    // public boolean getStretch() {
+    //     return stretch;
+    // }
 
-    public void setStretch(boolean stretch) {
-        this.stretch = stretch;
-    }
+    // public void setStretch(boolean stretch) {
+    //     this.stretch = stretch;
+    // }
 
-    public boolean getUniform() {
-        return uniform;
-    }
+    // public boolean getUniform() {
+    //     return uniform;
+    // }
 
-    public void setUniform(boolean uniform) {
-        this.uniform = uniform;
-    }
+    // public void setUniform(boolean uniform) {
+    //     this.uniform = uniform;
+    // }
 }

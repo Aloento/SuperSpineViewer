@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.esotericsoftware.SpinePreview.Bone;
 
-import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
 import static com.esotericsoftware.SpinePreview.utils.SpineUtils.degRad;
 
 public class RegionAttachment extends Attachment {
@@ -133,9 +132,9 @@ public class RegionAttachment extends Attachment {
         worldVertices[offset + 1] = offsetX * c + offsetY * d + y;
     }
 
-    public float[] getOffset() {
-        return offset;
-    }
+    // public float[] getOffset() {
+    //     return offset;
+    // }
 
     public float[] getUVs() {
         return uvs;
@@ -201,28 +200,28 @@ public class RegionAttachment extends Attachment {
         return color;
     }
 
-    public String getPath() {
-        return path;
-    }
+    // public String getPath() {
+    //     return path;
+    // }
 
     public void setPath(String path) {
         this.path = path;
     }
 
-    public Attachment copy() {
-        RegionAttachment copy = new RegionAttachment(name);
-        copy.region = region;
-        copy.path = path;
-        copy.x = x;
-        copy.y = y;
-        copy.scaleX = scaleX;
-        copy.scaleY = scaleY;
-        copy.rotation = rotation;
-        copy.width = width;
-        copy.height = height;
-        arraycopy(uvs, 0, copy.uvs, 0, 8);
-        arraycopy(offset, 0, copy.offset, 0, 8);
-        copy.color.set(color);
-        return copy;
-    }
+    // public Attachment copy() {
+    //     RegionAttachment copy = new RegionAttachment(name);
+    //     copy.region = region;
+    //     copy.path = path;
+    //     copy.x = x;
+    //     copy.y = y;
+    //     copy.scaleX = scaleX;
+    //     copy.scaleY = scaleY;
+    //     copy.rotation = rotation;
+    //     copy.width = width;
+    //     copy.height = height;
+    //     arraycopy(uvs, 0, copy.uvs, 0, 8);
+    //     arraycopy(offset, 0, copy.offset, 0, 8);
+    //     copy.color.set(color);
+    //     return copy;
+    // }
 }

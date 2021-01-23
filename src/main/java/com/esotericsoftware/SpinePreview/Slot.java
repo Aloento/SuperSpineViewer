@@ -11,11 +11,11 @@ public class Slot {
     final Color color = new Color();
     @Null
     final Color darkColor;
+    private final FloatArray deform = new FloatArray();
     @Null
     Attachment attachment;
     int attachmentState;
     private float attachmentTime;
-    private FloatArray deform = new FloatArray();
 
     public Slot(SlotData data, Bone bone) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
@@ -26,17 +26,17 @@ public class Slot {
         setToSetupPose();
     }
 
-    public Slot(Slot slot, Bone bone) {
-        if (slot == null) throw new IllegalArgumentException("slot cannot be null.");
-        if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
-        data = slot.data;
-        this.bone = bone;
-        color.set(slot.color);
-        darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
-        attachment = slot.attachment;
-        attachmentTime = slot.attachmentTime;
-        deform.addAll(slot.deform);
-    }
+    // public Slot(Slot slot, Bone bone) {
+    //     if (slot == null) throw new IllegalArgumentException("slot cannot be null.");
+    //     if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
+    //     data = slot.data;
+    //     this.bone = bone;
+    //     color.set(slot.color);
+    //     darkColor = slot.darkColor == null ? null : new Color(slot.darkColor);
+    //     attachment = slot.attachment;
+    //     attachmentTime = slot.attachmentTime;
+    //     deform.addAll(slot.deform);
+    // }
 
     public SlotData getData() {
         return data;
@@ -59,10 +59,9 @@ public class Slot {
         return darkColor;
     }
 
-    public @Null
-    Attachment getAttachment() {
-        return attachment;
-    }
+    // public @Null Attachment getAttachment() {
+    //     return attachment;
+    // }
 
     public void setAttachment(@Null Attachment attachment) {
         if (this.attachment == attachment) return;
@@ -71,22 +70,22 @@ public class Slot {
         deform.clear();
     }
 
-    public float getAttachmentTime() {
-        return bone.skeleton.time - attachmentTime;
-    }
+    // public float getAttachmentTime() {
+    //     return bone.skeleton.time - attachmentTime;
+    // }
 
-    public void setAttachmentTime(float time) {
-        attachmentTime = bone.skeleton.time - time;
-    }
+    // public void setAttachmentTime(float time) {
+    //     attachmentTime = bone.skeleton.time - time;
+    // }
 
     public FloatArray getDeform() {
         return deform;
     }
 
-    public void setDeform(FloatArray deform) {
-        if (deform == null) throw new IllegalArgumentException("deform cannot be null.");
-        this.deform = deform;
-    }
+    // public void setDeform(FloatArray deform) {
+    //     if (deform == null) throw new IllegalArgumentException("deform cannot be null.");
+    //     this.deform = deform;
+    // }
 
     public void setToSetupPose() {
         color.set(data.color);

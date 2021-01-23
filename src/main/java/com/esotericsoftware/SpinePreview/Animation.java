@@ -40,9 +40,9 @@ public class Animation {
         return n - step;
     }
 
-    public Array<Timeline> getTimelines() {
-        return timelines;
-    }
+    // public Array<Timeline> getTimelines() {
+    //     return timelines;
+    // }
 
     public void setTimelines(Array<Timeline> timelines) {
         if (timelines == null) throw new IllegalArgumentException("timelines cannot be null.");
@@ -69,14 +69,14 @@ public class Animation {
 
     public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, @Null Array<Event> events, float alpha,
                       MixBlend blend, MixDirection direction) {
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        if (loop && duration != 0) {
-            time %= duration;
-            if (lastTime > 0) lastTime %= duration;
-        }
-        Object[] timelines = this.timelines.items;
-        for (int i = 0, n = this.timelines.size; i < n; i++)
-            ((Timeline) timelines[i]).apply(skeleton, lastTime, time, events, alpha, blend, direction);
+        // if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+        // if (loop && duration != 0) {
+        //     time %= duration;
+        //     if (lastTime > 0) lastTime %= duration;
+        // }
+        // Object[] timelines = this.timelines.items;
+        // for (int i = 0, n = this.timelines.size; i < n; i++)
+        //     ((Timeline) timelines[i]).apply(skeleton, lastTime, time, events, alpha, blend, direction);
     }
 
     public String getName() {
@@ -129,9 +129,9 @@ public class Animation {
             return propertyIds;
         }
 
-        public float[] getFrames() {
-            return frames;
-        }
+        // public float[] getFrames() {
+        //     return frames;
+        // }
 
         public int getFrameEntries() {
             return 1;
@@ -159,17 +159,17 @@ public class Animation {
             curves[frameCount - 1] = STEPPED;
         }
 
-        public void setLinear(int frame) {
-            curves[frame] = LINEAR;
-        }
+        // public void setLinear(int frame) {
+        //     curves[frame] = LINEAR;
+        // }
 
         public void setStepped(int frame) {
             curves[frame] = STEPPED;
         }
 
-        public int getCurveType(int frame) {
-            return (int) curves[frame];
-        }
+        // public int getCurveType(int frame) {
+        //     return (int) curves[frame];
+        // }
 
         public void shrink(int bezierCount) {
             int size = getFrameCount() + bezierCount * BEZIER_SIZE;
@@ -1323,9 +1323,9 @@ public class Animation {
             return slotIndex;
         }
 
-        public String[] getAttachmentNames() {
-            return attachmentNames;
-        }
+        // public String[] getAttachmentNames() {
+        //     return attachmentNames;
+        // }
 
         public void setFrame(int frame, float time, String attachmentName) {
             frames[frame] = time;
@@ -1369,13 +1369,13 @@ public class Animation {
             return slotIndex;
         }
 
-        public VertexAttachment getAttachment() {
-            return attachment;
-        }
+        // public VertexAttachment getAttachment() {
+        //     return attachment;
+        // }
 
-        public float[][] getVertices() {
-            return vertices;
-        }
+        // public float[][] getVertices() {
+        //     return vertices;
+        // }
 
         public void setFrame(int frame, float time, float[] vertices) {
             frames[frame] = time;
@@ -1598,9 +1598,9 @@ public class Animation {
             events = new Event[frameCount];
         }
 
-        public Event[] getEvents() {
-            return events;
-        }
+        // public Event[] getEvents() {
+        //     return events;
+        // }
 
         public void setFrame(int frame, Event event) {
             frames[frame] = event.time;
@@ -1643,9 +1643,9 @@ public class Animation {
             drawOrders = new int[frameCount][];
         }
 
-        public int[][] getDrawOrders() {
-            return drawOrders;
-        }
+        // public int[][] getDrawOrders() {
+        //     return drawOrders;
+        // }
 
         public void setFrame(int frame, float time, @Null int[] drawOrder) {
             frames[frame] = time;
@@ -1690,9 +1690,9 @@ public class Animation {
             return ENTRIES;
         }
 
-        public int getIkConstraintIndex() {
-            return ikConstraintIndex;
-        }
+        // public int getIkConstraintIndex() {
+        //     return ikConstraintIndex;
+        // }
 
         public void setFrame(int frame, float time, float mix, float softness, int bendDirection, boolean compress,
                              boolean stretch) {
@@ -1788,9 +1788,9 @@ public class Animation {
             return ENTRIES;
         }
 
-        public int getTransformConstraintIndex() {
-            return transformConstraintIndex;
-        }
+        // public int getTransformConstraintIndex() {
+        //     return transformConstraintIndex;
+        // }
 
         public void setFrame(int frame, float time, float mixRotate, float mixX, float mixY, float mixScaleX, float mixScaleY,
                              float mixShearY) {
@@ -1895,9 +1895,9 @@ public class Animation {
             this.pathConstraintIndex = pathConstraintIndex;
         }
 
-        public int getPathConstraintIndex() {
-            return pathConstraintIndex;
-        }
+        // public int getPathConstraintIndex() {
+        //     return pathConstraintIndex;
+        // }
 
         public void apply(Skeleton skeleton, float lastTime, float time, @Null Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
@@ -1929,9 +1929,9 @@ public class Animation {
             this.pathConstraintIndex = pathConstraintIndex;
         }
 
-        public int getPathConstraintIndex() {
-            return pathConstraintIndex;
-        }
+        // public int getPathConstraintIndex() {
+        //     return pathConstraintIndex;
+        // }
 
         public void apply(Skeleton skeleton, float lastTime, float time, @Null Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
@@ -1969,9 +1969,9 @@ public class Animation {
             return ENTRIES;
         }
 
-        public int getPathConstraintIndex() {
-            return pathConstraintIndex;
-        }
+        // public int getPathConstraintIndex() {
+        //     return pathConstraintIndex;
+        // }
 
         public void setFrame(int frame, float time, float mixRotate, float mixX, float mixY) {
             frame <<= 2;

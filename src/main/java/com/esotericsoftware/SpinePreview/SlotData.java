@@ -23,48 +23,46 @@ public class SlotData {
         this.boneData = boneData;
     }
 
-    public int getIndex() {
-        return index;
-    }
+    // public int getIndex() {
+    //     return index;
+    // }
 
-    public String getName() {
-        return name;
-    }
+    // public String getName() {
+    //     return name;
+    // }
 
-    public BoneData getBoneData() {
-        return boneData;
-    }
+    // public BoneData getBoneData() {
+    //     return boneData;
+    // }
 
     public Color getColor() {
         return color;
     }
 
-    public @Null
-    Color getDarkColor() {
-        return darkColor;
-    }
+    // public @Null Color getDarkColor() {
+    //     return darkColor;
+    // }
 
     public void setDarkColor(@Null Color darkColor) {
         this.darkColor = darkColor;
     }
 
-    public @Null
-    String getAttachmentName() {
-        return attachmentName;
-    }
+    // public @Null String getAttachmentName() {
+    //     return attachmentName;
+    // }
 
-    public void setAttachmentName(@Null String attachmentName) {
-        this.attachmentName = attachmentName;
-    }
+    // public void setAttachmentName(@Null String attachmentName) {
+    //     this.attachmentName = attachmentName;
+    // }
 
     public BlendMode getBlendMode() {
         return blendMode;
     }
 
-    public void setBlendMode(BlendMode blendMode) {
-        if (blendMode == null) throw new IllegalArgumentException("blendMode cannot be null.");
-        this.blendMode = blendMode;
-    }
+    // public void setBlendMode(BlendMode blendMode) {
+    //     if (blendMode == null) throw new IllegalArgumentException("blendMode cannot be null.");
+    //     this.blendMode = blendMode;
+    // }
 
     public String toString() {
         return name;

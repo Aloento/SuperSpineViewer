@@ -10,25 +10,25 @@ abstract public class ConstraintData {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
+    // public String getName() {
+    //     return name;
+    // }
 
-    public int getOrder() {
-        return order;
-    }
+    // public int getOrder() {
+    //     return order;
+    // }
 
-    public void setOrder(int order) {
-        this.order = order;
-    }
+    // public void setOrder(int order) {
+    //     this.order = order;
+    // }
 
-    public boolean getSkinRequired() {
-        return skinRequired;
-    }
+    // public boolean getSkinRequired() {
+    //     return skinRequired;
+    // }
 
-    public void setSkinRequired(boolean skinRequired) {
-        this.skinRequired = skinRequired;
-    }
+    // public void setSkinRequired(boolean skinRequired) {
+    //     this.skinRequired = skinRequired;
+    // }
 
     public String toString() {
         return name;

@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Null;
 
-import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
-
 public class MeshAttachment extends VertexAttachment {
     private final Color color = new Color(1, 1, 1, 1);
     private TextureRegion region;
@@ -107,9 +105,9 @@ public class MeshAttachment extends VertexAttachment {
         this.triangles = triangles;
     }
 
-    public float[] getRegionUVs() {
-        return regionUVs;
-    }
+    // public float[] getRegionUVs() {
+    //     return regionUVs;
+    // }
 
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;
@@ -119,59 +117,57 @@ public class MeshAttachment extends VertexAttachment {
         return uvs;
     }
 
-    public void setUVs(float[] uvs) {
-        this.uvs = uvs;
-    }
+    // public void setUVs(float[] uvs) {
+    //     this.uvs = uvs;
+    // }
 
     public Color getColor() {
         return color;
     }
 
-    public String getPath() {
-        return path;
-    }
+    // public String getPath() {
+    //     return path;
+    // }
 
     public void setPath(String path) {
         this.path = path;
     }
 
-    public int getHullLength() {
-        return hullLength;
-    }
+    // public int getHullLength() {
+    //     return hullLength;
+    // }
 
     public void setHullLength(int hullLength) {
         this.hullLength = hullLength;
     }
 
-    public @Null
-    short[] getEdges() {
-        return edges;
-    }
+    // public @Null short[] getEdges() {
+    //     return edges;
+    // }
 
     public void setEdges(short[] edges) {
         this.edges = edges;
     }
 
-    public float getWidth() {
-        return width;
-    }
+    // public float getWidth() {
+    //     return width;
+    // }
 
     public void setWidth(float width) {
         this.width = width;
     }
 
-    public float getHeight() {
-        return height;
-    }
+    // public float getHeight() {
+    //     return height;
+    // }
 
     public void setHeight(float height) {
         this.height = height;
     }
 
-    public @Null
-    MeshAttachment getParentMesh() {
-        return parentMesh;
-    }
+    // public @Null MeshAttachment getParentMesh() {
+    //     return parentMesh;
+    // }
 
     public void setParentMesh(@Null MeshAttachment parentMesh) {
         this.parentMesh = parentMesh;
@@ -188,28 +184,28 @@ public class MeshAttachment extends VertexAttachment {
         }
     }
 
-    public Attachment copy() {
-        if (parentMesh != null) return newLinkedMesh();
-        MeshAttachment copy = new MeshAttachment(name);
-        copy.region = region;
-        copy.path = path;
-        copy.color.set(color);
-        copyTo(copy);
-        copy.regionUVs = new float[regionUVs.length];
-        arraycopy(regionUVs, 0, copy.regionUVs, 0, regionUVs.length);
-        copy.uvs = new float[uvs.length];
-        arraycopy(uvs, 0, copy.uvs, 0, uvs.length);
-        copy.triangles = new short[triangles.length];
-        arraycopy(triangles, 0, copy.triangles, 0, triangles.length);
-        copy.hullLength = hullLength;
-        if (edges != null) {
-            copy.edges = new short[edges.length];
-            arraycopy(edges, 0, copy.edges, 0, edges.length);
-        }
-        copy.width = width;
-        copy.height = height;
-        return copy;
-    }
+    // public Attachment copy() {
+    //     if (parentMesh != null) return newLinkedMesh();
+    //     MeshAttachment copy = new MeshAttachment(name);
+    //     copy.region = region;
+    //     copy.path = path;
+    //     copy.color.set(color);
+    //     copyTo(copy);
+    //     copy.regionUVs = new float[regionUVs.length];
+    //     arraycopy(regionUVs, 0, copy.regionUVs, 0, regionUVs.length);
+    //     copy.uvs = new float[uvs.length];
+    //     arraycopy(uvs, 0, copy.uvs, 0, uvs.length);
+    //     copy.triangles = new short[triangles.length];
+    //     arraycopy(triangles, 0, copy.triangles, 0, triangles.length);
+    //     copy.hullLength = hullLength;
+    //     if (edges != null) {
+    //         copy.edges = new short[edges.length];
+    //         arraycopy(edges, 0, copy.edges, 0, edges.length);
+    //     }
+    //     copy.width = width;
+    //     copy.height = height;
+    //     return copy;
+    // }
 
     public MeshAttachment newLinkedMesh() {
         MeshAttachment mesh = new MeshAttachment(name);

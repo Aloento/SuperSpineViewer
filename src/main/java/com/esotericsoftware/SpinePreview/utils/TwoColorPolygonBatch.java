@@ -28,9 +28,10 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private final boolean ownsDefaultShader;
     private final Color light = new Color(1, 1, 1, 1);
     private final Color dark = new Color(0, 0, 0, 1);
+    private final ShaderProgram defaultShader;
+    private final float darkPacked = Color.BLACK.toFloatBits();
     public int totalRenderCalls = 0;
     private boolean blendingDisabled;
-    private ShaderProgram defaultShader;
     private ShaderProgram shader;
     private int vertexIndex, triangleIndex;
     private @Null
@@ -43,19 +44,18 @@ public class TwoColorPolygonBatch implements PolygonBatch {
     private int blendDstFuncAlpha = GL20.GL_ONE_MINUS_SRC_ALPHA;
     private boolean premultipliedAlpha;
     private float lightPacked = Color.WHITE.toFloatBits();
-    private float darkPacked = Color.BLACK.toFloatBits();
 
-    public TwoColorPolygonBatch() {
-        this(2000);
-    }
+    // public TwoColorPolygonBatch() {
+    //     this(2000);
+    // }
 
     public TwoColorPolygonBatch(int size) {
         this(size, size << 1, null);
     }
 
-    public TwoColorPolygonBatch(int maxVertices, int maxTriangles) {
-        this(maxTriangles, maxTriangles, null);
-    }
+    // public TwoColorPolygonBatch(int maxVertices, int maxTriangles) {
+    //     this(maxTriangles, maxTriangles, null);
+    // }
 
     public TwoColorPolygonBatch(int maxVertices, int maxTriangles, @Null ShaderProgram defaultShader) {
         if (maxVertices > 32767)
@@ -165,28 +165,28 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         lightPacked = packedColor;
     }
 
-    public void setDarkColor(float r, float g, float b, float a) {
-        dark.set(r, g, b, a);
-        darkPacked = dark.toFloatBits();
-    }
+    // public void setDarkColor(float r, float g, float b, float a) {
+    //     dark.set(r, g, b, a);
+    //     darkPacked = dark.toFloatBits();
+    // }
 
-    public Color getDarkColor() {
-        return dark;
-    }
+    // public Color getDarkColor() {
+    //     return dark;
+    // }
 
-    public void setDarkColor(Color tint) {
-        dark.set(tint);
-        darkPacked = tint.toFloatBits();
-    }
+    // public void setDarkColor(Color tint) {
+    //     dark.set(tint);
+    //     darkPacked = tint.toFloatBits();
+    // }
 
-    public float getPackedDarkColor() {
-        return darkPacked;
-    }
+    // public float getPackedDarkColor() {
+    //     return darkPacked;
+    // }
 
-    public void setPackedDarkColor(float packedColor) {
-        Color.rgba8888ToColor(dark, NumberUtils.floatToIntColor(packedColor));
-        this.darkPacked = packedColor;
-    }
+    // public void setPackedDarkColor(float packedColor) {
+    //     Color.rgba8888ToColor(dark, NumberUtils.floatToIntColor(packedColor));
+    //     this.darkPacked = packedColor;
+    // }
 
     public void draw(PolygonRegion region, float x, float y) {
         if (!drawing) throw new IllegalStateException("begin must be called before draw.");
@@ -695,30 +695,30 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         this.vertexIndex = idx;
     }
 
-    public void drawTwoColor(Texture texture, float[] spriteVertices, int offset, int count) {
-        if (!drawing) throw new IllegalStateException("begin must be called before draw.");
-        final short[] triangles = this.triangles;
-        final float[] vertices = this.vertices;
-        final int triangleCount = count / SPRITE_SIZE * 6;
-        if (texture != lastTexture)
-            switchTexture(texture);
-        else if (triangleIndex + triangleCount > triangles.length || vertexIndex + count > vertices.length)
-            flush();
-        final int vertexIndex = this.vertexIndex;
-        int triangleIndex = this.triangleIndex;
-        short vertex = (short) (vertexIndex / VERTEX_SIZE);
-        for (int n = triangleIndex + triangleCount; triangleIndex < n; triangleIndex += 6, vertex += (short) 4) {
-            triangles[triangleIndex] = vertex;
-            triangles[triangleIndex + 1] = (short) (vertex + 1);
-            triangles[triangleIndex + 2] = (short) (vertex + 2);
-            triangles[triangleIndex + 3] = (short) (vertex + 2);
-            triangles[triangleIndex + 4] = (short) (vertex + 3);
-            triangles[triangleIndex + 5] = vertex;
-        }
-        this.triangleIndex = triangleIndex;
-        arraycopy(spriteVertices, offset, vertices, vertexIndex, count);
-        this.vertexIndex += count;
-    }
+    // public void drawTwoColor(Texture texture, float[] spriteVertices, int offset, int count) {
+    //     if (!drawing) throw new IllegalStateException("begin must be called before draw.");
+    //     final short[] triangles = this.triangles;
+    //     final float[] vertices = this.vertices;
+    //     final int triangleCount = count / SPRITE_SIZE * 6;
+    //     if (texture != lastTexture)
+    //         switchTexture(texture);
+    //     else if (triangleIndex + triangleCount > triangles.length || vertexIndex + count > vertices.length)
+    //         flush();
+    //     final int vertexIndex = this.vertexIndex;
+    //     int triangleIndex = this.triangleIndex;
+    //     short vertex = (short) (vertexIndex / VERTEX_SIZE);
+    //     for (int n = triangleIndex + triangleCount; triangleIndex < n; triangleIndex += 6, vertex += (short) 4) {
+    //         triangles[triangleIndex] = vertex;
+    //         triangles[triangleIndex + 1] = (short) (vertex + 1);
+    //         triangles[triangleIndex + 2] = (short) (vertex + 2);
+    //         triangles[triangleIndex + 3] = (short) (vertex + 2);
+    //         triangles[triangleIndex + 4] = (short) (vertex + 3);
+    //         triangles[triangleIndex + 5] = vertex;
+    //     }
+    //     this.triangleIndex = triangleIndex;
+    //     arraycopy(spriteVertices, offset, vertices, vertexIndex, count);
+    //     this.vertexIndex += count;
+    // }
 
     @Override
     public void draw(Texture texture, float[] spriteVertices, int offset, int count) {
@@ -1217,22 +1217,22 @@ public class TwoColorPolygonBatch implements PolygonBatch {
         }
     }
 
-    public ShaderProgram getDefaultShader() {
-        return defaultShader;
-    }
+    // public ShaderProgram getDefaultShader() {
+    //     return defaultShader;
+    // }
 
-    public void setDefaultShader(ShaderProgram newDefaultShader) {
-        boolean current = shader == defaultShader;
-        boolean flush = current && drawing;
-        if (flush) flush();
-        if (ownsDefaultShader) defaultShader.dispose();
-        defaultShader = newDefaultShader;
-        if (current) shader = newDefaultShader;
-        if (flush) {
-            newDefaultShader.bind();
-            setupMatrices();
-        }
-    }
+    // public void setDefaultShader(ShaderProgram newDefaultShader) {
+    //     boolean current = shader == defaultShader;
+    //     boolean flush = current && drawing;
+    //     if (flush) flush();
+    //     if (ownsDefaultShader) defaultShader.dispose();
+    //     defaultShader = newDefaultShader;
+    //     if (current) shader = newDefaultShader;
+    //     if (flush) {
+    //         newDefaultShader.bind();
+    //         setupMatrices();
+    //     }
+    // }
 
     @Override
     public boolean isBlendingEnabled() {

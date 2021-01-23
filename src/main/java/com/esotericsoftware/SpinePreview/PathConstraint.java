@@ -38,20 +38,20 @@ public class PathConstraint implements Updatable {
         mixY = data.mixY;
     }
 
-    public PathConstraint(PathConstraint constraint, Skeleton skeleton) {
-        if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        data = constraint.data;
-        bones = new Array<>(constraint.bones.size);
-        for (Bone bone : constraint.bones)
-            bones.add(skeleton.bones.get(bone.data.index));
-        target = skeleton.slots.get(constraint.target.data.index);
-        position = constraint.position;
-        spacing = constraint.spacing;
-        mixRotate = constraint.mixRotate;
-        mixX = constraint.mixX;
-        mixY = constraint.mixY;
-    }
+    // public PathConstraint(PathConstraint constraint, Skeleton skeleton) {
+    //     if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
+    //     if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+    //     data = constraint.data;
+    //     bones = new Array<>(constraint.bones.size);
+    //     for (Bone bone : constraint.bones)
+    //         bones.add(skeleton.bones.get(bone.data.index));
+    //     target = skeleton.slots.get(constraint.target.data.index);
+    //     position = constraint.position;
+    //     spacing = constraint.spacing;
+    //     mixRotate = constraint.mixRotate;
+    //     mixX = constraint.mixX;
+    //     mixY = constraint.mixY;
+    // }
 
     public void update() {
         Attachment attachment = target.attachment;
@@ -414,66 +414,66 @@ public class PathConstraint implements Updatable {
         }
     }
 
-    public float getPosition() {
-        return position;
-    }
+    // public float getPosition() {
+    //     return position;
+    // }
 
-    public void setPosition(float position) {
-        this.position = position;
-    }
+    // public void setPosition(float position) {
+    //     this.position = position;
+    // }
 
-    public float getSpacing() {
-        return spacing;
-    }
+    // public float getSpacing() {
+    //     return spacing;
+    // }
 
-    public void setSpacing(float spacing) {
-        this.spacing = spacing;
-    }
+    // public void setSpacing(float spacing) {
+    //     this.spacing = spacing;
+    // }
 
-    public float getMixRotate() {
-        return mixRotate;
-    }
+    // public float getMixRotate() {
+    //     return mixRotate;
+    // }
 
-    public void setMixRotate(float mixRotate) {
-        this.mixRotate = mixRotate;
-    }
+    // public void setMixRotate(float mixRotate) {
+    //     this.mixRotate = mixRotate;
+    // }
 
-    public float getMixX() {
-        return mixX;
-    }
+    // public float getMixX() {
+    //     return mixX;
+    // }
 
-    public void setMixX(float mixX) {
-        this.mixX = mixX;
-    }
+    // public void setMixX(float mixX) {
+    //     this.mixX = mixX;
+    // }
 
-    public float getMixY() {
-        return mixY;
-    }
+    // public float getMixY() {
+    //     return mixY;
+    // }
 
-    public void setMixY(float mixY) {
-        this.mixY = mixY;
-    }
+    // public void setMixY(float mixY) {
+    //     this.mixY = mixY;
+    // }
 
-    public Array<Bone> getBones() {
-        return bones;
-    }
+    // public Array<Bone> getBones() {
+    //     return bones;
+    // }
 
-    public Slot getTarget() {
-        return target;
-    }
+    // public Slot getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(Slot target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
-        this.target = target;
-    }
+    // public void setTarget(Slot target) {
+    //     if (target == null) throw new IllegalArgumentException("target cannot be null.");
+    //     this.target = target;
+    // }
 
     public boolean isActive() {
         return active;
     }
 
-    public PathConstraintData getData() {
-        return data;
-    }
+    // public PathConstraintData getData() {
+    //     return data;
+    // }
 
     public String toString() {
         return data.name;

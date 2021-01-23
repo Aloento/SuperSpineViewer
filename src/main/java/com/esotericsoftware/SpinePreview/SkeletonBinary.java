@@ -35,13 +35,12 @@ public class SkeletonBinary extends SkeletonLoader {
     static public final int PATH_POSITION = 0;
     static public final int PATH_SPACING = 1;
     static public final int PATH_MIX = 2;
-    static public final int CURVE_LINEAR = 0;
     static public final int CURVE_STEPPED = 1;
     static public final int CURVE_BEZIER = 2;
 
-    public SkeletonBinary(AttachmentLoader attachmentLoader) {
-        super(attachmentLoader);
-    }
+    // public SkeletonBinary(AttachmentLoader attachmentLoader) {
+    //     super(attachmentLoader);
+    // }
 
     public SkeletonBinary(TextureAtlas atlas) {
         super(atlas);

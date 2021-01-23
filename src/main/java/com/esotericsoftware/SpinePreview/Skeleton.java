@@ -1,17 +1,13 @@
 package com.esotericsoftware.SpinePreview;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Null;
 import com.esotericsoftware.SpinePreview.Skin.SkinEntry;
 import com.esotericsoftware.SpinePreview.attachments.Attachment;
-import com.esotericsoftware.SpinePreview.attachments.MeshAttachment;
 import com.esotericsoftware.SpinePreview.attachments.PathAttachment;
-import com.esotericsoftware.SpinePreview.attachments.RegionAttachment;
 
-import static com.esotericsoftware.SpinePreview.utils.SpineUtils.*;
+import static com.esotericsoftware.SpinePreview.utils.SpineUtils.arraycopy;
 
 public class Skeleton {
     final SkeletonData data;
@@ -66,45 +62,45 @@ public class Skeleton {
         updateCache();
     }
 
-    public Skeleton(Skeleton skeleton) {
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        data = skeleton.data;
-        bones = new Array<>(skeleton.bones.size);
-        for (Bone bone : skeleton.bones) {
-            Bone newBone;
-            if (bone.parent == null)
-                newBone = new Bone(bone, this, null);
-            else {
-                Bone parent = bones.get(bone.parent.data.index);
-                newBone = new Bone(bone, this, parent);
-                parent.children.add(newBone);
-            }
-            bones.add(newBone);
-        }
-        slots = new Array<>(skeleton.slots.size);
-        for (Slot slot : skeleton.slots) {
-            Bone bone = bones.get(slot.bone.data.index);
-            slots.add(new Slot(slot, bone));
-        }
-        drawOrder = new Array<>(slots.size);
-        for (Slot slot : skeleton.drawOrder)
-            drawOrder.add(slots.get(slot.data.index));
-        ikConstraints = new Array<>(skeleton.ikConstraints.size);
-        for (IkConstraint ikConstraint : skeleton.ikConstraints)
-            ikConstraints.add(new IkConstraint(ikConstraint, this));
-        transformConstraints = new Array<>(skeleton.transformConstraints.size);
-        for (TransformConstraint transformConstraint : skeleton.transformConstraints)
-            transformConstraints.add(new TransformConstraint(transformConstraint, this));
-        pathConstraints = new Array<>(skeleton.pathConstraints.size);
-        for (PathConstraint pathConstraint : skeleton.pathConstraints)
-            pathConstraints.add(new PathConstraint(pathConstraint, this));
-        skin = skeleton.skin;
-        color = new Color(skeleton.color);
-        time = skeleton.time;
-        scaleX = skeleton.scaleX;
-        scaleY = skeleton.scaleY;
-        updateCache();
-    }
+    // public Skeleton(Skeleton skeleton) {
+    //     if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+    //     data = skeleton.data;
+    //     bones = new Array<>(skeleton.bones.size);
+    //     for (Bone bone : skeleton.bones) {
+    //         Bone newBone;
+    //         if (bone.parent == null)
+    //             newBone = new Bone(bone, this, null);
+    //         else {
+    //             Bone parent = bones.get(bone.parent.data.index);
+    //             newBone = new Bone(bone, this, parent);
+    //             parent.children.add(newBone);
+    //         }
+    //         bones.add(newBone);
+    //     }
+    //     slots = new Array<>(skeleton.slots.size);
+    //     for (Slot slot : skeleton.slots) {
+    //         Bone bone = bones.get(slot.bone.data.index);
+    //         slots.add(new Slot(slot, bone));
+    //     }
+    //     drawOrder = new Array<>(slots.size);
+    //     for (Slot slot : skeleton.drawOrder)
+    //         drawOrder.add(slots.get(slot.data.index));
+    //     ikConstraints = new Array<>(skeleton.ikConstraints.size);
+    //     for (IkConstraint ikConstraint : skeleton.ikConstraints)
+    //         ikConstraints.add(new IkConstraint(ikConstraint, this));
+    //     transformConstraints = new Array<>(skeleton.transformConstraints.size);
+    //     for (TransformConstraint transformConstraint : skeleton.transformConstraints)
+    //         transformConstraints.add(new TransformConstraint(transformConstraint, this));
+    //     pathConstraints = new Array<>(skeleton.pathConstraints.size);
+    //     for (PathConstraint pathConstraint : skeleton.pathConstraints)
+    //         pathConstraints.add(new PathConstraint(pathConstraint, this));
+    //     skin = skeleton.skin;
+    //     color = new Color(skeleton.color);
+    //     time = skeleton.time;
+    //     scaleX = skeleton.scaleX;
+    //     scaleY = skeleton.scaleY;
+    //     updateCache();
+    // }
 
     public void updateCache() {
         Array<Updatable> updateCache = this.updateCache;
@@ -276,27 +272,27 @@ public class Skeleton {
             ((Updatable) updateCache[i]).update();
     }
 
-    public void updateWorldTransform(Bone parent) {
-        if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
-        Bone rootBone = getRootBone();
-        float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
-        rootBone.worldX = pa * x + pb * y + parent.worldX;
-        rootBone.worldY = pc * x + pd * y + parent.worldY;
-        float rotationY = rootBone.rotation + 90 + rootBone.shearY;
-        float la = cosDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
-        float lb = cosDeg(rotationY) * rootBone.scaleY;
-        float lc = sinDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
-        float ld = sinDeg(rotationY) * rootBone.scaleY;
-        rootBone.a = (pa * la + pb * lc) * scaleX;
-        rootBone.b = (pa * lb + pb * ld) * scaleX;
-        rootBone.c = (pc * la + pd * lc) * scaleY;
-        rootBone.d = (pc * lb + pd * ld) * scaleY;
-        Object[] updateCache = this.updateCache.items;
-        for (int i = 0, n = this.updateCache.size; i < n; i++) {
-            Updatable updatable = (Updatable) updateCache[i];
-            if (updatable != rootBone) updatable.update();
-        }
-    }
+    // public void updateWorldTransform(Bone parent) {
+    //     if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
+    //     Bone rootBone = getRootBone();
+    //     float pa = parent.a, pb = parent.b, pc = parent.c, pd = parent.d;
+    //     rootBone.worldX = pa * x + pb * y + parent.worldX;
+    //     rootBone.worldY = pc * x + pd * y + parent.worldY;
+    //     float rotationY = rootBone.rotation + 90 + rootBone.shearY;
+    //     float la = cosDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
+    //     float lb = cosDeg(rotationY) * rootBone.scaleY;
+    //     float lc = sinDeg(rootBone.rotation + rootBone.shearX) * rootBone.scaleX;
+    //     float ld = sinDeg(rotationY) * rootBone.scaleY;
+    //     rootBone.a = (pa * la + pb * lc) * scaleX;
+    //     rootBone.b = (pa * lb + pb * ld) * scaleX;
+    //     rootBone.c = (pc * la + pd * lc) * scaleY;
+    //     rootBone.d = (pc * lb + pd * ld) * scaleY;
+    //     Object[] updateCache = this.updateCache.items;
+    //     for (int i = 0, n = this.updateCache.size; i < n; i++) {
+    //         Updatable updatable = (Updatable) updateCache[i];
+    //         if (updatable != rootBone) updatable.update();
+    //     }
+    // }
 
     public void setToSetupPose() {
         setBonesToSetupPose();
@@ -347,21 +343,21 @@ public class Skeleton {
             ((Slot) slots[i]).setToSetupPose();
     }
 
-    public SkeletonData getData() {
-        return data;
-    }
+    // public SkeletonData getData() {
+    //     return data;
+    // }
 
     public Array<Bone> getBones() {
         return bones;
     }
 
-    public Array<Updatable> getUpdateCache() {
-        return updateCache;
-    }
+    // public Array<Updatable> getUpdateCache() {
+    //     return updateCache;
+    // }
 
-    public Bone getRootBone() {
-        return bones.size == 0 ? null : bones.first();
-    }
+    // public Bone getRootBone() {
+    //     return bones.size == 0 ? null : bones.first();
+    // }
 
     public @Null
     Bone findBone(String boneName) {
@@ -374,9 +370,9 @@ public class Skeleton {
         return null;
     }
 
-    public Array<Slot> getSlots() {
-        return slots;
-    }
+    // public Array<Slot> getSlots() {
+    //     return slots;
+    // }
 
     public @Null
     Slot findSlot(String slotName) {
@@ -389,19 +385,18 @@ public class Skeleton {
         return null;
     }
 
-    public Array<Slot> getDrawOrder() {
-        return drawOrder;
-    }
+    // public Array<Slot> getDrawOrder() {
+    //     return drawOrder;
+    // }
 
-    public void setDrawOrder(Array<Slot> drawOrder) {
-        if (drawOrder == null) throw new IllegalArgumentException("drawOrder cannot be null.");
-        this.drawOrder = drawOrder;
-    }
+    // public void setDrawOrder(Array<Slot> drawOrder) {
+    //     if (drawOrder == null) throw new IllegalArgumentException("drawOrder cannot be null.");
+    //     this.drawOrder = drawOrder;
+    // }
 
-    public @Null
-    Skin getSkin() {
-        return skin;
-    }
+    // public @Null Skin getSkin() {
+    //     return skin;
+    // }
 
     public void setSkin(String skinName) {
         Skin skin = data.findSkin(skinName);
@@ -430,12 +425,11 @@ public class Skeleton {
         updateCache();
     }
 
-    public @Null
-    Attachment getAttachment(String slotName, String attachmentName) {
-        SlotData slot = data.findSlot(slotName);
-        if (slot == null) throw new IllegalArgumentException("Slot not found: " + slotName);
-        return getAttachment(slot.getIndex(), attachmentName);
-    }
+    // public @Null Attachment getAttachment(String slotName, String attachmentName) {
+    //     SlotData slot = data.findSlot(slotName);
+    //     if (slot == null) throw new IllegalArgumentException("Slot not found: " + slotName);
+    //     return getAttachment(slot.getIndex(), attachmentName);
+    // }
 
     public @Null
     Attachment getAttachment(int slotIndex, String attachmentName) {
@@ -448,166 +442,163 @@ public class Skeleton {
         return null;
     }
 
-    public void setAttachment(String slotName, @Null String attachmentName) {
-        if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
-        Slot slot = findSlot(slotName);
-        if (slot == null) throw new IllegalArgumentException("Slot not found: " + slotName);
-        Attachment attachment = null;
-        if (attachmentName != null) {
-            attachment = getAttachment(slot.data.index, attachmentName);
-            if (attachment == null)
-                throw new IllegalArgumentException("Attachment not found: " + attachmentName + ", for slot: " + slotName);
-        }
-        slot.setAttachment(attachment);
-    }
+    // public void setAttachment(String slotName, @Null String attachmentName) {
+    //     if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
+    //     Slot slot = findSlot(slotName);
+    //     if (slot == null) throw new IllegalArgumentException("Slot not found: " + slotName);
+    //     Attachment attachment = null;
+    //     if (attachmentName != null) {
+    //         attachment = getAttachment(slot.data.index, attachmentName);
+    //         if (attachment == null)
+    //             throw new IllegalArgumentException("Attachment not found: " + attachmentName + ", for slot: " + slotName);
+    //     }
+    //     slot.setAttachment(attachment);
+    // }
 
-    public Array<IkConstraint> getIkConstraints() {
-        return ikConstraints;
-    }
+    // public Array<IkConstraint> getIkConstraints() {
+    //     return ikConstraints;
+    // }
 
-    public @Null
-    IkConstraint findIkConstraint(String constraintName) {
-        if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
-        Object[] ikConstraints = this.ikConstraints.items;
-        for (int i = 0, n = this.ikConstraints.size; i < n; i++) {
-            IkConstraint ikConstraint = (IkConstraint) ikConstraints[i];
-            if (ikConstraint.data.name.equals(constraintName)) return ikConstraint;
-        }
-        return null;
-    }
+    // public @Null IkConstraint findIkConstraint(String constraintName) {
+    //     if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
+    //     Object[] ikConstraints = this.ikConstraints.items;
+    //     for (int i = 0, n = this.ikConstraints.size; i < n; i++) {
+    //         IkConstraint ikConstraint = (IkConstraint) ikConstraints[i];
+    //         if (ikConstraint.data.name.equals(constraintName)) return ikConstraint;
+    //     }
+    //     return null;
+    // }
 
-    public Array<TransformConstraint> getTransformConstraints() {
-        return transformConstraints;
-    }
+    // public Array<TransformConstraint> getTransformConstraints() {
+    //     return transformConstraints;
+    // }
 
-    public @Null
-    TransformConstraint findTransformConstraint(String constraintName) {
-        if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
-        Object[] transformConstraints = this.transformConstraints.items;
-        for (int i = 0, n = this.transformConstraints.size; i < n; i++) {
-            TransformConstraint constraint = (TransformConstraint) transformConstraints[i];
-            if (constraint.data.name.equals(constraintName)) return constraint;
-        }
-        return null;
-    }
+    // public @Null TransformConstraint findTransformConstraint(String constraintName) {
+    //     if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
+    //     Object[] transformConstraints = this.transformConstraints.items;
+    //     for (int i = 0, n = this.transformConstraints.size; i < n; i++) {
+    //         TransformConstraint constraint = (TransformConstraint) transformConstraints[i];
+    //         if (constraint.data.name.equals(constraintName)) return constraint;
+    //     }
+    //     return null;
+    // }
 
-    public Array<PathConstraint> getPathConstraints() {
-        return pathConstraints;
-    }
+    // public Array<PathConstraint> getPathConstraints() {
+    //     return pathConstraints;
+    // }
 
-    public @Null
-    PathConstraint findPathConstraint(String constraintName) {
-        if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
-        Object[] pathConstraints = this.pathConstraints.items;
-        for (int i = 0, n = this.pathConstraints.size; i < n; i++) {
-            PathConstraint constraint = (PathConstraint) pathConstraints[i];
-            if (constraint.data.name.equals(constraintName)) return constraint;
-        }
-        return null;
-    }
+    // public @Null PathConstraint findPathConstraint(String constraintName) {
+    //     if (constraintName == null) throw new IllegalArgumentException("constraintName cannot be null.");
+    //     Object[] pathConstraints = this.pathConstraints.items;
+    //     for (int i = 0, n = this.pathConstraints.size; i < n; i++) {
+    //         PathConstraint constraint = (PathConstraint) pathConstraints[i];
+    //         if (constraint.data.name.equals(constraintName)) return constraint;
+    //     }
+    //     return null;
+    // }
 
-    public void getBounds(Vector2 offset, Vector2 size, FloatArray temp) {
-        if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
-        if (size == null) throw new IllegalArgumentException("size cannot be null.");
-        if (temp == null) throw new IllegalArgumentException("temp cannot be null.");
-        Object[] drawOrder = this.drawOrder.items;
-        float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
-        for (int i = 0, n = this.drawOrder.size; i < n; i++) {
-            Slot slot = (Slot) drawOrder[i];
-            if (!slot.bone.active) continue;
-            int verticesLength = 0;
-            float[] vertices = null;
-            Attachment attachment = slot.attachment;
-            if (attachment instanceof RegionAttachment) {
-                verticesLength = 8;
-                vertices = temp.setSize(8);
-                ((RegionAttachment) attachment).computeWorldVertices(slot.getBone(), vertices, 0, 2);
-            } else if (attachment instanceof MeshAttachment) {
-                MeshAttachment mesh = (MeshAttachment) attachment;
-                verticesLength = mesh.getWorldVerticesLength();
-                vertices = temp.setSize(verticesLength);
-                mesh.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
-            }
-            if (vertices != null) {
-                for (int ii = 0; ii < verticesLength; ii += 2) {
-                    float x = vertices[ii], y = vertices[ii + 1];
-                    minX = Math.min(minX, x);
-                    minY = Math.min(minY, y);
-                    maxX = Math.max(maxX, x);
-                    maxY = Math.max(maxY, y);
-                }
-            }
-        }
-        offset.set(minX, minY);
-        size.set(maxX - minX, maxY - minY);
-    }
+    // public void getBounds(Vector2 offset, Vector2 size, FloatArray temp) {
+    //     if (offset == null) throw new IllegalArgumentException("offset cannot be null.");
+    //     if (size == null) throw new IllegalArgumentException("size cannot be null.");
+    //     if (temp == null) throw new IllegalArgumentException("temp cannot be null.");
+    //     Object[] drawOrder = this.drawOrder.items;
+    //     float minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+    //     for (int i = 0, n = this.drawOrder.size; i < n; i++) {
+    //         Slot slot = (Slot) drawOrder[i];
+    //         if (!slot.bone.active) continue;
+    //         int verticesLength = 0;
+    //         float[] vertices = null;
+    //         Attachment attachment = slot.attachment;
+    //         if (attachment instanceof RegionAttachment) {
+    //             verticesLength = 8;
+    //             vertices = temp.setSize(8);
+    //             ((RegionAttachment) attachment).computeWorldVertices(slot.getBone(), vertices, 0, 2);
+    //         } else if (attachment instanceof MeshAttachment) {
+    //             MeshAttachment mesh = (MeshAttachment) attachment;
+    //             verticesLength = mesh.getWorldVerticesLength();
+    //             vertices = temp.setSize(verticesLength);
+    //             mesh.computeWorldVertices(slot, 0, verticesLength, vertices, 0, 2);
+    //         }
+    //         if (vertices != null) {
+    //             for (int ii = 0; ii < verticesLength; ii += 2) {
+    //                 float x = vertices[ii], y = vertices[ii + 1];
+    //                 minX = Math.min(minX, x);
+    //                 minY = Math.min(minY, y);
+    //                 maxX = Math.max(maxX, x);
+    //                 maxY = Math.max(maxY, y);
+    //             }
+    //         }
+    //     }
+    //     offset.set(minX, minY);
+    //     size.set(maxX - minX, maxY - minY);
+    // }
 
-    public Color getColor() {
-        return color;
-    }
+    // public Color getColor() {
+    //     return color;
+    // }
 
-    public void setColor(Color color) {
-        if (color == null) throw new IllegalArgumentException("color cannot be null.");
-        this.color.set(color);
-    }
+    // public void setColor(Color color) {
+    //     if (color == null) throw new IllegalArgumentException("color cannot be null.");
+    //     this.color.set(color);
+    // }
 
-    public void setColor(float r, float g, float b, float a) {
-        color.set(r, g, b, a);
-    }
+    // public void setColor(float r, float g, float b, float a) {
+    //     color.set(r, g, b, a);
+    // }
 
-    public float getScaleX() {
-        return scaleX;
-    }
+    // public float getScaleX() {
+    //     return scaleX;
+    // }
 
-    public void setScaleX(float scaleX) {
-        this.scaleX = scaleX;
-    }
+    // public void setScaleX(float scaleX) {
+    //     this.scaleX = scaleX;
+    // }
 
-    public float getScaleY() {
-        return scaleY;
-    }
+    // public float getScaleY() {
+    //     return scaleY;
+    // }
 
-    public void setScaleY(float scaleY) {
-        this.scaleY = scaleY;
-    }
+    // public void setScaleY(float scaleY) {
+    //     this.scaleY = scaleY;
+    // }
 
-    public void setScale(float scaleX, float scaleY) {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-    }
+    // public void setScale(float scaleX, float scaleY) {
+    //     this.scaleX = scaleX;
+    //     this.scaleY = scaleY;
+    // }
 
-    public float getX() {
-        return x;
-    }
+    // public float getX() {
+    //     return x;
+    // }
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    // public void setX(float x) {
+    //     this.x = x;
+    // }
 
-    public float getY() {
-        return y;
-    }
+    // public float getY() {
+    //     return y;
+    // }
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    // public void setY(float y) {
+    //     this.y = y;
+    // }
 
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
-    public float getTime() {
-        return time;
-    }
+    // public float getTime() {
+    //     return time;
+    // }
 
-    public void setTime(float time) {
-        this.time = time;
-    }
+    // public void setTime(float time) {
+    //     this.time = time;
+    // }
 
-    public void update(float delta) {
-        time += delta;
-    }
+    // public void update(float delta) {
+    //     time += delta;
+    // }
 
     public String toString() {
         return data.name != null ? data.name : super.toString();

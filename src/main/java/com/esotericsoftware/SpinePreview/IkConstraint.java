@@ -28,20 +28,20 @@ public class IkConstraint implements Updatable {
         target = skeleton.findBone(data.target.name);
     }
 
-    public IkConstraint(IkConstraint constraint, Skeleton skeleton) {
-        if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
-        if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
-        data = constraint.data;
-        bones = new Array<>(constraint.bones.size);
-        for (Bone bone : constraint.bones)
-            bones.add(skeleton.bones.get(bone.data.index));
-        target = skeleton.bones.get(constraint.target.data.index);
-        mix = constraint.mix;
-        softness = constraint.softness;
-        bendDirection = constraint.bendDirection;
-        compress = constraint.compress;
-        stretch = constraint.stretch;
-    }
+    // public IkConstraint(IkConstraint constraint, Skeleton skeleton) {
+    //     if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
+    //     if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
+    //     data = constraint.data;
+    //     bones = new Array<>(constraint.bones.size);
+    //     for (Bone bone : constraint.bones)
+    //         bones.add(skeleton.bones.get(bone.data.index));
+    //     target = skeleton.bones.get(constraint.target.data.index);
+    //     mix = constraint.mix;
+    //     softness = constraint.softness;
+    //     bendDirection = constraint.bendDirection;
+    //     compress = constraint.compress;
+    //     stretch = constraint.stretch;
+    // }
 
     static public void apply(Bone bone, float targetX, float targetY, boolean compress, boolean stretch, boolean uniform,
                              float alpha) {
@@ -244,66 +244,66 @@ public class IkConstraint implements Updatable {
         }
     }
 
-    public Array<Bone> getBones() {
-        return bones;
-    }
+    // public Array<Bone> getBones() {
+    //     return bones;
+    // }
 
-    public Bone getTarget() {
-        return target;
-    }
+    // public Bone getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(Bone target) {
-        if (target == null) throw new IllegalArgumentException("target cannot be null.");
-        this.target = target;
-    }
+    // public void setTarget(Bone target) {
+    //     if (target == null) throw new IllegalArgumentException("target cannot be null.");
+    //     this.target = target;
+    // }
 
-    public float getMix() {
-        return mix;
-    }
+    // public float getMix() {
+    //     return mix;
+    // }
 
-    public void setMix(float mix) {
-        this.mix = mix;
-    }
+    // public void setMix(float mix) {
+    //     this.mix = mix;
+    // }
 
-    public float getSoftness() {
-        return softness;
-    }
+    // public float getSoftness() {
+    //     return softness;
+    // }
 
-    public void setSoftness(float softness) {
-        this.softness = softness;
-    }
+    // public void setSoftness(float softness) {
+    //     this.softness = softness;
+    // }
 
-    public int getBendDirection() {
-        return bendDirection;
-    }
+    // public int getBendDirection() {
+    //     return bendDirection;
+    // }
 
-    public void setBendDirection(int bendDirection) {
-        this.bendDirection = bendDirection;
-    }
+    // public void setBendDirection(int bendDirection) {
+    //     this.bendDirection = bendDirection;
+    // }
 
-    public boolean getCompress() {
-        return compress;
-    }
+    // public boolean getCompress() {
+    //     return compress;
+    // }
 
-    public void setCompress(boolean compress) {
-        this.compress = compress;
-    }
+    // public void setCompress(boolean compress) {
+    //     this.compress = compress;
+    // }
 
-    public boolean getStretch() {
-        return stretch;
-    }
+    // public boolean getStretch() {
+    //     return stretch;
+    // }
 
-    public void setStretch(boolean stretch) {
-        this.stretch = stretch;
-    }
+    // public void setStretch(boolean stretch) {
+    //     this.stretch = stretch;
+    // }
 
     public boolean isActive() {
         return active;
     }
 
-    public IkConstraintData getData() {
-        return data;
-    }
+    // public IkConstraintData getData() {
+    //     return data;
+    // }
 
     public String toString() {
         return data.name;

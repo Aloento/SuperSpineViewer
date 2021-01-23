@@ -42,9 +42,9 @@ public class SkeletonData {
         return null;
     }
 
-    public Array<SlotData> getSlots() {
-        return slots;
-    }
+    // public Array<SlotData> getSlots() {
+    //     return slots;
+    // }
 
     public @Null
     SlotData findSlot(String slotName) {
@@ -62,9 +62,9 @@ public class SkeletonData {
         return defaultSkin;
     }
 
-    public void setDefaultSkin(@Null Skin defaultSkin) {
-        this.defaultSkin = defaultSkin;
-    }
+    // public void setDefaultSkin(@Null Skin defaultSkin) {
+    //     this.defaultSkin = defaultSkin;
+    // }
 
     public @Null
     Skin findSkin(String skinName) {
@@ -86,9 +86,9 @@ public class SkeletonData {
         return null;
     }
 
-    public Array<EventData> getEvents() {
-        return events;
-    }
+    // public Array<EventData> getEvents() {
+    //     return events;
+    // }
 
     public Array<Animation> getAnimations() {
         return animations;
@@ -135,9 +135,9 @@ public class SkeletonData {
         return null;
     }
 
-    public Array<PathConstraintData> getPathConstraints() {
-        return pathConstraints;
-    }
+    // public Array<PathConstraintData> getPathConstraints() {
+    //     return pathConstraints;
+    // }
 
     public @Null
     PathConstraintData findPathConstraint(String constraintName) {
@@ -155,85 +155,82 @@ public class SkeletonData {
         return name;
     }
 
-    public void setName(@Null String name) {
-        this.name = name;
-    }
+    // public void setName(@Null String name) {
+    //     this.name = name;
+    // }
 
-    public float getX() {
-        return x;
-    }
+    // public float getX() {
+    //     return x;
+    // }
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    // public void setX(float x) {
+    //     this.x = x;
+    // }
 
-    public float getY() {
-        return y;
-    }
+    // public float getY() {
+    //     return y;
+    // }
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    // public void setY(float y) {
+    //     this.y = y;
+    // }
 
-    public float getWidth() {
-        return width;
-    }
+    // public float getWidth() {
+    //     return width;
+    // }
 
-    public void setWidth(float width) {
-        this.width = width;
-    }
+    // public void setWidth(float width) {
+    //     this.width = width;
+    // }
 
-    public float getHeight() {
-        return height;
-    }
+    // public float getHeight() {
+    //     return height;
+    // }
 
-    public void setHeight(float height) {
-        this.height = height;
-    }
+    // public void setHeight(float height) {
+    //     this.height = height;
+    // }
 
     public @Null
     String getVersion() {
         return version;
     }
 
-    public void setVersion(@Null String version) {
-        this.version = version;
-    }
+    // public void setVersion(@Null String version) {
+    //     this.version = version;
+    // }
 
-    public @Null
-    String getHash() {
-        return hash;
-    }
+    // public @Null String getHash() {
+    //     return hash;
+    // }
 
-    public void setHash(@Null String hash) {
-        this.hash = hash;
-    }
+    // public void setHash(@Null String hash) {
+    //     this.hash = hash;
+    // }
 
-    public @Null
-    String getImagesPath() {
-        return imagesPath;
-    }
+    // public @Null String getImagesPath() {
+    //     return imagesPath;
+    // }
 
-    public void setImagesPath(@Null String imagesPath) {
-        this.imagesPath = imagesPath;
-    }
+    // public void setImagesPath(@Null String imagesPath) {
+    //     this.imagesPath = imagesPath;
+    // }
 
-    public @Null
-    String getAudioPath() {
-        return audioPath;
-    }
+    // public @Null String getAudioPath() {
+    //     return audioPath;
+    // }
 
-    public void setAudioPath(@Null String audioPath) {
-        this.audioPath = audioPath;
-    }
+    // public void setAudioPath(@Null String audioPath) {
+    //     this.audioPath = audioPath;
+    // }
 
-    public float getFps() {
-        return fps;
-    }
+    // public float getFps() {
+    //     return fps;
+    // }
 
-    public void setFps(float fps) {
-        this.fps = fps;
-    }
+    // public void setFps(float fps) {
+    //     this.fps = fps;
+    // }
 
     public String toString() {
         return name != null ? name : super.toString();
