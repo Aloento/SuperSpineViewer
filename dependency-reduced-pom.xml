@@ -42,7 +42,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.QYun.SuperSpineViewer.Controller.Main</mainClass>
+                  <mainClass>com.QYun.SuperSpineViewer.Main</mainClass>
                 </transformer>
                 <transformer />
               </transformers>

@@ -1,4 +1,4 @@
-package com.QYun.SuperSpineViewer;
+package com.QYun.SuperSpineViewer.Controller;
 
 import com.jfoenix.assets.JFoenixResources;
 import com.jfoenix.controls.JFXDecorator;

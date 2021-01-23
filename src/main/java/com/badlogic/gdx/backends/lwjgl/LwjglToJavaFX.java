@@ -1,6 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import com.QYun.SuperSpineViewer.Controller.Main;
+import com.QYun.SuperSpineViewer.Main;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;

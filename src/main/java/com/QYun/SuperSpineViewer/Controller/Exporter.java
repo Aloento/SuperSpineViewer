@@ -2,6 +2,7 @@ package com.QYun.SuperSpineViewer.Controller;
 
 import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.Loader;
+import com.QYun.SuperSpineViewer.Main;
 import com.QYun.SuperSpineViewer.RecordFX;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;

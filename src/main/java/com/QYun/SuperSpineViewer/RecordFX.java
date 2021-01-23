@@ -1,7 +1,6 @@
 package com.QYun.SuperSpineViewer;
 
 import com.QYun.Spine.SuperSpine;
-import com.QYun.SuperSpineViewer.Controller.Main;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;

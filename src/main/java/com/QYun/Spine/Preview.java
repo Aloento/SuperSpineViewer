@@ -1,6 +1,6 @@
 package com.QYun.Spine;
 
-import com.QYun.SuperSpineViewer.Controller.Main;
+import com.QYun.SuperSpineViewer.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;

@@ -2,7 +2,6 @@ package com.QYun.SuperSpineViewer;
 
 import com.QYun.Spine.SuperSpine;
 import com.QYun.Spine.Universal;
-import com.QYun.SuperSpineViewer.Controller.Main;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;

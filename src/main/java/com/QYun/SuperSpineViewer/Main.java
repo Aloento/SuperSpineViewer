@@ -1,6 +1,7 @@
-package com.QYun.SuperSpineViewer.Controller;
+package com.QYun.SuperSpineViewer;
 
-import com.QYun.SuperSpineViewer.Launcher;
+import com.QYun.SuperSpineViewer.Controller.Launcher;
+import com.QYun.SuperSpineViewer.Controller.Spine;
 import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Application;
 import javafx.scene.control.Label;
