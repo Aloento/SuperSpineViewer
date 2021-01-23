@@ -8,9 +8,9 @@ public class Slot {
     final SlotData data;
     final Bone bone;
     final Color color;
+    private final FloatArray attachmentVertices = new FloatArray();
     Attachment attachment;
     private float attachmentTime;
-    private final FloatArray attachmentVertices = new FloatArray();
 
     public Slot(SlotData data, Bone bone) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");

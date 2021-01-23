@@ -8,11 +8,11 @@ public class Slot {
     final SlotData data;
     final Bone bone;
     final Color color = new Color();
+    private final FloatArray deform = new FloatArray();
     Color darkColor;
     Attachment attachment;
     int attachmentState;
     private float attachmentTime;
-    private final FloatArray deform = new FloatArray();
 
     public Slot(SlotData data, Bone bone) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");

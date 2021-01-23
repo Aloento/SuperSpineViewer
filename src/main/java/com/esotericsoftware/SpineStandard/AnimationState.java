@@ -27,8 +27,8 @@ public class AnimationState {
     private final EventQueue queue = new EventQueue();
     private final IntSet propertyIDs = new IntSet();
     private final Array<TrackEntry> mixingTo = new Array<>(); // Spine36
-    boolean animationsChanged;
     private final AnimationStateData data;
+    boolean animationsChanged;
     private float timeScale = 1;
     private int unKeyedState;
 
