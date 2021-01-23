@@ -10,7 +10,7 @@ import com.esotericsoftware.SpineLegacy.attachments.FfdAttachment;
 public class Animation {
     final String name;
     private final Array<Timeline> timelines;
-    private float duration;
+    private final float duration;
 
     public Animation(String name, Array<Timeline> timelines, float duration) {
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
@@ -50,17 +50,17 @@ public class Animation {
         }
     }
 
-    public Array<Timeline> getTimelines() {
-        return timelines;
-    }
+    // public Array<Timeline> getTimelines() {
+    //     return timelines;
+    // }
 
     public float getDuration() {
         return duration;
     }
 
-    public void setDuration(float duration) {
-        this.duration = duration;
-    }
+    // public void setDuration(float duration) {
+    //     this.duration = duration;
+    // }
 
     public void apply(Skeleton skeleton, float lastTime, float time, boolean loop, Array<Event> events) {
         if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
@@ -175,13 +175,13 @@ public class Animation {
             frames = new float[frameCount << 1];
         }
 
-        public int getBoneIndex() {
-            return boneIndex;
-        }
+        // public int getBoneIndex() {
+        //     return boneIndex;
+        // }
 
-        public void setBoneIndex(int boneIndex) {
-            this.boneIndex = boneIndex;
-        }
+        // public void setBoneIndex(int boneIndex) {
+        //     this.boneIndex = boneIndex;
+        // }
 
         public float[] getFrames() {
             return frames;
@@ -237,13 +237,13 @@ public class Animation {
             frames = new float[frameCount * 3];
         }
 
-        public int getBoneIndex() {
-            return boneIndex;
-        }
+        // public int getBoneIndex() {
+        //     return boneIndex;
+        // }
 
-        public void setBoneIndex(int boneIndex) {
-            this.boneIndex = boneIndex;
-        }
+        // public void setBoneIndex(int boneIndex) {
+        //     this.boneIndex = boneIndex;
+        // }
 
         public float[] getFrames() {
             return frames;
@@ -340,13 +340,13 @@ public class Animation {
             frames = new float[frameCount * 5];
         }
 
-        public int getSlotIndex() {
-            return slotIndex;
-        }
+        // public int getSlotIndex() {
+        //     return slotIndex;
+        // }
 
-        public void setSlotIndex(int slotIndex) {
-            this.slotIndex = slotIndex;
-        }
+        // public void setSlotIndex(int slotIndex) {
+        //     this.slotIndex = slotIndex;
+        // }
 
         public float[] getFrames() {
             return frames;
@@ -407,13 +407,13 @@ public class Animation {
             return frames.length;
         }
 
-        public int getSlotIndex() {
-            return slotIndex;
-        }
+        // public int getSlotIndex() {
+        //     return slotIndex;
+        // }
 
-        public void setSlotIndex(int slotIndex) {
-            this.slotIndex = slotIndex;
-        }
+        // public void setSlotIndex(int slotIndex) {
+        //     this.slotIndex = slotIndex;
+        // }
 
         public float[] getFrames() {
             return frames;
@@ -456,9 +456,9 @@ public class Animation {
             return frames;
         }
 
-        public Event[] getEvents() {
-            return events;
-        }
+        // public Event[] getEvents() {
+        //     return events;
+        // }
 
         public void setFrame(int frameIndex, Event event) {
             frames[frameIndex] = event.time;
@@ -545,29 +545,29 @@ public class Animation {
             frameVertices = new float[frameCount][];
         }
 
-        public int getSlotIndex() {
-            return slotIndex;
-        }
+        // public int getSlotIndex() {
+        //     return slotIndex;
+        // }
 
-        public void setSlotIndex(int slotIndex) {
-            this.slotIndex = slotIndex;
-        }
+        // public void setSlotIndex(int slotIndex) {
+        //     this.slotIndex = slotIndex;
+        // }
 
-        public Attachment getAttachment() {
-            return attachment;
-        }
+        // public Attachment getAttachment() {
+        //     return attachment;
+        // }
 
-        public void setAttachment(Attachment attachment) {
-            this.attachment = attachment;
-        }
+        // public void setAttachment(Attachment attachment) {
+        //     this.attachment = attachment;
+        // }
 
         public float[] getFrames() {
             return frames;
         }
 
-        public float[][] getVertices() {
-            return frameVertices;
-        }
+        // public float[][] getVertices() {
+        //     return frameVertices;
+        // }
 
         public void setFrame(int frameIndex, float time, float[] vertices) {
             frames[frameIndex] = time;
@@ -629,14 +629,6 @@ public class Animation {
         public IkConstraintTimeline(int frameCount) {
             super(frameCount);
             frames = new float[frameCount * 3];
-        }
-
-        public int getIkConstraintIndex() {
-            return ikConstraintIndex;
-        }
-
-        public void setIkConstraintIndex(int ikConstraint) {
-            this.ikConstraintIndex = ikConstraint;
         }
 
         public float[] getFrames() {

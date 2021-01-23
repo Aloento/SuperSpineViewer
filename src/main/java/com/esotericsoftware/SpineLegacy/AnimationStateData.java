@@ -16,22 +16,22 @@ public class AnimationStateData {
         return skeletonData;
     }
 
-    public void setMix(String fromName, String toName, float duration) {
-        Animation from = skeletonData.findAnimation(fromName);
-        if (from == null) throw new IllegalArgumentException("Animation not found: " + fromName);
-        Animation to = skeletonData.findAnimation(toName);
-        if (to == null) throw new IllegalArgumentException("Animation not found: " + toName);
-        setMix(from, to, duration);
-    }
+    // public void setMix(String fromName, String toName, float duration) {
+    //     Animation from = skeletonData.findAnimation(fromName);
+    //     if (from == null) throw new IllegalArgumentException("Animation not found: " + fromName);
+    //     Animation to = skeletonData.findAnimation(toName);
+    //     if (to == null) throw new IllegalArgumentException("Animation not found: " + toName);
+    //     setMix(from, to, duration);
+    // }
 
-    public void setMix(Animation from, Animation to, float duration) {
-        if (from == null) throw new IllegalArgumentException("from cannot be null.");
-        if (to == null) throw new IllegalArgumentException("to cannot be null.");
-        Key key = new Key();
-        key.a1 = from;
-        key.a2 = to;
-        animationToMixTime.put(key, duration);
-    }
+    // public void setMix(Animation from, Animation to, float duration) {
+    //     if (from == null) throw new IllegalArgumentException("from cannot be null.");
+    //     if (to == null) throw new IllegalArgumentException("to cannot be null.");
+    //     Key key = new Key();
+    //     key.a1 = from;
+    //     key.a2 = to;
+    //     animationToMixTime.put(key, duration);
+    // }
 
     public float getMix(Animation from, Animation to) {
         tempKey.a1 = from;

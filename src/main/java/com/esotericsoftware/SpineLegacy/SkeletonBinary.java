@@ -10,6 +10,7 @@ import com.esotericsoftware.SpineLegacy.SkeletonJson.LinkedMesh;
 import com.esotericsoftware.SpineLegacy.attachments.*;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class SkeletonBinary {
     static private final Color tempColor = new Color();
@@ -21,9 +22,9 @@ public class SkeletonBinary {
         attachmentLoader = new AtlasAttachmentLoader(atlas);
     }
 
-    public float getScale() {
-        return scale;
-    }
+    // public float getScale() {
+    //     return scale;
+    // }
 
     public void setScale(float scale) {
         this.scale = scale;
@@ -70,15 +71,15 @@ public class SkeletonBinary {
             }
         }) {
             skeletonData.hash = input.readString();
-            if (skeletonData.hash.isEmpty()) skeletonData.hash = null;
+            if (Objects.requireNonNull(skeletonData.hash).isEmpty()) skeletonData.hash = null;
             skeletonData.version = input.readString();
-            if (skeletonData.version.isEmpty()) skeletonData.version = null;
+            if (Objects.requireNonNull(skeletonData.version).isEmpty()) skeletonData.version = null;
             skeletonData.width = input.readFloat();
             skeletonData.height = input.readFloat();
             boolean nonessential = input.readBoolean();
             if (nonessential) {
                 skeletonData.imagesPath = input.readString();
-                if (skeletonData.imagesPath.isEmpty()) skeletonData.imagesPath = null;
+                if (Objects.requireNonNull(skeletonData.imagesPath).isEmpty()) skeletonData.imagesPath = null;
             }
             for (int i = 0, n = input.readInt(true); i < n; i++) {
                 String name = input.readString();

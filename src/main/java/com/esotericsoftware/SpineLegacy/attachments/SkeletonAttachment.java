@@ -13,7 +13,7 @@ public class SkeletonAttachment extends Attachment {
         return skeleton;
     }
 
-    public void setSkeleton(Skeleton skeleton) {
-        this.skeleton = skeleton;
-    }
+    // public void setSkeleton(Skeleton skeleton) {
+    //     this.skeleton = skeleton;
+    // }
 }

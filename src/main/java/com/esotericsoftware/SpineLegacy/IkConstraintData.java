@@ -13,37 +13,37 @@ public class IkConstraintData {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
+    // public String getName() {
+    //     return name;
+    // }
 
-    public Array<BoneData> getBones() {
-        return bones;
-    }
+    // public Array<BoneData> getBones() {
+    //     return bones;
+    // }
 
-    public BoneData getTarget() {
-        return target;
-    }
+    // public BoneData getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(BoneData target) {
-        this.target = target;
-    }
+    // public void setTarget(BoneData target) {
+    //     this.target = target;
+    // }
 
-    public int getBendDirection() {
-        return bendDirection;
-    }
+    // public int getBendDirection() {
+    //     return bendDirection;
+    // }
 
-    public void setBendDirection(int bendDirection) {
-        this.bendDirection = bendDirection;
-    }
+    // public void setBendDirection(int bendDirection) {
+    //     this.bendDirection = bendDirection;
+    // }
 
-    public float getMix() {
-        return mix;
-    }
+    // public float getMix() {
+    //     return mix;
+    // }
 
-    public void setMix(float mix) {
-        this.mix = mix;
-    }
+    // public void setMix(float mix) {
+    //     this.mix = mix;
+    // }
 
     public String toString() {
         return name;

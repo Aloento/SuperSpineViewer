@@ -23,27 +23,27 @@ public class Bone implements Updatable {
         setToSetupPose();
     }
 
-    public Bone(Bone bone, Skeleton skeleton, Bone parent) {
-        if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
-        this.skeleton = skeleton;
-        this.parent = parent;
-        data = bone.data;
-        x = bone.x;
-        y = bone.y;
-        rotation = bone.rotation;
-        scaleX = bone.scaleX;
-        scaleY = bone.scaleY;
-        shearX = bone.shearX;
-        shearY = bone.shearY;
-    }
+    // public Bone(Bone bone, Skeleton skeleton, Bone parent) {
+    //     if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
+    //     this.skeleton = skeleton;
+    //     this.parent = parent;
+    //     data = bone.data;
+    //     x = bone.x;
+    //     y = bone.y;
+    //     rotation = bone.rotation;
+    //     scaleX = bone.scaleX;
+    //     scaleY = bone.scaleY;
+    //     shearX = bone.shearX;
+    //     shearY = bone.shearY;
+    // }
 
     public void update() {
         updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
     }
 
-    public void updateWorldTransform() {
-        updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
-    }
+    // public void updateWorldTransform() {
+    //     updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
+    // }
 
     public void updateWorldTransform(float x, float y, float rotation, float scaleX, float scaleY, float shearX, float shearY) {
         appliedRotation = rotation;
@@ -165,38 +165,38 @@ public class Bone implements Updatable {
         shearY = data.shearY;
     }
 
-    public BoneData getData() {
-        return data;
-    }
+    // public BoneData getData() {
+    //     return data;
+    // }
 
-    public Skeleton getSkeleton() {
-        return skeleton;
-    }
+    // public Skeleton getSkeleton() {
+    //     return skeleton;
+    // }
 
-    public Bone getParent() {
-        return parent;
-    }
+    // public Bone getParent() {
+    //     return parent;
+    // }
 
-    public float getX() {
-        return x;
-    }
+    // public float getX() {
+    //     return x;
+    // }
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    // public void setX(float x) {
+    //     this.x = x;
+    // }
 
-    public float getY() {
-        return y;
-    }
+    // public float getY() {
+    //     return y;
+    // }
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    // public void setY(float y) {
+    //     this.y = y;
+    // }
 
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
+    // public void setPosition(float x, float y) {
+    //     this.x = x;
+    //     this.y = y;
+    // }
 
     public float getRotation() {
         return rotation;
@@ -222,31 +222,31 @@ public class Bone implements Updatable {
         this.scaleY = scaleY;
     }
 
-    public void setScale(float scaleX, float scaleY) {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-    }
+    // public void setScale(float scaleX, float scaleY) {
+    //     this.scaleX = scaleX;
+    //     this.scaleY = scaleY;
+    // }
 
-    public void setScale(float scale) {
-        scaleX = scale;
-        scaleY = scale;
-    }
+    // public void setScale(float scale) {
+    //     scaleX = scale;
+    //     scaleY = scale;
+    // }
 
-    public float getShearX() {
-        return shearX;
-    }
+    // public float getShearX() {
+    //     return shearX;
+    // }
 
-    public void setShearX(float shearX) {
-        this.shearX = shearX;
-    }
+    // public void setShearX(float shearX) {
+    //     this.shearX = shearX;
+    // }
 
-    public float getShearY() {
-        return shearY;
-    }
+    // public float getShearY() {
+    //     return shearY;
+    // }
 
-    public void setShearY(float shearY) {
-        this.shearY = shearY;
-    }
+    // public void setShearY(float shearY) {
+    //     this.shearY = shearY;
+    // }
 
     public float getA() {
         return a;

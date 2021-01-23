@@ -13,11 +13,8 @@ public class AnimationState {
             return new TrackEntry();
         }
     };
-    private AnimationStateData data;
+    private final AnimationStateData data;
     private float timeScale = 1;
-
-    public AnimationState() {
-    }
 
     public AnimationState(AnimationStateData data) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
@@ -96,11 +93,11 @@ public class AnimationState {
         }
     }
 
-    public void clearTracks() {
-        for (int i = 0, n = tracks.size; i < n; i++)
-            clearTrack(i);
-        tracks.clear();
-    }
+    // public void clearTracks() {
+    //     for (int i = 0, n = tracks.size; i < n; i++)
+    //         clearTrack(i);
+    //     tracks.clear();
+    // }
 
     public void clearTrack(int trackIndex) {
         if (trackIndex >= tracks.size) return;
@@ -177,30 +174,17 @@ public class AnimationState {
         return tracks.get(trackIndex);
     }
 
-    public void addListener(AnimationStateListener listener) {
-        if (listener == null) throw new IllegalArgumentException("listener cannot be null.");
-        listeners.add(listener);
-    }
-
-    public void clearListeners() {
-        listeners.clear();
-    }
-
     public void setTimeScale(float timeScale) {
         this.timeScale = timeScale;
     }
 
-    public AnimationStateData getData() {
-        return data;
-    }
+    // public AnimationStateData getData() {
+    //     return data;
+    // }
 
-    public void setData(AnimationStateData data) {
-        this.data = data;
-    }
-
-    public Array<TrackEntry> getTracks() {
-        return tracks;
-    }
+    // public void setData(AnimationStateData data) {
+    //     this.data = data;
+    // }
 
     public String toString() {
         StringBuilder buffer = new StringBuilder(64);
@@ -243,13 +227,13 @@ public class AnimationState {
             time = 0;
         }
 
-        public Animation getAnimation() {
-            return animation;
-        }
+        // public Animation getAnimation() {
+        //     return animation;
+        // }
 
-        public void setAnimation(Animation animation) {
-            this.animation = animation;
-        }
+        // public void setAnimation(Animation animation) {
+        //     this.animation = animation;
+        // }
 
         public boolean getLoop() {
             return loop;
@@ -259,33 +243,21 @@ public class AnimationState {
             return time;
         }
 
-        public void setTime(float time) {
-            this.time = time;
-        }
+        // public void setTime(float time) {
+        //     this.time = time;
+        // }
 
         public float getEndTime() {
             return endTime;
         }
 
-        public float getMix() {
-            return mix;
-        }
+        // public float getMix() {
+        //     return mix;
+        // }
 
-        public void setMix(float mix) {
-            this.mix = mix;
-        }
-
-        public TrackEntry getNext() {
-            return next;
-        }
-
-        public void setNext(TrackEntry next) {
-            this.next = next;
-        }
-
-        public boolean isComplete() {
-            return time >= endTime;
-        }
+        // public void setMix(float mix) {
+        //     this.mix = mix;
+        // }
 
         public String toString() {
             return animation == null ? "<none>" : animation.name;

@@ -16,33 +16,33 @@ public class SlotData {
         this.boneData = boneData;
     }
 
-    public String getName() {
-        return name;
-    }
+    // public String getName() {
+    //     return name;
+    // }
 
-    public BoneData getBoneData() {
-        return boneData;
-    }
+    // public BoneData getBoneData() {
+    //     return boneData;
+    // }
 
     public Color getColor() {
         return color;
     }
 
-    public String getAttachmentName() {
-        return attachmentName;
-    }
+    // public String getAttachmentName() {
+    //     return attachmentName;
+    // }
 
-    public void setAttachmentName(String attachmentName) {
-        this.attachmentName = attachmentName;
-    }
+    // public void setAttachmentName(String attachmentName) {
+    //     this.attachmentName = attachmentName;
+    // }
 
     public BlendMode getBlendMode() {
         return blendMode;
     }
 
-    public void setBlendMode(BlendMode blendMode) {
-        this.blendMode = blendMode;
-    }
+    // public void setBlendMode(BlendMode blendMode) {
+    //     this.blendMode = blendMode;
+    // }
 
     public String toString() {
         return name;

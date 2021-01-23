@@ -10,7 +10,7 @@ public class Slot {
     final Color color;
     Attachment attachment;
     private float attachmentTime;
-    private FloatArray attachmentVertices = new FloatArray();
+    private final FloatArray attachmentVertices = new FloatArray();
 
     public Slot(SlotData data, Bone bone) {
         if (data == null) throw new IllegalArgumentException("data cannot be null.");
@@ -21,19 +21,19 @@ public class Slot {
         setToSetupPose();
     }
 
-    public Slot(Slot slot, Bone bone) {
-        if (slot == null) throw new IllegalArgumentException("slot cannot be null.");
-        if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
-        data = slot.data;
-        this.bone = bone;
-        color = new Color(slot.color);
-        attachment = slot.attachment;
-        attachmentTime = slot.attachmentTime;
-    }
+    // public Slot(Slot slot, Bone bone) {
+    //     if (slot == null) throw new IllegalArgumentException("slot cannot be null.");
+    //     if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
+    //     data = slot.data;
+    //     this.bone = bone;
+    //     color = new Color(slot.color);
+    //     attachment = slot.attachment;
+    //     attachmentTime = slot.attachmentTime;
+    // }
 
-    public SlotData getData() {
-        return data;
-    }
+    // public SlotData getData() {
+    //     return data;
+    // }
 
     public Bone getBone() {
         return bone;
@@ -62,17 +62,17 @@ public class Slot {
         return bone.skeleton.time - attachmentTime;
     }
 
-    public void setAttachmentTime(float time) {
-        attachmentTime = bone.skeleton.time - time;
-    }
+    // public void setAttachmentTime(float time) {
+    //     attachmentTime = bone.skeleton.time - time;
+    // }
 
     public FloatArray getAttachmentVertices() {
         return attachmentVertices;
     }
 
-    public void setAttachmentVertices(FloatArray attachmentVertices) {
-        this.attachmentVertices = attachmentVertices;
-    }
+    // public void setAttachmentVertices(FloatArray attachmentVertices) {
+    //     this.attachmentVertices = attachmentVertices;
+    // }
 
     void setToSetupPose(int slotIndex) {
         color.set(data.color);

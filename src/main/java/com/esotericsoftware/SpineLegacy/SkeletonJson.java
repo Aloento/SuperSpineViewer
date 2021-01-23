@@ -17,13 +17,9 @@ public class SkeletonJson {
         attachmentLoader = new AtlasAttachmentLoader(atlas);
     }
 
-    public SkeletonJson(AttachmentLoader attachmentLoader) {
-        this.attachmentLoader = attachmentLoader;
-    }
-
-    public float getScale() {
-        return scale;
-    }
+    // public float getScale() {
+    //     return scale;
+    // }
 
     public void setScale(float scale) {
         this.scale = scale;

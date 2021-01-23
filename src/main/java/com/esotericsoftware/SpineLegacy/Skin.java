@@ -34,11 +34,11 @@ public class Skin {
         return attachments.get(lookup);
     }
 
-    public void clear() {
-        for (Key key : attachments.keys())
-            keyPool.free(key);
-        attachments.clear();
-    }
+    // public void clear() {
+    //     for (Key key : attachments.keys())
+    //         keyPool.free(key);
+    //     attachments.clear();
+    // }
 
     public String getName() {
         return name;

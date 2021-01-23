@@ -98,9 +98,9 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
         return this == sourceAttachment || (inheritFFD && parentMesh == sourceAttachment);
     }
 
-    public float[] getWorldVertices() {
-        return worldVertices;
-    }
+    // public float[] getWorldVertices() {
+    //     return worldVertices;
+    // }
 
     public float[] getVertices() {
         return vertices;
@@ -118,9 +118,9 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
         this.triangles = triangles;
     }
 
-    public float[] getRegionUVs() {
-        return regionUVs;
-    }
+    // public float[] getRegionUVs() {
+    //     return regionUVs;
+    // }
 
     public void setRegionUVs(float[] regionUVs) {
         this.regionUVs = regionUVs;
@@ -130,49 +130,49 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
         return color;
     }
 
-    public String getPath() {
-        return path;
-    }
+    // public String getPath() {
+    //     return path;
+    // }
 
     public void setPath(String path) {
         this.path = path;
     }
 
-    public int getHullLength() {
-        return hullLength;
-    }
+    // public int getHullLength() {
+    //     return hullLength;
+    // }
 
     public void setHullLength(int hullLength) {
         this.hullLength = hullLength;
     }
 
-    public short[] getEdges() {
-        return edges;
-    }
+    // public short[] getEdges() {
+    //     return edges;
+    // }
 
     public void setEdges(short[] edges) {
         this.edges = edges;
     }
 
-    public float getWidth() {
-        return width;
-    }
+    // public float getWidth() {
+    //     return width;
+    // }
 
     public void setWidth(float width) {
         this.width = width;
     }
 
-    public float getHeight() {
-        return height;
-    }
+    // public float getHeight() {
+    //     return height;
+    // }
 
     public void setHeight(float height) {
         this.height = height;
     }
 
-    public MeshAttachment getParentMesh() {
-        return parentMesh;
-    }
+    // public MeshAttachment getParentMesh() {
+    //     return parentMesh;
+    // }
 
     public void setParentMesh(MeshAttachment parentMesh) {
         this.parentMesh = parentMesh;
@@ -187,9 +187,9 @@ public class MeshAttachment extends Attachment implements FfdAttachment {
         }
     }
 
-    public boolean getInheritFFD() {
-        return inheritFFD;
-    }
+    // public boolean getInheritFFD() {
+    //     return inheritFFD;
+    // }
 
     public void setInheritFFD(boolean inheritFFD) {
         this.inheritFFD = inheritFFD;

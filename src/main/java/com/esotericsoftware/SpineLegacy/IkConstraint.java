@@ -24,15 +24,15 @@ public class IkConstraint implements Updatable {
         }
     }
 
-    public IkConstraint(IkConstraint ikConstraint, Skeleton skeleton) {
-        data = ikConstraint.data;
-        bones = new Array<>(ikConstraint.bones.size);
-        for (Bone bone : ikConstraint.bones)
-            bones.add(skeleton.bones.get(bone.skeleton.bones.indexOf(bone, true)));
-        target = skeleton.bones.get(ikConstraint.target.skeleton.bones.indexOf(ikConstraint.target, true));
-        mix = ikConstraint.mix;
-        bendDirection = ikConstraint.bendDirection;
-    }
+    // public IkConstraint(IkConstraint ikConstraint, Skeleton skeleton) {
+    //     data = ikConstraint.data;
+    //     bones = new Array<>(ikConstraint.bones.size);
+    //     for (Bone bone : ikConstraint.bones)
+    //         bones.add(skeleton.bones.get(bone.skeleton.bones.indexOf(bone, true)));
+    //     target = skeleton.bones.get(ikConstraint.target.skeleton.bones.indexOf(ikConstraint.target, true));
+    //     mix = ikConstraint.mix;
+    //     bendDirection = ikConstraint.bendDirection;
+    // }
 
     static public void apply(Bone bone, float targetX, float targetY, float alpha) {
         if (Loader.spineVersion == 32) {
@@ -181,9 +181,9 @@ public class IkConstraint implements Updatable {
                 child.shearX, child.shearY);
     }
 
-    public void apply() {
-        update();
-    }
+    // public void apply() {
+    //     update();
+    // }
 
     public void update() {
         Bone target = this.target;
@@ -194,37 +194,37 @@ public class IkConstraint implements Updatable {
         }
     }
 
-    public Array<Bone> getBones() {
-        return bones;
-    }
+    // public Array<Bone> getBones() {
+    //     return bones;
+    // }
 
-    public Bone getTarget() {
-        return target;
-    }
+    // public Bone getTarget() {
+    //     return target;
+    // }
 
-    public void setTarget(Bone target) {
-        this.target = target;
-    }
+    // public void setTarget(Bone target) {
+    //     this.target = target;
+    // }
 
-    public float getMix() {
-        return mix;
-    }
+    // public float getMix() {
+    //     return mix;
+    // }
 
-    public void setMix(float mix) {
-        this.mix = mix;
-    }
+    // public void setMix(float mix) {
+    //     this.mix = mix;
+    // }
 
-    public int getBendDirection() {
-        return bendDirection;
-    }
+    // public int getBendDirection() {
+    //     return bendDirection;
+    // }
 
-    public void setBendDirection(int bendDirection) {
-        this.bendDirection = bendDirection;
-    }
+    // public void setBendDirection(int bendDirection) {
+    //     this.bendDirection = bendDirection;
+    // }
 
-    public IkConstraintData getData() {
-        return data;
-    }
+    // public IkConstraintData getData() {
+    //     return data;
+    // }
 
     public String toString() {
         return data.name;

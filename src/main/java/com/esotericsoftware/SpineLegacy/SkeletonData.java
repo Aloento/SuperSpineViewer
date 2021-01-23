@@ -37,19 +37,19 @@ public class SkeletonData {
         return -1;
     }
 
-    public Array<SlotData> getSlots() {
-        return slots;
-    }
+    // public Array<SlotData> getSlots() {
+    //     return slots;
+    // }
 
-    public SlotData findSlot(String slotName) {
-        if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
-        Array<SlotData> slots = this.slots;
-        for (int i = 0, n = slots.size; i < n; i++) {
-            SlotData slot = slots.get(i);
-            if (slot.name.equals(slotName)) return slot;
-        }
-        return null;
-    }
+    // public SlotData findSlot(String slotName) {
+    //     if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
+    //     Array<SlotData> slots = this.slots;
+    //     for (int i = 0, n = slots.size; i < n; i++) {
+    //         SlotData slot = slots.get(i);
+    //         if (slot.name.equals(slotName)) return slot;
+    //     }
+    //     return null;
+    // }
 
     public int findSlotIndex(String slotName) {
         if (slotName == null) throw new IllegalArgumentException("slotName cannot be null.");
@@ -63,9 +63,9 @@ public class SkeletonData {
         return defaultSkin;
     }
 
-    public void setDefaultSkin(Skin defaultSkin) {
-        this.defaultSkin = defaultSkin;
-    }
+    // public void setDefaultSkin(Skin defaultSkin) {
+    //     this.defaultSkin = defaultSkin;
+    // }
 
     public Skin findSkin(String skinName) {
         if (skinName == null) throw new IllegalArgumentException("skinName cannot be null.");
@@ -85,9 +85,9 @@ public class SkeletonData {
         return null;
     }
 
-    public Array<EventData> getEvents() {
-        return events;
-    }
+    // public Array<EventData> getEvents() {
+    //     return events;
+    // }
 
     public Array<Animation> getAnimations() {
         return animations;
@@ -135,49 +135,41 @@ public class SkeletonData {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    // public void setName(String name) {
+    //     this.name = name;
+    // }
 
-    public float getWidth() {
-        return width;
-    }
+    // public float getWidth() {
+    //     return width;
+    // }
 
-    public void setWidth(float width) {
-        this.width = width;
-    }
+    // public void setWidth(float width) {
+    //     this.width = width;
+    // }
 
-    public float getHeight() {
-        return height;
-    }
+    // public float getHeight() {
+    //     return height;
+    // }
 
-    public void setHeight(float height) {
-        this.height = height;
-    }
+    // public void setHeight(float height) {
+    //     this.height = height;
+    // }
 
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+    // public void setVersion(String version) {
+    //     this.version = version;
+    // }
 
-    public String getHash() {
-        return hash;
-    }
+    // public String getHash() {
+    //     return hash;
+    // }
 
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
-    public String getImagesPath() {
-        return imagesPath;
-    }
-
-    public void setImagesPath(String imagesPath) {
-        this.imagesPath = imagesPath;
-    }
+    // public void setHash(String hash) {
+    //     this.hash = hash;
+    // }
 
     public String toString() {
         return name != null ? name : super.toString();

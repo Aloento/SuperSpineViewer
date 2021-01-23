@@ -34,22 +34,22 @@ public class RegionSequenceAttachment extends RegionAttachment {
         return super.updateWorldVertices(slot, premultipliedAlpha);
     }
 
-    public TextureRegion[] getRegions() {
-        if (regions == null) throw new IllegalStateException("Regions have not been set: " + this);
-        return regions;
-    }
+    // public TextureRegion[] getRegions() {
+    //     if (regions == null) throw new IllegalStateException("Regions have not been set: " + this);
+    //     return regions;
+    // }
 
-    public void setRegions(TextureRegion[] regions) {
-        this.regions = regions;
-    }
+    // public void setRegions(TextureRegion[] regions) {
+    //     this.regions = regions;
+    // }
 
-    public void setFrameTime(float frameTime) {
-        this.frameTime = frameTime;
-    }
+    // public void setFrameTime(float frameTime) {
+    //     this.frameTime = frameTime;
+    // }
 
-    public void setMode(Mode mode) {
-        this.mode = mode;
-    }
+    // public void setMode(Mode mode) {
+    //     this.mode = mode;
+    // }
 
     public enum Mode {
         forward, backward, forwardLoop, backwardLoop, pingPong, random

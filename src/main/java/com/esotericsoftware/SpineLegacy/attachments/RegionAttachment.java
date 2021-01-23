@@ -153,13 +153,13 @@ public class RegionAttachment extends Attachment {
         return vertices;
     }
 
-    public float[] getWorldVertices() {
-        return vertices;
-    }
+    // public float[] getWorldVertices() {
+    //     return vertices;
+    // }
 
-    public float[] getOffset() {
-        return offset;
-    }
+    // public float[] getOffset() {
+    //     return offset;
+    // }
 
     public float getX() {
         return x;
@@ -221,9 +221,9 @@ public class RegionAttachment extends Attachment {
         return color;
     }
 
-    public String getPath() {
-        return path;
-    }
+    // public String getPath() {
+    //     return path;
+    // }
 
     public void setPath(String path) {
         this.path = path;
