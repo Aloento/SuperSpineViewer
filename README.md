@@ -3,7 +3,7 @@
 一个拿来加载与导出Spine动画的工具  
 至少需要Java15才能运行  
 或使用打包好的exe程序  
-当前版本：0.1.27
+当前版本：0.1.28
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
@@ -28,7 +28,8 @@ Spine Universal LibGDX Runtimes
 ### 已知问题
 
 目前渲染实现会占用大量不必要的带宽  
-在DriftFX稳定后会尝试迁移
+在DriftFX稳定后会尝试迁移  
+目前要求系统支持像素缓冲区  
 
 如果出现 [（这其实是JDK的一个Bug）](https://bugs.openjdk.java.net/browse/JDK-8192647)  
 `[warning][gc,alloc] SavePNG: Retried waiting for GCLocker too often allocating &d words`  

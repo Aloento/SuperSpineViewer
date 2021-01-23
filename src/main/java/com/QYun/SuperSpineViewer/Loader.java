@@ -15,7 +15,6 @@ import java.nio.file.Files;
 
 public class Loader extends Main {
     public static byte spineVersion = 0;
-    private final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
     private final String[] startSuffixes = {"", "-pro", "-ess"};
     private final String[] dataSuffixes = {".json", ".skel"};
     private final String[] endSuffixes = {"", ".txt", ".bytes"};
@@ -102,7 +101,6 @@ public class Loader extends Main {
         spine.setSkelFile(handle);
 
         Platform.runLater(() -> {
-            config.samples = 16;
             LwjglApplicationConfiguration.disableAudio = true;
             Atlas.setText("Atlas : " + spine.getAtlasFile().name());
             Skel.setText("Skel : " + handle.name());
@@ -115,10 +113,10 @@ public class Loader extends Main {
         if (isLoad) {
             if (tmp != Universal.Range) {
                 gdxApp.exit();
-                gdxApp = new LwjglFXApplication(universal, spineRender, config);
+                gdxApp = new LwjglFXApplication(universal, spineRender);
             }
         } else {
-            gdxApp = new LwjglFXApplication(universal, spineRender, config);
+            gdxApp = new LwjglFXApplication(universal, spineRender);
             spineController.isLoaded();
         }
     }

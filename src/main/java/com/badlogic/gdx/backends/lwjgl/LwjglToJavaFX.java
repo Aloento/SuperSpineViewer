@@ -5,7 +5,10 @@ import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.ContextAttribs;
+import org.lwjgl.opengl.Drawable;
+import org.lwjgl.opengl.Pbuffer;
+import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.stream.RenderStream;
 import org.lwjgl.util.stream.StreamHandler;
 import org.lwjgl.util.stream.StreamUtil;
@@ -16,9 +19,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static org.lwjgl.opengl.GL11.glGetInteger;
-import static org.lwjgl.opengl.GL30.GL_MAX_SAMPLES;
 
 public class LwjglToJavaFX {
     static Drawable drawable;
@@ -31,7 +31,6 @@ public class LwjglToJavaFX {
     private RenderStream renderStream;
     private WritableImage renderImage;
     private int transfersToBuffer = 3;
-    private int samples = 1;
 
     LwjglToJavaFX(final ImageView target) {
         targetView = target;
@@ -49,12 +48,12 @@ public class LwjglToJavaFX {
 
         drawable = pbuffer;
 
-        final ContextCapabilities caps = GLContext.getCapabilities();
-
-        if (caps.OpenGL30 || (caps.GL_EXT_framebuffer_multisample && caps.GL_EXT_framebuffer_blit))
-            maxSamples = glGetInteger(GL_MAX_SAMPLES);
-        else
-            maxSamples = 1;
+        // final ContextCapabilities caps = GLContext.getCapabilities();
+        //
+        // if (caps.OpenGL30 || (caps.GL_EXT_framebuffer_multisample && caps.GL_EXT_framebuffer_blit))
+        //     maxSamples = glGetInteger(GL_MAX_SAMPLES);
+        // else
+        maxSamples = 1;
 
         // if (caps.GL_ARB_debug_output)
         //     glDebugMessageCallbackARB(new ARBDebugOutputCallback());
@@ -67,14 +66,6 @@ public class LwjglToJavaFX {
         this.snapshotRequest = new AtomicLong();
     }
 
-    public int getMaxSamples() {
-        return maxSamples;
-    }
-
-    public RenderStreamFactory getRenderStreamFactory() {
-        return renderStreamFactory;
-    }
-
     public void setRenderStreamFactory(final RenderStreamFactory renderStreamFactory) {
         pendingRunnables.offer(() -> {
             if (renderStream != null)
@@ -82,7 +73,7 @@ public class LwjglToJavaFX {
 
             LwjglToJavaFX.this.renderStreamFactory = renderStreamFactory;
 
-            renderStream = renderStreamFactory.create(Objects.requireNonNull(renderStream).getHandler(), samples, transfersToBuffer);
+            renderStream = renderStreamFactory.create(Objects.requireNonNull(renderStream).getHandler(), maxSamples, transfersToBuffer);
         });
     }
 
@@ -107,18 +98,10 @@ public class LwjglToJavaFX {
         resetStreams();
     }
 
-    public void setSamples(final int samples) {
-        if (this.samples == samples)
-            return;
-
-        this.samples = samples;
-        resetStreams();
-    }
-
     private void resetStreams() {
         pendingRunnables.offer(() -> {
             renderStream.destroy();
-            renderStream = renderStreamFactory.create(renderStream.getHandler(), samples, transfersToBuffer);
+            renderStream = renderStreamFactory.create(renderStream.getHandler(), maxSamples, transfersToBuffer);
             updateSnapshot();
         });
     }

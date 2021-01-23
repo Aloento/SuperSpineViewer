@@ -16,6 +16,10 @@ public class LwjglFXApplication extends LwjglApplication {
     final LwjglFXInput input;
     private boolean shouldRender;
 
+    public LwjglFXApplication (ApplicationListener listener, ImageView target) {
+        this(listener, target, new LwjglApplicationConfiguration());
+    }
+
     public LwjglFXApplication(ApplicationListener listener, ImageView target, LwjglApplicationConfiguration config) {
         this(listener, config, new LwjglFXGraphics(config, target));
     }
