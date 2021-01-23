@@ -42,7 +42,7 @@ public class RecordFX extends Main {
         Thread recodeThread = new Thread("RecordFX_Capturing") {
             @Override
             public void run() {
-                new File(outPath + "Sequence").mkdirs();
+                new File(outPath + fileName + "_Sequence").mkdirs();
                 System.out.println("录制开始");
                 do {
                     Platform.runLater(() -> {
@@ -85,12 +85,12 @@ public class RecordFX extends Main {
 
             if (Runtime.getRuntime().exec(new String[]{
                     "ffmpeg", "-r", String.valueOf(FPS),
-                    "-i", outPath + "Sequence" + File.separator + fileName + "_%d.png",
+                    "-i", outPath + fileName + "_Sequence" + File.separator + fileName + "_%d.png",
                     "-c:v", "png", "-pix_fmt", "rgba",
                     "-filter:v", "\"setpts=" + quality + "*PTS\"",
                     outPath + fileName + ".mov"
             }, new String[]{System.getProperty("user.dir")}).waitFor() == 0) {
-                File sequence = new File(outPath + "Sequence" + File.separator);
+                File sequence = new File(outPath + fileName + "_Sequence" + File.separator);
                 for (String file : Objects.requireNonNull(sequence.list()))
                     new File(sequence, file).delete();
                 sequence.delete();
@@ -145,7 +145,7 @@ public class RecordFX extends Main {
         public void run() {
             try {
                 ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png",
-                        new File((outPath + "Sequence" + File.separator + fileName) + "_" + index + ".png"));
+                        new File((outPath + fileName + "_Sequence" + File.separator + fileName) + "_" + index + ".png"));
                 image = null;
                 System.out.println("保存：" + index);
             } catch (IOException e) {
