@@ -52,6 +52,7 @@ public class Launcher extends Application {
 
         primaryStage.getIcons().add(new Image("UI/SuperSpineViewer.png"));
         primaryStage.setWidth(1280);
+        primaryStage.setHeight(800);
         primaryStage.setTitle("QYun SoarTeam");
         primaryStage.setScene(scene);
         primaryStage.show();

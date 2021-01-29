@@ -332,8 +332,16 @@ public class Spine extends Main implements Initializable {
                         )
                 );
                 viewerLine.play();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+                loadPane = null;
+                purpleSpinner = null;
+                blueSpinner = null;
+                cyanSpinner = null;
+                greenSpinner = null;
+                yellowSpinner = null;
+                orangeSpinner = null;
+                redSpinner = null;
+            } catch (InterruptedException ignored) {
             }
         }).start();
     }
