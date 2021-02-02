@@ -131,7 +131,7 @@ public class SkeletonClipping {
                         clippedTrianglesItems[s + 2] = (short) (index + ii + 1);
                         s += 3;
                     }
-                    index += (short) clipOutputCount + (short) 1;
+                    index += (short) (clipOutputCount + 1);
                 } else {
                     float[] clippedVerticesItems = clippedVertices.setSize(s + 3 * vertexSize);
                     clippedVerticesItems[s] = x1;
