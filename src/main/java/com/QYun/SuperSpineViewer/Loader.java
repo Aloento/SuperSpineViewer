@@ -118,6 +118,7 @@ public class Loader extends Main {
         } else {
             gdxApp = new LwjglFXApplication(universal, spineRender);
             spineController.isLoaded();
+            spineController = null;
         }
     }
 }

@@ -173,7 +173,7 @@ public class LwjglFXGraphics extends LwjglGraphics {
 
     private void createDisplayPixelFormat() {
         bufferFormat = new BufferFormat(config.r, config.g, config.b, config.a, config.depth, config.stencil, config.samples, false);
-        this.toFX = new LwjglToJavaFX(target);
+        this.toFX = new LwjglToJavaFX();
     }
 
     @Override

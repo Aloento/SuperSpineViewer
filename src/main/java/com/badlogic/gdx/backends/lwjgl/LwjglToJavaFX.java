@@ -2,7 +2,6 @@ package com.badlogic.gdx.backends.lwjgl;
 
 import com.QYun.SuperSpineViewer.Main;
 import javafx.application.Platform;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
@@ -20,20 +19,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class LwjglToJavaFX {
+public class LwjglToJavaFX extends Main {
     static Drawable drawable;
     private final ConcurrentLinkedQueue<Runnable> pendingRunnables;
     private final Pbuffer pbuffer;
     private final int maxSamples;
     private final AtomicLong snapshotRequest;
-    private final ImageView targetView;
     private RenderStreamFactory renderStreamFactory;
     private RenderStream renderStream;
     private WritableImage renderImage;
     private int transfersToBuffer = 3;
 
-    LwjglToJavaFX(final ImageView target) {
-        targetView = target;
+    LwjglToJavaFX() {
         this.pendingRunnables = new ConcurrentLinkedQueue<>();
 
         if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) == 0)
@@ -47,22 +44,10 @@ public class LwjglToJavaFX {
         }
 
         drawable = pbuffer;
-
-        // final ContextCapabilities caps = GLContext.getCapabilities();
-        //
-        // if (caps.OpenGL30 || (caps.GL_EXT_framebuffer_multisample && caps.GL_EXT_framebuffer_blit))
-        //     maxSamples = glGetInteger(GL_MAX_SAMPLES);
-        // else
         maxSamples = 1;
-
-        // if (caps.GL_ARB_debug_output)
-        //     glDebugMessageCallbackARB(new ARBDebugOutputCallback());
-        // else if (caps.GL_AMD_debug_output)
-        //     glDebugMessageCallbackAMD(new AMDDebugOutputCallback());
 
         this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
         this.renderStream = renderStreamFactory.create(getReadHandler(), 1, transfersToBuffer);
-
         this.snapshotRequest = new AtomicLong();
     }
 
@@ -125,11 +110,11 @@ public class LwjglToJavaFX {
         return new StreamHandler() {
 
             public int getWidth() {
-                return Math.max(Main.width, 0);
+                return Math.max(width, 0);
             }
 
             public int getHeight() {
-                return Math.max(Main.height, 0);
+                return Math.max(height, 0);
             }
 
             public void process(final int width, final int height, final ByteBuffer data, final int stride, final Semaphore signal) {
@@ -137,16 +122,21 @@ public class LwjglToJavaFX {
                 Platform.runLater(() -> {
                     try {
                         // If we're quitting, discard update
-                        if (!targetView.isVisible())
+                        if (!spineRender.isVisible())
                             return;
                         // Detect resize and recreate the image
                         if (renderImage == null || (int) renderImage.getWidth() != width || (int) renderImage.getHeight() != height) {
                             renderImage = new WritableImage(width, height);
-                            targetView.setImage(renderImage);
+                            spineRender.setImage(renderImage);
                         }
 
                         // Upload the image to JavaFX
                         renderImage.getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
+                        if (recording) {
+                            WritableImage save = new WritableImage(width, height);
+                            save.getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
+                            recordFX.recorderFX(save);
+                        }
                     } finally {
                         // Notify the render thread that we're done processing
                         signal.release();

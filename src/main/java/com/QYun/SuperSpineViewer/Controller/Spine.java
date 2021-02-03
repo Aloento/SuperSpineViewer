@@ -292,6 +292,7 @@ public class Spine extends Main implements Initializable {
             spine.setAnimate(null);
             spine.setSpeed(1);
             spine.setIsPlay(false);
+            System.gc();
         });
 
         C_Skins.setOnAction(event -> spine.setSkin(C_Skins.getValue()));

@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 public class Exporter extends Main implements Initializable {
     private final SuperSpine spine = new SuperSpine();
-    private final RecordFX recordFX = new RecordFX();
+    private final RecordFX record = new RecordFX();
 
     @FXML
     private Label L_Version;
@@ -41,7 +41,7 @@ public class Exporter extends Main implements Initializable {
             spine.setIsPlay(false);
             spine.setIsLoop(false);
             spine.setSpeed(quality);
-            recordFX.startRecording(spine.getProjectName() + "_" + spine.getAnimate());
+            record.startRecording(spine.getProjectName() + "_" + spine.getAnimate());
             spine.setIsPlay(true);
         }
     }
@@ -92,17 +92,17 @@ public class Exporter extends Main implements Initializable {
 
     @FXML
     void RB_N() {
-        perform = 5;
+        perform = 6;
     }
 
     @FXML
     void RB_H() {
-        perform = 10;
+        perform = 12;
     }
 
     @FXML
     void RB_L() {
-        perform = 2;
+        perform = 3;
     }
 
     @FXML
@@ -125,6 +125,7 @@ public class Exporter extends Main implements Initializable {
         FPS = L_FPS;
         Skel = L_Skel;
         Atlas = L_Atlas;
+        recordFX = record;
         progressBar = P_Export;
         spine.spineVersionProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
 
