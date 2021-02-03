@@ -1,8 +1,11 @@
 # SuperSpineViewer
 
+[**For English User**](https://github.com/Aloento/SuperSpineViewer/blob/master/README-Eng.md)
+
 一个拿来加载与导出Spine动画的工具  
 至少需要Java15才能运行  
 或使用打包好的exe程序  
+导出MOV需要FFmpeg  
 当前版本：1.0.2
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
@@ -29,7 +32,7 @@ Spine Universal LibGDX Runtimes
 
 目前渲染实现会占用大量不必要的带宽  
 在DriftFX稳定后会尝试迁移  
-目前要求系统支持像素缓冲区  
+目前要求系统支持像素缓冲区
 
 如果出现 [（这其实是JDK的一个Bug）](https://bugs.openjdk.java.net/browse/JDK-8192647)  
 `[warning][gc,alloc] SavePNG: Retried waiting for GCLocker too often allocating &d words`  
@@ -38,7 +41,7 @@ Spine Universal LibGDX Runtimes
 并且FFmpeg处理时会卡住  
 这时只能重启程序解决  
 请调整JVM参数以允许更多内存分配  
-或者降低分辨率或质量与提高性能  
+或者降低分辨率或质量与提高性能
 
 ### 性能设置参考
 
@@ -54,9 +57,9 @@ Spine Universal LibGDX Runtimes
 
 **CPU**
 
-    高性能 = High
-    普通 = Normal
-    低压 = Low
+    高性能 = High (12)
+    普通 = Normal (6)
+    低压 = Low （3）
 
 ### 序列使用参考
 
@@ -85,6 +88,7 @@ Spine Universal LibGDX Runtimes
 * 调整性能质量
 
 ### 支持的版本
+
 * Spine 2.x ×
 * Spine 3.1 √
 * Spine 3.2 √
