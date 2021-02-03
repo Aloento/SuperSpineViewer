@@ -1,15 +1,15 @@
 package com.QYun.SuperSpineViewer;
 
 import com.QYun.Spine.SuperSpine;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-import javax.imageio.ImageIO;
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -134,7 +134,7 @@ public class RecordFX extends Main {
 
     private class savePNG implements Runnable {
         private final short index;
-        private Image image;
+        private final Image image;
 
         private savePNG(Image image, short index) {
             this.image = image;
@@ -143,15 +143,21 @@ public class RecordFX extends Main {
 
         @Override
         public void run() {
-            try {
-                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png",
-                        new File((outPath + fileName + "_Sequence" + File.separator + fileName) + "_" + index + ".png"));
-                image = null;
-                System.out.println("保存：" + index);
-            } catch (IOException e) {
-                System.out.println("保存PNG文件失败");
-                e.printStackTrace();
+            Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+            for (int h = 0; h < height; h++) {
+                for (int w = 0; w < width; w++) {
+                    Color c = image.getPixelReader().getColor(w, h);
+                    pixmap.drawPixel(w, h,
+                            ((int) (c.getRed() * 255) << 24) | ((int) (c.getGreen() * 255) << 16) |
+                                    ((int) (c.getBlue() * 255) << 8) | (int) (c.getOpacity() * 255));
+                }
             }
+
+            PixmapIO.writePNG(Gdx.files.absolute(
+                    (outPath + fileName + "_Sequence" + File.separator + fileName) + "_" + index + ".png"),
+                    pixmap, 9, false);
+
+            System.out.println("保存：" + index);
         }
     }
 }
