@@ -92,6 +92,9 @@ public class RecordFX extends Main {
                 while (savePool.getActiveCount() != 0)
                     Thread.onSpinWait();
 
+                savePool.setCorePoolSize(0);
+                System.gc();
+
                 if (!sequence)
                     ffmpegFX();
 
@@ -101,9 +104,6 @@ public class RecordFX extends Main {
                     progressBar.setProgress(1);
                     System.out.println("导出结束");
                 });
-
-                savePool.setCorePoolSize(0);
-                System.gc();
             }
         };
         encode.setDaemon(true);
