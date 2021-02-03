@@ -18,8 +18,8 @@ public class Main {
     public static int width;
     public static int height;
     public static byte perform = 6;
+    public static byte sequence = 0;
     public static float quality = 0.5f;
-    public static boolean sequence = false;
     public static boolean isLoad = false;
     public static boolean preA = true;
     public static String outPath = null;

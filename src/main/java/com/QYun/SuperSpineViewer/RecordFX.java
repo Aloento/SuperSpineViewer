@@ -95,7 +95,7 @@ public class RecordFX extends Main {
                 savePool.setCorePoolSize(0);
                 System.gc();
 
-                if (!sequence)
+                if (sequence == 0)
                     ffmpegFX();
 
                 Platform.runLater(() -> {
@@ -133,7 +133,7 @@ public class RecordFX extends Main {
 
             PixmapIO.writePNG(Gdx.files.absolute(
                     (outPath + fileName + "_Sequence" + File.separator + fileName) + "_" + index + ".png"),
-                    pixmap, 9, true);
+                    pixmap, sequence, true);
 
             System.out.println("保存：" + index);
             index = 0;

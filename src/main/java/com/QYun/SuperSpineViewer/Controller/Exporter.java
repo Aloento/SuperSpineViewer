@@ -107,12 +107,12 @@ public class Exporter extends Main implements Initializable {
 
     @FXML
     void RB_MOV() {
-        sequence = false;
+        sequence = 0;
     }
 
     @FXML
     void RB_Sequence() {
-        sequence = true;
+        sequence = 9;
     }
 
     @FXML

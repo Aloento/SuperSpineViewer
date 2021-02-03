@@ -133,9 +133,9 @@ public class LwjglToJavaFX extends Main {
                         // Upload the image to JavaFX
                         renderImage.getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
                         if (recording) {
-                            WritableImage save = new WritableImage(width, height);
-                            save.getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
-                            recordFX.recorderFX(save);
+                            WritableImage tmp = new WritableImage(width, height);
+                            tmp.getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
+                            recordFX.recorderFX(tmp);
                         }
                     } finally {
                         // Notify the render thread that we're done processing
