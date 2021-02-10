@@ -123,8 +123,8 @@ public class Spine extends Main implements Initializable {
         JFXSlider S_Speed = new JFXSlider();
         S_Speed.setSnapToTicks(true);
         S_Speed.setShowTickLabels(true);
-        S_Speed.setMin(0.5);
-        S_Speed.setMax(2.5);
+        S_Speed.setMin(0.25);
+        S_Speed.setMax(2.0);
         S_Speed.setMajorTickUnit(0.25);
         S_Speed.setBlockIncrement(0.25);
         S_Speed.setValue(1);
