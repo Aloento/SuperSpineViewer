@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
-public class TransformConstraint {
+public class TransformConstraint implements Updatable {
     final TransformConstraintData data;
     final Array<Bone> bones;
     final Vector2 temp = new Vector2();

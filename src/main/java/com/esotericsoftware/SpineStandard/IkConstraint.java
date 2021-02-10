@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import static com.badlogic.gdx.math.MathUtils.radDeg;
 import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
 
-public class IkConstraint {
+public class IkConstraint implements Updatable {
     final IkConstraintData data;
     final Array<Bone> bones;
     Bone target;
