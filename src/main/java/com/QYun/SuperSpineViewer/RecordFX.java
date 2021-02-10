@@ -135,9 +135,9 @@ public class RecordFX extends Main {
                     (outPath + fileName + "_Sequence" + File.separator + fileName) + "_" + index + ".png"),
                     pixmap, sequence, true);
 
-            System.out.println("保存：" + index);
             index = 0;
             image = null;
+            System.out.println("保存：" + index);
         }
     }
 }
