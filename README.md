@@ -35,7 +35,7 @@ Spine Universal LibGDX Runtimes
 目前要求系统支持像素缓冲区
 
 如果出现 [（这其实是JDK的一个Bug）](https://bugs.openjdk.java.net/browse/JDK-8192647)  
-`[warning][gc,alloc] SavePNG: Retried waiting for GCLocker too often allocating &d words`  
+`[warning][gc,alloc] SavePNG: Retried waiting for GCLocker too often allocating %d words`  
 则说明内存回收时出现问题  
 这种情况下一定会丢帧，卡顿  
 并且FFmpeg处理时会卡住  

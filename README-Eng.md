@@ -32,7 +32,7 @@ Will try to migrate when DriftFX is stable
 Currently requires system support for Pixel Buffers
 
 If this appears [(This is actually a bug in the JDK)](https://bugs.openjdk.java.net/browse/JDK-8192647)  
-`[warning][gc,alloc] SavePNG: Retried waiting for GCLocker too often allocating &d words`  
+`[warning][gc,alloc] SavePNG: Retried waiting for GCLocker too often allocating %d words`  
 Then it means that there is a problem during **GC**  
 In this case, frames will be **lost** and **lagged**  
 and FFmpeg will get stuck when processing  
