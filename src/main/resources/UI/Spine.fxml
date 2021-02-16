@@ -3,19 +3,16 @@
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<StackPane fx:id="Spine" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
            fx:controller="com.QYun.SuperSpineViewer.Controller.Spine">
     <BorderPane>
-
         <left>
             <StackPane fx:id="spinePane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="697.0" prefWidth="360">
             </StackPane>
         </left>
-
         <center>
-            <StackPane>
+            <StackPane fx:id="Viewer">
                 <ImageView fx:id="SpineRender" opacity="0.0" scaleY="-1.0"/>
-
                 <StackPane fx:id="loadPane">
                     <JFXSpinner fx:id="purple" startingAngle="-40"
                                 styleClass="materialDesign-purple, first-spinner"/>
@@ -32,9 +29,7 @@
                     <JFXSpinner fx:id="red" startingAngle="-240"
                                 styleClass="materialDesign-red, seventh-spinner"/>
                 </StackPane>
-
             </StackPane>
         </center>
-
     </BorderPane>
 </StackPane>

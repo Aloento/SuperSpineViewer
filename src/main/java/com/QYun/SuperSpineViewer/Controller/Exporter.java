@@ -1,6 +1,7 @@
 package com.QYun.SuperSpineViewer.Controller;
 
 import com.QYun.Spine.SuperSpine;
+import com.QYun.SuperSpineViewer.GoJson;
 import com.QYun.SuperSpineViewer.Loader;
 import com.QYun.SuperSpineViewer.Main;
 import com.QYun.SuperSpineViewer.RecordFX;
@@ -113,6 +114,11 @@ public class Exporter extends Main implements Initializable {
     @FXML
     void RB_Sequence() {
         sequence = 9;
+    }
+
+    @FXML
+    void RB_Json() {
+        new GoJson();
     }
 
     @FXML

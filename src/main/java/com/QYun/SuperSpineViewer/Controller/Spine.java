@@ -22,10 +22,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
@@ -39,7 +36,7 @@ import static javafx.animation.Interpolator.EASE_BOTH;
 
 public class Spine extends Main implements Initializable {
     @FXML
-    private StackPane Spine;
+    private StackPane Viewer;
 
     @FXML
     private StackPane spinePane;
@@ -339,8 +336,8 @@ public class Spine extends Main implements Initializable {
                 Thread.sleep(500);
                 Platform.runLater(() -> {
                     loadPane.getChildren().removeAll(purple, blue, cyan, green, yellow, orange, red);
-                    Spine.getChildren().remove(loadPane);
-                    Spine = null;
+                    Viewer.getChildren().remove(loadPane);
+                    Viewer = null;
                     loadPane = null;
                     purple = null;
                     blue = null;

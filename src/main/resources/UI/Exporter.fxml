@@ -28,12 +28,12 @@
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
-                <Label fx:id="L_Version" layoutX="18.0" layoutY="37.0" styleClass="side-label" text="Version : "/>
+                <Label fx:id="L_Version" styleClass="side-label" text="Version : "/>
                 <Label fx:id="L_Skel" styleClass="side-label" text="Skel : "/>
                 <Label fx:id="L_Atlas" styleClass="side-label" text="Atlas : "/>
-                <Label fx:id="L_FPS" layoutX="18.0" layoutY="60.0" styleClass="side-label" text="FPS : "/>
+                <Label fx:id="L_FPS" styleClass="side-label" text="FPS : "/>
             </VBox>
-            <VBox layoutX="26.0" layoutY="79.0" spacing="16.0">
+            <VBox spacing="16.0">
                 <padding>
                     <Insets left="8.0"/>
                 </padding>
@@ -43,7 +43,7 @@
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
-                <Label layoutX="18.0" layoutY="10.0" text="Quality : ">
+                <Label text="Quality : ">
                     <styleClass>
                         <String fx:value="side-label"/>
                         <String fx:value="BOLD"/>
@@ -78,7 +78,7 @@
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
-                <HBox layoutX="18.0" layoutY="72.0" spacing="26.0">
+                <HBox spacing="26.0">
                     <JFXRadioButton onAction="#RB_N" selected="true" text="Normal">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
@@ -94,11 +94,14 @@
                             <String fx:value="custom-jfx-radio-button-red"/>
                         </styleClass>
                     </JFXRadioButton>
-                    <JFXRadioButton layoutX="97.0" layoutY="10.0" onAction="#RB_L" text="Low" toggleGroup="$Perform">
+                    <JFXRadioButton onAction="#RB_L" text="Low" toggleGroup="$Perform">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
                             <String fx:value="custom-jfx-radio-button-green"/>
                         </styleClass>
+                        <HBox.margin>
+                            <Insets left="12.0"/>
+                        </HBox.margin>
                     </JFXRadioButton>
                 </HBox>
             </VBox>
@@ -112,7 +115,7 @@
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
-                <HBox spacing="40.0">
+                <HBox spacing="38.0">
                     <JFXRadioButton onAction="#RB_MOV" selected="true" text="MOV">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
@@ -125,12 +128,21 @@
                     <JFXRadioButton onAction="#RB_Sequence" text="Sequence" toggleGroup="$Format">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
+                            <String fx:value="custom-jfx-radio-button-red"/>
+                        </styleClass>
+                    </JFXRadioButton>
+                    <JFXRadioButton onAction="#RB_Json" text="Json" toggleGroup="$Format">
+                        <styleClass>
+                            <String fx:value="custom-jfx-radio-button"/>
                             <String fx:value="custom-jfx-radio-button-green"/>
                         </styleClass>
+                        <HBox.margin>
+                            <Insets left="-28.0"/>
+                        </HBox.margin>
                     </JFXRadioButton>
                 </HBox>
             </VBox>
-            <VBox layoutX="26.0" layoutY="195.0" spacing="16.0">
+            <VBox spacing="16.0">
                 <padding>
                     <Insets left="8.0"/>
                 </padding>
@@ -151,7 +163,7 @@
                     </JFXButton>
                     <JFXTextField fx:id="T_Path"/>
                 </HBox>
-                <HBox layoutX="18.0" layoutY="41.0" maxWidth="250.0">
+                <HBox maxWidth="250.0">
                     <padding>
                         <Insets right="10.0"/>
                     </padding>
