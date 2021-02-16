@@ -39,6 +39,9 @@ import static javafx.animation.Interpolator.EASE_BOTH;
 
 public class Spine extends Main implements Initializable {
     @FXML
+    private StackPane Spine;
+
+    @FXML
     private StackPane spinePane;
 
     @FXML
@@ -48,25 +51,25 @@ public class Spine extends Main implements Initializable {
     private StackPane loadPane;
 
     @FXML
-    private JFXSpinner purpleSpinner;
+    private JFXSpinner purple;
 
     @FXML
-    private JFXSpinner blueSpinner;
+    private JFXSpinner blue;
 
     @FXML
-    private JFXSpinner cyanSpinner;
+    private JFXSpinner cyan;
 
     @FXML
-    private JFXSpinner greenSpinner;
+    private JFXSpinner green;
 
     @FXML
-    private JFXSpinner yellowSpinner;
+    private JFXSpinner yellow;
 
     @FXML
-    private JFXSpinner orangeSpinner;
+    private JFXSpinner orange;
 
     @FXML
-    private JFXSpinner redSpinner;
+    private JFXSpinner red;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -304,19 +307,19 @@ public class Spine extends Main implements Initializable {
         new Thread(() -> {
             isLoad = true;
             try {
-                setProgressAnimate(purpleSpinner);
+                setProgressAnimate(purple);
                 Thread.sleep(100);
-                setProgressAnimate(blueSpinner);
+                setProgressAnimate(blue);
                 Thread.sleep(100);
-                setProgressAnimate(cyanSpinner);
+                setProgressAnimate(cyan);
                 Thread.sleep(100);
-                setProgressAnimate(greenSpinner);
+                setProgressAnimate(green);
                 Thread.sleep(100);
-                setProgressAnimate(yellowSpinner);
+                setProgressAnimate(yellow);
                 Thread.sleep(100);
-                setProgressAnimate(orangeSpinner);
+                setProgressAnimate(orange);
                 Thread.sleep(100);
-                setProgressAnimate(redSpinner);
+                setProgressAnimate(red);
                 Thread.sleep(1000);
                 Timeline paneLine = new Timeline(
                         new KeyFrame(
@@ -333,15 +336,20 @@ public class Spine extends Main implements Initializable {
                         )
                 );
                 viewerLine.play();
-
-                loadPane = null;
-                purpleSpinner = null;
-                blueSpinner = null;
-                cyanSpinner = null;
-                greenSpinner = null;
-                yellowSpinner = null;
-                orangeSpinner = null;
-                redSpinner = null;
+                Thread.sleep(500);
+                Platform.runLater(() -> {
+                    loadPane.getChildren().removeAll(purple, blue, cyan, green, yellow, orange, red);
+                    Spine.getChildren().remove(loadPane);
+                    Spine = null;
+                    loadPane = null;
+                    purple = null;
+                    blue = null;
+                    cyan = null;
+                    green = null;
+                    yellow = null;
+                    orange = null;
+                    red = null;
+                });
             } catch (InterruptedException ignored) {
             }
         }).start();
