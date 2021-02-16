@@ -24,19 +24,14 @@ public class Legacy extends SuperSpine {
     private AnimationState state;
     private ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
         if (skeleton != null) {
-            if (newValue == null)
-                skeleton.setSkin((Skin) null);
-            else skeleton.setSkin(newValue);
+            skeleton.setSkin(newValue);
             skeleton.setSlotsToSetupPose();
         }
     };
     private ChangeListener<String> animateListener = (observable, oldValue, newValue) -> {
         if (state != null) {
-            if (newValue != null) {
-                state.setAnimation(0, newValue, isLoop.get());
-                isPlay.set(true);
-            } else
-                isPlay.set(false);
+            state.setAnimation(0, newValue, isLoop.get());
+            isPlay.set(true);
         }
     };
     private ChangeListener<Boolean> isLoopListener = (observable, oldValue, newValue) -> {
