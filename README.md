@@ -6,7 +6,7 @@
 至少需要Java15才能运行  
 或使用打包好的exe程序  
 导出MOV需要FFmpeg  
-当前版本：1.0.2
+当前版本：1.0.4
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
