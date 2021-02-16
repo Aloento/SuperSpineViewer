@@ -5,7 +5,6 @@ import com.QYun.Spine.Universal;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
-import javafx.application.Platform;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -100,11 +99,9 @@ public class Loader extends Main {
         spine.setAtlasFile(atlasFile(handle));
         spine.setSkelFile(handle);
 
-        Platform.runLater(() -> {
-            LwjglApplicationConfiguration.disableAudio = true;
-            Atlas.setText("Atlas : " + spine.getAtlasFile().name());
-            Skel.setText("Skel : " + handle.name());
-        });
+        LwjglApplicationConfiguration.disableAudio = true;
+        Atlas.setText("Atlas : " + spine.getAtlasFile().name());
+        Skel.setText("Skel : " + handle.name());
 
         spine.setIsBinary(!handle.extension().equalsIgnoreCase("json") && !handle.extension().equalsIgnoreCase("txt"));
         byte tmp = Universal.Range;
@@ -116,9 +113,12 @@ public class Loader extends Main {
                 gdxApp = new LwjglFXApplication(universal, spineRender);
             }
         } else {
-            gdxApp = new LwjglFXApplication(universal, spineRender);
-            spineController.isLoaded();
-            spineController = null;
+            new Thread(() -> {
+                if (spineController.isLoaded()) {
+                    gdxApp = new LwjglFXApplication(universal, spineRender);
+                    spineController = null;
+                }
+            }, "Loading").start();
         }
     }
 }

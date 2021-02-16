@@ -22,9 +22,9 @@ public class Main {
     public static float quality = 0.5f;
     public static boolean isLoad = false;
     public static boolean preA = true;
+    public static boolean recording = false;
     public static String outPath = null;
     public static String openPath = null;
-    public static volatile boolean recording = false;
 
     public static void main(String[] args) {
         if (args.length > 0) {

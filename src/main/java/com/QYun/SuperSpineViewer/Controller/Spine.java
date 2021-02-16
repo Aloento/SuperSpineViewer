@@ -36,13 +36,10 @@ import static javafx.animation.Interpolator.EASE_BOTH;
 
 public class Spine extends Main implements Initializable {
     @FXML
-    private StackPane Viewer;
+    private BorderPane Viewer;
 
     @FXML
     private StackPane spinePane;
-
-    @FXML
-    private ImageView SpineRender;
 
     @FXML
     private StackPane loadPane;
@@ -196,16 +193,15 @@ public class Spine extends Main implements Initializable {
         JFXDepthManager.setDepth(spinePane, 1);
         spinePane.getChildren().addAll(content, playButton);
 
-        spineRender = SpineRender;
-        Platform.runLater(() -> {
-            SpineRender.fitHeightProperty().bind(SpineRender.getScene().heightProperty().add(-103));
-            SpineRender.fitWidthProperty().bind(SpineRender.getScene().widthProperty().add(-368));
-        });
-        SpineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> {
+        spineRender = new ImageView();
+        spineRender.setScaleY(-1);
+        spineRender.setOpacity(0);
+
+        spineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> {
             T_Width.setPromptText(String.valueOf(newValue.intValue()));
             width = newValue.intValue();
         });
-        SpineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> {
+        spineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> {
             T_Height.setPromptText(String.valueOf(newValue.intValue()));
             height = newValue.intValue();
         });
@@ -300,56 +296,57 @@ public class Spine extends Main implements Initializable {
         C_Animate.setOnAction(event -> spine.setAnimate(C_Animate.getValue()));
     }
 
-    public void isLoaded() {
-        new Thread(() -> {
-            isLoad = true;
-            try {
-                setProgressAnimate(purple);
-                Thread.sleep(100);
-                setProgressAnimate(blue);
-                Thread.sleep(100);
-                setProgressAnimate(cyan);
-                Thread.sleep(100);
-                setProgressAnimate(green);
-                Thread.sleep(100);
-                setProgressAnimate(yellow);
-                Thread.sleep(100);
-                setProgressAnimate(orange);
-                Thread.sleep(100);
-                setProgressAnimate(red);
-                Thread.sleep(1000);
-                Timeline paneLine = new Timeline(
-                        new KeyFrame(
-                                Duration.seconds(1),
-                                new KeyValue(loadPane.opacityProperty(), 0)
-                        )
-                );
-                paneLine.play();
-                Thread.sleep(500);
+    public boolean isLoaded() {
+        try {
+            setProgressAnimate(purple);
+            Thread.sleep(100);
+            setProgressAnimate(blue);
+            Thread.sleep(100);
+            setProgressAnimate(cyan);
+            Thread.sleep(100);
+            setProgressAnimate(green);
+            Thread.sleep(100);
+            setProgressAnimate(yellow);
+            Thread.sleep(100);
+            setProgressAnimate(orange);
+            Thread.sleep(100);
+            setProgressAnimate(red);
+            Thread.sleep(1000);
+            Timeline paneLine = new Timeline(
+                    new KeyFrame(
+                            Duration.seconds(1),
+                            new KeyValue(loadPane.opacityProperty(), 0)
+                    )
+            );
+            paneLine.play();
+            Thread.sleep(700);
+            Platform.runLater(() -> {
+                loadPane.getChildren().removeAll(purple, blue, cyan, green, yellow, orange, red);
+                Viewer.getChildren().remove(loadPane);
+                Viewer.setCenter(spineRender);
+                spineRender.fitHeightProperty().bind(spineRender.getScene().heightProperty().add(-103));
+                spineRender.fitWidthProperty().bind(spineRender.getScene().widthProperty().add(-368));
+                Viewer = null;
+                loadPane = null;
+                purple = null;
+                blue = null;
+                cyan = null;
+                green = null;
+                yellow = null;
+                orange = null;
+                red = null;
                 Timeline viewerLine = new Timeline(
                         new KeyFrame(
                                 Duration.seconds(1),
-                                new KeyValue(SpineRender.opacityProperty(), 1)
+                                new KeyValue(spineRender.opacityProperty(), 1)
                         )
                 );
                 viewerLine.play();
-                Thread.sleep(500);
-                Platform.runLater(() -> {
-                    loadPane.getChildren().removeAll(purple, blue, cyan, green, yellow, orange, red);
-                    Viewer.getChildren().remove(loadPane);
-                    Viewer = null;
-                    loadPane = null;
-                    purple = null;
-                    blue = null;
-                    cyan = null;
-                    green = null;
-                    yellow = null;
-                    orange = null;
-                    red = null;
-                });
-            } catch (InterruptedException ignored) {
-            }
-        }).start();
+            });
+            return isLoad = true;
+        } catch (InterruptedException ignored) {
+            return false;
+        }
     }
 
     private void setProgressAnimate(JFXSpinner spinner) {
