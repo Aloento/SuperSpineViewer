@@ -111,7 +111,7 @@ public class RecordFX extends Main {
     }
 
     private class savePNG implements Runnable {
-        private short index;
+        private final short index;
         private WritableImage image;
 
         private savePNG(WritableImage image, short index) {
@@ -135,7 +135,6 @@ public class RecordFX extends Main {
                     (outPath + fileName + "_Sequence" + File.separator + fileName) + "_" + index + ".png"),
                     pixmap, sequence, true);
 
-            index = 0;
             image = null;
             System.out.println("保存：" + index);
         }
