@@ -195,7 +195,6 @@ public class Spine extends Main implements Initializable {
 
         spineRender = new ImageView();
         spineRender.setScaleY(-1);
-        spineRender.setOpacity(0);
 
         spineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> {
             T_Width.setPromptText(String.valueOf(newValue.intValue()));
@@ -319,7 +318,7 @@ public class Spine extends Main implements Initializable {
                     )
             );
             paneLine.play();
-            Thread.sleep(700);
+            Thread.sleep(800);
             Platform.runLater(() -> {
                 loadPane.getChildren().removeAll(purple, blue, cyan, green, yellow, orange, red);
                 Viewer.getChildren().remove(loadPane);
@@ -335,13 +334,6 @@ public class Spine extends Main implements Initializable {
                 yellow = null;
                 orange = null;
                 red = null;
-                Timeline viewerLine = new Timeline(
-                        new KeyFrame(
-                                Duration.seconds(1),
-                                new KeyValue(spineRender.opacityProperty(), 1)
-                        )
-                );
-                viewerLine.play();
             });
             return isLoad = true;
         } catch (InterruptedException ignored) {

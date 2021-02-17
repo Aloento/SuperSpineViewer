@@ -24,14 +24,21 @@ public class Standard extends SuperSpine {
     private AnimationState state;
     private ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
         if (skeleton != null) {
-            skeleton.setSkin(newValue);
+            if (newValue == null)
+                skeleton.setSkin((Skin) null);
+            else skeleton.setSkin(newValue);
             skeleton.setSlotsToSetupPose();
         }
     };
     private ChangeListener<String> animateListener = (observable, oldValue, newValue) -> {
         if (state != null) {
-            state.setAnimation(0, newValue, isLoop.get());
-            isPlay.set(true);
+            if (newValue != null) {
+                state.setAnimation(0, newValue, isLoop.get());
+                isPlay.set(true);
+            } else {
+                state.setEmptyAnimation(0, 0);
+                isPlay.set(false);
+            }
         }
     };
     private ChangeListener<Boolean> isLoopListener = (observable, oldValue, newValue) -> {
