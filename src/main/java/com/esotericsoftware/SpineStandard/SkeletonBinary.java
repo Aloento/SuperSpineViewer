@@ -1455,7 +1455,7 @@ public class SkeletonBinary {
             }
             byteCount--;
             if (chars.length < byteCount) chars = new char[byteCount];
-            char[] chars = this.chars;
+            // char[] chars = this.chars;
             int charCount = 0;
             for (int i = 0; i < byteCount; ) {
                 int b = read();
