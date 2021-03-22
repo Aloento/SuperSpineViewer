@@ -1098,51 +1098,51 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixBlend blend,
                           MixDirection direction) {
-            // Slot slot = skeleton.slots.get(slotIndex);
-            // if (!slot.bone.active && Loader.spineVersion == 38) return;
-            // float[] frames = this.frames;
-            // if (time < frames[0]) {
-            //     switch (blend) {
-            //         case setup -> {
-            //             slot.color.set(slot.data.color);
-            //             return;
-            //         }
-            //         case first -> {
-            //             Color color = slot.color, setup = slot.data.color;
-            //             color.add((setup.r - color.r) * alpha, (setup.g - color.g) * alpha, (setup.b - color.b) * alpha,
-            //                     (setup.a - color.a) * alpha);
-            //         }
-            //     }
-            //     return;
-            // }
-            // float r, g, b, a;
-            // if (time >= frames[frames.length - ENTRIES]) {
-            //     int i = frames.length;
-            //     r = frames[i + PREV_R];
-            //     g = frames[i + PREV_G];
-            //     b = frames[i + PREV_B];
-            //     a = frames[i + PREV_A];
-            // } else {
-            //     int frame = binarySearch(frames, time, ENTRIES);
-            //     r = frames[frame + PREV_R];
-            //     g = frames[frame + PREV_G];
-            //     b = frames[frame + PREV_B];
-            //     a = frames[frame + PREV_A];
-            //     float frameTime = frames[frame];
-            //     float percent = getCurvePercent(frame / ENTRIES - 1,
-            //             1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-            //     r += (frames[frame + R] - r) * percent;
-            //     g += (frames[frame + G] - g) * percent;
-            //     b += (frames[frame + B] - b) * percent;
-            //     a += (frames[frame + A] - a) * percent;
-            // }
-            // if (alpha == 1)
-            //     slot.color.set(r, g, b, a);
-            // else {
-            //     Color color = slot.color;
-            //     if (blend == setup) color.set(slot.data.color);
-            //     color.add((r - color.r) * alpha, (g - color.g) * alpha, (b - color.b) * alpha, (a - color.a) * alpha);
-            // }
+            Slot slot = skeleton.slots.get(slotIndex);
+            if (!slot.bone.active && Loader.spineVersion == 38) return;
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                switch (blend) {
+                    case setup -> {
+                        slot.color.set(slot.data.color);
+                        return;
+                    }
+                    case first -> {
+                        Color color = slot.color, setup = slot.data.color;
+                        color.add((setup.r - color.r) * alpha, (setup.g - color.g) * alpha, (setup.b - color.b) * alpha,
+                                (setup.a - color.a) * alpha);
+                    }
+                }
+                return;
+            }
+            float r, g, b, a;
+            if (time >= frames[frames.length - ENTRIES]) {
+                int i = frames.length;
+                r = frames[i + PREV_R];
+                g = frames[i + PREV_G];
+                b = frames[i + PREV_B];
+                a = frames[i + PREV_A];
+            } else {
+                int frame = binarySearch(frames, time, ENTRIES);
+                r = frames[frame + PREV_R];
+                g = frames[frame + PREV_G];
+                b = frames[frame + PREV_B];
+                a = frames[frame + PREV_A];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+                r += (frames[frame + R] - r) * percent;
+                g += (frames[frame + G] - g) * percent;
+                b += (frames[frame + B] - b) * percent;
+                a += (frames[frame + A] - a) * percent;
+            }
+            if (alpha == 1)
+                slot.color.set(r, g, b, a);
+            else {
+                Color color = slot.color;
+                if (blend == setup) color.set(slot.data.color);
+                color.add((r - color.r) * alpha, (g - color.g) * alpha, (b - color.b) * alpha, (a - color.a) * alpha);
+            }
         }
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, MixPose pose,
@@ -1238,37 +1238,37 @@ public class Animation {
         }
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha) { // Spine34
-            // float[] frames = this.frames;
-            // if (time < frames[0]) return;
-            //
-            // float r, g, b, a;
-            // if (time >= frames[frames.length - ENTRIES]) {
-            //     int i = frames.length;
-            //     r = frames[i + PREV_R];
-            //     g = frames[i + PREV_G];
-            //     b = frames[i + PREV_B];
-            //     a = frames[i + PREV_A];
-            // } else {
-            //
-            //     int frame = binarySearch(frames, time, ENTRIES);
-            //     r = frames[frame + PREV_R];
-            //     g = frames[frame + PREV_G];
-            //     b = frames[frame + PREV_B];
-            //     a = frames[frame + PREV_A];
-            //     float frameTime = frames[frame];
-            //     float percent = getCurvePercent(frame / ENTRIES - 1,
-            //             1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-            //
-            //     r += (frames[frame + R] - r) * percent;
-            //     g += (frames[frame + G] - g) * percent;
-            //     b += (frames[frame + B] - b) * percent;
-            //     a += (frames[frame + A] - a) * percent;
-            // }
-            // Color color = skeleton.slots.get(slotIndex).color;
-            // if (alpha < 1)
-            //     color.add((r - color.r) * alpha, (g - color.g) * alpha, (b - color.b) * alpha, (a - color.a) * alpha);
-            // else
-            //     color.set(r, g, b, a);
+            float[] frames = this.frames;
+            if (time < frames[0]) return;
+
+            float r, g, b, a;
+            if (time >= frames[frames.length - ENTRIES]) {
+                int i = frames.length;
+                r = frames[i + PREV_R];
+                g = frames[i + PREV_G];
+                b = frames[i + PREV_B];
+                a = frames[i + PREV_A];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                r = frames[frame + PREV_R];
+                g = frames[frame + PREV_G];
+                b = frames[frame + PREV_B];
+                a = frames[frame + PREV_A];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                r += (frames[frame + R] - r) * percent;
+                g += (frames[frame + G] - g) * percent;
+                b += (frames[frame + B] - b) * percent;
+                a += (frames[frame + A] - a) * percent;
+            }
+            Color color = skeleton.slots.get(slotIndex).color;
+            if (alpha < 1)
+                color.add((r - color.r) * alpha, (g - color.g) * alpha, (b - color.b) * alpha, (a - color.a) * alpha);
+            else
+                color.set(r, g, b, a);
         }
     }
 
