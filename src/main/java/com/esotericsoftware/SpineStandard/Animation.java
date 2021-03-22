@@ -2233,28 +2233,28 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha, MixBlend blend,
                           MixDirection direction) {
-            if (firedEvents == null) return;
-            float[] frames = this.frames;
-            int frameCount = frames.length;
-            if (lastTime > time) {
-                apply(skeleton, lastTime, Integer.MAX_VALUE, firedEvents, alpha, blend, direction);
-                lastTime = -1f;
-            } else if (lastTime >= frames[frameCount - 1])
-                return;
-            if (time < frames[0]) return;
-            int frame;
-            if (lastTime < frames[0])
-                frame = 0;
-            else {
-                frame = binarySearch(frames, lastTime);
-                float frameTime = frames[frame];
-                while (frame > 0) {
-                    if (frames[frame - 1] != frameTime) break;
-                    frame--;
-                }
-            }
-            for (; frame < frameCount && time >= frames[frame]; frame++)
-                firedEvents.add(events[frame]);
+            // if (firedEvents == null) return;
+            // float[] frames = this.frames;
+            // int frameCount = frames.length;
+            // if (lastTime > time) {
+            //     apply(skeleton, lastTime, Integer.MAX_VALUE, firedEvents, alpha, blend, direction);
+            //     lastTime = -1f;
+            // } else if (lastTime >= frames[frameCount - 1])
+            //     return;
+            // if (time < frames[0]) return;
+            // int frame;
+            // if (lastTime < frames[0])
+            //     frame = 0;
+            // else {
+            //     frame = binarySearch(frames, lastTime);
+            //     float frameTime = frames[frame];
+            //     while (frame > 0) {
+            //         if (frames[frame - 1] != frameTime) break;
+            //         frame--;
+            //     }
+            // }
+            // for (; frame < frameCount && time >= frames[frame]; frame++)
+            //     firedEvents.add(events[frame]);
         }
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> firedEvents, float alpha, MixPose pose,
