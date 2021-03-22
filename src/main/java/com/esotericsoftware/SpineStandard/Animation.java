@@ -260,7 +260,7 @@ public class Animation {
             for (int start = i, n = i + BEZIER_SIZE - 1; i < n; i += 2) {
                 x = curves[i];
                 if (x >= percent) {
-                    if (Loader.spineVersion > 34) {
+                    if (Loader.spineVersion > 35) {
                         if (i == start) return curves[i + 1] * percent / x;
                         float prevX = curves[i - 2], prevY = curves[i - 1];
                         return prevY + (curves[i + 1] - prevY) * (percent - prevX) / (x - prevX);
@@ -1198,43 +1198,43 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
                           boolean mixingOut) { // Spine35
-            // Slot slot = skeleton.slots.get(slotIndex);
-            // float[] frames = this.frames;
-            // if (time < frames[0]) {
-            //     if (setupPose) slot.color.set(slot.data.color);
-            //     return;
-            // }
-            //
-            // float r, g, b, a;
-            // if (time >= frames[frames.length - ENTRIES]) {
-            //     int i = frames.length;
-            //     r = frames[i + PREV_R];
-            //     g = frames[i + PREV_G];
-            //     b = frames[i + PREV_B];
-            //     a = frames[i + PREV_A];
-            // } else {
-            //
-            //     int frame = binarySearch(frames, time, ENTRIES);
-            //     r = frames[frame + PREV_R];
-            //     g = frames[frame + PREV_G];
-            //     b = frames[frame + PREV_B];
-            //     a = frames[frame + PREV_A];
-            //     float frameTime = frames[frame];
-            //     float percent = getCurvePercent(frame / ENTRIES - 1,
-            //             1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-            //
-            //     r += (frames[frame + R] - r) * percent;
-            //     g += (frames[frame + G] - g) * percent;
-            //     b += (frames[frame + B] - b) * percent;
-            //     a += (frames[frame + A] - a) * percent;
-            // }
-            // if (alpha == 1)
-            //     slot.color.set(r, g, b, a);
-            // else {
-            //     Color color = slot.color;
-            //     if (setupPose) color.set(slot.data.color);
-            //     color.add((r - color.r) * alpha, (g - color.g) * alpha, (b - color.b) * alpha, (a - color.a) * alpha);
-            // }
+            Slot slot = skeleton.slots.get(slotIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) slot.color.set(slot.data.color);
+                return;
+            }
+
+            float r, g, b, a;
+            if (time >= frames[frames.length - ENTRIES]) {
+                int i = frames.length;
+                r = frames[i + PREV_R];
+                g = frames[i + PREV_G];
+                b = frames[i + PREV_B];
+                a = frames[i + PREV_A];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                r = frames[frame + PREV_R];
+                g = frames[frame + PREV_G];
+                b = frames[frame + PREV_B];
+                a = frames[frame + PREV_A];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                r += (frames[frame + R] - r) * percent;
+                g += (frames[frame + G] - g) * percent;
+                b += (frames[frame + B] - b) * percent;
+                a += (frames[frame + A] - a) * percent;
+            }
+            if (alpha == 1)
+                slot.color.set(r, g, b, a);
+            else {
+                Color color = slot.color;
+                if (setupPose) color.set(slot.data.color);
+                color.add((r - color.r) * alpha, (g - color.g) * alpha, (b - color.b) * alpha, (a - color.a) * alpha);
+            }
         }
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha) { // Spine34
@@ -2082,7 +2082,7 @@ public class Animation {
                           boolean mixingOut) { // Spine35
             Slot slot = skeleton.slots.get(slotIndex);
             Attachment slotAttachment = slot.attachment;
-            if (!(slotAttachment instanceof VertexAttachment) || ((VertexAttachment) slotAttachment).applyDeform(attachment))
+            if (!(slotAttachment instanceof VertexAttachment) || !((VertexAttachment) slotAttachment).applyDeform(attachment))
                 return;
 
             FloatArray verticesArray = slot.getAttachmentVertices();
@@ -2908,54 +2908,54 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
                           boolean mixingOut) { // Spine35
-            // TransformConstraint constraint = skeleton.transformConstraints.get(transformConstraintIndex);
-            // float[] frames = this.frames;
-            // if (time < frames[0]) {
-            //     if (setupPose) {
-            //         TransformConstraintData data = constraint.data;
-            //         constraint.rotateMix = data.rotateMix;
-            //         constraint.translateMix = data.translateMix;
-            //         constraint.scaleMix = data.scaleMix;
-            //         constraint.shearMix = data.shearMix;
-            //     }
-            //     return;
-            // }
-            //
-            // float rotate, translate, scale, shear;
-            // if (time >= frames[frames.length - ENTRIES]) {
-            //     int i = frames.length;
-            //     rotate = frames[i + PREV_ROTATE];
-            //     translate = frames[i + PREV_TRANSLATE];
-            //     scale = frames[i + PREV_SCALE];
-            //     shear = frames[i + PREV_SHEAR];
-            // } else {
-            //
-            //     int frame = binarySearch(frames, time, ENTRIES);
-            //     rotate = frames[frame + PREV_ROTATE];
-            //     translate = frames[frame + PREV_TRANSLATE];
-            //     scale = frames[frame + PREV_SCALE];
-            //     shear = frames[frame + PREV_SHEAR];
-            //     float frameTime = frames[frame];
-            //     float percent = getCurvePercent(frame / ENTRIES - 1,
-            //             1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-            //
-            //     rotate += (frames[frame + ROTATE] - rotate) * percent;
-            //     translate += (frames[frame + TRANSLATE] - translate) * percent;
-            //     scale += (frames[frame + SCALE] - scale) * percent;
-            //     shear += (frames[frame + SHEAR] - shear) * percent;
-            // }
-            // if (setupPose) {
-            //     TransformConstraintData data = constraint.data;
-            //     constraint.rotateMix = data.rotateMix + (rotate - data.rotateMix) * alpha;
-            //     constraint.translateMix = data.translateMix + (translate - data.translateMix) * alpha;
-            //     constraint.scaleMix = data.scaleMix + (scale - data.scaleMix) * alpha;
-            //     constraint.shearMix = data.shearMix + (shear - data.shearMix) * alpha;
-            // } else {
-            //     constraint.rotateMix += (rotate - constraint.rotateMix) * alpha;
-            //     constraint.translateMix += (translate - constraint.translateMix) * alpha;
-            //     constraint.scaleMix += (scale - constraint.scaleMix) * alpha;
-            //     constraint.shearMix += (shear - constraint.shearMix) * alpha;
-            // }
+            TransformConstraint constraint = skeleton.transformConstraints.get(transformConstraintIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    TransformConstraintData data = constraint.data;
+                    constraint.rotateMix = data.rotateMix;
+                    constraint.translateMix = data.translateMix;
+                    constraint.scaleMix = data.scaleMix;
+                    constraint.shearMix = data.shearMix;
+                }
+                return;
+            }
+
+            float rotate, translate, scale, shear;
+            if (time >= frames[frames.length - ENTRIES]) {
+                int i = frames.length;
+                rotate = frames[i + PREV_ROTATE];
+                translate = frames[i + PREV_TRANSLATE];
+                scale = frames[i + PREV_SCALE];
+                shear = frames[i + PREV_SHEAR];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                rotate = frames[frame + PREV_ROTATE];
+                translate = frames[frame + PREV_TRANSLATE];
+                scale = frames[frame + PREV_SCALE];
+                shear = frames[frame + PREV_SHEAR];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                rotate += (frames[frame + ROTATE] - rotate) * percent;
+                translate += (frames[frame + TRANSLATE] - translate) * percent;
+                scale += (frames[frame + SCALE] - scale) * percent;
+                shear += (frames[frame + SHEAR] - shear) * percent;
+            }
+            if (setupPose) {
+                TransformConstraintData data = constraint.data;
+                constraint.rotateMix = data.rotateMix + (rotate - data.rotateMix) * alpha;
+                constraint.translateMix = data.translateMix + (translate - data.translateMix) * alpha;
+                constraint.scaleMix = data.scaleMix + (scale - data.scaleMix) * alpha;
+                constraint.shearMix = data.shearMix + (shear - data.shearMix) * alpha;
+            } else {
+                constraint.rotateMix += (rotate - constraint.rotateMix) * alpha;
+                constraint.translateMix += (translate - constraint.translateMix) * alpha;
+                constraint.scaleMix += (scale - constraint.scaleMix) * alpha;
+                constraint.shearMix += (shear - constraint.shearMix) * alpha;
+            }
         }
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha) { // Spine34
