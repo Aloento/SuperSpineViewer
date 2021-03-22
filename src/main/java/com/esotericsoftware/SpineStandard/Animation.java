@@ -1000,61 +1000,61 @@ public class Animation {
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha, boolean setupPose,
                           boolean mixingOut) { // Spine35
-            // Bone bone = skeleton.bones.get(boneIndex);
-            // float[] frames = this.frames;
-            // if (time < frames[0]) {
-            //     if (setupPose) {
-            //         bone.shearX = bone.data.shearX;
-            //         bone.shearY = bone.data.shearY;
-            //     }
-            //     return;
-            // }
-            //
-            // float x, y;
-            // if (time >= frames[frames.length - ENTRIES]) {
-            //     x = frames[frames.length + PREV_X];
-            //     y = frames[frames.length + PREV_Y];
-            // } else {
-            //
-            //     int frame = binarySearch(frames, time, ENTRIES);
-            //     x = frames[frame + PREV_X];
-            //     y = frames[frame + PREV_Y];
-            //     float frameTime = frames[frame];
-            //     float percent = getCurvePercent(frame / ENTRIES - 1,
-            //             1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-            //
-            //     x = x + (frames[frame + X] - x) * percent;
-            //     y = y + (frames[frame + Y] - y) * percent;
-            // }
-            // if (setupPose) {
-            //     bone.shearX = bone.data.shearX + x * alpha;
-            //     bone.shearY = bone.data.shearY + y * alpha;
-            // } else {
-            //     bone.shearX += (bone.data.shearX + x - bone.shearX) * alpha;
-            //     bone.shearY += (bone.data.shearY + y - bone.shearY) * alpha;
-            // }
+            Bone bone = skeleton.bones.get(boneIndex);
+            float[] frames = this.frames;
+            if (time < frames[0]) {
+                if (setupPose) {
+                    bone.shearX = bone.data.shearX;
+                    bone.shearY = bone.data.shearY;
+                }
+                return;
+            }
+
+            float x, y;
+            if (time >= frames[frames.length - ENTRIES]) {
+                x = frames[frames.length + PREV_X];
+                y = frames[frames.length + PREV_Y];
+            } else {
+
+                int frame = binarySearch(frames, time, ENTRIES);
+                x = frames[frame + PREV_X];
+                y = frames[frame + PREV_Y];
+                float frameTime = frames[frame];
+                float percent = getCurvePercent(frame / ENTRIES - 1,
+                        1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+                x = x + (frames[frame + X] - x) * percent;
+                y = y + (frames[frame + Y] - y) * percent;
+            }
+            if (setupPose) {
+                bone.shearX = bone.data.shearX + x * alpha;
+                bone.shearY = bone.data.shearY + y * alpha;
+            } else {
+                bone.shearX += (bone.data.shearX + x - bone.shearX) * alpha;
+                bone.shearY += (bone.data.shearY + y - bone.shearY) * alpha;
+            }
         }
 
         public void apply(Skeleton skeleton, float lastTime, float time, Array<Event> events, float alpha) { // Spine34
-            // float[] frames = this.frames;
-            // if (time < frames[0]) return;
-            //
-            // Bone bone = skeleton.bones.get(boneIndex);
-            // if (time >= frames[frames.length - ENTRIES]) {
-            //     bone.shearX += (bone.data.shearX + frames[frames.length + PREV_X] - bone.shearX) * alpha;
-            //     bone.shearY += (bone.data.shearY + frames[frames.length + PREV_Y] - bone.shearY) * alpha;
-            //     return;
-            // }
-            //
-            //
-            // int frame = binarySearch(frames, time, ENTRIES);
-            // float prevX = frames[frame + PREV_X];
-            // float prevY = frames[frame + PREV_Y];
-            // float frameTime = frames[frame];
-            // float percent = getCurvePercent(frame / ENTRIES - 1, 1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
-            //
-            // bone.shearX += (bone.data.shearX + (prevX + (frames[frame + X] - prevX) * percent) - bone.shearX) * alpha;
-            // bone.shearY += (bone.data.shearY + (prevY + (frames[frame + Y] - prevY) * percent) - bone.shearY) * alpha;
+            float[] frames = this.frames;
+            if (time < frames[0]) return;
+
+            Bone bone = skeleton.bones.get(boneIndex);
+            if (time >= frames[frames.length - ENTRIES]) {
+                bone.shearX += (bone.data.shearX + frames[frames.length + PREV_X] - bone.shearX) * alpha;
+                bone.shearY += (bone.data.shearY + frames[frames.length + PREV_Y] - bone.shearY) * alpha;
+                return;
+            }
+
+
+            int frame = binarySearch(frames, time, ENTRIES);
+            float prevX = frames[frame + PREV_X];
+            float prevY = frames[frame + PREV_Y];
+            float frameTime = frames[frame];
+            float percent = getCurvePercent(frame / ENTRIES - 1, 1 - (time - frameTime) / (frames[frame + PREV_TIME] - frameTime));
+
+            bone.shearX += (bone.data.shearX + (prevX + (frames[frame + X] - prevX) * percent) - bone.shearX) * alpha;
+            bone.shearY += (bone.data.shearY + (prevY + (frames[frame + Y] - prevY) * percent) - bone.shearY) * alpha;
         }
     }
 
