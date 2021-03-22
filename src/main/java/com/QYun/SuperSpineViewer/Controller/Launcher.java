@@ -18,6 +18,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.IOException;
 import java.util.Objects;
 
+import static com.QYun.SuperSpineViewer.Main.Pref;
+
 public class Launcher extends Application {
     @Override
     public void start(Stage primaryStage) {
@@ -51,8 +53,8 @@ public class Launcher extends Application {
                 Launcher.class.getResource("/UI/Main.css").toExternalForm());
 
         primaryStage.getIcons().add(new Image("UI/SuperSpineViewer.png"));
-        primaryStage.setWidth(1280);
-        primaryStage.setHeight(800);
+        primaryStage.setWidth(Pref.getDouble("stageWidth", 1280));
+        primaryStage.setHeight(Pref.getDouble("stageHeight", 800));
         primaryStage.setTitle("QYun SoarTeam");
         primaryStage.setScene(scene);
         primaryStage.show();
