@@ -82,7 +82,7 @@ public class Exporter extends Main implements Initializable {
             File direc = chooser.showDialog(new Stage());
             outPath = direc.getAbsolutePath() + File.separator;
             T_Path.setText(outPath);
-            Pref.put("lastSave", direc.getAbsolutePath());
+            Pref.put("lastSave", outPath);
         });
     }
 
