@@ -285,10 +285,14 @@ public class Spine extends Main implements Initializable {
             spine.setScale(1);
             spine.setX(0);
             spine.setY(-200f);
-            spine.setSkin(null);
-            spine.setAnimate(null);
-            spine.setSpeed(1);
             spine.setIsPlay(false);
+
+            T_Scale.clear();
+            T_X.clear();
+            T_Y.clear();
+            C_Skins.setValue(null);
+            C_Animate.setValue(null);
+            S_Speed.setValue(1);
             System.gc();
         });
 
