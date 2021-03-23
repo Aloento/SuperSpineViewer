@@ -74,15 +74,15 @@ public class Exporter extends Main implements Initializable {
     void B_Path() {
         Platform.runLater(() -> {
             DirectoryChooser chooser = new DirectoryChooser();
-            File last = new File(Pref.get("lastSave", System.getProperty("user.home")));
+            File last = new File(outPath);
             if (!last.canRead())
                 last = new File(System.getProperty("user.home"));
-            chooser.setInitialDirectory(last);
-            chooser.setTitle("Sava Location");
+            chooser.setInitialDirectory(last.getParentFile());
+            chooser.setTitle("Save Location");
             File direc = chooser.showDialog(new Stage());
             outPath = direc.getAbsolutePath() + File.separator;
             T_Path.setText(outPath);
-            Pref.put("lastSave", direc.getParent());
+            Pref.put("lastSave", direc.getAbsolutePath());
         });
     }
 
@@ -143,6 +143,7 @@ public class Exporter extends Main implements Initializable {
         Atlas = L_Atlas;
         recordFX = record;
         progressBar = P_Export;
+        T_Path.setText(outPath);
         spine.spineVersionProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
 
         if (openPath != null) {

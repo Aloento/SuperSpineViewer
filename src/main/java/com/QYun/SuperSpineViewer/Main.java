@@ -26,9 +26,9 @@ public class Main {
     public static boolean isLoad = false;
     public static boolean preA = true;
     public static boolean recording = false;
-    public static String outPath = null;
     public static String openPath = null;
     public static Preferences Pref = Preferences.userRoot().node("/com/QYun/SuperSpineViewer");
+    public static String outPath = Pref.get("lastSave", System.getProperty("user.home"));
 
     public static void main(String[] args) {
         if (args.length > 0) {
@@ -39,6 +39,7 @@ public class Main {
                 }
             } else openPath = args[0];
         }
+
         Application.launch(Launcher.class, args);
     }
 }
