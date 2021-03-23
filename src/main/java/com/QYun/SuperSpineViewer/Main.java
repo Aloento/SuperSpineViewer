@@ -39,7 +39,6 @@ public class Main {
                 }
             } else openPath = args[0];
         }
-
         Application.launch(Launcher.class, args);
     }
 }
