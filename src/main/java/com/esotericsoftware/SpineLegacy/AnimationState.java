@@ -243,9 +243,9 @@ public class AnimationState {
             return time;
         }
 
-        // public void setTime(float time) {
-        //     this.time = time;
-        // }
+        public void setTime(float time) {
+            this.time = time;
+        }
 
         public float getEndTime() {
             return endTime;

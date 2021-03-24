@@ -17,7 +17,7 @@
             </padding>
             <HBox>
                 <Label styleClass="title-text">
-                    Aloento v1.1.4
+                    Aloento v1.2.0
                 </Label>
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="10" HBox.hgrow="ALWAYS">

@@ -713,13 +713,13 @@ public class AnimationState {
         //     this.delay = delay;
         // }
 
-        // public float getTrackTime() {
-        //     return trackTime;
-        // }
+        public float getTrackTime() {
+            return trackTime;
+        }
 
-        // public void setTrackTime(float trackTime) {
-        //     this.trackTime = trackTime;
-        // }
+        public void setTrackTime(float trackTime) {
+            this.trackTime = trackTime;
+        }
 
         // public float getTrackEnd() {
         //     return trackEnd;

@@ -22,6 +22,7 @@ public class Legacy extends SuperSpine {
     private SkeletonMeshRenderer renderer;
     private Skeleton skeleton;
     private AnimationState state;
+    private float trackTime;
     private ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
         if (skeleton != null) {
             if (newValue == null)
@@ -55,7 +56,12 @@ public class Legacy extends SuperSpine {
                 else if (!isLoop.get())
                     state.setAnimation(0, animate.get(), isLoop.get());
                 state.setTimeScale(speed.get());
-            } else state.setTimeScale(0);
+                if (percent < 1)
+                    state.getCurrent(0).setTime(trackTime);
+            } else {
+                state.setTimeScale(0);
+                trackTime = state.getCurrent(0).getTime();
+            }
         }
     };
     private ChangeListener<Number> scaleListener = (observable, oldValue, newValue) -> {

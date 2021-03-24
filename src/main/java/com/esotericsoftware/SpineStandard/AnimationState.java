@@ -1193,8 +1193,29 @@ public class AnimationState {
         boolean loop, holdPrevious;
         float eventThreshold, attachmentThreshold, drawOrderThreshold;
         float animationStart, animationEnd, animationLast, nextAnimationLast;
-        float delay, trackTime, trackLast, nextTrackLast, trackEnd, timeScale, time, lastTime = -1, endTime, mix = 1; // Spine34
+        float delay;
+        float trackTime;
+        float trackLast;
+        float nextTrackLast;
+        float trackEnd;
+        float timeScale;
+        float time;
+        float lastTime = -1;
+        float endTime;
+        float mix = 1; // Spine34
         float alpha, mixTime, mixDuration, interruptAlpha, totalAlpha, mixAlpha; // Spine35
+
+        public float getTrackTime() {
+            if (Loader.spineVersion < 35)
+                return time;
+            return trackTime;
+        }
+
+        public void setTrackTime(float trackTime) {
+            if (Loader.spineVersion < 35)
+                this.time = trackTime;
+            this.trackTime = trackTime;
+        }
 
         public void reset() {
             next = null;
