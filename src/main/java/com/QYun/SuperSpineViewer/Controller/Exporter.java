@@ -41,9 +41,11 @@ public class Exporter extends Main implements Initializable {
         if (outPath != null && spine.getAnimate() != null) {
             spine.setIsPlay(false);
             spine.setIsLoop(false);
+            spine.setPercent(2);
             spine.setSpeed(quality);
-            record.startRecording(spine.getProjectName() + "_" + spine.getAnimate());
             spine.setIsPlay(true);
+            System.out.println("请求：开始录制");
+            record.startRecording(spine.getProjectName() + "_" + spine.getAnimate());
         }
     }
 
@@ -146,6 +148,7 @@ public class Exporter extends Main implements Initializable {
         T_Path.setText(outPath);
         spine.spineVersionProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
 
+        System.out.println("SuperSpineViewer已启动");
         if (openPath != null) {
             Platform.runLater(() -> {
                 new Loader().init();

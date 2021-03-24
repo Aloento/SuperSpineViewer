@@ -23,20 +23,18 @@ public class RecordFX extends Main {
                 save.setPriority(Thread.MIN_PRIORITY);
                 save.setDaemon(true);
                 return save;
-            }));
+            })) {{
+        allowCoreThreadTimeOut(true);
+    }};
     private final SuperSpine spine = new SuperSpine();
     private String fileName = null;
     private short counter;
-
-    public RecordFX() {
-        savePool.allowCoreThreadTimeOut(true);
-        System.out.println("SuperSpineViewer已启动");
-    }
+    private short items;
 
     public void recorderFX(WritableImage image) {
         if (spine.getPercent() < 1) {
             savePool.submit(new savePNG(image, counter++));
-            System.out.println("捕获：" + counter + "\t" + spine.getPercent());
+            // System.out.println("捕获：" + counter + "\t" + spine.getPercent());
         } else {
             recording = false;
             encodeFX();
@@ -47,12 +45,12 @@ public class RecordFX extends Main {
 
     public void startRecording(String fileName) {
         if (!recording) {
+            while (spine.getPercent() == 2)
+                Thread.onSpinWait();
             this.fileName = fileName;
             savePool.setMaximumPoolSize(perform);
             savePool.setCorePoolSize(perform);
-            spine.setPercent(0);
             recording = true;
-            System.out.println("请求：开始录制");
         }
     }
 
@@ -60,6 +58,7 @@ public class RecordFX extends Main {
         try {
             System.out.println("FFmpeg处理开始");
             new File((outPath + fileName) + ".mov").delete();
+            Platform.runLater(() -> progressBar.setProgress(-1));
 
             if (Runtime.getRuntime().exec(new String[]{
                     "ffmpeg", "-r", "60",
@@ -75,10 +74,9 @@ public class RecordFX extends Main {
 
                 System.out.println("视频导出成功");
             } else Platform.runLater(() -> {
-                Main.progressBar.setProgress(0);
+                progressBar.setProgress(0);
                 System.out.println("FFMPEG错误，序列已导出");
             });
-
         } catch (Exception ignored) {
         }
     }
@@ -87,8 +85,8 @@ public class RecordFX extends Main {
         Thread encode = new Thread("RecordFX_Encoding") {
             @Override
             public void run() {
-                System.out.println("请求：停止录制");
                 Platform.runLater(() -> progressBar.setProgress(-1));
+                System.out.println("请求：停止录制");
                 while (savePool.getActiveCount() != 0)
                     Thread.onSpinWait();
 
@@ -101,6 +99,7 @@ public class RecordFX extends Main {
                 Platform.runLater(() -> {
                     spine.setSpeed(1);
                     counter = 0;
+                    items = 0;
                     progressBar.setProgress(1);
                     System.out.println("导出结束");
                 });
@@ -121,22 +120,23 @@ public class RecordFX extends Main {
 
         @Override
         public void run() {
-            Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
-            for (int h = 0; h < height; h++) {
-                for (int w = 0; w < width; w++) {
-                    Color c = image.getPixelReader().getColor(w, h);
-                    pixmap.drawPixel(w, h,
-                            ((int) (c.getRed() * 255) << 24) | ((int) (c.getGreen() * 255) << 16) |
-                                    ((int) (c.getBlue() * 255) << 8) | (int) (c.getOpacity() * 255));
-                }
-            }
-
             PixmapIO.writePNG(Gdx.files.absolute(
                     (outPath + fileName + "_Sequence" + File.separator + fileName) + "_" + index + ".png"),
-                    pixmap, sequence, true);
+                    new Pixmap(width, height, Pixmap.Format.RGBA8888) {{
+                        for (int h = 0; h < height; h++) {
+                            for (int w = 0; w < width; w++) {
+                                Color c = image.getPixelReader().getColor(w, h);
+                                drawPixel(w, h,
+                                        ((int) (c.getRed() * 255) << 24) | ((int) (c.getGreen() * 255) << 16) |
+                                                ((int) (c.getBlue() * 255) << 8) | (int) (c.getOpacity() * 255));
+                            }
+                        }
+                    }}, sequence, true);
 
             image = null;
-            System.out.println("保存：" + index);
+            items++;
+            Platform.runLater(() -> progressBar.setProgress((double) items / counter));
+            // System.out.println("保存：" + index);
         }
     }
 }

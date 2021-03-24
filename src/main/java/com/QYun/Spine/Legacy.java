@@ -24,12 +24,10 @@ public class Legacy extends SuperSpine {
     private AnimationState state;
     private float trackTime;
     private ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
-        if (skeleton != null) {
-            if (newValue == null)
-                skeleton.setSkin((Skin) null);
-            else skeleton.setSkin(newValue);
-            skeleton.setSlotsToSetupPose();
-        }
+        if (newValue == null)
+            skeleton.setSkin((Skin) null);
+        else skeleton.setSkin(newValue);
+        skeleton.setSlotsToSetupPose();
     };
     private ChangeListener<String> animateListener = (observable, oldValue, newValue) -> {
         if (newValue != null) {
@@ -39,17 +37,15 @@ public class Legacy extends SuperSpine {
             isPlay.set(false);
     };
     private ChangeListener<Boolean> isLoopListener = (observable, oldValue, newValue) -> {
-        if (state != null) {
-            if (animate.get() == null)
-                isPlay.set(false);
-            else {
-                state.setAnimation(0, animate.get(), newValue);
-                if (newValue) isPlay.set(true);
-            }
+        if (animate.get() == null)
+            isPlay.set(false);
+        else {
+            state.setAnimation(0, animate.get(), newValue);
+            if (newValue) isPlay.set(true);
         }
     };
     private ChangeListener<Boolean> isPlayListener = (observable, oldValue, newValue) -> {
-        if (!newValue.equals(oldValue) && state != null) {
+        if (!newValue.equals(oldValue)) {
             if (newValue) {
                 if (animate.get() == null)
                     state.setAnimation(0, animatesList.get(0), isLoop.get());
@@ -65,36 +61,27 @@ public class Legacy extends SuperSpine {
         }
     };
     private ChangeListener<Number> scaleListener = (observable, oldValue, newValue) -> {
-        if (state != null) {
-            Gdx.app.postRunnable(this::loadSkel);
-            if (animate.get() != null) {
-                state.setAnimation(0, animate.get(), isLoop.get());
-                isPlay.set(true);
-            }
+        Gdx.app.postRunnable(this::loadSkel);
+        if (animate.get() != null) {
+            state.setAnimation(0, animate.get(), isLoop.get());
+            isPlay.set(true);
         }
     };
     private ChangeListener<Number> XListener = (observable, oldValue, newValue) -> {
-        if (state != null) {
-            Gdx.app.postRunnable(this::loadSkel);
-            if (animate.get() != null) {
-                state.setAnimation(0, animate.get(), isLoop.get());
-                isPlay.set(true);
-            }
+        Gdx.app.postRunnable(this::loadSkel);
+        if (animate.get() != null) {
+            state.setAnimation(0, animate.get(), isLoop.get());
+            isPlay.set(true);
         }
     };
     private ChangeListener<Number> YListener = (observable, oldValue, newValue) -> {
-        if (state != null) {
-            Gdx.app.postRunnable(this::loadSkel);
-            if (animate.get() != null) {
-                state.setAnimation(0, animate.get(), isLoop.get());
-                isPlay.set(true);
-            }
+        Gdx.app.postRunnable(this::loadSkel);
+        if (animate.get() != null) {
+            state.setAnimation(0, animate.get(), isLoop.get());
+            isPlay.set(true);
         }
     };
-    private ChangeListener<Number> speedListener = (observable, oldValue, newValue) -> {
-        if (state != null)
-            state.setTimeScale(speed.get());
-    };
+    private ChangeListener<Number> speedListener = (observable, oldValue, newValue) -> state.setTimeScale(speed.get());
 
     private void lists(Array<Skin> skins, Array<Animation> animations) {
         for (Skin skin : skins)
@@ -218,17 +205,15 @@ public class Legacy extends SuperSpine {
         renderer.draw(batch, skeleton);
         batch.end();
 
-        if (state != null) {
-            TrackEntry entry = state.getCurrent(0);
-            if (entry != null) {
-                percent = entry.getTime() / entry.getEndTime();
-                if (entry.getLoop())
-                    percent %= 1;
-                if (isPlay.get())
-                    Platform.runLater(() -> Main.progressBar.setProgress(percent));
-                if (percent >= 1 && !isLoop.get())
-                    isPlay.set(false);
-            }
+        TrackEntry entry = state.getCurrent(0);
+        if (entry != null) {
+            percent = entry.getTime() / entry.getEndTime();
+            if (entry.getLoop())
+                percent %= 1;
+            if (isPlay.get())
+                Platform.runLater(() -> Main.progressBar.setProgress(percent));
+            if (percent >= 1 && !isLoop.get())
+                isPlay.set(false);
         }
     }
 
