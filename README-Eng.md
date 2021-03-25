@@ -4,7 +4,7 @@ A tool to load and export Spine animations
 Requires Java 15 to run  
 or use a packaged exe program  
 Exporting MOV requires FFmpeg  
-Current version: 1.2.2
+Current version: 1.2.3
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
