@@ -5,7 +5,6 @@ import javafx.application.Platform;
 import javafx.scene.image.WritableImage;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.Drawable;
 import org.lwjgl.opengl.Pbuffer;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.stream.RenderStream;
@@ -17,24 +16,19 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class LwjglToJavaFX extends Main {
-    static Drawable drawable;
-    private final ConcurrentLinkedQueue<Runnable> pendingRunnables;
+    private final ConcurrentLinkedQueue<Runnable> pendingRunnables = new ConcurrentLinkedQueue<>();
     private final Pbuffer pbuffer;
-    private final int maxSamples;
-    private final AtomicLong snapshotRequest;
+    // private final AtomicLong snapshotRequest;
     private RenderStreamFactory renderStreamFactory;
     private RenderStream renderStream;
     private WritableImage renderImage;
-    private int transfersToBuffer = 3;
+    private final int transfersToBuffer = 3;
 
     LwjglToJavaFX() {
-        this.pendingRunnables = new ConcurrentLinkedQueue<>();
-
         if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) == 0)
-            throw new UnsupportedOperationException("Support for pbuffers is required.");
+            throw new UnsupportedOperationException("Your System should support PixelBuffer!");
 
         try {
             pbuffer = new Pbuffer(1, 1, new PixelFormat(), null, null, new ContextAttribs().withDebug(true));
@@ -43,12 +37,9 @@ public class LwjglToJavaFX extends Main {
             throw new RuntimeException(e);
         }
 
-        drawable = pbuffer;
-        maxSamples = 1;
-
         this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
         this.renderStream = renderStreamFactory.create(getReadHandler(), 1, transfersToBuffer);
-        this.snapshotRequest = new AtomicLong();
+        // this.snapshotRequest = new AtomicLong();
     }
 
     public void setRenderStreamFactory(final RenderStreamFactory renderStreamFactory) {
@@ -58,7 +49,7 @@ public class LwjglToJavaFX extends Main {
 
             LwjglToJavaFX.this.renderStreamFactory = renderStreamFactory;
 
-            renderStream = renderStreamFactory.create(Objects.requireNonNull(renderStream).getHandler(), maxSamples, transfersToBuffer);
+            renderStream = renderStreamFactory.create(Objects.requireNonNull(renderStream).getHandler(), 1, transfersToBuffer);
         });
     }
 
@@ -67,29 +58,29 @@ public class LwjglToJavaFX extends Main {
         pbuffer.destroy();
     }
 
-    public void updateSnapshot() {
-        snapshotRequest.incrementAndGet();
-    }
+    // public void updateSnapshot() {
+    //     snapshotRequest.incrementAndGet();
+    // }
 
-    public int getTransfersToBuffer() {
-        return transfersToBuffer;
-    }
+    // public int getTransfersToBuffer() {
+    //     return transfersToBuffer;
+    // }
 
-    public void setTransfersToBuffer(final int transfersToBuffer) {
-        if (this.transfersToBuffer == transfersToBuffer)
-            return;
+    // public void setTransfersToBuffer(final int transfersToBuffer) {
+    //     if (this.transfersToBuffer == transfersToBuffer)
+    //         return;
+    //
+    //     this.transfersToBuffer = transfersToBuffer;
+    //     resetStreams();
+    // }
 
-        this.transfersToBuffer = transfersToBuffer;
-        resetStreams();
-    }
-
-    private void resetStreams() {
-        pendingRunnables.offer(() -> {
-            renderStream.destroy();
-            renderStream = renderStreamFactory.create(renderStream.getHandler(), maxSamples, transfersToBuffer);
-            updateSnapshot();
-        });
-    }
+    // private void resetStreams() {
+    //     pendingRunnables.offer(() -> {
+    //         renderStream.destroy();
+    //         renderStream = renderStreamFactory.create(renderStream.getHandler(), maxSamples, transfersToBuffer);
+    //         updateSnapshot();
+    //     });
+    // }
 
     private void drainPendingActionsQueue() {
         Runnable runnable;
