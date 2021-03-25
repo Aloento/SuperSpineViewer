@@ -76,7 +76,7 @@ public class RecordFX extends Main {
                     "-i", outPath + fileName + "_Sequence" + File.separator + fileName + "_%d.png",
                     "-c:v", "png", "-pix_fmt", "rgba",
                     "-filter:v", "\"setpts=" + quality + "*PTS\"",
-                    "-nostdin", "-y",
+                    "-nostdin", "-y", "-loglevel", "quiet",
                     outPath + fileName + ".mov"
             }, new String[]{System.getProperty("user.dir")}).waitFor() == 0) {
                 File sequence = new File(outPath + fileName + "_Sequence" + File.separator);
