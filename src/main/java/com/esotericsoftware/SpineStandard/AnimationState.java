@@ -1205,11 +1205,11 @@ public class AnimationState {
         float mix = 1; // Spine34
         float alpha, mixTime, mixDuration, interruptAlpha, totalAlpha, mixAlpha; // Spine35
 
-        public float getTrackTime() {
-            if (Loader.spineVersion < 35)
-                return time;
-            return trackTime;
-        }
+        // public float getTrackTime() {
+        //     if (Loader.spineVersion < 35)
+        //         return time;
+        //     return trackTime;
+        // }
 
         public void setTrackTime(float trackTime) {
             if (Loader.spineVersion < 35)

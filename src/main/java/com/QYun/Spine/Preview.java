@@ -39,12 +39,9 @@ public class Preview extends SuperSpine {
         }
     };
     private ChangeListener<Boolean> isLoopListener = (observable, oldValue, newValue) -> {
-        if (animate.get() == null) {
-            state.setEmptyAnimation(0, 0);
+        if (isPlay.get()) {
             isPlay.set(false);
-        } else {
-            state.setAnimation(0, animate.get(), newValue);
-            if (newValue) isPlay.set(true);
+            isPlay.set(true);
         }
     };
     private ChangeListener<Boolean> isPlayListener = (observable, oldValue, newValue) -> {
@@ -52,14 +49,14 @@ public class Preview extends SuperSpine {
             if (newValue) {
                 if (animate.get() == null)
                     state.setAnimation(0, animatesList.get(0), isLoop.get());
-                else if (!isLoop.get())
+                else
                     state.setAnimation(0, animate.get(), isLoop.get());
                 state.setTimeScale(speed.get());
                 if (percent < 1)
                     state.getCurrent(0).setTrackTime(trackTime);
             } else {
                 state.setTimeScale(0);
-                trackTime = state.getCurrent(0).getTrackTime();
+                trackTime = state.getCurrent(0).getAnimationTime();
             }
         }
     };
