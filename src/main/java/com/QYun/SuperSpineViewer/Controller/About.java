@@ -2,26 +2,16 @@ package com.QYun.SuperSpineViewer.Controller;
 
 import javafx.application.Application;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class About implements Initializable {
+public class About {
     @FXML
     private StackPane aboutPane;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-    }
-
     @FXML
     private void handleExitButtonClicked() {
-        Stage aboutStage = (Stage) aboutPane.getScene().getWindow();
-        aboutStage.close();
+        ((Stage) aboutPane.getScene().getWindow()).close();
     }
 
     @FXML
