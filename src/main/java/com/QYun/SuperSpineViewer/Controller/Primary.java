@@ -21,7 +21,6 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,7 +41,6 @@ public class Primary extends Main implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         mainDrawer.setOnDrawerOpening(e -> {
             final Transition animation = titleBurger.getAnimation();
             animation.setRate(1);
@@ -54,17 +52,19 @@ public class Primary extends Main implements Initializable {
             animation.play();
         });
         titleBurgerContainer.setOnMouseClicked(e -> {
-            if (mainDrawer.isClosed() || mainDrawer.isClosing()) {
+            if (mainDrawer.isClosed() || mainDrawer.isClosing())
                 mainDrawer.open();
-            } else {
-                mainDrawer.close();
-            }
+            else mainDrawer.close();
         });
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/MainPopup.fxml"));
-        loader.setController(new InputController());
         try {
-            toolbarPopup = new JFXPopup(loader.load());
+            toolbarPopup = new JFXPopup(new FXMLLoader(Primary.this.getClass().getResource("/UI/MainPopup.fxml")) {{
+                setController(new InputController());
+            }}.load());
+            FXMLLoader spineLoader = new FXMLLoader(getClass().getResource("/UI/Spine.fxml"));
+            spineController = spineLoader.getController();
+            mainDrawer.setContent(spineLoader.<Parent>load());
+            mainDrawer.setSidePane(new FXMLLoader(getClass().getResource("/UI/Exporter.fxml")).<Parent>load());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,67 +75,42 @@ public class Primary extends Main implements Initializable {
                         JFXPopup.PopupHPosition.RIGHT,
                         -12,
                         15));
-
-        Parent Spine = null;
-        try {
-            FXMLLoader spineLoader = new FXMLLoader(getClass().getResource("/UI/Spine.fxml"));
-            Spine = spineLoader.load();
-            spineController = spineLoader.getController();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mainDrawer.setContent(Spine);
-
-        Parent Exporter = null;
-        try {
-            FXMLLoader exporterLoader = new FXMLLoader(getClass().getResource("/UI/Exporter.fxml"));
-            Exporter = exporterLoader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mainDrawer.setSidePane(Exporter);
     }
 
     public static final class InputController {
-
         @FXML
         private JFXListView<?> toolbarPopupList;
 
         @FXML
         private void mainSubmit() {
             if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 0) {
-
                 AtomicReference<Double> xOffset = new AtomicReference<>((double) 0);
                 AtomicReference<Double> yOffset = new AtomicReference<>((double) 0);
-                Stage aboutStage = new Stage(StageStyle.TRANSPARENT);
-                Parent about = null;
+
                 try {
-                    about = FXMLLoader.load(getClass().getResource("/UI/About.fxml"));
+                    Parent about = FXMLLoader.load(getClass().getResource("/UI/About.fxml"));
+                    Stage aboutStage = new Stage(StageStyle.TRANSPARENT) {{
+                        setResizable(false);
+                        setAlwaysOnTop(true);
+                        setScene(new Scene(about) {{
+                            getRoot().setEffect(new DropShadow(10, Color.rgb(100, 100, 100)));
+                            setFill(Color.TRANSPARENT);
+                        }});
+                        getIcons().add(new Image("/UI/Q-Audio.png"));
+                        setTitle("SuperSpineViewer - Aloento_QYun_SoarTeam");
+                        show();
+                    }};
+                    about.setOnMousePressed(event -> {
+                        xOffset.set(event.getSceneX());
+                        yOffset.set(event.getSceneY());
+                    });
+                    about.setOnMouseDragged(event -> {
+                        aboutStage.setX(event.getScreenX() - xOffset.get());
+                        aboutStage.setY(event.getScreenY() - yOffset.get());
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                Scene aboutScene = new Scene(Objects.requireNonNull(about));
-                aboutScene.getRoot().setEffect(new DropShadow(10, Color.rgb(100, 100, 100)));
-                aboutScene.setFill(Color.TRANSPARENT);
-
-                aboutStage.setResizable(false);
-                aboutStage.setAlwaysOnTop(true);
-                aboutStage.setScene(aboutScene);
-                aboutStage.getIcons().add(new Image("/UI/Q-Audio.png"));
-                aboutStage.setTitle("SuperSpineViewer - Aloento_QYun_SoarTeam");
-                aboutStage.show();
-
-                about.setOnMousePressed(event -> {
-                    xOffset.set(event.getSceneX());
-                    yOffset.set(event.getSceneY());
-                    event.consume();
-                });
-                about.setOnMouseDragged(event -> {
-                    aboutStage.setX(event.getScreenX() - xOffset.get());
-                    aboutStage.setY(event.getScreenY() - yOffset.get());
-                    event.consume();
-                });
 
                 System.out.println(
                         """
@@ -163,10 +138,7 @@ public class Primary extends Main implements Initializable {
                                                '%#########$:%######%:$#####&!$#@!%##%.           `
                                                        `'::::::::::::::::::::::'.`::`            `""".indent(9));
 
-            }
-
-            if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 1)
-                Platform.runLater(() -> System.exit(0));
+            } else System.exit(0);
         }
     }
 }

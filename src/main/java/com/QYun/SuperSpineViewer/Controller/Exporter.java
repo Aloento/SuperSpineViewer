@@ -76,8 +76,7 @@ public class Exporter extends Main implements Initializable {
                 last = new File(System.getProperty("user.home"));
             chooser.setInitialDirectory(last.getParentFile());
             chooser.setTitle("Save Location");
-            File direc = chooser.showDialog(new Stage());
-            outPath = direc.getAbsolutePath() + File.separator;
+            outPath = chooser.showDialog(new Stage()).getAbsolutePath() + File.separator;
             T_Path.setText(outPath);
             Pref.put("lastSave", outPath);
         });
