@@ -131,7 +131,7 @@
                             <String fx:value="custom-jfx-radio-button-red"/>
                         </styleClass>
                     </JFXRadioButton>
-                    <JFXRadioButton onAction="#RB_Json" text="Json" toggleGroup="$Format">
+                    <JFXRadioButton disable="true" onAction="#RB_Json" text="Json" toggleGroup="$Format">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
                             <String fx:value="custom-jfx-radio-button-green"/>
