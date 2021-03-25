@@ -105,7 +105,7 @@ public class Exporter extends Main implements Initializable {
 
     @FXML
     void RB_H() {
-        perform = 12;
+        perform = 18;
     }
 
     @FXML
