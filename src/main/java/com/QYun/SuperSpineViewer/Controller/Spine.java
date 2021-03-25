@@ -4,7 +4,6 @@ import com.QYun.Spine.Universal;
 import com.QYun.SuperSpineViewer.Loader;
 import com.QYun.SuperSpineViewer.Main;
 import com.jfoenix.controls.*;
-import com.jfoenix.controls.JFXButton.ButtonType;
 import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -66,115 +65,139 @@ public class Spine extends Main implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ImageView spineLogo = new ImageView();
-        spineLogo.setImage(new Image("/UI/SpineLogo.png", 138, 0, true, true, false));
+        ImageView spineLogo = new ImageView() {{
+            setImage(new Image("/UI/SpineLogo.png", 138, 0, true, true, false));
+        }};
+        AtomicReference<String> headerColor = new AtomicReference<>(getColor((short) ((Math.random() * 12) % 22)));
 
-        StackPane header = new StackPane();
-        AtomicReference<String> headerColor = new AtomicReference<>(getDefaultColor((short) ((Math.random() * 12) % 22)));
-        header.setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
+        Label project = new Label("Waiting Loading...") {{
+            setStyle("-fx-text-fill: #f1f1f2;");
+            getStyleClass().add("normal-label");
+        }};
 
-        Label project = new Label("Waiting Loading...");
-        project.setStyle("-fx-text-fill: #f1f1f2;");
-        project.getStyleClass().add("normal-label");
-        header.setAlignment(Pos.BOTTOM_LEFT);
-        header.getChildren().addAll(spineLogo, project);
-        StackPane.setAlignment(spineLogo, Pos.CENTER);
+        StackPane header = new StackPane() {{
+            setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
+            setAlignment(Pos.BOTTOM_LEFT);
+            getChildren().addAll(spineLogo, project);
+            setAlignment(spineLogo, Pos.CENTER);
+        }};
+
         spine.projectNameProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> project.setText(newValue)));
-
         VBox.setVgrow(header, Priority.NEVER);
-        StackPane body = new StackPane();
-        body.setStyle("-fx-background-radius: 0 0 5 5; -fx-background-color: rgb(255,255,255,0.87);");
 
-        Label L_Scale = new Label("Load Scale");
-        L_Scale.getStyleClass().add("normal-label");
-        Label L_Width = new Label("Camera Width");
-        L_Width.getStyleClass().add("normal-label");
-        Label L_Height = new Label("Camera Height");
-        L_Height.getStyleClass().add("normal-label");
-        Label L_X = new Label("Position X");
-        L_X.getStyleClass().add("normal-label");
-        Label L_Y = new Label("Position Y");
-        L_Y.getStyleClass().add("normal-label");
-        Label L_Speed = new Label("Play Speed");
-        L_Speed.getStyleClass().add("normal-label");
-        Label L_Skins = new Label("Skins");
-        L_Skins.getStyleClass().add("normal-label");
-        Label L_Animate = new Label("Animations");
-        L_Animate.getStyleClass().add("normal-label");
-        Label L_Loop = new Label("Loop");
-        L_Loop.getStyleClass().add("normal-label");
+        JFXTextField T_Scale = new JFXTextField() {{
+            setPromptText("1.0");
+            setTextFormatter(new TextFormatter<String>(change -> {
+                if (change.getText().matches("[0-9]*|\\."))
+                    return change;
+                return null;
+            }));
+            setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode().equals(KeyCode.ENTER))
+                    if (getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
+                        spine.setScale(Float.parseFloat(getText()));
+            });
+        }};
 
-        JFXTextField T_Scale = new JFXTextField();
-        T_Scale.setPromptText("1.0");
-        JFXTextField T_Width = new JFXTextField();
-        T_Width.setEditable(false);
-        JFXTextField T_Height = new JFXTextField();
-        T_Height.setEditable(false);
-        JFXTextField T_X = new JFXTextField();
-        T_X.setPromptText("0.0");
-        JFXTextField T_Y = new JFXTextField();
-        T_Y.setPromptText("-200");
+        JFXTextField T_Width = new JFXTextField() {{
+            setEditable(false);
+        }};
 
-        JFXSlider S_Speed = new JFXSlider();
-        S_Speed.setSnapToTicks(true);
-        S_Speed.setShowTickLabels(true);
-        S_Speed.setMin(0.25);
-        S_Speed.setMax(2.0);
-        S_Speed.setMajorTickUnit(0.25);
-        S_Speed.setBlockIncrement(0.25);
-        S_Speed.setValue(1);
+        JFXTextField T_Height = new JFXTextField() {{
+            setEditable(false);
+        }};
 
-        JFXToggleButton T_Loop = new JFXToggleButton();
-        JFXButton B_Reload = new JFXButton("Reload");
-        B_Reload.setButtonType(ButtonType.FLAT);
-        B_Reload.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
-        JFXButton B_Reset = new JFXButton("Reset");
-        B_Reset.setButtonType(ButtonType.FLAT);
-        B_Reset.setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+        JFXTextField T_X = new JFXTextField() {{
+            setPromptText("0.0");
+            setTextFormatter(new TextFormatter<String>(change -> {
+                if (change.getText().matches("[0-9]*|\\.|-"))
+                    return change;
+                return null;
+            }));
+            setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode().equals(KeyCode.ENTER))
+                    if (getText().matches("-?[0-9]\\d*|-?([1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*)"))
+                        spine.setX(Float.parseFloat(getText()));
+            });
+        }};
 
-        FlowPane set = new FlowPane(L_Loop, T_Loop, B_Reload, B_Reset);
-        set.setMaxWidth(300);
-        set.setStyle("-fx-padding: 0 0 0 18;");
-        JFXComboBox<String> C_Skins = new JFXComboBox<>();
-        JFXComboBox<String> C_Animate = new JFXComboBox<>();
+        JFXTextField T_Y = new JFXTextField() {{
+            setPromptText("-200");
+            setTextFormatter(new TextFormatter<String>(change -> {
+                if (change.getText().matches("[0-9]*|\\.|-"))
+                    return change;
+                return null;
+            }));
+            setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode().equals(KeyCode.ENTER))
+                    if (getText().matches("-?[0-9]\\d*|-?([1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*)"))
+                        spine.setY(Float.parseFloat(getText()));
+            });
+        }};
 
-        VBox controller = new VBox(20);
-        controller.setPadding(new Insets(14, 16, 20, 16));
-        controller.getChildren().addAll(L_Scale, T_Scale,
-                L_X, T_X,
-                L_Y, T_Y,
-                L_Width, T_Width,
-                L_Height, T_Height,
-                L_Speed, S_Speed, set,
-                L_Skins, C_Skins,
-                L_Animate, C_Animate);
+        JFXSlider S_Speed = new JFXSlider() {{
+            setSnapToTicks(true);
+            setShowTickLabels(true);
+            setMin(0.25);
+            setMax(2.0);
+            setMajorTickUnit(0.25);
+            setBlockIncrement(0.25);
+            setValue(1);
+            setValueFactory(slider ->
+                    Bindings.createStringBinding(() -> ((int) (getValue() * 100) / 100f) + "x", slider.valueProperty())
+            );
+            valueProperty().addListener((observable, oldValue, newValue) -> spine.setSpeed((Float.parseFloat(String.valueOf(newValue)))));
+        }};
 
-        ScrollPane scrollPane = new ScrollPane(controller);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        body.getChildren().add(scrollPane);
-        VBox content = new VBox();
-        content.getChildren().addAll(header, body);
+        JFXComboBox<String> C_Skins = new JFXComboBox<>() {{
+            setItems(spine.getSkinsList());
+            setOnAction(event -> spine.setSkin(getValue()));
+        }};
 
-        JFXButton playButton = new JFXButton("");
-        playButton.setButtonType(ButtonType.RAISED);
-        playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((short) ((Math.random() * 20) % 22)));
-        playButton.setPrefSize(56, 56);
-        playButton.setRipplerFill(Color.valueOf(headerColor.get()));
-        playButton.setScaleX(0);
-        playButton.setScaleY(0);
+        JFXComboBox<String> C_Animate = new JFXComboBox<>() {{
+            setItems(spine.getAnimatesList());
+            setOnAction(event -> spine.setAnimate(getValue()));
+        }};
 
-        FontIcon playIcon = new FontIcon();
-        playIcon.setIconLiteral("fas-play");
-        playIcon.setIconSize(20);
-        playIcon.setIconColor(Paint.valueOf("WHITE"));
-        FontIcon pauseIcon = new FontIcon();
-        pauseIcon.setIconLiteral("fas-pause");
-        pauseIcon.setIconSize(20);
-        pauseIcon.setIconColor(Paint.valueOf("WHITE"));
-        playButton.setGraphic(playIcon);
+        FontIcon playIcon = new FontIcon() {{
+            setIconLiteral("fas-play");
+            setIconSize(20);
+            setIconColor(Paint.valueOf("WHITE"));
+        }};
 
-        playButton.translateYProperty().bind(Bindings.createDoubleBinding(() ->
-                header.getBoundsInParent().getHeight() - playButton.getHeight() / 2, header.boundsInParentProperty(), playButton.heightProperty()));
+        FontIcon pauseIcon = new FontIcon() {{
+            setIconLiteral("fas-pause");
+            setIconSize(20);
+            setIconColor(Paint.valueOf("WHITE"));
+        }};
+
+        JFXButton playButton = new JFXButton("") {{
+            setButtonType(ButtonType.RAISED);
+            setStyle("-fx-background-radius: 40;-fx-background-color: " + getColor((short) ((Math.random() * 20) % 22)));
+            setPrefSize(56, 56);
+            setRipplerFill(Color.valueOf(headerColor.get()));
+            setScaleX(0);
+            setScaleY(0);
+            setGraphic(playIcon);
+            translateYProperty().bind(Bindings.createDoubleBinding(() ->
+                    header.getBoundsInParent().getHeight() - getHeight() / 2, header.boundsInParentProperty(), heightProperty()));
+            setOnAction(event -> {
+                if (isLoad) {
+                    if (spine.isIsPlay()) {
+                        spine.setIsPlay(false);
+                        setGraphic(playIcon);
+                    } else {
+                        spine.setIsPlay(true);
+                        setGraphic(pauseIcon);
+                        headerColor.set(getColor((short) ((Math.random() * 12) % 22)));
+                        header.setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
+                        setStyle("-fx-background-radius: 40;-fx-background-color: " + getColor((short) ((Math.random() * 20) % 22)));
+                        setRipplerFill(Color.valueOf(headerColor.get()));
+                    }
+                }
+            });
+        }};
+
         StackPane.setMargin(playButton, new Insets(0, 26, 0, 0));
         StackPane.setAlignment(playButton, Pos.TOP_RIGHT);
 
@@ -189,40 +212,85 @@ public class Spine extends Main implements Initializable {
         animation.play();
 
         JFXDepthManager.setDepth(spinePane, 1);
-        spinePane.getChildren().addAll(content, playButton);
+        spinePane.getChildren().addAll(new VBox() {{
+            getChildren().addAll(header, new StackPane() {{
+                setStyle("-fx-background-radius: 0 0 5 5; -fx-background-color: rgb(255,255,255,0.87);");
+                getChildren().add(new ScrollPane(new VBox(20) {{
+                    setPadding(new Insets(14, 16, 20, 16));
+                    getChildren().addAll(new Label("Load Scale") {{
+                                             getStyleClass().add("normal-label");
+                                         }}, T_Scale,
+                            new Label("Position X") {{
+                                getStyleClass().add("normal-label");
+                            }}, T_X,
+                            new Label("Position Y") {{
+                                getStyleClass().add("normal-label");
+                            }}, T_Y,
+                            new Label("Camera Width") {{
+                                getStyleClass().add("normal-label");
+                            }}, T_Width,
+                            new Label("Camera Height") {{
+                                getStyleClass().add("normal-label");
+                            }}, T_Height,
+                            new Label("Play Speed") {{
+                                getStyleClass().add("normal-label");
+                            }}, S_Speed, new FlowPane(new Label("Loop") {{
+                                getStyleClass().add("normal-label");
+                            }}, new JFXToggleButton() {{
+                                setOnAction(event1 -> spine.setIsLoop(isSelected()));
+                            }}, new JFXButton("Reload") {{
+                                setButtonType(ButtonType.FLAT);
+                                setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+                                setOnAction(event -> {
+                                    Universal.Range = -1;
+                                    new Loader().init();
+                                });
+                            }}, new JFXButton("Reset") {{
+                                setButtonType(ButtonType.FLAT);
+                                setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+                                setOnAction(event -> {
+                                    spine.setScale(1);
+                                    spine.setX(0);
+                                    spine.setY(-200f);
+                                    spine.setIsPlay(false);
 
-        spineRender = new ImageView();
-        spineRender.setScaleY(-1);
+                                    T_Scale.clear();
+                                    T_X.clear();
+                                    T_Y.clear();
+                                    C_Skins.setValue(null);
+                                    C_Animate.setValue(null);
+                                    S_Speed.setValue(1);
+                                    System.gc();
+                                });
+                            }}) {{
+                                setMaxWidth(300);
+                                setStyle("-fx-padding: 0 0 0 18;");
+                            }},
+                            new Label("Skins") {{
+                                getStyleClass().add("normal-label");
+                            }}, C_Skins,
+                            new Label("Animations") {{
+                                getStyleClass().add("normal-label");
+                            }}, C_Animate);
+                }}) {{
+                    setHbarPolicy(ScrollBarPolicy.NEVER);
+                }});
+            }});
+        }}, playButton);
 
-        spineRender.fitWidthProperty().addListener((observable, oldValue, newValue) -> {
-            T_Width.setPromptText(String.valueOf(newValue.intValue()));
-            width = newValue.intValue();
-            Pref.putDouble("stageWidth", newValue.doubleValue() + 368);
-        });
-        spineRender.fitHeightProperty().addListener((observable, oldValue, newValue) -> {
-            T_Height.setPromptText(String.valueOf(newValue.intValue()));
-            height = newValue.intValue();
-            Pref.putDouble("stageHeight", newValue.doubleValue() + 103);
-        });
-
-        C_Skins.setItems(spine.getSkinsList());
-        C_Animate.setItems(spine.getAnimatesList());
-
-        playButton.setOnAction(event -> {
-            if (isLoad) {
-                if (spine.isIsPlay()) {
-                    spine.setIsPlay(false);
-                    playButton.setGraphic(playIcon);
-                } else {
-                    spine.setIsPlay(true);
-                    playButton.setGraphic(pauseIcon);
-                    headerColor.set(getDefaultColor((short) ((Math.random() * 12) % 22)));
-                    header.setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
-                    playButton.setStyle("-fx-background-radius: 40;-fx-background-color: " + getDefaultColor((short) ((Math.random() * 20) % 22)));
-                    playButton.setRipplerFill(Color.valueOf(headerColor.get()));
-                }
-            }
-        });
+        spineRender = new ImageView() {{
+            setScaleY(-1);
+            fitWidthProperty().addListener((observable, oldValue, newValue) -> {
+                T_Width.setPromptText(String.valueOf(newValue.intValue()));
+                width = newValue.intValue();
+                Pref.putDouble("stageWidth", newValue.doubleValue() + 368);
+            });
+            fitHeightProperty().addListener((observable, oldValue, newValue) -> {
+                T_Height.setPromptText(String.valueOf(newValue.intValue()));
+                height = newValue.intValue();
+                Pref.putDouble("stageHeight", newValue.doubleValue() + 103);
+            });
+        }};
 
         spine.isPlayProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) {
@@ -230,73 +298,6 @@ public class Spine extends Main implements Initializable {
                 else Platform.runLater(() -> playButton.setGraphic(playIcon));
             }
         });
-
-        T_Scale.setTextFormatter(new TextFormatter<String>(change -> {
-            if (change.getText().matches("[0-9]*|\\."))
-                return change;
-            return null;
-        }));
-        T_Scale.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode().equals(KeyCode.ENTER))
-                if (T_Scale.getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
-                    spine.setScale(Float.parseFloat(T_Scale.getText()));
-        });
-
-        T_X.setTextFormatter(new TextFormatter<String>(change -> {
-            if (change.getText().matches("[0-9]*|\\.|-"))
-                return change;
-            return null;
-        }));
-        T_X.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode().equals(KeyCode.ENTER))
-                if (T_X.getText().matches("-?[0-9]\\d*|-?([1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*)"))
-                    spine.setX(Float.parseFloat(T_X.getText()));
-        });
-
-        T_Y.setTextFormatter(new TextFormatter<String>(change -> {
-            if (change.getText().matches("[0-9]*|\\.|-"))
-                return change;
-            return null;
-        }));
-        T_Y.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode().equals(KeyCode.ENTER))
-                if (T_Y.getText().matches("-?[0-9]\\d*|-?([1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*)"))
-                    spine.setY(Float.parseFloat(T_Y.getText()));
-        });
-
-        S_Speed.setValueFactory(slider ->
-                Bindings.createStringBinding(
-                        () -> ((int) (S_Speed.getValue() * 100) / 100f) + "x",
-                        slider.valueProperty()
-                )
-        );
-        S_Speed.valueProperty().addListener((observable, oldValue, newValue) -> spine.setSpeed((Float.parseFloat(String.valueOf(newValue)))));
-
-        T_Loop.setOnAction(event -> spine.setIsLoop(T_Loop.isSelected()));
-
-        B_Reload.setOnAction(event -> {
-            Universal.Range = -1;
-            new Loader().init();
-        });
-
-        B_Reset.setOnAction(event -> {
-            spine.setScale(1);
-            spine.setX(0);
-            spine.setY(-200f);
-            spine.setIsPlay(false);
-
-            T_Scale.clear();
-            T_X.clear();
-            T_Y.clear();
-            C_Skins.setValue(null);
-            C_Animate.setValue(null);
-            S_Speed.setValue(1);
-            System.gc();
-        });
-
-        C_Skins.setOnAction(event -> spine.setSkin(C_Skins.getValue()));
-
-        C_Animate.setOnAction(event -> spine.setAnimate(C_Animate.getValue()));
     }
 
     public boolean isLoaded() {
@@ -355,7 +356,7 @@ public class Spine extends Main implements Initializable {
         timeline.play();
     }
 
-    private String getDefaultColor(short i) {
+    private String getColor(short i) {
         return switch (i) {
             case 0 -> "#455A64";
             case 1 -> "#616161";
