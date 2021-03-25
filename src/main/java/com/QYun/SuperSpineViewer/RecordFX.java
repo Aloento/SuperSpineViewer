@@ -94,7 +94,12 @@ public class RecordFX extends Main {
     }
 
     private void encodeFX() {
-        Thread encode = new Thread("RecordFX_Encoding") {
+        new Thread("RecordFX_Encoding") {
+            {
+                setDaemon(true);
+                start();
+            }
+
             @Override
             public void run() {
                 Platform.runLater(() -> progressBar.setProgress(-1));
@@ -117,8 +122,6 @@ public class RecordFX extends Main {
                 });
             }
         };
-        encode.setDaemon(true);
-        encode.start();
     }
 
     private class savePNG implements Runnable {

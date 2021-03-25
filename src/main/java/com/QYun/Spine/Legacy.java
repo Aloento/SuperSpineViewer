@@ -92,9 +92,7 @@ public class Legacy extends SuperSpine {
     }
 
     private boolean loadSkel() {
-        TextureAtlasData atlasData = new TextureAtlasData(atlasFile, atlasFile.parent(), false);
-
-        TextureAtlas atlas = new TextureAtlas(atlasData) {
+        TextureAtlas atlas = new TextureAtlas(new TextureAtlasData(atlasFile, atlasFile.parent(), false)) {
             public AtlasRegion findRegion(String name) {
                 AtlasRegion region = super.findRegion(name);
                 if (region == null) {

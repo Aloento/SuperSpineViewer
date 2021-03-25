@@ -6,7 +6,6 @@ import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXPopup;
 import javafx.animation.Transition;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -62,9 +61,9 @@ public class Primary extends Main implements Initializable {
                 setController(new InputController());
             }}.load());
             FXMLLoader spineLoader = new FXMLLoader(getClass().getResource("/UI/Spine.fxml"));
-            spineController = spineLoader.getController();
             mainDrawer.setContent(spineLoader.<Parent>load());
             mainDrawer.setSidePane(new FXMLLoader(getClass().getResource("/UI/Exporter.fxml")).<Parent>load());
+            spineController = spineLoader.getController();
         } catch (IOException e) {
             e.printStackTrace();
         }
