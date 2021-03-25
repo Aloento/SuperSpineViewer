@@ -1,6 +1,5 @@
 package com.QYun.SuperSpineViewer;
 
-import com.QYun.Spine.SuperSpine;
 import com.QYun.Spine.Universal;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
@@ -19,7 +18,6 @@ public class Loader extends Main {
     private final String[] dataSuffixes = {".json", ".skel"};
     private final String[] endSuffixes = {"", ".txt", ".bytes"};
     private final String[] atlasSuffixes = {".atlas", "-pma.atlas"};
-    private final SuperSpine spine = new SuperSpine();
     private final Universal universal = new Universal();
 
     private void whichVersion(String skel) {

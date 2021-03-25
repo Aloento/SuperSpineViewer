@@ -1,6 +1,5 @@
 package com.QYun.SuperSpineViewer.Controller;
 
-import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.Loader;
 import com.QYun.SuperSpineViewer.Main;
 import com.QYun.SuperSpineViewer.RecordFX;
@@ -19,9 +18,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Exporter extends Main implements Initializable {
-    private final SuperSpine spine = new SuperSpine();
-    private final RecordFX record = new RecordFX();
-
     @FXML
     private Label L_Version;
     @FXML
@@ -44,7 +40,7 @@ public class Exporter extends Main implements Initializable {
             spine.setSpeed(quality);
             spine.setIsPlay(true);
             System.out.println("请求：开始录制");
-            record.startRecording(spine.getProjectName() + "_" + spine.getAnimate());
+            recordFX.Start(spine.getProjectName() + "_" + spine.getAnimate());
         }
     }
 
@@ -141,9 +137,9 @@ public class Exporter extends Main implements Initializable {
         FPS = L_FPS;
         Skel = L_Skel;
         Atlas = L_Atlas;
-        recordFX = record;
         progressBar = P_Export;
         T_Path.setText(outPath);
+        recordFX = new RecordFX();
         spine.spineVersionProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
 
         System.out.println("SuperSpineViewer已启动");

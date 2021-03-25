@@ -1,5 +1,6 @@
 package com.QYun.SuperSpineViewer;
 
+import com.QYun.Spine.SuperSpine;
 import com.QYun.SuperSpineViewer.Controller.Launcher;
 import com.QYun.SuperSpineViewer.Controller.Spine;
 import com.jfoenix.controls.JFXProgressBar;
@@ -11,6 +12,8 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class Main {
+    public static final SuperSpine spine = new SuperSpine();
+    public static final Preferences Pref = Preferences.userRoot().node("/com/QYun/SuperSpineViewer");
     public static RecordFX recordFX;
     public static Spine spineController;
     public static JFXProgressBar progressBar;
@@ -21,13 +24,12 @@ public class Main {
     public static int width;
     public static int height;
     public static byte perform = 6;
-    public static byte sequence = 0;
+    public static byte sequence;
     public static float quality = 0.5f;
     public static boolean isLoad = false;
     public static boolean preA = true;
     public static boolean recording = false;
-    public static String openPath = null;
-    public static Preferences Pref = Preferences.userRoot().node("/com/QYun/SuperSpineViewer");
+    public static String openPath;
     public static String outPath = Pref.get("lastSave", System.getProperty("user.home"));
 
     public static void main(String[] args) {

@@ -136,6 +136,9 @@ public class LwjglToJavaFX extends Main {
                             recordFX.recorderFX(new WritableImage(width, height) {{
                                 getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
                             }});
+                    } catch (OutOfMemoryError ignored) {
+                        recordFX.Exit();
+                        System.out.println("内存不足，导出终止");
                     } finally {
                         // Notify the render thread that we're done processing
                         signal.release();

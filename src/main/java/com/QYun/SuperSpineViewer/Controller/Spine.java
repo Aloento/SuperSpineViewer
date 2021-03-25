@@ -1,6 +1,5 @@
 package com.QYun.SuperSpineViewer.Controller;
 
-import com.QYun.Spine.SuperSpine;
 import com.QYun.Spine.Universal;
 import com.QYun.SuperSpineViewer.Loader;
 import com.QYun.SuperSpineViewer.Main;
@@ -67,7 +66,6 @@ public class Spine extends Main implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        SuperSpine spine = new SuperSpine();
         ImageView spineLogo = new ImageView();
         spineLogo.setImage(new Image("/UI/SpineLogo.png", 138, 0, true, true, false));
 

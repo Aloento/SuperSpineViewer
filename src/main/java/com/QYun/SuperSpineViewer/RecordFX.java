@@ -1,6 +1,5 @@
 package com.QYun.SuperSpineViewer;
 
-import com.QYun.Spine.SuperSpine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
@@ -26,7 +25,6 @@ public class RecordFX extends Main {
             })) {{
         allowCoreThreadTimeOut(true);
     }};
-    private final SuperSpine spine = new SuperSpine();
     private String fileName = null;
     private short counter;
     private short items;
@@ -43,7 +41,7 @@ public class RecordFX extends Main {
         }
     }
 
-    public void startRecording(String fileName) {
+    public void Start(String fileName) {
         if (!recording) {
             while (spine.getPercent() == 2)
                 Thread.onSpinWait();
@@ -52,6 +50,19 @@ public class RecordFX extends Main {
             savePool.setCorePoolSize(perform);
             recording = true;
         }
+    }
+
+    public void Exit() {
+        recording = false;
+        savePool.shutdownNow();
+        savePool.setCorePoolSize(0);
+        savePool.setMaximumPoolSize(1);
+        spine.setSpeed(1);
+        spine.setIsPlay(false);
+        counter = 0;
+        items = 0;
+        System.out.println("强制停止");
+        System.gc();
     }
 
     private void ffmpegFX() {
