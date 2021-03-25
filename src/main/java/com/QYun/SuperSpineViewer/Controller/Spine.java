@@ -83,8 +83,6 @@ public class Spine extends Main implements Initializable {
         }};
 
         spine.projectNameProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> project.setText(newValue)));
-        VBox.setVgrow(header, Priority.NEVER);
-
         JFXTextField T_Scale = new JFXTextField() {{
             setPromptText("1.0");
             setTextFormatter(new TextFormatter<String>(change -> {
@@ -198,9 +196,6 @@ public class Spine extends Main implements Initializable {
             });
         }};
 
-        StackPane.setMargin(playButton, new Insets(0, 26, 0, 0));
-        StackPane.setAlignment(playButton, Pos.TOP_RIGHT);
-
         Timeline animation = new Timeline(new KeyFrame(Duration.millis(240),
                 new KeyValue(playButton.scaleXProperty(),
                         1,
@@ -275,7 +270,10 @@ public class Spine extends Main implements Initializable {
                 }}) {{
                     setHbarPolicy(ScrollBarPolicy.NEVER);
                 }});
+                setMargin(playButton, new Insets(0, 26, 0, 0));
+                setAlignment(playButton, Pos.TOP_RIGHT);
             }});
+            setVgrow(header, Priority.NEVER);
         }}, playButton);
 
         spineRender = new ImageView() {{
@@ -316,13 +314,12 @@ public class Spine extends Main implements Initializable {
             Thread.sleep(100);
             setProgressAnimate(red);
             Thread.sleep(1000);
-            Timeline paneLine = new Timeline(
+            new Timeline(
                     new KeyFrame(
                             Duration.seconds(1),
                             new KeyValue(loadPane.opacityProperty(), 0)
                     )
-            );
-            paneLine.play();
+            ).play();
             Thread.sleep(800);
             Platform.runLater(() -> {
                 loadPane.getChildren().removeAll(purple, blue, cyan, green, yellow, orange, red);
@@ -347,13 +344,12 @@ public class Spine extends Main implements Initializable {
     }
 
     private void setProgressAnimate(JFXSpinner spinner) {
-        Timeline timeline = new Timeline(
+        new Timeline(
                 new KeyFrame(
                         Duration.seconds(1),
                         new KeyValue(spinner.progressProperty(), 1)
                 )
-        );
-        timeline.play();
+        ).play();
     }
 
     private String getColor(short i) {
