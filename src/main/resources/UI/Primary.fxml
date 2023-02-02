@@ -1,34 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXDrawer?>
-<?import com.jfoenix.controls.JFXHamburger?>
-<?import com.jfoenix.controls.JFXRippler?>
-<?import com.jfoenix.controls.JFXToolbar?>
-<?import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
 <?import java.lang.String?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
            fx:controller="to.aloen.ssv.controller.Primary">
     <BorderPane>
-        <top>
-            <VBox spacing="20">
-                <JFXToolbar>
-                    <leftItems>
-                        <JFXRippler maskType="CIRCLE" style="-fx-ripple-color:WHITE;">
-                            <StackPane fx:id="titleBurgerContainer">
-                                <JFXHamburger fx:id="titleBurger">
-                                    <HamburgerBackArrowBasicTransition/>
-                                </JFXHamburger>
-                            </StackPane>
-                        </JFXRippler>
-                    </leftItems>
-                </JFXToolbar>
-            </VBox>
-        </top>
-
         <center>
             <JFXDrawer fx:id="mainDrawer" defaultDrawerSize="302" direction="LEFT">
                 <styleClass>
@@ -36,6 +15,5 @@
                 </styleClass>
             </JFXDrawer>
         </center>
-
     </BorderPane>
 </StackPane>

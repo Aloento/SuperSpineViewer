@@ -196,7 +196,7 @@ public class Spine extends Main implements Initializable {
         spinePane.getChildren().addAll(new VBox() {{
             getChildren().addAll(new StackPane() {{
                 setStyle("-fx-background-radius: 0 0 5 5; -fx-background-color: rgb(255,255,255,0.87);");
-                setMargin(playButton, new Insets(0, 26, 0, 0));
+                setMargin(playButton, new Insets(0, 14, 0, 0));
                 setAlignment(playButton, Pos.TOP_RIGHT);
 
                 getChildren().add(new ScrollPane(new VBox(20) {{

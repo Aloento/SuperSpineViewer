@@ -7,7 +7,7 @@
            fx:controller="to.aloen.ssv.controller.Spine">
     <BorderPane fx:id="Viewer">
         <left>
-            <StackPane fx:id="spinePane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="697.0" prefWidth="360">
+            <StackPane fx:id="spinePane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="697.0" prefWidth="340">
             </StackPane>
         </left>
         <center>
