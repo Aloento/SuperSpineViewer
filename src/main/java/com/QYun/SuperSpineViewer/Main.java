@@ -33,6 +33,8 @@ public class Main {
     public static String outPath = Pref.get("lastSave", System.getProperty("user.home"));
 
     public static void main(String[] args) {
+        org.burningwave.core.assembler.StaticComponentContainer.Modules.exportAllToAll();
+
         if (args.length > 0) {
             if (args[0].equals("reset")) {
                 try {
