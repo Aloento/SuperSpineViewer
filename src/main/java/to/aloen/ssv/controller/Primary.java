@@ -31,12 +31,7 @@ public class Primary extends Main implements Initializable {
     private JFXHamburger titleBurger;
 
     @FXML
-    private StackPane optionsBurger;
-
-    @FXML
     private JFXDrawer mainDrawer;
-
-    private JFXPopup toolbarPopup;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,87 +52,12 @@ public class Primary extends Main implements Initializable {
         });
 
         try {
-            toolbarPopup = new JFXPopup(new FXMLLoader(Primary.this.getClass().getResource("/UI/MainPopup.fxml")) {{
-                setController(new InputController());
-            }}.load());
             FXMLLoader spineLoader = new FXMLLoader(getClass().getResource("/UI/Spine.fxml"));
             mainDrawer.setContent(spineLoader.<Parent>load());
             mainDrawer.setSidePane(new FXMLLoader(getClass().getResource("/UI/Exporter.fxml")).<Parent>load());
             spineController = spineLoader.getController();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        optionsBurger.setOnMouseClicked(e ->
-                toolbarPopup.show(optionsBurger,
-                        JFXPopup.PopupVPosition.TOP,
-                        JFXPopup.PopupHPosition.RIGHT,
-                        -12,
-                        15));
-    }
-
-    public static final class InputController {
-        @FXML
-        private JFXListView<?> toolbarPopupList;
-
-        @FXML
-        private void mainSubmit() {
-            if (toolbarPopupList.getSelectionModel().getSelectedIndex() == 0) {
-                AtomicReference<Double> xOffset = new AtomicReference<>((double) 0);
-                AtomicReference<Double> yOffset = new AtomicReference<>((double) 0);
-
-                try {
-                    Parent about = FXMLLoader.load(getClass().getResource("/UI/About.fxml"));
-                    Stage aboutStage = new Stage(StageStyle.TRANSPARENT) {{
-                        setResizable(false);
-                        setAlwaysOnTop(true);
-                        setScene(new Scene(about) {{
-                            getRoot().setEffect(new DropShadow(10, Color.rgb(100, 100, 100)));
-                            setFill(Color.TRANSPARENT);
-                        }});
-                        getIcons().add(new Image("/UI/Q-Audio.png"));
-                        setTitle("SuperSpineViewer - Aloento_QYun_SoarTeam");
-                        show();
-                    }};
-                    about.setOnMousePressed(event -> {
-                        xOffset.set(event.getSceneX());
-                        yOffset.set(event.getSceneY());
-                    });
-                    about.setOnMouseDragged(event -> {
-                        aboutStage.setX(event.getScreenX() - xOffset.get());
-                        aboutStage.setY(event.getScreenY() - yOffset.get());
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                System.out.println(
-                        """
-                                                         ...                                     `
-                                               .;$#################@|`                           `
-                                           .%###########################&:                       `
-                                        .%#################################@:                    `
-                                      '&######################################!                  `
-                                    `$#############@|'         .;&##############;                `
-                                   ;############%.                  ;@###########%.              `
-                                  !###########;                       `$##########$`             `
-                                 ;##########%. `%%`               `|:   ;##########%.            `
-                                `$#########%. '&##&'            .|###!   ;##########;            `
-                                :@########@:                   |######!  .%#########|            `
-                                ;#########&`                  ;########%. |#########%.           `
-                                :#########@:            '`   `$##########%$#########%.           `
-                                `$#########%           :$|`  !######################%.           `
-                                 ;##########|       `::;`'%%&#######################%.           `
-                                  |##########@:   |#################################%.           `
-                                   !############|$##################################%.           `
-                                    '&##############################################%.           `
-                                      ;#######################&''&##@!%########@!%##%.           `
-                                        '&###################|:&&:|#@!|@@@@@###@!%##%.           `
-                                           '&##############@;;####;;@######&!$#@!%##%.           `
-                                               '%#########$:%######%:$#####&!$#@!%##%.           `
-                                                       `'::::::::::::::::::::::'.`::`            `""".indent(9));
-
-            } else System.exit(0);
         }
     }
 }

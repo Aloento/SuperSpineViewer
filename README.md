@@ -3,10 +3,9 @@
 [**For English User**](https://github.com/Aloento/SuperSpineViewer/blob/master/README-Eng.md)
 
 一个拿来加载与导出Spine动画的工具  
-一定需要Java15才能运行  
-或使用打包好的exe程序  
+要求系统支持像素缓冲区  
 导出MOV需要FFmpeg  
-当前版本：1.2.6
+当前版本：1.3.0
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
@@ -14,34 +13,7 @@
 
 [**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases/latest)
 
-[通用运行依赖](https://github.com/Aloento/SuperSpineViewer/releases/tag/R1.0.0)
-
 [![Windows x64](https://github.com/Aloento/SuperSpineViewer/workflows/Windows%20x64/badge.svg "Windows x64自动构建")](https://github.com/Aloento/SuperSpineViewer/actions?query=workflow%3A%22Windows+x64%22)
-
-### 须知 & 关于
-
-它本质上是我学习Java和OpenJFX的练习作品  
-我虽然尽可能保证它能正常使用  
-但是不能保证它好用  
-也不能保证拥有大多数功能
-
-本工具使用高度定制的Spine运行时  
-Spine Universal LibGDX Runtimes
-
-### 已知问题
-
-目前渲染实现会占用大量不必要的带宽  
-在DriftFX稳定后会尝试迁移  
-目前要求系统支持像素缓冲区
-
-如果出现 [（这其实是JDK的一个Bug）](https://bugs.openjdk.java.net/browse/JDK-8192647)  
-`[warning][gc,alloc] SavePNG: Retried waiting for GCLocker too often allocating %d words`  
-则说明内存回收时出现问题  
-这种情况下一定会丢帧，卡顿  
-并且FFmpeg处理时会卡住  
-这时只能重启程序解决  
-请调整JVM参数以允许更多内存分配  
-或者降低分辨率或质量与提高性能
 
 ### 性能设置参考
 

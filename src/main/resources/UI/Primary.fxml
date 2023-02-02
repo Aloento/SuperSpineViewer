@@ -21,15 +21,6 @@
                         </JFXRippler>
                         <Label>SuperSpineViewer</Label>
                     </leftItems>
-                    <rightItems>
-                        <JFXRippler maskType="CIRCLE"
-                                    style="-fx-ripple-color:WHITE;">
-                            <StackPane fx:id="optionsBurger">
-                                <JFXHamburger styleClass="jfx-options-burger">
-                                </JFXHamburger>
-                            </StackPane>
-                        </JFXRippler>
-                    </rightItems>
                 </JFXToolbar>
             </VBox>
         </top>
