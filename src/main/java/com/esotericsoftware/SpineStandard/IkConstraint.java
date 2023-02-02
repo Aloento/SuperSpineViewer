@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.Loader;
+import to.aloen.ssv.Loader;
 import com.badlogic.gdx.utils.Array;
 
 import static com.badlogic.gdx.math.MathUtils.radDeg;

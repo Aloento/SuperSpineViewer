@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard;
 
-import com.QYun.SuperSpineViewer.Loader;
+import to.aloen.ssv.Loader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;

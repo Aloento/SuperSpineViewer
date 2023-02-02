@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
 <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
-           fx:controller="com.QYun.SuperSpineViewer.Controller.Primary">
+           fx:controller="to.aloen.ssv.controller.Primary">
     <BorderPane>
         <top>
             <VBox spacing="20">

@@ -1,6 +1,6 @@
-package com.QYun.Spine;
+package to.aloen.spine;
 
-import com.QYun.SuperSpineViewer.Main;
+import to.aloen.ssv.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;

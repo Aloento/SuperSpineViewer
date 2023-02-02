@@ -1,8 +1,8 @@
-package com.QYun.SuperSpineViewer.Controller;
+package to.aloen.ssv.controller;
 
-import com.QYun.Spine.Universal;
-import com.QYun.SuperSpineViewer.Loader;
-import com.QYun.SuperSpineViewer.Main;
+import to.aloen.spine.Universal;
+import to.aloen.ssv.Loader;
+import to.aloen.ssv.Main;
 import com.jfoenix.controls.*;
 import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.KeyFrame;

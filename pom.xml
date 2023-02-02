@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.QYun</groupId>
+    <groupId>to.aloen</groupId>
     <artifactId>SuperSpineViewer</artifactId>
-    <version>1.2.6</version>
+    <version>1.3.0</version>
     <repositories>
         <repository>
             <id>sonatype</id>
@@ -16,7 +16,7 @@
     </repositories>
 
     <name>SuperSpineViewer</name>
-    <url>https://github.com/soarteam/SuperSpineViewer</url>
+    <url>https://github.com/Aloento/SuperSpineViewer</url>
 
     <licenses>
         <license>
@@ -28,8 +28,8 @@
     </licenses>
 
     <organization>
-        <name>QYun_SoarTeam</name>
-        <url>https://Q-Audio.org/</url>
+        <name>SoarCraft</name>
+        <url>https://Aloen.to/</url>
     </organization>
 
     <developers>
@@ -58,40 +58,40 @@
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx</artifactId>
-            <version>1.9.11</version>
+            <version>1.11.0</version>
         </dependency>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-platform</artifactId>
-            <version>1.9.11</version>
+            <version>1.11.0</version>
             <classifier>natives-desktop</classifier>
         </dependency>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-box2d</artifactId>
-            <version>1.9.11</version>
+            <version>1.11.0</version>
         </dependency>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-box2d-platform</artifactId>
-            <version>1.9.11</version>
+            <version>1.11.0</version>
             <classifier>natives-desktop</classifier>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-backend-lwjgl</artifactId>
-            <version>1.9.11</version>
+            <version>1.11.0</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>15.0.1</version>
+            <version>19.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>15.0.1</version>
+            <version>19.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.jfoenix</groupId>
@@ -101,12 +101,12 @@
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
-            <version>12.1.0</version>
+            <version>12.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-fontawesome5-pack</artifactId>
-            <version>12.1.0</version>
+            <version>12.3.1</version>
         </dependency>
     </dependencies>
 
@@ -115,7 +115,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -126,7 +126,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.QYun.SuperSpineViewer.Main</mainClass>
+                                    <mainClass>to.aloen.ssv.Main</mainClass>
                                 </transformer>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>

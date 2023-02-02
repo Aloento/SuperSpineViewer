@@ -1,6 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import com.QYun.SuperSpineViewer.Main;
+import to.aloen.ssv.Main;
 import javafx.application.Platform;
 import javafx.scene.image.WritableImage;
 import org.lwjgl.LWJGLException;

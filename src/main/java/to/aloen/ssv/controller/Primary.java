@@ -1,6 +1,6 @@
-package com.QYun.SuperSpineViewer.Controller;
+package to.aloen.ssv.controller;
 
-import com.QYun.SuperSpineViewer.Main;
+import to.aloen.ssv.Main;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXListView;

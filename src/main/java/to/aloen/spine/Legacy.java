@@ -1,25 +1,25 @@
-package com.QYun.Spine;
+package to.aloen.spine;
 
-import com.QYun.SuperSpineViewer.Main;
+import to.aloen.ssv.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.SpinePreview.*;
-import com.esotericsoftware.SpinePreview.AnimationState.TrackEntry;
-import com.esotericsoftware.SpinePreview.utils.TwoColorPolygonBatch;
+import com.esotericsoftware.SpineLegacy.*;
+import com.esotericsoftware.SpineLegacy.AnimationState.TrackEntry;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 
-public class Preview extends SuperSpine {
-    private TwoColorPolygonBatch batch;
+public class Legacy extends SuperSpine {
+    private PolygonSpriteBatch batch;
     private OrthographicCamera camera;
-    private SkeletonRenderer renderer;
+    private SkeletonMeshRenderer renderer;
     private Skeleton skeleton;
     private AnimationState state;
     private float trackTime;
@@ -33,10 +33,8 @@ public class Preview extends SuperSpine {
         if (newValue != null) {
             state.setAnimation(0, newValue, isLoop.get());
             isPlay.set(true);
-        } else {
-            state.setEmptyAnimation(0, 0);
+        } else
             isPlay.set(false);
-        }
     };
     private ChangeListener<Boolean> isLoopListener = (observable, oldValue, newValue) -> {
         if (isPlay.get()) {
@@ -53,10 +51,10 @@ public class Preview extends SuperSpine {
                     state.setAnimation(0, animate.get(), isLoop.get());
                 state.setTimeScale(speed.get());
                 if (percent < 1)
-                    state.getCurrent(0).setTrackTime(trackTime);
+                    state.getCurrent(0).setTime(trackTime);
             } else {
                 state.setTimeScale(0);
-                trackTime = state.getCurrent(0).getAnimationTime();
+                trackTime = state.getCurrent(0).getTime();
             }
         }
     };
@@ -108,13 +106,16 @@ public class Preview extends SuperSpine {
             }
         };
 
-        SkeletonLoader loader;
-        if (isBinary)
-            loader = new SkeletonBinary(atlas);
-        else loader = new SkeletonJson(atlas);
-
-        loader.setScale(scale.get());
-        SkeletonData skeletonData = loader.readSkeletonData(skelFile);
+        SkeletonData skeletonData;
+        if (isBinary) {
+            SkeletonBinary binary = new SkeletonBinary(atlas);
+            binary.setScale(scale.get());
+            skeletonData = binary.readSkeletonData(skelFile);
+        } else {
+            SkeletonJson json = new SkeletonJson(atlas);
+            json.setScale(scale.get());
+            skeletonData = json.readSkeletonData(skelFile);
+        }
         if (skeletonData.getBones().size == 0) {
             System.out.println("骨骼为空");
             return false;
@@ -126,9 +127,6 @@ public class Preview extends SuperSpine {
         skeleton.setPosition(X.get(), Y.get());
 
         state = new AnimationState(new AnimationStateData(skeletonData));
-        if (animate.get() == null)
-            state.setEmptyAnimation(0, 0);
-
         spineVersion.set(skeletonData.getVersion());
         projectName.set(skeletonData.getName());
 
@@ -151,7 +149,7 @@ public class Preview extends SuperSpine {
 
     void reload() {
         super.reload();
-        if (Universal.Range != 2) {
+        if (Universal.Range != 0) {
             batch = null;
             camera = null;
             renderer = null;
@@ -179,9 +177,9 @@ public class Preview extends SuperSpine {
     }
 
     void create() {
-        batch = new TwoColorPolygonBatch(3100);
+        batch = new PolygonSpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        renderer = new SkeletonRenderer();
+        renderer = new SkeletonMeshRenderer();
         renderer.setPremultipliedAlpha(true);
 
         if (loadSkel())
@@ -195,9 +193,7 @@ public class Preview extends SuperSpine {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle("FPS : " + Gdx.graphics.getFramesPerSecond());
-
         renderer.setPremultipliedAlpha(Main.preA);
-        batch.setPremultipliedAlpha(Main.preA);
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);
@@ -207,7 +203,9 @@ public class Preview extends SuperSpine {
 
         TrackEntry entry = state.getCurrent(0);
         if (entry != null) {
-            percent = entry.getAnimationTime() / entry.getAnimationEnd();
+            percent = entry.getTime() / entry.getEndTime();
+            if (entry.getLoop())
+                percent %= 1;
             if (isPlay.get())
                 Platform.runLater(() -> Main.progressBar.setProgress(percent));
             if (percent >= 1 && !isLoop.get())

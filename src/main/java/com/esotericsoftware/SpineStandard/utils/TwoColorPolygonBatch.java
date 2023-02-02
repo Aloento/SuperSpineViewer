@@ -1,6 +1,6 @@
 package com.esotericsoftware.SpineStandard.utils;
 
-import com.QYun.SuperSpineViewer.Loader;
+import to.aloen.ssv.Loader;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;

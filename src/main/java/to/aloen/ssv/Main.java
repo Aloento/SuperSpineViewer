@@ -1,8 +1,8 @@
-package com.QYun.SuperSpineViewer;
+package to.aloen.ssv;
 
-import com.QYun.Spine.SuperSpine;
-import com.QYun.SuperSpineViewer.Controller.Launcher;
-import com.QYun.SuperSpineViewer.Controller.Spine;
+import to.aloen.spine.SuperSpine;
+import to.aloen.ssv.controller.Launcher;
+import to.aloen.ssv.controller.Spine;
 import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Application;
 import javafx.scene.control.Label;
@@ -13,7 +13,7 @@ import java.util.prefs.Preferences;
 
 public class Main {
     public static final SuperSpine spine = new SuperSpine();
-    public static final Preferences Pref = Preferences.userRoot().node("/com/QYun/SuperSpineViewer");
+    public static final Preferences Pref = Preferences.userRoot().node("/to/aloen/ssv");
     public static RecordFX recordFX;
     public static Spine spineController;
     public static JFXProgressBar progressBar;

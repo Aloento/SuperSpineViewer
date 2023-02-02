@@ -1,4 +1,4 @@
-package com.QYun.SuperSpineViewer;
+package to.aloen.ssv;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;

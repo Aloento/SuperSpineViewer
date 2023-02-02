@@ -1,4 +1,4 @@
-package com.QYun.SuperSpineViewer.Controller;
+package to.aloen.ssv.controller;
 
 import com.jfoenix.assets.JFoenixResources;
 import com.jfoenix.controls.JFXDecorator;
@@ -14,7 +14,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 
-import static com.QYun.SuperSpineViewer.Main.Pref;
+import static to.aloen.ssv.Main.Pref;
 
 public class Launcher extends Application {
     @Override

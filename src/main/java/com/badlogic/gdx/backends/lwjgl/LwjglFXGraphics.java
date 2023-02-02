@@ -1,6 +1,6 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import com.QYun.SuperSpineViewer.Main;
+import to.aloen.ssv.Main;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;

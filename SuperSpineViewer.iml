@@ -581,11 +581,12 @@
     <orderEntry type="library" name="Maven: org.burningwave:core:12.62.5" level="project" />
     <orderEntry type="library" name="Maven: org.burningwave:jvm-driver:8.14.0" level="project" />
     <orderEntry type="library" name="Maven: io.github.toolfactory:jvm-driver:9.4.2" level="project" />
-    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx:1.9.11" level="project" />
-    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-platform:natives-desktop:1.9.11" level="project" />
-    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-box2d:1.9.11" level="project" />
-    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-box2d-platform:natives-desktop:1.9.11" level="project" />
-    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-backend-lwjgl:1.9.11" level="project" />
+    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-jnigen-loader:2.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-platform:natives-desktop:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-box2d:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-box2d-platform:natives-desktop:1.11.0" level="project" />
+    <orderEntry type="library" name="Maven: com.badlogicgames.gdx:gdx-backend-lwjgl:1.11.0" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl:2.9.3" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl-platform:natives-windows:2.9.3" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl-platform:natives-linux:2.9.3" level="project" />
@@ -595,20 +596,19 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.jinput:jinput-platform:natives-linux:2.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.jinput:jinput-platform:natives-windows:2.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.jinput:jinput-platform:natives-osx:2.0.5" level="project" />
-    <orderEntry type="library" name="Maven: org.lwjgl.lwjgl:lwjgl_util:2.9.3" level="project" />
     <orderEntry type="library" name="Maven: com.badlogicgames.jlayer:jlayer:1.0.1-gdx" level="project" />
     <orderEntry type="library" name="Maven: org.jcraft:jorbis:0.0.17" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:15.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:19.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:19.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:19.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:19.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:19.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:19.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:19.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:19.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.jfoenix:jfoenix:9.0.10" level="project" />
-    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-javafx:12.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-core:12.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-fontawesome5-pack:12.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-javafx:12.3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-core:12.3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1" level="project" />
   </component>
 </module>

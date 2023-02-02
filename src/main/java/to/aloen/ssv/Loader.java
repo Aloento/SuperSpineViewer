@@ -1,6 +1,6 @@
-package com.QYun.SuperSpineViewer;
+package to.aloen.ssv;
 
-import com.QYun.Spine.Universal;
+import to.aloen.spine.Universal;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;

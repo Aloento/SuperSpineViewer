@@ -1,4 +1,4 @@
-package com.QYun.SuperSpineViewer.Controller;
+package to.aloen.ssv.controller;
 
 import javafx.application.Application;
 import javafx.fxml.FXML;

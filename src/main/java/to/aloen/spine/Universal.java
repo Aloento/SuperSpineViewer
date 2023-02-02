@@ -1,4 +1,4 @@
-package com.QYun.Spine;
+package to.aloen.spine;
 
 import com.badlogic.gdx.ApplicationAdapter;
 

@@ -42,7 +42,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.QYun.SuperSpineViewer.Main</mainClass>
+                  <mainClass>to.aloen.ssv.Main</mainClass>
                 </transformer>
                 <transformer />
               </transformers>
