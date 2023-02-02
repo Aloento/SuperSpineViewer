@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.controls.JFXRippler?>
+<?import com.jfoenix.controls.JFXToolbar?>
 <?import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import java.lang.String?>
+
 <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
            fx:controller="to.aloen.ssv.controller.Primary">
     <BorderPane>
@@ -19,7 +24,6 @@
                                 </JFXHamburger>
                             </StackPane>
                         </JFXRippler>
-                        <Label>SuperSpineViewer</Label>
                     </leftItems>
                 </JFXToolbar>
             </VBox>

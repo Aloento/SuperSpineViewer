@@ -3,6 +3,7 @@ package to.aloen.ssv.controller;
 import com.jfoenix.assets.JFoenixResources;
 import com.jfoenix.controls.JFXDecorator;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -11,15 +12,19 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
+import to.aloen.ssv.Main;
 
 import java.io.IOException;
 
 import static to.aloen.ssv.Main.Pref;
 
 public class Launcher extends Application {
+    private final String title = "SuperSpineViewer - Aloento : ";
+
     @Override
     public void start(Stage primaryStage) throws IOException {
         System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
+
         Label icon = new Label() {{
             setGraphic(new FontIcon() {{
                 setIconSize(18);
@@ -40,8 +45,11 @@ public class Launcher extends Application {
         primaryStage.getIcons().add(new Image("UI/SuperSpineViewer.png"));
         primaryStage.setWidth(Pref.getDouble("stageWidth", 1280));
         primaryStage.setHeight(Pref.getDouble("stageHeight", 800));
-        primaryStage.setTitle("QYun SoarTeam");
+        primaryStage.setTitle(title + "Waiting Loading...");
         primaryStage.show();
         icon.requestFocus();
+
+        Main.spine.projectNameProperty().addListener(
+                (observable, oldValue, newValue) -> Platform.runLater(() -> primaryStage.setTitle(title + newValue)));
     }
 }

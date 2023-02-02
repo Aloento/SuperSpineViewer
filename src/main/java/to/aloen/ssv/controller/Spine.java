@@ -1,8 +1,5 @@
 package to.aloen.ssv.controller;
 
-import to.aloen.spine.Universal;
-import to.aloen.ssv.Loader;
-import to.aloen.ssv.Main;
 import com.jfoenix.controls.*;
 import com.jfoenix.effects.JFXDepthManager;
 import javafx.animation.KeyFrame;
@@ -17,7 +14,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
@@ -25,6 +21,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
+import to.aloen.spine.Universal;
+import to.aloen.ssv.Loader;
+import to.aloen.ssv.Main;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -66,25 +65,6 @@ public class Spine extends Main implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         AtomicReference<String> headerColor = new AtomicReference<>(getColor((short) ((Math.random() * 12) % 22)));
-
-        ImageView spineLogo = new ImageView() {{
-            setImage(new Image("/UI/SpineLogo.png", 138, 0, true, true, false));
-        }};
-
-        Label project = new Label("Waiting Loading...") {{
-            setStyle("-fx-text-fill: #f1f1f2;");
-            getStyleClass().add("normal-label");
-        }};
-
-        spine.projectNameProperty().addListener(
-                (observable, oldValue, newValue) -> Platform.runLater(() -> project.setText(newValue)));
-
-        StackPane header = new StackPane() {{
-            setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
-            getChildren().addAll(spineLogo, project);
-            setAlignment(spineLogo, Pos.CENTER);
-            setAlignment(Pos.BOTTOM_LEFT);
-        }};
 
         JFXTextField T_Scale = new JFXTextField() {{
             setPromptText("1.0");
@@ -186,9 +166,6 @@ public class Spine extends Main implements Initializable {
             setScaleY(0);
             setGraphic(playIcon);
 
-            translateYProperty().bind(Bindings.createDoubleBinding(() ->
-                    header.getBoundsInParent().getHeight() - getHeight() / 2, header.boundsInParentProperty(), heightProperty()));
-
             setOnAction(event -> {
                 if (isLoad) {
                     if (spine.isIsPlay()) {
@@ -198,7 +175,6 @@ public class Spine extends Main implements Initializable {
                         spine.setIsPlay(true);
                         setGraphic(pauseIcon);
                         headerColor.set(getColor((short) ((Math.random() * 12) % 22)));
-                        header.setStyle("-fx-background-radius: 0 5 0 0; -fx-min-height: 138; -fx-background-color: " + headerColor);
                         setStyle("-fx-background-radius: 40;-fx-background-color: " + getColor((short) ((Math.random() * 20) % 22)));
                         setRipplerFill(Color.valueOf(headerColor.get()));
                     }
@@ -218,7 +194,7 @@ public class Spine extends Main implements Initializable {
         JFXDepthManager.setDepth(spinePane, 1);
 
         spinePane.getChildren().addAll(new VBox() {{
-            getChildren().addAll(header, new StackPane() {{
+            getChildren().addAll(new StackPane() {{
                 setStyle("-fx-background-radius: 0 0 5 5; -fx-background-color: rgb(255,255,255,0.87);");
                 setMargin(playButton, new Insets(0, 26, 0, 0));
                 setAlignment(playButton, Pos.TOP_RIGHT);
@@ -294,7 +270,6 @@ public class Spine extends Main implements Initializable {
                     setHbarPolicy(ScrollBarPolicy.NEVER);
                 }});
             }});
-            setVgrow(header, Priority.NEVER);
         }}, playButton);
 
         spineRender = new ImageView() {{
