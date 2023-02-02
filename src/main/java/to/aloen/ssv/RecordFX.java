@@ -14,30 +14,17 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class RecordFX extends Main {
-    private final ThreadPoolExecutor savePool = new ThreadPoolExecutor(0, 1,
-            1L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(),
-            (r -> {
-                Thread save = new Thread(r, "SavePNG");
-                save.setPriority(Thread.MIN_PRIORITY);
-                save.setDaemon(true);
-                return save;
-            })) {{
-        allowCoreThreadTimeOut(true);
-    }};
     private String fileName = null;
     private short counter;
     private short items;
 
     public void recorderFX(WritableImage image) {
         if (spine.getPercent() < 1) {
-            savePool.submit(new savePNG(image, counter++));
+            Thread.startVirtualThread(new savePNG(image, counter++));
             // System.out.println("捕获：" + counter + "\t" + spine.getPercent());
         } else {
             recording = false;
             encodeFX();
-            savePool.setMaximumPoolSize(Byte.MAX_VALUE);
-            savePool.setCorePoolSize(Byte.MAX_VALUE);
         }
     }
 
@@ -46,17 +33,12 @@ public class RecordFX extends Main {
             while (spine.getPercent() == 2)
                 Thread.onSpinWait();
             this.fileName = fileName;
-            savePool.setMaximumPoolSize(perform);
-            savePool.setCorePoolSize(perform);
             recording = true;
         }
     }
 
     public void Exit() {
         recording = false;
-        savePool.shutdownNow();
-        savePool.setCorePoolSize(0);
-        savePool.setMaximumPoolSize(1);
         spine.setSpeed(1);
         spine.setIsPlay(false);
         counter = 0;
@@ -104,10 +86,6 @@ public class RecordFX extends Main {
             public void run() {
                 Platform.runLater(() -> progressBar.setProgress(-1));
                 System.out.println("请求：停止录制");
-                while (savePool.getActiveCount() != 0)
-                    Thread.onSpinWait();
-
-                savePool.setCorePoolSize(0);
                 System.gc();
 
                 if (sequence == 0)
