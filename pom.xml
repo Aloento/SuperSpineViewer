@@ -94,9 +94,9 @@
             <version>19.0.2</version>
         </dependency>
         <dependency>
-            <groupId>com.jfoenix</groupId>
+            <groupId>org.rationalityfrontline.workaround</groupId>
             <artifactId>jfoenix</artifactId>
-            <version>9.0.10</version>
+            <version>19.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
