@@ -3,7 +3,8 @@
 [**For English User**](https://github.com/Aloento/SuperSpineViewer/blob/master/README-Eng.md)
 
 一个拿来加载与导出Spine动画的工具  
-要求系统支持像素缓冲区  
+需要 Java 19+  
+需要 像素缓冲区支持  
 导出MOV需要FFmpeg  
 当前版本：1.3.0
 
@@ -17,21 +18,14 @@
 
 ### 性能设置参考
 
-* 高分辨率(Camera) = 高内存需求
-* 高质量(Quality) = 成倍增加的内存需求
-* 高性能(Performance) = 更高的CPU需求，但内存占用随着性能的增加而减少
+* 高分辨率 (Camera) = 高内存需求
+* 高质量 (Quality) = 成倍增加的内存需求
 
 **RAM**:
 
     4G+ = Extreme (240FPS)
-    3G~ = Standard (120FPS)
-    2G~ = Fast (60FPS)
-
-**CPU**
-
-    高性能 = High (12)
-    普通 = Normal (6)
-    低压 = Low （3）
+    2G~ = Standard (120FPS)
+    1G~ = Fast (60FPS)
 
 ### 序列使用参考
 

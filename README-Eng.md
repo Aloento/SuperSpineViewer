@@ -1,7 +1,8 @@
 # SuperSpineViewer
 
 A tool to load and export Spine animations  
-Requires system support for Pixel Buffers  
+Java 19+ required  
+Pixel Buffers support required  
 Exporting MOV requires FFmpeg  
 Current version: 1.3.0
 
@@ -17,19 +18,12 @@ Current version: 1.3.0
 
 * High Resolution (Camera) = High Memory Requirements
 * Quality = Exponentially Higher Memory Requirements
-* Performance = Higher CPU Requirements, But Memory Usage Decreases As Performance Increases
 
 **RAM**:
 
     4G+ = Extreme (240FPS)
-    3G~ = Standard (120FPS)
-    2G~ = Fast (60FPS)
-
-**CPU**
-
-    High-End = High (12)
-    General = Normal (6)
-    Mobile = Low (3)
+    2G~ = Standard (120FPS)
+    1G~ = Fast (60FPS)
 
 ### Sequence Usage Reference
 
