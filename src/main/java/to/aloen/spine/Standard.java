@@ -1,6 +1,5 @@
 package to.aloen.spine;
 
-import to.aloen.ssv.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,6 +14,7 @@ import com.esotericsoftware.SpineStandard.AnimationState.TrackEntry;
 import com.esotericsoftware.SpineStandard.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import to.aloen.ssv.Main;
 
 public class Standard extends SuperSpine {
     private TwoColorPolygonBatch batch;

@@ -1,8 +1,5 @@
 package to.aloen.ssv.controller;
 
-import to.aloen.ssv.Loader;
-import to.aloen.ssv.Main;
-import to.aloen.ssv.RecordFX;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
@@ -12,6 +9,9 @@ import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import to.aloen.ssv.Loader;
+import to.aloen.ssv.Main;
+import to.aloen.ssv.RecordFX;
 
 import java.io.File;
 import java.net.URL;
@@ -98,21 +98,6 @@ public class Exporter extends Main implements Initializable {
     }
 
     @FXML
-    void RB_N() {
-        perform = 6;
-    }
-
-    @FXML
-    void RB_H() {
-        perform = 18;
-    }
-
-    @FXML
-    void RB_L() {
-        perform = 3;
-    }
-
-    @FXML
     void RB_MOV() {
         sequence = 0;
     }
@@ -120,10 +105,6 @@ public class Exporter extends Main implements Initializable {
     @FXML
     void RB_Sequence() {
         sequence = 9;
-    }
-
-    @FXML
-    void RB_Json() {
     }
 
     @FXML

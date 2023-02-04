@@ -37,12 +37,6 @@
                 <padding>
                     <Insets left="8.0"/>
                 </padding>
-                <Label text="Graphic Setting">
-                    <styleClass>
-                        <String fx:value="side-label"/>
-                        <String fx:value="BOLD"/>
-                    </styleClass>
-                </Label>
                 <Label text="Quality : ">
                     <styleClass>
                         <String fx:value="side-label"/>
@@ -72,38 +66,6 @@
                         </styleClass>
                     </JFXRadioButton>
                 </HBox>
-                <Label layoutX="18.0" layoutY="41.0" text="Performance : ">
-                    <styleClass>
-                        <String fx:value="side-label"/>
-                        <String fx:value="BOLD"/>
-                    </styleClass>
-                </Label>
-                <HBox spacing="26.0">
-                    <JFXRadioButton onAction="#RB_N" selected="true" text="Normal">
-                        <styleClass>
-                            <String fx:value="custom-jfx-radio-button"/>
-                            <String fx:value="custom-jfx-radio-button-blue"/>
-                        </styleClass>
-                        <toggleGroup>
-                            <ToggleGroup fx:id="Perform"/>
-                        </toggleGroup>
-                    </JFXRadioButton>
-                    <JFXRadioButton onAction="#RB_H" text="High" toggleGroup="$Perform">
-                        <styleClass>
-                            <String fx:value="custom-jfx-radio-button"/>
-                            <String fx:value="custom-jfx-radio-button-red"/>
-                        </styleClass>
-                    </JFXRadioButton>
-                    <JFXRadioButton onAction="#RB_L" text="Low" toggleGroup="$Perform">
-                        <styleClass>
-                            <String fx:value="custom-jfx-radio-button"/>
-                            <String fx:value="custom-jfx-radio-button-green"/>
-                        </styleClass>
-                        <HBox.margin>
-                            <Insets left="12.0"/>
-                        </HBox.margin>
-                    </JFXRadioButton>
-                </HBox>
             </VBox>
             <VBox spacing="16.0">
                 <padding>
@@ -116,7 +78,7 @@
                     </styleClass>
                 </Label>
                 <HBox spacing="38.0">
-                    <JFXRadioButton onAction="#RB_MOV" selected="true" text="MOV">
+                    <JFXRadioButton onAction="#RB_MOV" text="MOV">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
                             <String fx:value="custom-jfx-radio-button-blue"/>
@@ -125,20 +87,11 @@
                             <ToggleGroup fx:id="Format"/>
                         </toggleGroup>
                     </JFXRadioButton>
-                    <JFXRadioButton onAction="#RB_Sequence" text="Sequence" toggleGroup="$Format">
+                    <JFXRadioButton onAction="#RB_Sequence" selected="true" text="Sequence" toggleGroup="$Format">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
                             <String fx:value="custom-jfx-radio-button-red"/>
                         </styleClass>
-                    </JFXRadioButton>
-                    <JFXRadioButton disable="true" onAction="#RB_Json" text="Json" toggleGroup="$Format">
-                        <styleClass>
-                            <String fx:value="custom-jfx-radio-button"/>
-                            <String fx:value="custom-jfx-radio-button-green"/>
-                        </styleClass>
-                        <HBox.margin>
-                            <Insets left="-28.0"/>
-                        </HBox.margin>
                     </JFXRadioButton>
                 </HBox>
             </VBox>

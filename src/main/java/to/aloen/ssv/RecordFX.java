@@ -5,26 +5,27 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
 import javafx.application.Platform;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 
 import java.io.File;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class RecordFX extends Main {
+    private final LinkedBlockingQueue<Runnable> savePool = new LinkedBlockingQueue<>();
+
     private String fileName = null;
     private short counter;
     private short items;
 
     public void recorderFX(WritableImage image) {
         if (spine.getPercent() < 1) {
-            Thread.startVirtualThread(new savePNG(image, counter++));
+            savePool.add(new savePNG(image, counter++));
             // System.out.println("捕获：" + counter + "\t" + spine.getPercent());
         } else {
             recording = false;
-            encodeFX();
+            new Thread(this::encodeFX).start();
         }
     }
 
@@ -50,7 +51,7 @@ public class RecordFX extends Main {
     private void ffmpegFX() {
         try {
             System.out.println("FFmpeg处理开始");
-            new File((outPath + fileName) + ".mov").delete();
+            Files.deleteIfExists(Path.of(outPath + fileName + ".mov"));
             Platform.runLater(() -> progressBar.setProgress(-1));
 
             if (Runtime.getRuntime().exec(new String[]{
@@ -62,9 +63,11 @@ public class RecordFX extends Main {
                     outPath + fileName + ".mov"
             }, new String[]{System.getProperty("user.dir")}).waitFor() == 0) {
                 File sequence = new File(outPath + fileName + "_Sequence" + File.separator);
-                for (String file : Objects.requireNonNull(sequence.list()))
-                    new File(sequence, file).delete();
-                sequence.delete();
+
+                for (File file : sequence.listFiles()) {
+                    file.deleteOnExit();
+                }
+                sequence.deleteOnExit();
 
                 System.out.println("视频导出成功");
             } else Platform.runLater(() -> {
@@ -76,35 +79,37 @@ public class RecordFX extends Main {
     }
 
     private void encodeFX() {
-        new Thread("RecordFX_Encoding") {
-            {
-                setDaemon(true);
-                start();
+        Platform.runLater(() -> progressBar.setProgress(-1));
+        System.out.println("请求：停止录制");
+
+        ArrayList<Thread> threads = new ArrayList<>();
+
+        for (Runnable runnable : savePool)
+            threads.add(Thread.startVirtualThread(runnable));
+
+        for (Thread thread : threads)
+            try {
+                thread.join();
+            } catch (InterruptedException ignored) {
             }
 
-            @Override
-            public void run() {
-                Platform.runLater(() -> progressBar.setProgress(-1));
-                System.out.println("请求：停止录制");
-                System.gc();
+        System.gc();
 
-                if (sequence == 0)
-                    ffmpegFX();
+        if (sequence == 0)
+            ffmpegFX();
 
-                Platform.runLater(() -> {
-                    spine.setSpeed(1);
-                    counter = 0;
-                    items = 0;
-                    progressBar.setProgress(1);
-                    System.out.println("导出结束");
-                });
-            }
-        };
+        Platform.runLater(() -> {
+            spine.setSpeed(1);
+            counter = 0;
+            items = 0;
+            progressBar.setProgress(1);
+            System.out.println("导出结束");
+        });
     }
 
     private class savePNG implements Runnable {
         private final short index;
-        private WritableImage image;
+        private final WritableImage image;
 
         private savePNG(WritableImage image, short index) {
             this.image = image;
@@ -113,22 +118,18 @@ public class RecordFX extends Main {
 
         @Override
         public void run() {
-            PixmapIO.writePNG(Gdx.files.absolute(
-                    (outPath + fileName + "_Sequence" + File.separator + fileName) + "_" + index + ".png"),
+            PixmapIO.writePNG(Gdx.files.absolute(outPath + fileName + "_Sequence" + File.separator + fileName + "_" + index + ".png"),
                     new Pixmap(width, height, Pixmap.Format.RGBA8888) {{
                         for (int h = 0; h < height; h++) {
                             for (int w = 0; w < width; w++) {
-                                Color c = image.getPixelReader().getColor(w, h);
-                                drawPixel(w, h,
-                                        ((int) (c.getRed() * 255) << 24) | ((int) (c.getGreen() * 255) << 16) |
-                                                ((int) (c.getBlue() * 255) << 8) | (int) (c.getOpacity() * 255));
+                                int argb = image.getPixelReader().getArgb(w, h);
+                                drawPixel(w, h, (argb << 8) | (argb >>> 24));
                             }
                         }
                     }}, sequence, true);
 
-            image = null;
-            items++;
-            Platform.runLater(() -> progressBar.setProgress((double) items / counter));
+            var percent = (double) items++ / counter;
+            Platform.runLater(() -> progressBar.setProgress(percent));
             // System.out.println("保存：" + index);
         }
     }

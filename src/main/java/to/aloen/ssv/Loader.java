@@ -1,9 +1,9 @@
 package to.aloen.ssv;
 
-import to.aloen.spine.Universal;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
+import to.aloen.spine.Universal;
 
 import java.io.BufferedReader;
 import java.io.File;

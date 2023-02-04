@@ -1,6 +1,5 @@
 package to.aloen.spine;
 
-import to.aloen.ssv.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,6 +14,7 @@ import com.esotericsoftware.SpineLegacy.*;
 import com.esotericsoftware.SpineLegacy.AnimationState.TrackEntry;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import to.aloen.ssv.Main;
 
 public class Legacy extends SuperSpine {
     private PolygonSpriteBatch batch;
