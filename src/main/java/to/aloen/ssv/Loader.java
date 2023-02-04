@@ -3,7 +3,7 @@ package to.aloen.ssv;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
-import to.aloen.spine.Universal;
+import to.aloen.spine.SpineAdapter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +18,7 @@ public class Loader extends Main {
     private final String[] dataSuffixes = {".json", ".skel"};
     private final String[] endSuffixes = {"", ".txt", ".bytes"};
     private final String[] atlasSuffixes = {".atlas", "-pma.atlas"};
-    private final Universal universal = new Universal();
+    private final SpineAdapter adapter = new SpineAdapter();
 
     private void whichVersion(String skel) {
         if (skel.contains("4.0."))
@@ -58,10 +58,10 @@ public class Loader extends Main {
         }
 
         if (spineVersion > 38)
-            Universal.Range = 2;
+            SpineAdapter.Range = 2;
         else if (spineVersion < 34)
-            Universal.Range = 0;
-        else Universal.Range = 1;
+            SpineAdapter.Range = 0;
+        else SpineAdapter.Range = 1;
     }
 
     private FileHandle atlasFile(FileHandle skeletonFile) {
@@ -102,18 +102,18 @@ public class Loader extends Main {
         Skel.setText("Skel : " + handle.name());
 
         spine.setIsBinary(!handle.extension().equalsIgnoreCase("json") && !handle.extension().equalsIgnoreCase("txt"));
-        byte tmp = Universal.Range;
+        byte tmp = SpineAdapter.Range;
         skelVersion(new File(openPath));
-        universal.reload();
+        adapter.reload();
         if (isLoad) {
-            if (tmp != Universal.Range) {
+            if (tmp != SpineAdapter.Range) {
                 gdxApp.exit();
-                gdxApp = new LwjglFXApplication(universal, spineRender);
+                gdxApp = new LwjglFXApplication(adapter, spineRender);
             }
         } else {
             new Thread(() -> {
                 if (spineController.isLoaded()) {
-                    gdxApp = new LwjglFXApplication(universal, spineRender);
+                    gdxApp = new LwjglFXApplication(adapter, spineRender);
                     spineController = null;
                 }
             }, "Loading").start();

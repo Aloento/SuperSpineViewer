@@ -16,7 +16,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import to.aloen.ssv.Main;
 
-public class Legacy extends SuperSpine {
+public class Legacy extends BaseSpine {
     private PolygonSpriteBatch batch;
     private OrthographicCamera camera;
     private SkeletonMeshRenderer renderer;
@@ -149,7 +149,7 @@ public class Legacy extends SuperSpine {
 
     void reload() {
         super.reload();
-        if (Universal.Range != 0) {
+        if (SpineAdapter.Range != 0) {
             batch = null;
             camera = null;
             renderer = null;

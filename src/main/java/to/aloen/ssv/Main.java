@@ -4,15 +4,16 @@ import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Application;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import to.aloen.spine.SuperSpine;
+import to.aloen.spine.BaseSpine;
 import to.aloen.ssv.controller.Launcher;
 import to.aloen.ssv.controller.Spine;
 
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.zip.Deflater;
 
 public class Main {
-    public static final SuperSpine spine = new SuperSpine();
+    public static final BaseSpine spine = new BaseSpine();
     public static final Preferences Pref = Preferences.userRoot().node("/to/aloen/ssv");
     public static RecordFX recordFX;
     public static Spine spineController;
@@ -23,7 +24,7 @@ public class Main {
     public static Label Atlas;
     public static int width;
     public static int height;
-    public static byte sequence = 9;
+    public static byte sequence = Deflater.BEST_COMPRESSION;
     public static float quality = 0.5f;
     public static boolean isLoad = false;
     public static boolean preA = true;

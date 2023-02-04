@@ -24,7 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
-import to.aloen.spine.Universal;
+import to.aloen.spine.SpineAdapter;
 import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 
@@ -236,7 +236,7 @@ public class Spine extends Main implements Initializable {
                                         setButtonType(ButtonType.FLAT);
 
                                         setOnAction(event -> {
-                                            Universal.Range = -1;
+                                            SpineAdapter.Range = -1;
                                             new Loader().init();
                                         });
                                     }},

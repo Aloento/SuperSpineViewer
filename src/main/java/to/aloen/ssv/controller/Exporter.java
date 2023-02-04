@@ -16,6 +16,7 @@ import to.aloen.ssv.RecordFX;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.zip.Deflater;
 
 public class Exporter extends Main implements Initializable {
     @FXML
@@ -99,12 +100,12 @@ public class Exporter extends Main implements Initializable {
 
     @FXML
     void RB_MOV() {
-        sequence = 0;
+        sequence = Byte.MIN_VALUE;
     }
 
     @FXML
     void RB_Sequence() {
-        sequence = 9;
+        sequence = Deflater.BEST_COMPRESSION;
     }
 
     @FXML

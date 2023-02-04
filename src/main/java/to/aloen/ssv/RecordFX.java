@@ -95,7 +95,7 @@ public class RecordFX extends Main {
 
         System.gc();
 
-        if (sequence == 0)
+        if (sequence == Byte.MIN_VALUE)
             ffmpegFX();
 
         Platform.runLater(() -> {

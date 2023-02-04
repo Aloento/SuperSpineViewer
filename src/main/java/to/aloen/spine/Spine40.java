@@ -9,14 +9,14 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.SpineStandard.*;
-import com.esotericsoftware.SpineStandard.AnimationState.TrackEntry;
-import com.esotericsoftware.SpineStandard.utils.TwoColorPolygonBatch;
+import com.esotericsoftware.Spine40.*;
+import com.esotericsoftware.Spine40.AnimationState.TrackEntry;
+import com.esotericsoftware.Spine40.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import to.aloen.ssv.Main;
 
-public class Standard extends BaseSpine {
+public class Spine40 extends BaseSpine {
     private TwoColorPolygonBatch batch;
     private OrthographicCamera camera;
     private SkeletonRenderer renderer;
@@ -108,16 +108,13 @@ public class Standard extends BaseSpine {
             }
         };
 
-        SkeletonData skeletonData;
-        if (isBinary) {
-            SkeletonBinary binary = new SkeletonBinary(atlas);
-            binary.setScale(scale.get());
-            skeletonData = binary.readSkeletonData(skelFile);
-        } else {
-            SkeletonJson json = new SkeletonJson(atlas);
-            json.setScale(scale.get());
-            skeletonData = json.readSkeletonData(skelFile);
-        }
+        SkeletonLoader loader;
+        if (isBinary)
+            loader = new SkeletonBinary(atlas);
+        else loader = new SkeletonJson(atlas);
+
+        loader.setScale(scale.get());
+        SkeletonData skeletonData = loader.readSkeletonData(skelFile);
         if (skeletonData.getBones().size == 0) {
             System.out.println("骨骼为空");
             return false;
@@ -154,7 +151,7 @@ public class Standard extends BaseSpine {
 
     void reload() {
         super.reload();
-        if (SpineAdapter.Range != 1) {
+        if (SpineAdapter.Range != 2) {
             batch = null;
             camera = null;
             renderer = null;
