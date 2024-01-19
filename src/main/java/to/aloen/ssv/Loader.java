@@ -27,7 +27,7 @@ public abstract class Loader {
 
     private static final SpineAdapter adapter = new SpineAdapter();
 
-    private static void whichVersion(String skel) {
+    private static void getVersion(String skel) {
         if (skel.contains("4.2."))
             spineVersion = 42;
         else if (skel.contains("4.1."))
@@ -62,13 +62,13 @@ public abstract class Loader {
                 try(FileReader file = new FileReader(skelFile)) {
                     try(BufferedReader reader = new BufferedReader(file)) {
                         reader.readLine();
-                        whichVersion(reader.readLine());
+                        getVersion(reader.readLine());
                     }
                 }
 
                 System.out.println(STR."Spine二进制版本：\{spineVersion}");
             } else {
-                whichVersion(Files.readString(skelFile.toPath()));
+                getVersion(Files.readString(skelFile.toPath()));
                 System.out.println(STR."SpineJson版本：\{spineVersion}");
             }
         } catch (Exception e) {
@@ -113,24 +113,26 @@ public abstract class Loader {
     }
 
     public static void init() {
-        FileHandle handle = new FileHandle(new File(Main.openPath));
-        Spine.atlasFile = atlasFile(handle);
-        Spine.skelFile = handle;
-
         LwjglApplicationConfiguration.disableAudio = true;
-        Main.Atlas.setText(STR."Atlas : \{Spine.atlasFile.name()}");
+
+        File skel = new File(Main.openPath);
+        FileHandle handle = Spine.skelFile = new FileHandle(skel);
         Main.Skel.setText(STR."Skel : \{handle.name()}");
+
+        FileHandle atlas = Spine.atlasFile = atlasFile(handle);
+        Main.Atlas.setText(STR."Atlas : \{atlas.name()}");
 
         Spine.isBinary =
             !handle.extension().equalsIgnoreCase("json") &&
                 !handle.extension().equalsIgnoreCase("txt");
 
-        byte tmp = SpineAdapter.Range;
-        skelVersion(new File(Main.openPath));
+        byte prev = spineVersion;
+
+        skelVersion(skel);
         adapter.reload();
 
         if (Main.isLoad) {
-            if (tmp != SpineAdapter.Range) {
+            if (prev != spineVersion) {
                 gdxApp.exit();
                 gdxApp = new LwjglFXApplication(adapter, Main.spineRender);
             }

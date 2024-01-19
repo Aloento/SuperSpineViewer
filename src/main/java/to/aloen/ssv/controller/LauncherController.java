@@ -23,7 +23,7 @@ public class LauncherController extends Application {
         setAnimation(new HamburgerBackArrowBasicTransition(this));
     }};
 
-    private final String title = "SuperSpineViewer - Aloento : ";
+    private static final String title = "SuperSpineViewer - Aloento : ";
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -51,7 +51,7 @@ public class LauncherController extends Application {
         JFXDecorator decorator = new JFXDecorator(
             primaryStage,
             FXMLLoader.load(Objects.requireNonNull(
-                LauncherController.this.getClass().getResource("/UI/Primary.fxml")
+                getClass().getResource("/UI/Primary.fxml")
             ))
         ) {{
             setCustomMaximize(true);

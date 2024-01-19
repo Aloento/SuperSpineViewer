@@ -68,7 +68,7 @@ public class SpineController extends Main implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        AtomicReference<String> headerColor = new AtomicReference<>(getColor((short) ((Math.random() * 12) % 22)));
+        AtomicReference<String> headerColor = new AtomicReference<>(getColor((byte) ((Math.random() * 12) % 22)));
 
         JFXTextField T_Scale = new JFXTextField() {{
             setPromptText("1.0");
@@ -162,7 +162,7 @@ public class SpineController extends Main implements Initializable {
         }};
 
         JFXButton playButton = new JFXButton("") {{
-            setStyle("-fx-background-radius: 40;-fx-background-color: " + getColor((short) ((Math.random() * 20) % 22)));
+            setStyle("-fx-background-radius: 40;-fx-background-color: " + getColor((byte) ((Math.random() * 20) % 22)));
             setRipplerFill(Color.valueOf(headerColor.get()));
             setButtonType(ButtonType.RAISED);
             setPrefSize(56, 56);
@@ -178,8 +178,8 @@ public class SpineController extends Main implements Initializable {
                     } else {
                         Spine.isPlay.set(true);
                         setGraphic(pauseIcon);
-                        headerColor.set(getColor((short) ((Math.random() * 12) % 22)));
-                        setStyle("-fx-background-radius: 40;-fx-background-color: " + getColor((short) ((Math.random() * 20) % 22)));
+                        headerColor.set(getColor((byte) ((Math.random() * 12) % 22)));
+                        setStyle("-fx-background-radius: 40;-fx-background-color: " + getColor((byte) ((Math.random() * 20) % 22)));
                         setRipplerFill(Color.valueOf(headerColor.get()));
                     }
                 }
@@ -247,7 +247,7 @@ public class SpineController extends Main implements Initializable {
                                 setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
                                 setButtonType(ButtonType.FLAT);
 
-                                setOnAction(event -> {
+                                setOnAction(_ -> {
                                     Spine.scale.set((float) 1);
                                     Spine.X.set((float) 0);
                                     Spine.Y.set(-200f);
@@ -329,10 +329,13 @@ public class SpineController extends Main implements Initializable {
 
             Platform.runLater(() -> {
                 loadPane.getChildren().removeAll(purple, blue, cyan, green, yellow, orange, red);
+
                 Viewer.getChildren().remove(loadPane);
                 Viewer.setCenter(spineRender);
+
                 spineRender.fitHeightProperty().bind(spineRender.getScene().heightProperty().add(-103));
                 spineRender.fitWidthProperty().bind(spineRender.getScene().widthProperty().add(-368));
+
                 Viewer = null;
                 loadPane = null;
                 purple = null;
@@ -345,12 +348,12 @@ public class SpineController extends Main implements Initializable {
             });
 
             return isLoad = true;
-        } catch (InterruptedException ignored) {
+        } catch (Exception ignored) {
             return false;
         }
     }
 
-    private void setProgressAnimate(JFXSpinner spinner) {
+    private static void setProgressAnimate(JFXSpinner spinner) {
         new Timeline(
             new KeyFrame(
                 Duration.seconds(1),
@@ -359,7 +362,7 @@ public class SpineController extends Main implements Initializable {
         ).play();
     }
 
-    private String getColor(short i) {
+    private static String getColor(byte i) {
         return switch (i) {
             case 0 -> "#455A64";
             case 1 -> "#616161";

@@ -58,8 +58,10 @@ public class Main {
                     Pref.clear();
                 } catch (BackingStoreException ignored) {
                 }
-            } else openPath = args[0];
+            } else
+                openPath = args[0];
         }
+
         Application.launch(LauncherController.class, args);
     }
 }

@@ -20,19 +20,19 @@ public class PrimaryController extends Main implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        mainDrawer.setOnDrawerOpening(e -> {
+        mainDrawer.setOnDrawerOpening(_ -> {
             final Transition animation = Hamburger.getAnimation();
             animation.setRate(1);
             animation.play();
         });
 
-        mainDrawer.setOnDrawerClosing(e -> {
+        mainDrawer.setOnDrawerClosing(_ -> {
             final Transition animation = Hamburger.getAnimation();
             animation.setRate(-1);
             animation.play();
         });
 
-        Hamburger.setOnMouseClicked(e -> {
+        Hamburger.setOnMouseClicked(_ -> {
             if (mainDrawer.isClosed() || mainDrawer.isClosing())
                 mainDrawer.open();
             else mainDrawer.close();
