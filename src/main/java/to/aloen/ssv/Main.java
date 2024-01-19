@@ -12,6 +12,8 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.zip.Deflater;
 
+import static org.burningwave.core.assembler.StaticComponentContainer.Modules;
+
 public class Main {
     public static final BaseSpine spine = new BaseSpine();
     public static final Preferences Pref = Preferences.userRoot().node("/to/aloen/ssv");
@@ -33,7 +35,7 @@ public class Main {
     public static String outPath = Pref.get("lastSave", System.getProperty("user.home"));
 
     public static void main(String[] args) {
-        org.burningwave.core.assembler.StaticComponentContainer.Modules.exportAllToAll();
+        Modules.exportAllToAll();
 
         if (args.length > 0) {
             if (args[0].equals("reset")) {
