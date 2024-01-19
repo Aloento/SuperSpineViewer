@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
 import javafx.application.Platform;
 import javafx.scene.image.WritableImage;
+import to.aloen.spine.Spine;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ public class RecordFX extends Main {
     private short items;
 
     public void recorderFX(WritableImage image) {
-        if (spine.getPercent() < 1) {
+        if (Spine.percent < 1) {
             savePool.add(new savePNG(image, counter++));
             // System.out.println("捕获：" + counter + "\t" + spine.getPercent());
         } else {
@@ -31,7 +32,7 @@ public class RecordFX extends Main {
 
     public void Start(String fileName) {
         if (!recording) {
-            while (spine.getPercent() == 2)
+            while (Spine.percent == 2)
                 Thread.onSpinWait();
             this.fileName = fileName;
             recording = true;
@@ -40,8 +41,8 @@ public class RecordFX extends Main {
 
     public void Exit() {
         recording = false;
-        spine.setSpeed(1);
-        spine.setIsPlay(false);
+        Spine.speed.set(1);
+        Spine.isPlay.set(false);
         counter = 0;
         items = 0;
         System.out.println("强制停止");
@@ -99,7 +100,7 @@ public class RecordFX extends Main {
             ffmpegFX();
 
         Platform.runLater(() -> {
-            spine.setSpeed(1);
+            Spine.speed.set(1);
             counter = 0;
             items = 0;
             progressBar.setProgress(1);

@@ -16,7 +16,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import to.aloen.ssv.Main;
 
-public class Spine40 extends BaseSpine {
+public class Spine40 extends Spine {
     private TwoColorPolygonBatch batch;
     private OrthographicCamera camera;
     private SkeletonRenderer renderer;

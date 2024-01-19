@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static to.aloen.ssv.controller.Launcher.Hamburger;
+import static to.aloen.ssv.controller.LauncherController.Hamburger;
 
-public class Primary extends Main implements Initializable {
+public class PrimaryController extends Main implements Initializable {
     @FXML
     private JFXDrawer mainDrawer;
 

@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import to.aloen.spine.Spine;
 import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 import to.aloen.ssv.RecordFX;
@@ -18,7 +19,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.zip.Deflater;
 
-public class Exporter extends Main implements Initializable {
+public class ExporterController extends Main implements Initializable {
     @FXML
     private Label L_Version;
     @FXML
@@ -34,15 +35,15 @@ public class Exporter extends Main implements Initializable {
 
     @FXML
     void B_Export() {
-        if (outPath != null && spine.getAnimate() != null) {
-            spine.setIsPlay(false);
-            spine.setIsLoop(false);
-            spine.setPercent(2);
-            spine.setSpeed(quality);
-            spine.setIsPlay(true);
+        if (outPath != null && Spine.animate.get() != null) {
+            Spine.isPlay.set(false);
+            Spine.isLoop.set(false);
+            Spine.percent = 2;
+            Spine.speed.set(quality);
+            Spine.isPlay.set(true);
 
             System.out.println("请求：开始录制");
-            recordFX.Start(STR."\{spine.getProjectName()}_\{spine.getAnimate()}");
+            recordFX.Start(STR."\{Spine.projectName.get()}_\{Spine.animate.get()}");
         }
     }
 
@@ -133,7 +134,7 @@ public class Exporter extends Main implements Initializable {
         T_Path.setText(outPath);
         recordFX = new RecordFX();
 
-        spine.spineVersionProperty().addListener(
+        Spine.spineVersion.addListener(
             (_, _, newValue) -> Platform.runLater(
                 () -> L_Version.setText(STR."Version : \{newValue}")
             ));

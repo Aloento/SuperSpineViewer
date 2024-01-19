@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 
 public class SpineAdapter extends ApplicationAdapter {
     public static byte Range;
-    private static BaseSpine Runtimes;
+    private static Spine Runtimes;
 
     public void reload() {
         if (Runtimes != null)

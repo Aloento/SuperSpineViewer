@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
-           fx:controller="to.aloen.ssv.controller.Spine">
+           fx:controller="to.aloen.ssv.controller.SpineController">
     <BorderPane fx:id="Viewer">
         <left>
             <StackPane fx:id="spinePane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="697.0" prefWidth="340">

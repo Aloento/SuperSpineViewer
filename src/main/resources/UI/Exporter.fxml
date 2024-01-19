@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import java.lang.*?>
 <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
-           fx:controller="to.aloen.ssv.controller.Exporter">
+           fx:controller="to.aloen.ssv.controller.ExporterController">
     <ScrollPane hbarPolicy="NEVER" styleClass="side-menu">
         <VBox spacing="20.0">
             <padding>

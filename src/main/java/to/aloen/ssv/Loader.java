@@ -3,6 +3,7 @@ package to.aloen.ssv;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFXApplication;
 import com.badlogic.gdx.files.FileHandle;
+import to.aloen.spine.Spine;
 import to.aloen.spine.SpineAdapter;
 
 import java.io.BufferedReader;
@@ -51,14 +52,20 @@ public class Loader extends Main {
 
     private void skelVersion(File skelFile) {
         try {
-            if (spine.isIsBinary()) {
-                whichVersion(new BufferedReader(new FileReader(skelFile)).readLine());
+            if (Spine.isBinary) {
+                try(FileReader file = new FileReader(skelFile)) {
+                    try(BufferedReader reader = new BufferedReader(file)) {
+                        reader.readLine();
+                        whichVersion(reader.readLine());
+                    }
+                }
+
                 System.out.println(STR."Spine二进制版本：\{spineVersion}");
             } else {
                 whichVersion(Files.readString(skelFile.toPath()));
                 System.out.println(STR."SpineJson版本：\{spineVersion}");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("文件读取失败");
             e.printStackTrace();
         }
@@ -100,17 +107,16 @@ public class Loader extends Main {
 
     public void init() {
         FileHandle handle = new FileHandle(new File(openPath));
-        spine.setAtlasFile(atlasFile(handle));
-        spine.setSkelFile(handle);
+        Spine.atlasFile = atlasFile(handle);
+        Spine.skelFile = handle;
 
         LwjglApplicationConfiguration.disableAudio = true;
-        Atlas.setText(STR."Atlas : \{spine.getAtlasFile().name()}");
+        Atlas.setText(STR."Atlas : \{Spine.atlasFile.name()}");
         Skel.setText(STR."Skel : \{handle.name()}");
 
-        spine.setIsBinary(
+        Spine.isBinary =
             !handle.extension().equalsIgnoreCase("json") &&
-                !handle.extension().equalsIgnoreCase("txt")
-        );
+                !handle.extension().equalsIgnoreCase("txt");
 
         byte tmp = SpineAdapter.Range;
         skelVersion(new File(openPath));

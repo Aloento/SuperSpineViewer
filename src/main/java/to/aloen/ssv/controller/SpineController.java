@@ -24,6 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
+import to.aloen.spine.Spine;
 import to.aloen.spine.SpineAdapter;
 import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
@@ -34,7 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static javafx.animation.Interpolator.EASE_BOTH;
 
-public class Spine extends Main implements Initializable {
+public class SpineController extends Main implements Initializable {
     @FXML
     private BorderPane Viewer;
 
@@ -80,7 +81,7 @@ public class Spine extends Main implements Initializable {
             setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode().equals(KeyCode.ENTER))
                     if (getText().matches("^[1-9]\\d*$|^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$"))
-                        spine.setScale(Float.parseFloat(getText()));
+                        Spine.scale.set(Float.parseFloat(getText()));
             });
         }};
 
@@ -103,7 +104,7 @@ public class Spine extends Main implements Initializable {
             setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode().equals(KeyCode.ENTER))
                     if (getText().matches("-?[0-9]\\d*|-?([1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*)"))
-                        spine.setX(Float.parseFloat(getText()));
+                        Spine.X.set(Float.parseFloat(getText()));
             });
         }};
 
@@ -118,7 +119,7 @@ public class Spine extends Main implements Initializable {
             setOnKeyPressed(keyEvent -> {
                 if (keyEvent.getCode().equals(KeyCode.ENTER))
                     if (getText().matches("-?[0-9]\\d*|-?([1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*)"))
-                        spine.setY(Float.parseFloat(getText()));
+                        Spine.Y.set(Float.parseFloat(getText()));
             });
         }};
 
@@ -135,17 +136,17 @@ public class Spine extends Main implements Initializable {
                 Bindings.createStringBinding(() -> STR."\{(int) (getValue() * 100) / 100f}x", slider.valueProperty())
             );
             valueProperty().addListener(
-                (_, _, newValue) -> spine.setSpeed((Float.parseFloat(String.valueOf(newValue)))));
+                (_, _, newValue) -> Spine.speed.set((Float.parseFloat(String.valueOf(newValue)))));
         }};
 
         JFXComboBox<String> C_Skins = new JFXComboBox<>() {{
-            setItems(spine.getSkinsList());
-            setOnAction(_ -> spine.setSkin(getValue()));
+            setItems(Spine.skinsList);
+            setOnAction(_ -> Spine.skin.set(getValue()));
         }};
 
         JFXComboBox<String> C_Animate = new JFXComboBox<>() {{
-            setItems(spine.getAnimatesList());
-            setOnAction(_ -> spine.setAnimate(getValue()));
+            setItems(Spine.animatesList);
+            setOnAction(_ -> Spine.animate.set(getValue()));
         }};
 
         FontIcon playIcon = new FontIcon() {{
@@ -171,11 +172,11 @@ public class Spine extends Main implements Initializable {
 
             setOnAction(_ -> {
                 if (isLoad) {
-                    if (spine.isIsPlay()) {
-                        spine.setIsPlay(false);
+                    if (Spine.isPlay.get()) {
+                        Spine.isPlay.set(false);
                         setGraphic(playIcon);
                     } else {
-                        spine.setIsPlay(true);
+                        Spine.isPlay.set(true);
                         setGraphic(pauseIcon);
                         headerColor.set(getColor((short) ((Math.random() * 12) % 22)));
                         setStyle("-fx-background-radius: 40;-fx-background-color: " + getColor((short) ((Math.random() * 20) % 22)));
@@ -231,7 +232,7 @@ public class Spine extends Main implements Initializable {
                                 getStyleClass().add("normal-label");
                             }},
                             new JFXToggleButton() {{
-                                setOnAction(_ -> spine.setIsLoop(isSelected()));
+                                setOnAction(_ -> Spine.isLoop.set(isSelected()));
                             }},
                             new JFXButton("Reload") {{
                                 setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
@@ -247,10 +248,10 @@ public class Spine extends Main implements Initializable {
                                 setButtonType(ButtonType.FLAT);
 
                                 setOnAction(event -> {
-                                    spine.setScale(1);
-                                    spine.setX(0);
-                                    spine.setY(-200f);
-                                    spine.setIsPlay(false);
+                                    Spine.scale.set((float) 1);
+                                    Spine.X.set((float) 0);
+                                    Spine.Y.set(-200f);
+                                    Spine.isPlay.set(false);
 
                                     T_Scale.clear();
                                     T_X.clear();
@@ -292,7 +293,7 @@ public class Spine extends Main implements Initializable {
             });
         }};
 
-        spine.isPlayProperty().addListener((_, oldValue, newValue) -> {
+        Spine.isPlay.addListener((_, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) {
                 if (newValue) Platform.runLater(() -> playButton.setGraphic(pauseIcon));
                 else Platform.runLater(() -> playButton.setGraphic(playIcon));

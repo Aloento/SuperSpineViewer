@@ -11,14 +11,14 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import to.aloen.ssv.Main;
+import to.aloen.spine.Spine;
 
 import java.io.IOException;
 import java.util.Objects;
 
 import static to.aloen.ssv.Main.Pref;
 
-public class Launcher extends Application {
+public class LauncherController extends Application {
     public static final JFXHamburger Hamburger = new JFXHamburger() {{
         setAnimation(new HamburgerBackArrowBasicTransition(this));
     }};
@@ -41,7 +41,7 @@ public class Launcher extends Application {
 
         Hamburger.requestFocus();
 
-        Main.spine.projectNameProperty().addListener(
+        Spine.projectName.addListener(
             (_, _, newValue) -> Platform.runLater(
                 () -> primaryStage.setTitle(STR."\{title}\{newValue}")
             ));
@@ -51,7 +51,7 @@ public class Launcher extends Application {
         JFXDecorator decorator = new JFXDecorator(
             primaryStage,
             FXMLLoader.load(Objects.requireNonNull(
-                Launcher.this.getClass().getResource("/UI/Primary.fxml")
+                LauncherController.this.getClass().getResource("/UI/Primary.fxml")
             ))
         ) {{
             setCustomMaximize(true);
@@ -67,7 +67,7 @@ public class Launcher extends Application {
                 JFoenixResources.load("css/jfoenix-fonts.css").toExternalForm(),
                 JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
                 Objects.requireNonNull(
-                    Launcher.class.getResource("/UI/Main.css")
+                    LauncherController.class.getResource("/UI/Main.css")
                 ).toExternalForm());
         }};
     }

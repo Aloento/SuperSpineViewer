@@ -16,7 +16,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import to.aloen.ssv.Main;
 
-public class Legacy extends BaseSpine {
+public class Legacy extends Spine {
     private PolygonSpriteBatch batch;
     private OrthographicCamera camera;
     private SkeletonMeshRenderer renderer;
