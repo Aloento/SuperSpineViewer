@@ -1,10 +1,10 @@
 # SuperSpineViewer
 
 A tool to load and export Spine animations  
-Java 19+ required  
+Java 21 required  
 Pixel Buffers support required  
 Exporting MOV requires FFmpeg  
-Current version: 1.3.0
+Current version: 2.0.0
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
@@ -12,7 +12,7 @@ Current version: 1.3.0
 
 [**Released Stable Version**](https://github.com/Aloento/SuperSpineViewer/releases/latest)
 
-[![Windows x64](https://github.com/Aloento/SuperSpineViewer/workflows/Windows%20x64/badge.svg "Windows x64自动构建")](https://github.com/Aloento/SuperSpineViewer/actions?query=workflow%3A%22Windows+x64%22)
+[**Runtime**](https://github.com/Aloento/SuperSpineViewer/releases/tag/R1.0.0)
 
 ### Performance Settings Reference
 
@@ -53,7 +53,7 @@ At default 30FPS, the Time Scaling setting
 
 ### Supported Versions
 
-* Spine 2.x ×
+* Spine 2.x √
 * Spine 3.1 √
 * Spine 3.2 √
 * Spine 3.3 √
@@ -63,6 +63,8 @@ At default 30FPS, the Time Scaling setting
 * Spine 3.7 √
 * Spine 3.8 √
 * Spine 4.0 √
+* Spine 4.1 √
+* Spine 4.2 √
 
 ## Gallery
 
