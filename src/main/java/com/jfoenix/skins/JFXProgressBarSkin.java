@@ -15,6 +15,7 @@ import javafx.util.Duration;
 
 public class JFXProgressBarSkin extends ProgressIndicatorSkin {
 
+    private final TreeShowingProperty treeShowingExpression;
     boolean wasIndeterminate = false;
     private StackPane track;
     private StackPane secondaryBar;
@@ -23,7 +24,6 @@ public class JFXProgressBarSkin extends ProgressIndicatorSkin {
     private double secondaryBarWidth = 0;
     private Animation indeterminateTransition;
     private Region clip;
-    private final TreeShowingProperty treeShowingExpression;
 
     public JFXProgressBarSkin(JFXProgressBar bar) {
         super(bar);
@@ -119,7 +119,7 @@ public class JFXProgressBarSkin extends ProgressIndicatorSkin {
     protected void updateSecondaryProgress() {
         final JFXProgressBar control = (JFXProgressBar) getSkinnable();
         secondaryBarWidth = ((int) (control.getWidth() - snappedLeftInset() - snappedRightInset()) * 2
-                * Math.min(1, Math.max(0, control.getSecondaryProgress()))) / 2.0F;
+            * Math.min(1, Math.max(0, control.getSecondaryProgress()))) / 2.0F;
         control.requestLayout();
     }
 
@@ -139,8 +139,8 @@ public class JFXProgressBarSkin extends ProgressIndicatorSkin {
     private void updateAnimation() {
         ProgressIndicator control = getSkinnable();
         final boolean isTreeVisible = control.isVisible() &&
-                control.getParent() != null &&
-                control.getScene() != null;
+            control.getParent() != null &&
+            control.getScene() != null;
         if (indeterminateTransition != null) {
             pauseTimeline(!isTreeVisible);
         } else if (isTreeVisible) {
@@ -153,7 +153,7 @@ public class JFXProgressBarSkin extends ProgressIndicatorSkin {
         final boolean isIndeterminate = control.isIndeterminate();
         if (!(isIndeterminate && wasIndeterminate)) {
             barWidth = ((int) (control.getWidth() - snappedLeftInset() - snappedRightInset()) * 2
-                    * Math.min(1, Math.max(0, control.getProgress()))) / 2.0F;
+                * Math.min(1, Math.max(0, control.getProgress()))) / 2.0F;
             control.requestLayout();
         }
         wasIndeterminate = isIndeterminate;
@@ -167,22 +167,22 @@ public class JFXProgressBarSkin extends ProgressIndicatorSkin {
         ProgressIndicator control = getSkinnable();
         final double w = control.getWidth() - (snappedLeftInset() + snappedRightInset());
         indeterminateTransition = new Timeline(new KeyFrame(
-                Duration.ZERO,
-                new KeyValue(clip.scaleXProperty(), 0.0, Interpolator.EASE_IN),
-                new KeyValue(clip.translateXProperty(), -w / 2, Interpolator.LINEAR)
+            Duration.ZERO,
+            new KeyValue(clip.scaleXProperty(), 0.0, Interpolator.EASE_IN),
+            new KeyValue(clip.translateXProperty(), -w / 2, Interpolator.LINEAR)
         ),
-                new KeyFrame(
-                        Duration.seconds(0.5 * dur),
-                        new KeyValue(clip.scaleXProperty(), 0.4, Interpolator.LINEAR)
-                ),
-                new KeyFrame(
-                        Duration.seconds(0.9 * dur),
-                        new KeyValue(clip.translateXProperty(), w / 2, Interpolator.LINEAR)
-                ),
-                new KeyFrame(
-                        Duration.seconds(1 * dur),
-                        new KeyValue(clip.scaleXProperty(), 0.0, Interpolator.EASE_OUT)
-                ));
+            new KeyFrame(
+                Duration.seconds(0.5 * dur),
+                new KeyValue(clip.scaleXProperty(), 0.4, Interpolator.LINEAR)
+            ),
+            new KeyFrame(
+                Duration.seconds(0.9 * dur),
+                new KeyValue(clip.translateXProperty(), w / 2, Interpolator.LINEAR)
+            ),
+            new KeyFrame(
+                Duration.seconds(1 * dur),
+                new KeyValue(clip.scaleXProperty(), 0.0, Interpolator.EASE_OUT)
+            ));
         indeterminateTransition.setCycleCount(Timeline.INDEFINITE);
     }
 

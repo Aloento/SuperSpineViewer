@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import to.aloen.ssv.Main;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static to.aloen.ssv.Main.Pref;
 
@@ -28,23 +29,46 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) throws IOException {
         System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
 
-        primaryStage.setScene(new Scene(new JFXDecorator(primaryStage, FXMLLoader.load(Launcher.this.getClass().getResource("/UI/Primary.fxml"))) {{
-            setCustomMaximize(true);
-            setGraphic(Hamburger);
-        }}, Screen.getScreens().get(0).getBounds().getWidth() / 2.5, Screen.getScreens().get(0).getBounds().getHeight() / 1.35) {{
-            getStylesheets().addAll(JFoenixResources.load("css/jfoenix-fonts.css").toExternalForm(),
-                    JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
-                    Launcher.class.getResource("/UI/Main.css").toExternalForm());
-        }});
+        primaryStage.setScene(getScene(primaryStage));
 
         primaryStage.getIcons().add(new Image("UI/SuperSpineViewer.png"));
+
         primaryStage.setWidth(Pref.getDouble("stageWidth", 1280));
         primaryStage.setHeight(Pref.getDouble("stageHeight", 800));
-        primaryStage.setTitle(title + "Waiting Loading...");
+        primaryStage.setTitle(STR."\{title}Waiting Loading...");
+
         primaryStage.show();
+
         Hamburger.requestFocus();
 
         Main.spine.projectNameProperty().addListener(
-                (observable, oldValue, newValue) -> Platform.runLater(() -> primaryStage.setTitle(title + newValue)));
+            (_, _, newValue) -> Platform.runLater(
+                () -> primaryStage.setTitle(STR."\{title}\{newValue}")
+            ));
+    }
+
+    private Scene getScene(Stage primaryStage) throws IOException {
+        JFXDecorator decorator = new JFXDecorator(
+            primaryStage,
+            FXMLLoader.load(Objects.requireNonNull(
+                Launcher.this.getClass().getResource("/UI/Primary.fxml")
+            ))
+        ) {{
+            setCustomMaximize(true);
+            setGraphic(Hamburger);
+        }};
+
+        return new Scene(
+            decorator,
+            Screen.getScreens().getFirst().getBounds().getWidth() / 2.5,
+            Screen.getScreens().getFirst().getBounds().getHeight() / 1.35
+        ) {{
+            getStylesheets().addAll(
+                JFoenixResources.load("css/jfoenix-fonts.css").toExternalForm(),
+                JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
+                Objects.requireNonNull(
+                    Launcher.class.getResource("/UI/Main.css")
+                ).toExternalForm());
+        }};
     }
 }
