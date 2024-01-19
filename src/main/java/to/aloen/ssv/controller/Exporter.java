@@ -40,8 +40,9 @@ public class Exporter extends Main implements Initializable {
             spine.setPercent(2);
             spine.setSpeed(quality);
             spine.setIsPlay(true);
+
             System.out.println("请求：开始录制");
-            recordFX.Start(spine.getProjectName() + "_" + spine.getAnimate());
+            recordFX.Start(STR."\{spine.getProjectName()}_\{spine.getAnimate()}");
         }
     }
 
@@ -50,20 +51,27 @@ public class Exporter extends Main implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Skeleton");
         File last = new File(Pref.get("lastOpen", System.getProperty("user.home")));
+
         if (!last.canRead())
             last = new File(System.getProperty("user.home"));
+
         fileChooser.setInitialDirectory(last);
 
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Skeleton File", "*.json", "*.skel", "*.txt", "*.bytes")
+            new FileChooser.ExtensionFilter("Skeleton File", "*.json", "*.skel", "*.txt", "*.bytes")
         );
 
         File file = fileChooser.showOpenDialog(new Stage());
+
         if (file != null) {
             openPath = file.getAbsolutePath();
             new Loader().init();
-            if (isLoad) System.out.println("请求重载");
-            else System.out.println("请求初始化");
+
+            if (isLoad)
+                System.out.println("请求重载");
+            else
+                System.out.println("请求初始化");
+
             Pref.put("lastOpen", file.getParent());
         }
     }
@@ -73,10 +81,13 @@ public class Exporter extends Main implements Initializable {
         Platform.runLater(() -> {
             DirectoryChooser chooser = new DirectoryChooser();
             File last = new File(outPath);
+
             if (!last.canRead())
                 last = new File(System.getProperty("user.home"));
+
             chooser.setInitialDirectory(last.getParentFile());
             chooser.setTitle("Save Location");
+
             outPath = chooser.showDialog(new Stage()).getAbsolutePath() + File.separator;
             T_Path.setText(outPath);
             Pref.put("lastSave", outPath);
@@ -121,9 +132,14 @@ public class Exporter extends Main implements Initializable {
         progressBar = P_Export;
         T_Path.setText(outPath);
         recordFX = new RecordFX();
-        spine.spineVersionProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> L_Version.setText("Version : " + newValue)));
+
+        spine.spineVersionProperty().addListener(
+            (_, _, newValue) -> Platform.runLater(
+                () -> L_Version.setText(STR."Version : \{newValue}")
+            ));
 
         System.out.println("SuperSpineViewer已启动");
+
         if (openPath != null) {
             Platform.runLater(() -> {
                 new Loader().init();

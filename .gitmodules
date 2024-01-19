@@ -1,0 +1,3 @@
+[submodule "esotericsoftware"]
+	path = src/main/java/com/esotericsoftware
+	url = git@github.com:Aloento/SpineLibGDX.git

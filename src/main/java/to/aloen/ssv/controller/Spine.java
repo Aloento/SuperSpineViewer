@@ -132,20 +132,20 @@ public class Spine extends Main implements Initializable {
             setValue(1);
 
             setValueFactory(slider ->
-                    Bindings.createStringBinding(() -> ((int) (getValue() * 100) / 100f) + "x", slider.valueProperty())
+                Bindings.createStringBinding(() -> STR."\{(int) (getValue() * 100) / 100f}x", slider.valueProperty())
             );
             valueProperty().addListener(
-                    (observable, oldValue, newValue) -> spine.setSpeed((Float.parseFloat(String.valueOf(newValue)))));
+                (_, _, newValue) -> spine.setSpeed((Float.parseFloat(String.valueOf(newValue)))));
         }};
 
         JFXComboBox<String> C_Skins = new JFXComboBox<>() {{
             setItems(spine.getSkinsList());
-            setOnAction(event -> spine.setSkin(getValue()));
+            setOnAction(_ -> spine.setSkin(getValue()));
         }};
 
         JFXComboBox<String> C_Animate = new JFXComboBox<>() {{
             setItems(spine.getAnimatesList());
-            setOnAction(event -> spine.setAnimate(getValue()));
+            setOnAction(_ -> spine.setAnimate(getValue()));
         }};
 
         FontIcon playIcon = new FontIcon() {{
@@ -169,7 +169,7 @@ public class Spine extends Main implements Initializable {
             setScaleY(0);
             setGraphic(playIcon);
 
-            setOnAction(event -> {
+            setOnAction(_ -> {
                 if (isLoad) {
                     if (spine.isIsPlay()) {
                         spine.setIsPlay(false);
@@ -186,14 +186,16 @@ public class Spine extends Main implements Initializable {
         }};
 
         Timeline animation = new Timeline(new KeyFrame(Duration.millis(240),
-                new KeyValue(playButton.scaleXProperty(),
-                        1,
-                        EASE_BOTH),
-                new KeyValue(playButton.scaleYProperty(),
-                        1,
-                        EASE_BOTH)));
+            new KeyValue(playButton.scaleXProperty(),
+                1,
+                EASE_BOTH),
+            new KeyValue(playButton.scaleYProperty(),
+                1,
+                EASE_BOTH)));
+
         animation.setDelay(Duration.millis((2000 * Math.random()) + 1000));
         animation.play();
+
         JFXDepthManager.setDepth(spinePane, 1);
 
         spinePane.getChildren().addAll(new VBox() {{
@@ -205,70 +207,70 @@ public class Spine extends Main implements Initializable {
                 getChildren().add(new ScrollPane(new VBox(20) {{
                     setPadding(new Insets(14, 16, 20, 16));
                     getChildren().addAll(
-                            new Label("Load Scale") {{
-                                getStyleClass().add("normal-label");
-                            }}, T_Scale,
-                            new Label("Position X") {{
-                                getStyleClass().add("normal-label");
-                            }}, T_X,
-                            new Label("Position Y") {{
-                                getStyleClass().add("normal-label");
-                            }}, T_Y,
-                            new Label("Camera Width") {{
-                                getStyleClass().add("normal-label");
-                            }}, T_Width,
-                            new Label("Camera Height") {{
-                                getStyleClass().add("normal-label");
-                            }}, T_Height,
-                            new Label("Play Speed") {{
-                                getStyleClass().add("normal-label");
-                            }}, S_Speed,
+                        new Label("Load Scale") {{
+                            getStyleClass().add("normal-label");
+                        }}, T_Scale,
+                        new Label("Position X") {{
+                            getStyleClass().add("normal-label");
+                        }}, T_X,
+                        new Label("Position Y") {{
+                            getStyleClass().add("normal-label");
+                        }}, T_Y,
+                        new Label("Camera Width") {{
+                            getStyleClass().add("normal-label");
+                        }}, T_Width,
+                        new Label("Camera Height") {{
+                            getStyleClass().add("normal-label");
+                        }}, T_Height,
+                        new Label("Play Speed") {{
+                            getStyleClass().add("normal-label");
+                        }}, S_Speed,
 
-                            new FlowPane(
-                                    new Label("Loop") {{
-                                        getStyleClass().add("normal-label");
-                                    }},
-                                    new JFXToggleButton() {{
-                                        setOnAction(event1 -> spine.setIsLoop(isSelected()));
-                                    }},
-                                    new JFXButton("Reload") {{
-                                        setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
-                                        setButtonType(ButtonType.FLAT);
-
-                                        setOnAction(event -> {
-                                            SpineAdapter.Range = -1;
-                                            new Loader().init();
-                                        });
-                                    }},
-                                    new JFXButton("Reset") {{
-                                        setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
-                                        setButtonType(ButtonType.FLAT);
-
-                                        setOnAction(event -> {
-                                            spine.setScale(1);
-                                            spine.setX(0);
-                                            spine.setY(-200f);
-                                            spine.setIsPlay(false);
-
-                                            T_Scale.clear();
-                                            T_X.clear();
-                                            T_Y.clear();
-                                            C_Skins.setValue(null);
-                                            C_Animate.setValue(null);
-                                            S_Speed.setValue(1);
-                                            System.gc();
-                                        });
-                                    }}) {{
-                                setMaxWidth(300);
-                                setStyle("-fx-padding: 0 0 0 18;");
+                        new FlowPane(
+                            new Label("Loop") {{
+                                getStyleClass().add("normal-label");
                             }},
+                            new JFXToggleButton() {{
+                                setOnAction(_ -> spine.setIsLoop(isSelected()));
+                            }},
+                            new JFXButton("Reload") {{
+                                setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+                                setButtonType(ButtonType.FLAT);
 
-                            new Label("Skins") {{
-                                getStyleClass().add("normal-label");
-                            }}, C_Skins,
-                            new Label("Animations") {{
-                                getStyleClass().add("normal-label");
-                            }}, C_Animate);
+                                setOnAction(_ -> {
+                                    SpineAdapter.Range = -1;
+                                    new Loader().init();
+                                });
+                            }},
+                            new JFXButton("Reset") {{
+                                setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
+                                setButtonType(ButtonType.FLAT);
+
+                                setOnAction(event -> {
+                                    spine.setScale(1);
+                                    spine.setX(0);
+                                    spine.setY(-200f);
+                                    spine.setIsPlay(false);
+
+                                    T_Scale.clear();
+                                    T_X.clear();
+                                    T_Y.clear();
+                                    C_Skins.setValue(null);
+                                    C_Animate.setValue(null);
+                                    S_Speed.setValue(1);
+                                    System.gc();
+                                });
+                            }}) {{
+                            setMaxWidth(300);
+                            setStyle("-fx-padding: 0 0 0 18;");
+                        }},
+
+                        new Label("Skins") {{
+                            getStyleClass().add("normal-label");
+                        }}, C_Skins,
+                        new Label("Animations") {{
+                            getStyleClass().add("normal-label");
+                        }}, C_Animate);
                 }}) {{
                     setHbarPolicy(ScrollBarPolicy.NEVER);
                 }});
@@ -277,20 +279,20 @@ public class Spine extends Main implements Initializable {
 
         spineRender = new ImageView() {{
             setScaleY(-1);
-            fitWidthProperty().addListener((observable, oldValue, newValue) -> {
+            fitWidthProperty().addListener((_, _, newValue) -> {
                 T_Width.setPromptText(String.valueOf(newValue.intValue()));
                 width = newValue.intValue();
                 Pref.putDouble("stageWidth", newValue.doubleValue() + 368);
             });
 
-            fitHeightProperty().addListener((observable, oldValue, newValue) -> {
+            fitHeightProperty().addListener((_, _, newValue) -> {
                 T_Height.setPromptText(String.valueOf(newValue.intValue()));
                 height = newValue.intValue();
                 Pref.putDouble("stageHeight", newValue.doubleValue() + 103);
             });
         }};
 
-        spine.isPlayProperty().addListener((observable, oldValue, newValue) -> {
+        spine.isPlayProperty().addListener((_, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) {
                 if (newValue) Platform.runLater(() -> playButton.setGraphic(pauseIcon));
                 else Platform.runLater(() -> playButton.setGraphic(playIcon));
@@ -314,13 +316,16 @@ public class Spine extends Main implements Initializable {
             Thread.sleep(100);
             setProgressAnimate(red);
             Thread.sleep(1000);
+
             new Timeline(
-                    new KeyFrame(
-                            Duration.seconds(1),
-                            new KeyValue(loadPane.opacityProperty(), 0)
-                    )
+                new KeyFrame(
+                    Duration.seconds(1),
+                    new KeyValue(loadPane.opacityProperty(), 0)
+                )
             ).play();
+
             Thread.sleep(800);
+
             Platform.runLater(() -> {
                 loadPane.getChildren().removeAll(purple, blue, cyan, green, yellow, orange, red);
                 Viewer.getChildren().remove(loadPane);
@@ -337,6 +342,7 @@ public class Spine extends Main implements Initializable {
                 orange = null;
                 red = null;
             });
+
             return isLoad = true;
         } catch (InterruptedException ignored) {
             return false;
@@ -345,10 +351,10 @@ public class Spine extends Main implements Initializable {
 
     private void setProgressAnimate(JFXSpinner spinner) {
         new Timeline(
-                new KeyFrame(
-                        Duration.seconds(1),
-                        new KeyValue(spinner.progressProperty(), 1)
-                )
+            new KeyFrame(
+                Duration.seconds(1),
+                new KeyValue(spinner.progressProperty(), 1)
+            )
         ).play();
     }
 

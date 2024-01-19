@@ -63,8 +63,7 @@ public class LwjglFXGraphics extends LwjglGraphics {
             Display.setParent(canvas);
         } else {
             if (!displayMode(config.width, config.height, config.fullscreen))
-                throw new GdxRuntimeException("Couldn't set display mode " + config.width + "x" + config.height + ", fullscreen: "
-                        + config.fullscreen);
+                throw new GdxRuntimeException(STR."Couldn't set display mode \{config.width}x\{config.height}, fullscreen: \{config.fullscreen}");
 
             if (config.iconPaths.size > 0) {
                 ByteBuffer[] icons = new ByteBuffer[config.iconPaths.size];
