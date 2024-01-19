@@ -66,7 +66,7 @@ public class ExporterController extends Main implements Initializable {
 
         if (file != null) {
             openPath = file.getAbsolutePath();
-            new Loader().init();
+            Loader.init();
 
             if (isLoad)
                 System.out.println("请求重载");
@@ -143,7 +143,7 @@ public class ExporterController extends Main implements Initializable {
 
         if (openPath != null) {
             Platform.runLater(() -> {
-                new Loader().init();
+                Loader.init();
                 System.out.println("从命令行加载");
             });
         }

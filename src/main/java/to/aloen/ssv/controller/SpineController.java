@@ -240,7 +240,7 @@ public class SpineController extends Main implements Initializable {
 
                                 setOnAction(_ -> {
                                     SpineAdapter.Range = -1;
-                                    new Loader().init();
+                                    Loader.init();
                                 });
                             }},
                             new JFXButton("Reset") {{
