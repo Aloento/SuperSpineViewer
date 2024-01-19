@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
+           fx:controller="to.aloen.ssv.controller.Spine">
+    <BorderPane fx:id="Viewer">
+        <left>
+            <StackPane fx:id="spinePane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="697.0" prefWidth="340">
+            </StackPane>
+        </left>
+        <center>
+            <StackPane fx:id="loadPane">
+                <JFXSpinner fx:id="purple" startingAngle="-40"
+                            styleClass="materialDesign-purple, first-spinner"/>
+                <JFXSpinner fx:id="blue" startingAngle="-90"
+                            styleClass="materialDesign-blue, second-spinner"/>
+                <JFXSpinner fx:id="cyan" startingAngle="-120"
+                            styleClass="materialDesign-cyan, third-spinner"/>
+                <JFXSpinner fx:id="green" startingAngle="-150"
+                            styleClass="materialDesign-green, fourth-spinner"/>
+                <JFXSpinner fx:id="yellow" startingAngle="-180"
+                            styleClass="materialDesign-yellow, fifth-spinner"/>
+                <JFXSpinner fx:id="orange" startingAngle="-210"
+                            styleClass="materialDesign-orange, sixth-spinner"/>
+                <JFXSpinner fx:id="red" startingAngle="-240"
+                            styleClass="materialDesign-red, seventh-spinner"/>
+            </StackPane>
+        </center>
+    </BorderPane>
+</StackPane>

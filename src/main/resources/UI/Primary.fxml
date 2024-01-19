@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import java.lang.String?>
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1"
+           fx:controller="to.aloen.ssv.controller.Primary">
+    <BorderPane>
+        <center>
+            <JFXDrawer fx:id="mainDrawer" defaultDrawerSize="302" direction="LEFT">
+                <styleClass>
+                    <String fx:value="body"/>
+                </styleClass>
+            </JFXDrawer>
+        </center>
+    </BorderPane>
+</StackPane>
