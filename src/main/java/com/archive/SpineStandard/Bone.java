@@ -1,11 +1,11 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.SpineStandard.BoneData.TransformMode;
+import com.archive.SpineStandard.BoneData.TransformMode;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
+import static com.archive.SpineStandard.utils.SpineUtils.*;
 
 public class Bone implements Updatable {
     final BoneData data;

@@ -1,10 +1,10 @@
-package com.esotericsoftware.SpineStandard.utils;
+package com.archive.SpineStandard.utils;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.ShortArray;
-import com.esotericsoftware.SpineStandard.Slot;
-import com.esotericsoftware.SpineStandard.attachments.ClippingAttachment;
+import com.archive.SpineStandard.Slot;
+import com.archive.SpineStandard.attachments.ClippingAttachment;
 
 public class SkeletonClipping {
     private final Triangulator triangulator = new Triangulator();

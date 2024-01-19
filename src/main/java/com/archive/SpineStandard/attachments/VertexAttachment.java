@@ -1,11 +1,11 @@
-package com.esotericsoftware.SpineStandard.attachments;
+package com.archive.SpineStandard.attachments;
 
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.SpineStandard.Bone;
-import com.esotericsoftware.SpineStandard.Skeleton;
-import com.esotericsoftware.SpineStandard.Slot;
+import com.archive.SpineStandard.Bone;
+import com.archive.SpineStandard.Skeleton;
+import com.archive.SpineStandard.Slot;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
+import static com.archive.SpineStandard.utils.SpineUtils.arraycopy;
 
 abstract public class VertexAttachment extends Attachment {
     static private int nextID;

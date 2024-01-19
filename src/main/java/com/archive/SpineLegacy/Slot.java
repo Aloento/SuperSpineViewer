@@ -1,8 +1,8 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.SpineLegacy.attachments.Attachment;
+import com.archive.SpineLegacy.attachments.Attachment;
 
 public class Slot {
     final SlotData data;

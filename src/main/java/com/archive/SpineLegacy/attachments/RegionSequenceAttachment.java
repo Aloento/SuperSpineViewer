@@ -1,8 +1,8 @@
-package com.esotericsoftware.SpineLegacy.attachments;
+package com.archive.SpineLegacy.attachments;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.esotericsoftware.SpineLegacy.Slot;
+import com.archive.SpineLegacy.Slot;
 
 public class RegionSequenceAttachment extends RegionAttachment {
     private Mode mode;

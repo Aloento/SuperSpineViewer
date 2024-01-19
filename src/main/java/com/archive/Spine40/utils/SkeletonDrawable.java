@@ -1,10 +1,10 @@
-package com.esotericsoftware.Spine40.utils;
+package com.archive.Spine40.utils;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
-import com.esotericsoftware.Spine40.AnimationState;
-import com.esotericsoftware.Spine40.Skeleton;
-import com.esotericsoftware.Spine40.SkeletonRenderer;
+import com.archive.Spine40.AnimationState;
+import com.archive.Spine40.Skeleton;
+import com.archive.Spine40.SkeletonRenderer;
 
 /**
  * A scene2d drawable that draws a skeleton. The animation state and skeleton must be updated each frame, or

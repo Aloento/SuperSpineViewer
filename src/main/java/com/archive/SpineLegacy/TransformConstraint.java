@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 import com.badlogic.gdx.math.Vector2;
 

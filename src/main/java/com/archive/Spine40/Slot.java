@@ -1,11 +1,11 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Null;
-import com.esotericsoftware.Spine40.Animation.DeformTimeline;
-import com.esotericsoftware.Spine40.attachments.Attachment;
-import com.esotericsoftware.Spine40.attachments.VertexAttachment;
+import com.archive.Spine40.Animation.DeformTimeline;
+import com.archive.Spine40.attachments.Attachment;
+import com.archive.Spine40.attachments.VertexAttachment;
 
 /**
  * Stores a slot's current pose. Slots organize attachments for {@link Skeleton#drawOrder} purposes and provide a place to store

@@ -1,13 +1,13 @@
-package com.esotericsoftware.SpineLegacy.attachments;
+package com.archive.SpineLegacy.attachments;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.NumberUtils;
-import com.esotericsoftware.SpineLegacy.Bone;
-import com.esotericsoftware.SpineLegacy.Skeleton;
-import com.esotericsoftware.SpineLegacy.Slot;
+import com.archive.SpineLegacy.Bone;
+import com.archive.SpineLegacy.Skeleton;
+import com.archive.SpineLegacy.Slot;
 
 public class MeshAttachment extends Attachment implements FfdAttachment {
     private final Color color = new Color(1, 1, 1, 1);

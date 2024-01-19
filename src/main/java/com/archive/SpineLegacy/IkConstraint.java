@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.utils.Array;

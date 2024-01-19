@@ -1,13 +1,13 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import com.esotericsoftware.SpineStandard.Animation.*;
+import com.archive.SpineStandard.Animation.*;
 
 import java.lang.StringBuilder;
 
-import static com.esotericsoftware.SpineStandard.Animation.RotateTimeline.*;
+import static com.archive.SpineStandard.Animation.RotateTimeline.*;
 
 public class AnimationState {
     static private final Animation emptyAnimation = new Animation("<empty>", new Array<>(0), 0);

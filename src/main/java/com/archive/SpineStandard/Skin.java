@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.utils.Array;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.SpineStandard.attachments.Attachment;
+import com.archive.SpineStandard.attachments.Attachment;
 
 public class Skin {
     final String name;

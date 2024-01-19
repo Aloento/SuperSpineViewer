@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.graphics.Color;
@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.ShortArray;
-import com.esotericsoftware.SpineStandard.attachments.*;
-import com.esotericsoftware.SpineStandard.utils.SkeletonClipping;
-import com.esotericsoftware.SpineStandard.utils.TwoColorPolygonBatch;
+import com.archive.SpineStandard.attachments.*;
+import com.archive.SpineStandard.utils.SkeletonClipping;
+import com.archive.SpineStandard.utils.TwoColorPolygonBatch;
 
 public class SkeletonRenderer {
     static private final short[] quadTriangles = {0, 1, 2, 2, 3, 0};

@@ -1,8 +1,8 @@
-package com.esotericsoftware.Spine40.utils;
+package com.archive.Spine40.utils;
 
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.Spine40.Skeleton;
-import com.esotericsoftware.Spine40.SkeletonData;
+import com.archive.Spine40.Skeleton;
+import com.archive.Spine40.SkeletonData;
 
 public class SkeletonPool extends Pool<Skeleton> {
     private final SkeletonData skeletonData;

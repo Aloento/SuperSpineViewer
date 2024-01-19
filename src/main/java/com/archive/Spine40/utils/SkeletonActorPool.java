@@ -1,10 +1,10 @@
-package com.esotericsoftware.Spine40.utils;
+package com.archive.Spine40.utils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.Spine40.*;
-import com.esotericsoftware.Spine40.AnimationState.TrackEntry;
+import com.archive.Spine40.*;
+import com.archive.Spine40.AnimationState.TrackEntry;
 
 public class SkeletonActorPool extends Pool<SkeletonActor> {
     private final Pool<Skeleton> skeletonPool;

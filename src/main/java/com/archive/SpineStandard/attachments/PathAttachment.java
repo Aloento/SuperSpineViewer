@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard.attachments;
+package com.archive.SpineStandard.attachments;
 
 import com.badlogic.gdx.graphics.Color;
 

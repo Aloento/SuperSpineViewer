@@ -1,6 +1,6 @@
-package com.esotericsoftware.SpineStandard.attachments;
+package com.archive.SpineStandard.attachments;
 
-import com.esotericsoftware.SpineStandard.Skin;
+import com.archive.SpineStandard.Skin;
 
 public interface AttachmentLoader {
     RegionAttachment newRegionAttachment(Skin skin, String name, String path);

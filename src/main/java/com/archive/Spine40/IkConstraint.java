@@ -1,8 +1,8 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.utils.Array;
 
-import static com.esotericsoftware.Spine40.utils.SpineUtils.*;
+import static com.archive.Spine40.utils.SpineUtils.*;
 
 /**
  * Stores the current pose for an IK constraint. An IK constraint adjusts the rotation of 1 or 2 constrained bones so the tip of

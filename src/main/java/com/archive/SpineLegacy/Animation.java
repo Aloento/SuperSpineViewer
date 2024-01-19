@@ -1,11 +1,11 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.SpineLegacy.attachments.Attachment;
-import com.esotericsoftware.SpineLegacy.attachments.FfdAttachment;
+import com.archive.SpineLegacy.attachments.Attachment;
+import com.archive.SpineLegacy.attachments.FfdAttachment;
 
 public class Animation {
     final String name;

@@ -1,17 +1,17 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Null;
-import com.esotericsoftware.Spine40.Skin.SkinEntry;
-import com.esotericsoftware.Spine40.attachments.Attachment;
-import com.esotericsoftware.Spine40.attachments.MeshAttachment;
-import com.esotericsoftware.Spine40.attachments.PathAttachment;
-import com.esotericsoftware.Spine40.attachments.RegionAttachment;
+import com.archive.Spine40.Skin.SkinEntry;
+import com.archive.Spine40.attachments.Attachment;
+import com.archive.Spine40.attachments.MeshAttachment;
+import com.archive.Spine40.attachments.PathAttachment;
+import com.archive.Spine40.attachments.RegionAttachment;
 
-import static com.esotericsoftware.Spine40.utils.SpineUtils.*;
+import static com.archive.Spine40.utils.SpineUtils.*;
 
 /**
  * Stores the current pose for a skeleton.

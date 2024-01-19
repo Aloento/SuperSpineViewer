@@ -1,17 +1,17 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.ObjectSet;
-import com.esotericsoftware.Spine40.attachments.Attachment;
-import com.esotericsoftware.Spine40.attachments.VertexAttachment;
+import com.archive.Spine40.attachments.Attachment;
+import com.archive.Spine40.attachments.VertexAttachment;
 
-import static com.esotericsoftware.Spine40.Animation.MixBlend.*;
-import static com.esotericsoftware.Spine40.Animation.MixDirection.in;
-import static com.esotericsoftware.Spine40.Animation.MixDirection.out;
-import static com.esotericsoftware.Spine40.utils.SpineUtils.arraycopy;
+import static com.archive.Spine40.Animation.MixBlend.*;
+import static com.archive.Spine40.Animation.MixDirection.in;
+import static com.archive.Spine40.Animation.MixDirection.out;
+import static com.archive.Spine40.utils.SpineUtils.arraycopy;
 
 /**
  * Stores a list of timelines to animate a skeleton's pose over time.

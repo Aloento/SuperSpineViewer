@@ -1,16 +1,16 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.*;
-import com.esotericsoftware.Spine40.Animation.*;
-import com.esotericsoftware.Spine40.BoneData.TransformMode;
-import com.esotericsoftware.Spine40.PathConstraintData.PositionMode;
-import com.esotericsoftware.Spine40.PathConstraintData.RotateMode;
-import com.esotericsoftware.Spine40.PathConstraintData.SpacingMode;
-import com.esotericsoftware.Spine40.SkeletonJson.LinkedMesh;
-import com.esotericsoftware.Spine40.attachments.*;
+import com.archive.Spine40.Animation.*;
+import com.archive.Spine40.BoneData.TransformMode;
+import com.archive.Spine40.PathConstraintData.PositionMode;
+import com.archive.Spine40.PathConstraintData.RotateMode;
+import com.archive.Spine40.PathConstraintData.SpacingMode;
+import com.archive.Spine40.SkeletonJson.LinkedMesh;
+import com.archive.Spine40.attachments.*;
 
 import java.io.EOFException;
 import java.io.IOException;

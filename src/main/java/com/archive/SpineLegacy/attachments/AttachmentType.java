@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineLegacy.attachments;
+package com.archive.SpineLegacy.attachments;
 
 public enum AttachmentType {
     region, boundingbox, mesh, weightedmesh, linkedmesh, weightedlinkedmesh;

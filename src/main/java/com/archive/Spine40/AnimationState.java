@@ -1,8 +1,8 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import com.esotericsoftware.Spine40.Animation.*;
+import com.archive.Spine40.Animation.*;
 
 import java.lang.StringBuilder;
 

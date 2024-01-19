@@ -1,9 +1,9 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.SpineLegacy.attachments.*;
+import com.archive.SpineLegacy.attachments.*;
 
 public class SkeletonMeshRenderer extends SkeletonRenderer<PolygonSpriteBatch> {
     static private final short[] quadTriangles = {0, 1, 2, 2, 3, 0};

@@ -1,9 +1,9 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.graphics.Color;
-import com.esotericsoftware.Spine40.PathConstraint;
+import com.archive.Spine40.PathConstraint;
 
-import static com.esotericsoftware.Spine40.utils.SpineUtils.arraycopy;
+import static com.archive.Spine40.utils.SpineUtils.arraycopy;
 
 /**
  * An attachment whose vertices make up a composite Bezier curve.

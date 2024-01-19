@@ -1,4 +1,4 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 /**
  * The interface for items updated by {@link Skeleton#updateWorldTransform()}.

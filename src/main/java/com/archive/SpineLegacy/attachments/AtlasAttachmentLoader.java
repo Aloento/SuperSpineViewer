@@ -1,8 +1,8 @@
-package com.esotericsoftware.SpineLegacy.attachments;
+package com.archive.SpineLegacy.attachments;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.esotericsoftware.SpineLegacy.Skin;
+import com.archive.SpineLegacy.Skin;
 
 public class AtlasAttachmentLoader implements AttachmentLoader {
     private final TextureAtlas atlas;

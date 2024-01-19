@@ -1,9 +1,9 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
+import static com.archive.SpineStandard.utils.SpineUtils.*;
 
 public class TransformConstraint implements Updatable {
     final TransformConstraintData data;

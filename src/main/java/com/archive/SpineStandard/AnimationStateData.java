@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import com.badlogic.gdx.utils.ObjectFloatMap;
 

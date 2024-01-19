@@ -1,7 +1,7 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.utils.Null;
-import com.esotericsoftware.Spine40.Skin;
+import com.archive.Spine40.Skin;
 
 /**
  * The interface which can be implemented to customize creating and populating attachments.

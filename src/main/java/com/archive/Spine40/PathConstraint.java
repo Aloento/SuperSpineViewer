@@ -1,13 +1,13 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.Spine40.PathConstraintData.PositionMode;
-import com.esotericsoftware.Spine40.PathConstraintData.RotateMode;
-import com.esotericsoftware.Spine40.PathConstraintData.SpacingMode;
-import com.esotericsoftware.Spine40.attachments.Attachment;
-import com.esotericsoftware.Spine40.attachments.PathAttachment;
-import com.esotericsoftware.Spine40.utils.SpineUtils;
+import com.archive.Spine40.PathConstraintData.PositionMode;
+import com.archive.Spine40.PathConstraintData.RotateMode;
+import com.archive.Spine40.PathConstraintData.SpacingMode;
+import com.archive.Spine40.attachments.Attachment;
+import com.archive.Spine40.attachments.PathAttachment;
+import com.archive.Spine40.utils.SpineUtils;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard.attachments;
+package com.archive.SpineStandard.attachments;
 
 public enum AttachmentType {
     region, boundingbox, mesh, linkedmesh, path, point, clipping;

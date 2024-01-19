@@ -1,13 +1,13 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.*;
-import com.esotericsoftware.SpineLegacy.Animation.*;
-import com.esotericsoftware.SpineLegacy.SkeletonJson.LinkedMesh;
-import com.esotericsoftware.SpineLegacy.attachments.*;
+import com.archive.SpineLegacy.Animation.*;
+import com.archive.SpineLegacy.SkeletonJson.LinkedMesh;
+import com.archive.SpineLegacy.attachments.*;
 
 import java.io.IOException;
 import java.util.Objects;

@@ -1,8 +1,8 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.esotericsoftware.Spine40.Skin;
+import com.archive.Spine40.Skin;
 
 /**
  * An {@link AttachmentLoader} that configures attachments using texture regions from an {@link Atlas}.

@@ -1,11 +1,11 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Null;
 
-import static com.esotericsoftware.Spine40.utils.SpineUtils.arraycopy;
+import static com.archive.Spine40.utils.SpineUtils.arraycopy;
 
 /**
  * An attachment that displays a textured mesh. A mesh has hull vertices and internal vertices within the hull. Holes are not

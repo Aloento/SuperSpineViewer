@@ -1,7 +1,7 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.utils.Null;
-import com.esotericsoftware.Spine40.Skeleton;
+import com.archive.Spine40.Skeleton;
 
 /**
  * Attachment that displays a skeleton.

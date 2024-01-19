@@ -1,18 +1,18 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.*;
-import com.esotericsoftware.SpineStandard.Animation.*;
-import com.esotericsoftware.SpineStandard.BoneData.TransformMode;
-import com.esotericsoftware.SpineStandard.PathConstraintData.PositionMode;
-import com.esotericsoftware.SpineStandard.PathConstraintData.RotateMode;
-import com.esotericsoftware.SpineStandard.PathConstraintData.SpacingMode;
-import com.esotericsoftware.SpineStandard.attachments.*;
+import com.archive.SpineStandard.Animation.*;
+import com.archive.SpineStandard.BoneData.TransformMode;
+import com.archive.SpineStandard.PathConstraintData.PositionMode;
+import com.archive.SpineStandard.PathConstraintData.RotateMode;
+import com.archive.SpineStandard.PathConstraintData.SpacingMode;
+import com.archive.SpineStandard.attachments.*;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
+import static com.archive.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class SkeletonJson {
     private final AttachmentLoader attachmentLoader;

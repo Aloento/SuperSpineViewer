@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineLegacy.attachments;
+package com.archive.SpineLegacy.attachments;
 
 abstract public class Attachment {
     String name;

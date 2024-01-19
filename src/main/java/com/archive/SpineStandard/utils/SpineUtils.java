@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard.utils;
+package com.archive.SpineStandard.utils;
 
 public class SpineUtils {
     static public final float PI = 3.1415927f;

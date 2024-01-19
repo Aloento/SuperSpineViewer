@@ -1,8 +1,8 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Null;
-import com.esotericsoftware.Spine40.SlotData;
+import com.archive.Spine40.SlotData;
 
 /**
  * An attachment with vertices that make up a polygon used for clipping the rendering of other attachments.

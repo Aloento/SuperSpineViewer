@@ -1,4 +1,4 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.badlogic.gdx.utils.ShortArray;
-import com.esotericsoftware.Spine40.attachments.*;
-import com.esotericsoftware.Spine40.utils.SkeletonClipping;
-import com.esotericsoftware.Spine40.utils.TwoColorPolygonBatch;
+import com.archive.Spine40.attachments.*;
+import com.archive.Spine40.utils.SkeletonClipping;
+import com.archive.Spine40.utils.TwoColorPolygonBatch;
 
 public class SkeletonRenderer {
     static private final short[] quadTriangles = {0, 1, 2, 2, 3, 0};

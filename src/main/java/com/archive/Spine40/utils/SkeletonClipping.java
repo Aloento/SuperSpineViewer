@@ -1,10 +1,10 @@
-package com.esotericsoftware.Spine40.utils;
+package com.archive.Spine40.utils;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.ShortArray;
-import com.esotericsoftware.Spine40.Slot;
-import com.esotericsoftware.Spine40.attachments.ClippingAttachment;
+import com.archive.Spine40.Slot;
+import com.archive.Spine40.attachments.ClippingAttachment;
 
 public class SkeletonClipping {
     private final Triangulator triangulator = new Triangulator();

@@ -1,11 +1,11 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.Spine40.attachments.Attachment;
-import com.esotericsoftware.Spine40.attachments.BoundingBoxAttachment;
+import com.archive.Spine40.attachments.Attachment;
+import com.archive.Spine40.attachments.BoundingBoxAttachment;
 
 /**
  * Collects each visible {@link BoundingBoxAttachment} and computes the world vertices for its polygon. The polygon vertices are

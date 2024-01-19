@@ -1,9 +1,9 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import static com.esotericsoftware.Spine40.utils.SpineUtils.*;
+import static com.archive.Spine40.utils.SpineUtils.*;
 
 /**
  * Stores the current pose for a transform constraint. A transform constraint adjusts the world transform of the constrained

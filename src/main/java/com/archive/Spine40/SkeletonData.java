@@ -1,4 +1,4 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Null;

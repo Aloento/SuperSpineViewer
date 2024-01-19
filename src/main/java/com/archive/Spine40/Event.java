@@ -1,14 +1,14 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
-import com.esotericsoftware.Spine40.Animation.Timeline;
-import com.esotericsoftware.Spine40.AnimationState.AnimationStateListener;
+import com.archive.Spine40.Animation.Timeline;
+import com.archive.Spine40.AnimationState.AnimationStateListener;
 
 /**
  * Stores the current pose values for an {@link Event}.
  * <p>
  * See Timeline
- * {@link Timeline#apply(Skeleton, float, float, com.badlogic.gdx.utils.Array, float, com.esotericsoftware.Spine40.Animation.MixBlend, com.esotericsoftware.Spine40.Animation.MixDirection)},
- * AnimationStateListener {@link AnimationStateListener#event(com.esotericsoftware.Spine40.AnimationState.TrackEntry, Event)}, and
+ * {@link Timeline#apply(Skeleton, float, float, com.badlogic.gdx.utils.Array, float, com.archive.Spine40.Animation.MixBlend, com.archive.Spine40.Animation.MixDirection)},
+ * AnimationStateListener {@link AnimationStateListener#event(com.archive.Spine40.AnimationState.TrackEntry, Event)}, and
  * <a href="http://esotericsoftware.com/spine-events">Events</a> in the Spine User Guide.
  */
 public class Event {

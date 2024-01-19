@@ -1,7 +1,7 @@
-package com.esotericsoftware.SpineStandard.attachments;
+package com.archive.SpineStandard.attachments;
 
 import com.badlogic.gdx.graphics.Color;
-import com.esotericsoftware.SpineStandard.SlotData;
+import com.archive.SpineStandard.SlotData;
 
 public class ClippingAttachment extends VertexAttachment {
     final Color color = new Color(0.2275f, 0.2275f, 0.8078f, 1);

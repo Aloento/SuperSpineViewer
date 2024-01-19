@@ -1,12 +1,12 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.esotericsoftware.Spine40.Bone;
+import com.archive.Spine40.Bone;
 
-import static com.esotericsoftware.Spine40.utils.SpineUtils.arraycopy;
-import static com.esotericsoftware.Spine40.utils.SpineUtils.degRad;
+import static com.archive.Spine40.utils.SpineUtils.arraycopy;
+import static com.archive.Spine40.utils.SpineUtils.degRad;
 
 /**
  * An attachment that displays a textured quadrilateral.

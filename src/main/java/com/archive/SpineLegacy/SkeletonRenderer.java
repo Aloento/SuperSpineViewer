@@ -1,8 +1,8 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.SpineLegacy.attachments.*;
+import com.archive.SpineLegacy.attachments.*;
 
 public class SkeletonRenderer<T extends Batch> {
     boolean premultipliedAlpha;

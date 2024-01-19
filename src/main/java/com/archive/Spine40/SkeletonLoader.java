@@ -1,11 +1,11 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.Spine40.SkeletonJson.LinkedMesh;
-import com.esotericsoftware.Spine40.attachments.AtlasAttachmentLoader;
-import com.esotericsoftware.Spine40.attachments.AttachmentLoader;
+import com.archive.Spine40.SkeletonJson.LinkedMesh;
+import com.archive.Spine40.attachments.AtlasAttachmentLoader;
+import com.archive.Spine40.attachments.AttachmentLoader;
 
 import java.io.InputStream;
 

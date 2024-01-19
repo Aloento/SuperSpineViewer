@@ -1,12 +1,12 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Null;
-import com.esotericsoftware.Spine40.Bone;
-import com.esotericsoftware.Spine40.Skeleton;
-import com.esotericsoftware.Spine40.Slot;
+import com.archive.Spine40.Bone;
+import com.archive.Spine40.Skeleton;
+import com.archive.Spine40.Slot;
 
-import static com.esotericsoftware.Spine40.utils.SpineUtils.arraycopy;
+import static com.archive.Spine40.utils.SpineUtils.arraycopy;
 
 /**
  * Base class for an attachment with vertices that are transformed by one or more bones and can be deformed by a slot's

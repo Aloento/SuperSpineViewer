@@ -1,4 +1,4 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 /**
  * The base class for all constraint datas.

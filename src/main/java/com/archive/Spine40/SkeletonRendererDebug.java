@@ -1,4 +1,4 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.Spine40.attachments.*;
+import com.archive.Spine40.attachments.*;
 
 public class SkeletonRendererDebug {
     static public final Color boneLineColor = Color.RED;

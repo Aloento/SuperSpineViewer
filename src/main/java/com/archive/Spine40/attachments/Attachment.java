@@ -1,4 +1,4 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 /**
  * The base class for all attachments.

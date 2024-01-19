@@ -1,8 +1,8 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.esotericsoftware.Spine40.Bone;
+import com.archive.Spine40.Bone;
 
 import static com.badlogic.gdx.math.MathUtils.*;
 

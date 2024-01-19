@@ -1,7 +1,7 @@
-package com.esotericsoftware.Spine40.attachments;
+package com.archive.Spine40.attachments;
 
 import com.badlogic.gdx.graphics.Color;
-import com.esotericsoftware.Spine40.SkeletonBounds;
+import com.archive.Spine40.SkeletonBounds;
 
 /**
  * An attachment with vertices that make up a polygon. Can be used for hit detection, creating physics bodies, spawning particle

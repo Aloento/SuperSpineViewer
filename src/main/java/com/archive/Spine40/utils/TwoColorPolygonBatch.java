@@ -1,4 +1,4 @@
-package com.esotericsoftware.Spine40.utils;
+package com.archive.Spine40.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.NumberUtils;
 
-import static com.esotericsoftware.Spine40.utils.SpineUtils.arraycopy;
+import static com.archive.Spine40.utils.SpineUtils.arraycopy;
 
 /**
  * A batch that renders polygons and performs tinting using a light and dark color.

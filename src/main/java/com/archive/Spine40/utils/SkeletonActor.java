@@ -1,11 +1,11 @@
-package com.esotericsoftware.Spine40.utils;
+package com.archive.Spine40.utils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.esotericsoftware.Spine40.AnimationState;
-import com.esotericsoftware.Spine40.Skeleton;
-import com.esotericsoftware.Spine40.SkeletonRenderer;
+import com.archive.Spine40.AnimationState;
+import com.archive.Spine40.Skeleton;
+import com.archive.Spine40.SkeletonRenderer;
 
 /**
  * A scene2d actor that draws a skeleton.

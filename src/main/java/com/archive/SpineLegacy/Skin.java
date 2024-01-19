@@ -1,9 +1,9 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
-import com.esotericsoftware.SpineLegacy.attachments.Attachment;
+import com.archive.SpineLegacy.attachments.Attachment;
 
 public class Skin {
     static private final Key lookup = new Key();

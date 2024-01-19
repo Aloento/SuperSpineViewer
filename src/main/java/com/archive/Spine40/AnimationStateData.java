@@ -1,7 +1,7 @@
-package com.esotericsoftware.Spine40;
+package com.archive.Spine40;
 
 import com.badlogic.gdx.utils.ObjectFloatMap;
-import com.esotericsoftware.Spine40.AnimationState.TrackEntry;
+import com.archive.Spine40.AnimationState.TrackEntry;
 
 /**
  * Stores mix (crossfade) durations to be applied when {@link AnimationState} animations are changed.

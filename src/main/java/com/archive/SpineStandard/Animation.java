@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.graphics.Color;
@@ -6,16 +6,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntSet;
-import com.esotericsoftware.SpineStandard.attachments.Attachment;
-import com.esotericsoftware.SpineStandard.attachments.VertexAttachment;
+import com.archive.SpineStandard.attachments.Attachment;
+import com.archive.SpineStandard.attachments.VertexAttachment;
 
 import java.util.Objects;
 
-import static com.esotericsoftware.SpineStandard.Animation.MixBlend.*;
-import static com.esotericsoftware.SpineStandard.Animation.MixDirection.in;
-import static com.esotericsoftware.SpineStandard.Animation.MixDirection.out;
-import static com.esotericsoftware.SpineStandard.Animation.MixPose.P_setup;
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
+import static com.archive.SpineStandard.Animation.MixBlend.*;
+import static com.archive.SpineStandard.Animation.MixDirection.in;
+import static com.archive.SpineStandard.Animation.MixDirection.out;
+import static com.archive.SpineStandard.Animation.MixPose.P_setup;
+import static com.archive.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class Animation {
     final String name;

@@ -1,12 +1,12 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.SpineStandard.attachments.Attachment;
-import com.esotericsoftware.SpineStandard.attachments.PathAttachment;
+import com.archive.SpineStandard.attachments.Attachment;
+import com.archive.SpineStandard.attachments.PathAttachment;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
+import static com.archive.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class Skeleton {
     final SkeletonData data;

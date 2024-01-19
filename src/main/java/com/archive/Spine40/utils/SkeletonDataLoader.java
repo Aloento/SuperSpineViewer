@@ -1,4 +1,4 @@
-package com.esotericsoftware.Spine40.utils;
+package com.archive.Spine40.utils;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
@@ -9,11 +9,11 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Null;
-import com.esotericsoftware.Spine40.SkeletonBinary;
-import com.esotericsoftware.Spine40.SkeletonData;
-import com.esotericsoftware.Spine40.SkeletonJson;
-import com.esotericsoftware.Spine40.attachments.AtlasAttachmentLoader;
-import com.esotericsoftware.Spine40.attachments.AttachmentLoader;
+import com.archive.Spine40.SkeletonBinary;
+import com.archive.Spine40.SkeletonData;
+import com.archive.Spine40.SkeletonJson;
+import com.archive.Spine40.attachments.AtlasAttachmentLoader;
+import com.archive.Spine40.attachments.AttachmentLoader;
 
 /**
  * An asset loader to create and load skeleton data. The data file is assumed to be binary if it ends with <code>.skel</code>,

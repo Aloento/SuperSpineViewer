@@ -1,10 +1,10 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.utils.Array;
 
 import static com.badlogic.gdx.math.MathUtils.radDeg;
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.*;
+import static com.archive.SpineStandard.utils.SpineUtils.*;
 
 public class IkConstraint implements Updatable {
     final IkConstraintData data;

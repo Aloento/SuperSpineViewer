@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineLegacy;
+package com.archive.SpineLegacy;
 
 public class Event {
     final float time;

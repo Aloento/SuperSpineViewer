@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard.attachments;
+package com.archive.SpineStandard.attachments;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.graphics.Color;
@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.NumberUtils;
-import com.esotericsoftware.SpineStandard.Bone;
-import com.esotericsoftware.SpineStandard.Skeleton;
-import com.esotericsoftware.SpineStandard.Slot;
+import com.archive.SpineStandard.Bone;
+import com.archive.SpineStandard.Skeleton;
+import com.archive.SpineStandard.Slot;
 
 public class MeshAttachment extends VertexAttachment {
     private final Color color = new Color(1, 1, 1, 1);

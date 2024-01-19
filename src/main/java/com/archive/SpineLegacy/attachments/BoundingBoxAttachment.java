@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineLegacy.attachments;
+package com.archive.SpineLegacy.attachments;
 
 public class BoundingBoxAttachment extends Attachment {
     private float[] vertices;

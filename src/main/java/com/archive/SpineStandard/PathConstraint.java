@@ -1,14 +1,14 @@
-package com.esotericsoftware.SpineStandard;
+package com.archive.SpineStandard;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
-import com.esotericsoftware.SpineStandard.PathConstraintData.PositionMode;
-import com.esotericsoftware.SpineStandard.PathConstraintData.RotateMode;
-import com.esotericsoftware.SpineStandard.PathConstraintData.SpacingMode;
-import com.esotericsoftware.SpineStandard.attachments.Attachment;
-import com.esotericsoftware.SpineStandard.attachments.PathAttachment;
-import com.esotericsoftware.SpineStandard.utils.SpineUtils;
+import com.archive.SpineStandard.PathConstraintData.PositionMode;
+import com.archive.SpineStandard.PathConstraintData.RotateMode;
+import com.archive.SpineStandard.PathConstraintData.SpacingMode;
+import com.archive.SpineStandard.attachments.Attachment;
+import com.archive.SpineStandard.attachments.PathAttachment;
+import com.archive.SpineStandard.utils.SpineUtils;
 
 public class PathConstraint implements Updatable {
     static private final int NONE = -1, BEFORE = -2, AFTER = -3;

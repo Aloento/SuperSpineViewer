@@ -1,4 +1,4 @@
-package com.esotericsoftware.SpineStandard.utils;
+package com.archive.SpineStandard.utils;
 
 import to.aloen.ssv.Loader;
 import com.badlogic.gdx.Gdx;
@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.NumberUtils;
 
-import static com.esotericsoftware.SpineStandard.utils.SpineUtils.arraycopy;
+import static com.archive.SpineStandard.utils.SpineUtils.arraycopy;
 
 public class TwoColorPolygonBatch implements PolygonBatch {
     // static final byte VERTEX_SIZE = 2 + 1 + 1 + 2;

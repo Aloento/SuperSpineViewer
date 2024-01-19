@@ -1,6 +1,6 @@
-package com.esotericsoftware.SpineLegacy.attachments;
+package com.archive.SpineLegacy.attachments;
 
-import com.esotericsoftware.SpineLegacy.Skeleton;
+import com.archive.SpineLegacy.Skeleton;
 
 public class SkeletonAttachment extends Attachment {
     private Skeleton skeleton;
