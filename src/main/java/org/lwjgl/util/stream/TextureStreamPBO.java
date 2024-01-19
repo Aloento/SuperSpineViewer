@@ -35,12 +35,15 @@ abstract class TextureStreamPBO extends StreamBufferedPBO implements TextureStre
     private void resize(final int width, final int height) {
         if (width < 0 || height < 0)
             throw new IllegalArgumentException("Invalid dimensions: " + width + " x " + height);
+
         destroyObjects();
         this.width = width;
         this.height = height;
         this.stride = StreamUtil.getStride(width);
+
         if (width == 0 || height == 0)
             return;
+
         bufferIndex = 0;
         currentIndex = 0;
         resetTexture = true;
@@ -54,21 +57,28 @@ abstract class TextureStreamPBO extends StreamBufferedPBO implements TextureStre
     public void snapshot() {
         if (width != handler.getWidth() || height != handler.getHeight())
             resize(handler.getWidth(), handler.getHeight());
+
         if (width == 0 || height == 0)
             return;
+
         final int trgPBO = (int) (bufferIndex % transfersToBuffer);
+
         if (processingState.get(trgPBO))
             syncUpload(trgPBO);
+
         pinBuffer(trgPBO);
         processingState.set(trgPBO, true);
         semaphores[trgPBO].acquireUninterruptibly();
+
         handler.process(
-                width, height,
-                pinnedBuffers[trgPBO],
-                stride,
-                semaphores[trgPBO]
+            width, height,
+            pinnedBuffers[trgPBO],
+            stride,
+            semaphores[trgPBO]
         );
+
         bufferIndex++;
+
         if (resetTexture)
             syncUpload(trgPBO);
     }
@@ -77,8 +87,10 @@ abstract class TextureStreamPBO extends StreamBufferedPBO implements TextureStre
 
     public void tick() {
         final int srcPBO = (int) (currentIndex % transfersToBuffer);
+
         if (!processingState.get(srcPBO))
             return;
+
         syncUpload(srcPBO);
     }
 
@@ -92,11 +104,13 @@ abstract class TextureStreamPBO extends StreamBufferedPBO implements TextureStre
     private void upload(final int srcPBO) {
         glBindTexture(GL_TEXTURE_2D, texID);
         glPixelStorei(GL_UNPACK_ROW_LENGTH, stride >> 2);
+
         if (resetTexture) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 0);
             resetTexture = false;
         } else
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 0);
+
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
         postUpload(srcPBO);
@@ -116,7 +130,9 @@ abstract class TextureStreamPBO extends StreamBufferedPBO implements TextureStre
                 waitForProcessingToComplete(i);
             }
         }
+
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
         for (int pbo : pbos) {
             if (pbo != 0)
                 glDeleteBuffers(pbo);

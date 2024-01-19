@@ -24,6 +24,7 @@ final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
             return new TextureStreamINTEL(handler, transfersToBuffer);
         }
     };
+
     private final IntBuffer strideBuffer;
     private final IntBuffer layoutBuffer;
     private final StreamUtil.FBOUtil fboUtil;
@@ -36,8 +37,10 @@ final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
 
     TextureStreamINTEL(final StreamHandler handler, final int transfersToBuffer) {
         super(handler, transfersToBuffer);
+
         this.strideBuffer = BufferUtils.createIntBuffer(1);
         this.layoutBuffer = BufferUtils.createIntBuffer(1);
+
         fboUtil = StreamUtil.getFBOUtil(GLContext.getCapabilities());
         texFBO = fboUtil.genFramebuffers();
         bufferFBO = fboUtil.genFramebuffers();
@@ -46,11 +49,15 @@ final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
 
     private static int genLayoutLinearTexture(final int width, final int height) {
         final int texID = glGenTextures();
+
         glBindTexture(GL_TEXTURE_2D, texID);
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MEMORY_LAYOUT_INTEL, GL_LAYOUT_LINEAR_CPU_CACHED_INTEL);
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) null);
+
         return texID;
     }
 
@@ -69,12 +76,15 @@ final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
     private void resize(final int width, final int height) {
         if (width < 0 || height < 0)
             throw new IllegalArgumentException("Invalid dimensions: " + width + " x " + height);
+
         destroyObjects();
         this.width = width;
         this.height = height;
         this.stride = StreamUtil.getStride(width);
+
         if (width == 0 || height == 0)
             return;
+
         bufferIndex = 0;
         currentIndex = 0;
         resetTexture = true;
@@ -82,29 +92,38 @@ final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
         fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, texFBO);
         fboUtil.framebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texID, 0);
         fboUtil.bindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
         for (int i = 0; i < buffers.length; i++)
             buffers[i] = genLayoutLinearTexture(width, height);
+
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public void snapshot() {
         if (width != handler.getWidth() || height != handler.getHeight())
             resize(handler.getWidth(), handler.getHeight());
+
         if (width == 0 || height == 0)
             return;
+
         final int trgPBO = (int) (bufferIndex % transfersToBuffer);
+
         if (processingState.get(trgPBO))
             syncCopy(trgPBO);
-        pinnedBuffers[trgPBO] = glMapTexture2DINTEL(buffers[trgPBO], 0, height * stride, GL_MAP_WRITE_BIT, strideBuffer, layoutBuffer, pinnedBuffers[trgPBO]);
+
+        pinnedBuffers[trgPBO] = glMapTexture2DINTEL(buffers[trgPBO], 0, (long) height * stride, GL_MAP_WRITE_BIT, strideBuffer, layoutBuffer, pinnedBuffers[trgPBO]);
         processingState.set(trgPBO, true);
         semaphores[trgPBO].acquireUninterruptibly();
+
         handler.process(
-                width, height,
-                pinnedBuffers[trgPBO],
-                stride,
-                semaphores[trgPBO]
+            width, height,
+            pinnedBuffers[trgPBO],
+            stride,
+            semaphores[trgPBO]
         );
+
         bufferIndex++;
+
         if (resetTexture) {
             syncCopy(trgPBO);
             resetTexture = true;
@@ -113,10 +132,13 @@ final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
 
     public void tick() {
         final int srcPBO = (int) (currentIndex % transfersToBuffer);
+
         if (!processingState.get(srcPBO))
             return;
+
         if (!semaphores[srcPBO].tryAcquire())
             return;
+
         semaphores[srcPBO].release();
         postProcess(srcPBO);
         processingState.set(srcPBO, false);
@@ -152,10 +174,12 @@ final class TextureStreamINTEL extends StreamBuffered implements TextureStream {
             if (processingState.get(i))
                 waitForProcessingToComplete(i);
         }
+
         for (int i = 0; i < buffers.length; i++) {
             glDeleteTextures(buffers[i]);
             buffers[i] = 0;
         }
+
         glDeleteTextures(texID);
     }
 

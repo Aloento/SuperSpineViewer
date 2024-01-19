@@ -20,6 +20,7 @@ public class TextureStreamPBORange extends TextureStreamPBO {
             return new TextureStreamPBORange(handler, transfersToBuffer);
         }
     };
+
     private final GLSync[] fences;
 
     public TextureStreamPBORange(final StreamHandler handler, final int transfersToBuffer) {
@@ -38,9 +39,10 @@ public class TextureStreamPBORange extends TextureStreamPBO {
     public void pinBuffer(final int index) {
         if (fences[index] != null)
             StreamUtil.waitOnFence(fences, index);
+
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbos[index]);
-        glBufferData(GL_PIXEL_UNPACK_BUFFER, height * stride, GL_STREAM_DRAW);
-        pinnedBuffers[index] = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, height * stride, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT, pinnedBuffers[index]);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, (long) height * stride, GL_STREAM_DRAW);
+        pinnedBuffers[index] = glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, (long) height * stride, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT, pinnedBuffers[index]);
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
     }
 

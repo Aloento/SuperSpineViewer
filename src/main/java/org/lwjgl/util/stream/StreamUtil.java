@@ -33,11 +33,14 @@ public final class StreamUtil {
 
     static int createRenderTexture(final int width, final int height, final int filter) {
         final int texID = glGenTextures();
+
         glBindTexture(GL_TEXTURE_2D, texID);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) null);
         glBindTexture(GL_TEXTURE_2D, 0);
+
         return texID;
     }
 
@@ -47,12 +50,16 @@ public final class StreamUtil {
 
     static int createRenderBuffer(final FBOUtil fboUtil, final int width, final int height, final int samples, final int internalformat) {
         final int bufferID = fboUtil.genRenderbuffers();
+
         fboUtil.bindRenderbuffer(GL_RENDERBUFFER, bufferID);
+
         if (samples <= 1)
             fboUtil.renderbufferStorage(GL_RENDERBUFFER, internalformat, width, height);
         else
             fboUtil.renderbufferStorageMultisample(GL_RENDERBUFFER, samples, internalformat, width, height);
+
         fboUtil.bindRenderbuffer(GL_RENDERBUFFER, 0);
+
         return bufferID;
     }
 
@@ -72,8 +79,8 @@ public final class StreamUtil {
 
     static int getStride(final int width) {
         return isAMD(GLContext.getCapabilities()) ?
-                width * 4 :
-                getStride(width, TEX_ROW_ALIGNMENT);
+            width * 4 :
+            getStride(width, TEX_ROW_ALIGNMENT);
     }
 
     static int getStride(final int width, final int aligment) {
@@ -86,27 +93,34 @@ public final class StreamUtil {
     private static void checkCapabilities(final ContextCapabilities caps) {
         if (!caps.OpenGL15)
             throw new UnsupportedOperationException("Support for OpenGL 1.5 or higher is required.");
+
         if (!(caps.OpenGL20 || caps.GL_ARB_texture_non_power_of_two))
             throw new UnsupportedOperationException("Support for npot textures is required.");
+
         if (!(caps.OpenGL30 || caps.GL_ARB_framebuffer_object || caps.GL_EXT_framebuffer_object))
             throw new UnsupportedOperationException("Framebuffer object support is required.");
     }
 
     public static RenderStreamFactory getRenderStreamImplementation() {
         final List<RenderStreamFactory> list = getRenderStreamImplementations();
+
         if (list.isEmpty())
             throw new UnsupportedOperationException("A supported TextureStream implementation could not be found.");
+
         return list.get(0);
     }
 
     public static List<RenderStreamFactory> getRenderStreamImplementations() {
         final ContextCapabilities caps = GLContext.getCapabilities();
         checkCapabilities(caps);
+
         final List<RenderStreamFactory> list = new ArrayList<>();
+
         addIfSupported(caps, list, RenderStreamPBOAMD.FACTORY);
         addIfSupported(caps, list, RenderStreamPBOCopy.FACTORY);
         addIfSupported(caps, list, RenderStreamINTEL.FACTORY);
         addIfSupported(caps, list, RenderStreamPBODefault.FACTORY);
+
         return list;
     }
 
@@ -118,8 +132,10 @@ public final class StreamUtil {
     static int checkSamples(final int samples, final ContextCapabilities caps) {
         if (samples <= 1)
             return samples;
+
         if (!(caps.OpenGL30 || (caps.GL_EXT_framebuffer_multisample && caps.GL_EXT_framebuffer_blit)))
             throw new UnsupportedOperationException("Multisampled rendering on framebuffer objects is not supported.");
+
         return Math.min(samples, glGetInteger(GL_MAX_SAMPLES));
     }
 

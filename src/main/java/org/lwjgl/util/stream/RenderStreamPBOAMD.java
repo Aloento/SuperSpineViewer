@@ -34,6 +34,7 @@ final class RenderStreamPBOAMD extends RenderStreamPBO {
 
     protected void resizeBuffers(final int height, final int stride) {
         final int renderBytes = height * stride;
+
         for (int i = 0; i < pbos.length; i++) {
             pbos[i] = glGenBuffers();
             glBindBuffer(GL_EXTERNAL_VIRTUAL_MEMORY_BUFFER_AMD, pbos[i]);
@@ -45,6 +46,7 @@ final class RenderStreamPBOAMD extends RenderStreamPBO {
             pinnedBuffers[i] = buffer.slice().order(ByteOrder.nativeOrder());
             glBufferData(GL_EXTERNAL_VIRTUAL_MEMORY_BUFFER_AMD, pinnedBuffers[i], GL_STREAM_READ);
         }
+
         glBindBuffer(GL_EXTERNAL_VIRTUAL_MEMORY_BUFFER_AMD, 0);
     }
 
@@ -60,8 +62,10 @@ final class RenderStreamPBOAMD extends RenderStreamPBO {
 
     protected void copyFrames(final int src, final int trg) {
         StreamUtil.waitOnFence(fences, src);
+
         final ByteBuffer srcBuffer = pinnedBuffers[src];
         final ByteBuffer trgBuffer = pinnedBuffers[trg];
+
         trgBuffer.put(srcBuffer);
         trgBuffer.flip();
         srcBuffer.flip();
@@ -75,6 +79,7 @@ final class RenderStreamPBOAMD extends RenderStreamPBO {
             if (fences[i] != null)
                 StreamUtil.waitOnFence(fences, i);
         }
+
         super.destroyObjects();
     }
 }

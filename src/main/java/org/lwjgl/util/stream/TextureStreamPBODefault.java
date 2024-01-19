@@ -30,8 +30,8 @@ public class TextureStreamPBODefault extends TextureStreamPBO {
 
     public void pinBuffer(final int index) {
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbos[index]);
-        glBufferData(GL_PIXEL_UNPACK_BUFFER, height * stride, GL_STREAM_DRAW);
-        pinnedBuffers[index] = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY, height * stride, pinnedBuffers[index]);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, (long) height * stride, GL_STREAM_DRAW);
+        pinnedBuffers[index] = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY, (long) height * stride, pinnedBuffers[index]);
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
     }
 

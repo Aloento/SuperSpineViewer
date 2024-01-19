@@ -12,12 +12,14 @@ abstract class StreamBufferedPBO extends StreamBuffered {
 
     protected void resizeBuffers(final int height, final int stride, final int pboTarget, final int pboUsage) {
         final int renderBytes = height * stride;
+
         for (int i = 0; i < pbos.length; i++) {
             pbos[i] = glGenBuffers();
             glBindBuffer(pboTarget, pbos[i]);
             glBufferData(pboTarget, renderBytes, pboUsage);
             pinnedBuffers[i] = null;
         }
+
         glBindBuffer(pboTarget, 0);
     }
 }

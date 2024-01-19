@@ -18,19 +18,24 @@ abstract class StreamBuffered {
     protected StreamBuffered(final StreamHandler handler, final int transfersToBuffer) {
         this.handler = handler;
         this.transfersToBuffer = transfersToBuffer;
+
         pinnedBuffers = new ByteBuffer[transfersToBuffer];
         semaphores = new Semaphore[transfersToBuffer];
+
         for (int i = 0; i < semaphores.length; i++)
             semaphores[i] = new Semaphore(1, false);
+
         processingState = new BitSet(transfersToBuffer);
     }
 
     protected void waitForProcessingToComplete(final int index) {
         final Semaphore s = semaphores[index];
+
         if (s.availablePermits() == 0) {
             s.acquireUninterruptibly();
             s.release();
         }
+
         postProcess(index);
         processingState.set(index, false);
     }

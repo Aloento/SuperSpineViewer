@@ -36,11 +36,13 @@ public final class GLContext {
         ContextCapabilities caps = getCapabilitiesImpl();
         if (caps == null)
             throw new RuntimeException("No OpenGL context found in the current thread.");
+
         return caps;
     }
 
     static void setCapabilities(ContextCapabilities capabilities) {
         current_capabilities.set(capabilities);
+
         CapabilitiesCacheEntry thread_cache_entry = thread_cache_entries.get();
         if (thread_cache_entry == null) {
             thread_cache_entry = new CapabilitiesCacheEntry();
@@ -48,6 +50,7 @@ public final class GLContext {
         }
         thread_cache_entry.owner = Thread.currentThread();
         thread_cache_entry.capabilities = capabilities;
+
         fast_path_cache = thread_cache_entry;
     }
 
@@ -65,11 +68,15 @@ public final class GLContext {
     }
 
     static long getPlatformSpecificFunctionAddress(String function_prefix, String[] os_prefixes, String[] os_function_prefixes, String function) {
-        String os_name = AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty("os.name"));
+        String os_name = AccessController.doPrivileged(
+            (PrivilegedAction<String>) () -> System.getProperty("os.name")
+        );
+
         for (int i = 0; i < os_prefixes.length; i++)
             if (os_name.startsWith(os_prefixes[i])) {
                 String platform_function_name = function.replaceFirst(function_prefix, os_function_prefixes[i]);
-                return getFunctionAddress(platform_function_name);
+                long address = getFunctionAddress(platform_function_name);
+                return address;
             }
         return 0;
     }
@@ -94,9 +101,11 @@ public final class GLContext {
         final String version = glGetString(GL_VERSION);
         if (version == null)
             throw new IllegalStateException("glGetString(GL_VERSION) returned null - possibly caused by missing current context.");
+
         final StringTokenizer version_tokenizer = new StringTokenizer(version, ". ");
         final String major_string = version_tokenizer.nextToken();
         final String minor_string = version_tokenizer.nextToken();
+
         int majorVersion = 0;
         int minorVersion = 0;
         try {
@@ -105,12 +114,14 @@ public final class GLContext {
         } catch (NumberFormatException e) {
             LWJGLUtil.log("The major and/or minor OpenGL version is malformed: " + e.getMessage());
         }
+
         final int[][] GL_VERSIONS = {
-                {1, 2, 3, 4, 5},
-                {0, 1},
-                {0, 1, 2, 3},
-                {0, 1, 2, 3, 4, 5},
+            {1, 2, 3, 4, 5},
+            {0, 1},
+            {0, 1, 2, 3},
+            {0, 1, 2, 3, 4, 5},
         };
+
         for (int major = 1; major <= GL_VERSIONS.length; major++) {
             int[] minors = GL_VERSIONS[major - 1];
             for (int minor : minors) {
@@ -118,20 +129,26 @@ public final class GLContext {
                     supported_extensions.add("OpenGL" + major + minor);
             }
         }
+
         int profileMask = 0;
+
         if (majorVersion < 3) {
             final String extensions_string = glGetString(GL_EXTENSIONS);
             if (extensions_string == null)
                 throw new IllegalStateException("glGetString(GL_EXTENSIONS) returned null - is there a context current?");
+
             final StringTokenizer tokenizer = new StringTokenizer(extensions_string);
             while (tokenizer.hasMoreTokens())
                 supported_extensions.add(tokenizer.nextToken());
         } else {
             final int extensionCount = glGetInteger(GL_NUM_EXTENSIONS);
+
             for (int i = 0; i < extensionCount; i++)
                 supported_extensions.add(glGetStringi(GL_EXTENSIONS, i));
+
             if (3 < majorVersion || 2 <= minorVersion) {
                 Util.checkGLError();
+
                 try {
                     profileMask = glGetInteger(GL_CONTEXT_PROFILE_MASK);
                     Util.checkGLError();
@@ -140,6 +157,7 @@ public final class GLContext {
                 }
             }
         }
+
         return profileMask;
     }
 
@@ -147,11 +165,12 @@ public final class GLContext {
         resetNativeStubs(extension_class);
         if (supported_extensions.contains(ext_name)) {
             try {
-                AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
-                    Method init_stubs_method = extension_class.getDeclaredMethod("initNativeStubs");
-                    init_stubs_method.invoke(null);
-                    return null;
-                });
+                AccessController.doPrivileged(
+                    (PrivilegedExceptionAction<Object>) () -> {
+                        Method init_stubs_method = extension_class.getDeclaredMethod("initNativeStubs");
+                        init_stubs_method.invoke(null);
+                        return null;
+                    });
             } catch (Exception e) {
                 LWJGLUtil.log("Failed to initialize extension " + extension_class + " - exception: " + e);
                 supported_extensions.remove(ext_name);
@@ -199,6 +218,7 @@ public final class GLContext {
 
     public static synchronized void unloadOpenGLLibrary() {
         gl_ref_count--;
+
         if (gl_ref_count == 0 && LWJGLUtil.getPlatform() != LWJGLUtil.PLATFORM_LINUX)
             nUnloadOpenGLLibrary();
     }

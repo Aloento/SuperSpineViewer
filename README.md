@@ -88,3 +88,7 @@
         </tr>
     </table>
 </html>
+
+## 构建
+
+重写 `org.lwjgl.lwjgl：lwjgl` 的 `MANIFEST.MF`，使 `Sealed: false`
