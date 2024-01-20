@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
@@ -18,11 +19,11 @@ import to.aloen.ssv.Main;
 
 public class Spine31 extends Spine {
 
-    private TwoColorPolygonBatch batch;
+    private PolygonSpriteBatch batch;
 
     private OrthographicCamera camera;
 
-    private SkeletonRenderer renderer;
+    private SkeletonMeshRenderer renderer;
 
     private Skeleton skeleton;
 
@@ -43,10 +44,8 @@ public class Spine31 extends Spine {
         if (newValue != null) {
             state.setAnimation(0, newValue, isLoop.get());
             isPlay.set(true);
-        } else {
-            state.setEmptyAnimation(0, 0);
+        } else
             isPlay.set(false);
-        }
     };
 
     private ChangeListener<Boolean> isLoopListener = (_, _, _) -> {
@@ -67,10 +66,10 @@ public class Spine31 extends Spine {
                 state.setTimeScale(speed.get());
 
                 if (percent < 1)
-                    state.getCurrent(0).setTrackTime(trackTime);
+                    state.getCurrent(0).setTime(trackTime);
             } else {
                 state.setTimeScale(0);
-                trackTime = state.getCurrent(0).getAnimationTime();
+                trackTime = state.getCurrent(0).getTime();
             }
         }
     };
@@ -150,9 +149,6 @@ public class Spine31 extends Spine {
             skeleton.setPosition(X.get(), Y.get());
 
             state = new AnimationState(new AnimationStateData(skeletonData));
-            if (animate.get() == null)
-                state.setEmptyAnimation(0, 0);
-
             spineVersion.set(skeletonData.getVersion());
             projectName.set(skeletonData.getName());
 
@@ -222,12 +218,10 @@ public class Spine31 extends Spine {
     }
 
     public void create() {
-        batch = new TwoColorPolygonBatch(3100);
-        batch.setPremultipliedAlpha(Main.batchA);
-
+        batch = new PolygonSpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        renderer = new SkeletonRenderer();
+        renderer = new SkeletonMeshRenderer();
         renderer.setPremultipliedAlpha(Main.renderA);
 
         if (loadSkeleton()) {
@@ -251,7 +245,6 @@ public class Spine31 extends Spine {
         Gdx.graphics.setTitle(STR."FPS : \{Gdx.graphics.getFramesPerSecond()}");
 
         renderer.setPremultipliedAlpha(Main.renderA);
-        batch.setPremultipliedAlpha(Main.batchA);
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);
@@ -262,7 +255,7 @@ public class Spine31 extends Spine {
         TrackEntry entry = state.getCurrent(0);
 
         if (entry != null) {
-            percent = entry.getAnimationTime() / entry.getAnimationEnd();
+            percent = entry.getTime() / entry.getEndTime();
 
             if (isPlay.get())
                 Platform.runLater(() -> Main.progressBar.setProgress(percent));
