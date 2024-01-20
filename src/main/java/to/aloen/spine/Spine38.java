@@ -194,7 +194,7 @@ public class Spine38 extends Spine {
     public void reload() {
         super.reload();
 
-        if (Loader.spineVersion == currentVersion) {
+        if (Loader.spineVersion != currentVersion) {
             batch = null;
             camera = null;
             renderer = null;

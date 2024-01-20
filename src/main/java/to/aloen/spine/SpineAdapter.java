@@ -9,11 +9,6 @@ public class SpineAdapter extends ApplicationAdapter {
 
     private static Spine Runtimes;
 
-    public void reload() {
-        if (Runtimes != null)
-            Runtimes.reload();
-    }
-
     @Override
     public void create() {
         Loader.spineVersion = 38;
@@ -29,5 +24,11 @@ public class SpineAdapter extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         Runtimes.resize();
+    }
+
+    @Override
+    public void dispose() {
+        if (Runtimes != null)
+            Runtimes.reload();
     }
 }

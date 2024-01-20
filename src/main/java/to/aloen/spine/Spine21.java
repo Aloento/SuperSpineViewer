@@ -14,9 +14,10 @@ import com.archive.SpineLegacy.*;
 import com.archive.SpineLegacy.AnimationState.TrackEntry;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 
-public class Legacy extends Spine {
+public class Spine21 extends Spine {
     private PolygonSpriteBatch batch;
     private OrthographicCamera camera;
     private SkeletonMeshRenderer renderer;
@@ -149,7 +150,8 @@ public class Legacy extends Spine {
 
     public void reload() {
         super.reload();
-        if (SpineAdapter.Range != 0) {
+
+        if (Loader.spineVersion != currentVersion) {
             batch = null;
             camera = null;
             renderer = null;
@@ -173,7 +175,8 @@ public class Legacy extends Spine {
             XListener = null;
             YListener = null;
             speedListener = null;
-        } else Gdx.app.postRunnable(this::loadSkel);
+        } else
+            Gdx.app.postRunnable(this::loadSkel);
     }
 
     public void create() {

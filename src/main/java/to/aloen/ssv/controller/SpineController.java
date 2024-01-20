@@ -25,7 +25,6 @@ import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 import to.aloen.spine.Spine;
-import to.aloen.spine.SpineAdapter;
 import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 
@@ -65,6 +64,44 @@ public class SpineController extends Main implements Initializable {
 
     @FXML
     private JFXSpinner red;
+
+    private static void setProgressAnimate(JFXSpinner spinner) {
+        new Timeline(
+            new KeyFrame(
+                Duration.seconds(1),
+                new KeyValue(spinner.progressProperty(), 1)
+            )
+        ).play();
+    }
+
+    private static String getColor(byte i) {
+        return switch (i) {
+            case 0 -> "#455A64";
+            case 1 -> "#616161";
+            case 2 -> "#512DA8";
+            case 3 -> "#5D4037";
+            case 4 -> "#9C27B0";
+            case 5 -> "#7B1FA2";
+            case 6 -> "#673AB7";
+            case 7 -> "#7C4DFF";
+            case 8 -> "#3F51B5";
+            case 9 -> "#536DFE";
+            case 10 -> "#2196F3";
+            case 11 -> "#448AFF";
+            case 12 -> "#0288D1";
+            case 13 -> "#00BCD4";
+            case 14 -> "#009688";
+            case 15 -> "#4CAF50";
+            case 16 -> "#689F38";
+            case 17 -> "#607D8B";
+            case 18 -> "#FFC107";
+            case 19 -> "#FF9800";
+            case 20 -> "#FF5722";
+            case 21 -> "#795548";
+            case 22 -> "#9E9E9E";
+            default -> "#FFFFFF";
+        };
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -238,10 +275,7 @@ public class SpineController extends Main implements Initializable {
                                 setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
                                 setButtonType(ButtonType.FLAT);
 
-                                setOnAction(_ -> {
-                                    SpineAdapter.Range = -1;
-                                    Loader.init();
-                                });
+                                setOnAction(_ -> Loader.init());
                             }},
                             new JFXButton("Reset") {{
                                 setStyle("-fx-text-fill:#5264AE;-fx-font-size:14px;");
@@ -351,43 +385,5 @@ public class SpineController extends Main implements Initializable {
         } catch (Exception ignored) {
             return false;
         }
-    }
-
-    private static void setProgressAnimate(JFXSpinner spinner) {
-        new Timeline(
-            new KeyFrame(
-                Duration.seconds(1),
-                new KeyValue(spinner.progressProperty(), 1)
-            )
-        ).play();
-    }
-
-    private static String getColor(byte i) {
-        return switch (i) {
-            case 0 -> "#455A64";
-            case 1 -> "#616161";
-            case 2 -> "#512DA8";
-            case 3 -> "#5D4037";
-            case 4 -> "#9C27B0";
-            case 5 -> "#7B1FA2";
-            case 6 -> "#673AB7";
-            case 7 -> "#7C4DFF";
-            case 8 -> "#3F51B5";
-            case 9 -> "#536DFE";
-            case 10 -> "#2196F3";
-            case 11 -> "#448AFF";
-            case 12 -> "#0288D1";
-            case 13 -> "#00BCD4";
-            case 14 -> "#009688";
-            case 15 -> "#4CAF50";
-            case 16 -> "#689F38";
-            case 17 -> "#607D8B";
-            case 18 -> "#FFC107";
-            case 19 -> "#FF9800";
-            case 20 -> "#FF5722";
-            case 21 -> "#795548";
-            case 22 -> "#9E9E9E";
-            default -> "#FFFFFF";
-        };
     }
 }

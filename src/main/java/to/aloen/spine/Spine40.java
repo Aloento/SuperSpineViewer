@@ -14,6 +14,7 @@ import com.archive.Spine40.AnimationState.TrackEntry;
 import com.archive.Spine40.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 
 public class Spine40 extends Spine {
@@ -151,7 +152,8 @@ public class Spine40 extends Spine {
 
     public void reload() {
         super.reload();
-        if (SpineAdapter.Range != 2) {
+
+        if (Loader.spineVersion != currentVersion) {
             batch = null;
             camera = null;
             renderer = null;
@@ -175,7 +177,8 @@ public class Spine40 extends Spine {
             XListener = null;
             YListener = null;
             speedListener = null;
-        } else Gdx.app.postRunnable(this::loadSkel);
+        } else
+            Gdx.app.postRunnable(this::loadSkel);
     }
 
     public void create() {

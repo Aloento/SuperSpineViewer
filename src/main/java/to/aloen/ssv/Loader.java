@@ -59,7 +59,6 @@ public abstract class Loader {
             if (Spine.isBinary) {
                 try(FileReader file = new FileReader(skelFile)) {
                     try(BufferedReader reader = new BufferedReader(file)) {
-                        reader.readLine();
                         getVersion(reader.readLine());
                     }
                 }
@@ -110,6 +109,7 @@ public abstract class Loader {
 
     public static void init() {
         LwjglApplicationConfiguration.disableAudio = true;
+        Spine.currentVersion = spineVersion;
 
         File skel = new File(Main.openPath);
         FileHandle handle = Spine.skelFile = new FileHandle(skel);
@@ -122,13 +122,11 @@ public abstract class Loader {
             !handle.extension().equalsIgnoreCase("json") &&
                 !handle.extension().equalsIgnoreCase("txt");
 
-        byte prev = spineVersion;
-
         skelVersion(skel);
-        adapter.reload();
+        adapter.dispose();
 
         if (Main.isLoad) {
-            if (prev != spineVersion) {
+            if (Spine.currentVersion != spineVersion) {
                 gdxApp.exit();
                 gdxApp = new LwjglFXApplication(adapter, Main.spineRender);
             }
