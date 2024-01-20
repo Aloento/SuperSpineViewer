@@ -6,7 +6,7 @@
 需要 **Java 21 21 21**  
 需要 像素缓冲区支持  
 导出 MOV 需要 FFmpeg  
-当前版本：2.0.0
+当前版本：2.1.0
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 

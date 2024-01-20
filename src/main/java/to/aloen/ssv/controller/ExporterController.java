@@ -18,7 +18,6 @@ import to.aloen.ssv.RecordFX;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.zip.Deflater;
 
 public class ExporterController implements Initializable {
     @FXML
@@ -134,7 +133,7 @@ public class ExporterController implements Initializable {
 
     @FXML
     void RB_Sequence() {
-        Main.sequence = Deflater.BEST_COMPRESSION;
+        Main.sequence = Byte.MAX_VALUE;
     }
 
     @FXML

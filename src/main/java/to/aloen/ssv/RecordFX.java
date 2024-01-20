@@ -10,12 +10,24 @@ import to.aloen.spine.Spine;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.zip.Deflater;
 
 public abstract class RecordFX {
-    private static final LinkedBlockingQueue<Runnable> savePool = new LinkedBlockingQueue<>();
+    private static final LinkedBlockingQueue<Runnable> savePool = new LinkedBlockingQueue<>() {{
+        for (int i = 0; i < (Runtime.getRuntime().availableProcessors() + 1) / 2; i++) {
+            Thread.startVirtualThread(() -> {
+                while (true) {
+                    try {
+                        take().run();
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            });
+        }
+    }};
 
     private static String fileName;
 
@@ -23,10 +35,9 @@ public abstract class RecordFX {
 
     private static short items;
 
-    public static void Record(PixelReader image) {
+    public static void Record(final PixelReader image) {
         if (Spine.percent < 1) {
-            counter++;
-            savePool.add(() -> savePNG(image, counter));
+            savePool.add(new Task(image, counter++));
             // System.out.println(STR."捕获：\{counter}\t\{Spine.percent}");
         } else {
             Main.recording = false;
@@ -48,8 +59,11 @@ public abstract class RecordFX {
         Main.recording = false;
         Spine.speed.set(1);
         Spine.isPlay.set(false);
+        savePool.clear();
+
         counter = 0;
         items = 0;
+
         System.out.println("强制停止");
         System.gc();
     }
@@ -90,16 +104,14 @@ public abstract class RecordFX {
         Platform.runLater(() -> Main.progressBar.setProgress(-1));
         System.out.println("请求：停止录制");
 
-        ArrayList<Thread> threads = new ArrayList<>();
+        ArrayBlockingQueue<Thread> threads = new ArrayBlockingQueue<>(savePool.size());
 
-        for (Runnable runnable : savePool)
-            threads.add(Thread.startVirtualThread(runnable));
+        while (!savePool.isEmpty())
+            threads.add(Thread.startVirtualThread(savePool.poll()));
 
-        savePool.clear();
-
-        for (Thread thread : threads)
+        while (!threads.isEmpty())
             try {
-                thread.join();
+                threads.poll().join();
             } catch (InterruptedException ignored) {
             }
 
@@ -117,25 +129,49 @@ public abstract class RecordFX {
         });
     }
 
-    private static void savePNG(PixelReader image, short index) {
-        Pixmap pixmap = new Pixmap(Main.width, Main.height, Pixmap.Format.RGBA8888) {{
-            for (int h = 0; h < Main.height; h++) {
-                for (int w = 0; w < Main.width; w++) {
-                    int argb = image.getArgb(w, h);
-                    drawPixel(w, h, (argb << 8) | (argb >>> 24));
-                }
+    private static Pixmap toPixmap(final PixelReader image) {
+        final Pixmap pixmap = new Pixmap(Main.width, Main.height, Pixmap.Format.RGBA8888);
+
+        for (int h = 0; h < Main.height; h++) {
+            for (int w = 0; w < Main.width; w++) {
+                int argb = image.getArgb(w, h);
+                pixmap.drawPixel(w, h, (argb << 8) | (argb >>> 24));
             }
-        }};
+        }
 
-        PixmapIO.writePNG(Gdx.files.absolute(
-            STR."\{Main.outPath}\{fileName}_Sequence\{File.separator}\{fileName}_\{index}.png"),
-            pixmap, Main.sequence, true
-        );
+        return pixmap;
+    }
 
-        var percent = (double) items++ / counter;
-        Platform.runLater(() -> Main.progressBar.setProgress(percent));
+    private static void writePNG(final Pixmap pixmap, final short index) {
+        try {
+            PixmapIO.writePNG(Gdx.files.absolute(
+                    STR."\{Main.outPath}\{fileName}_Sequence\{File.separator}\{fileName}_\{index}.png"),
+                pixmap, Deflater.NO_COMPRESSION, true
+            );
+        } finally {
+            pixmap.dispose();
 
-        pixmap.dispose();
-        // System.out.println(STR."保存：\{index}");
+            var percent = (double) items++ / counter;
+            Platform.runLater(() -> Main.progressBar.setProgress(percent));
+            // System.out.println(STR."保存：\{index}");
+        }
+    }
+
+    private static class Task implements Runnable {
+        private final short counter;
+
+        private PixelReader image;
+
+        private Task(PixelReader image, short counter) {
+            this.image = image;
+            this.counter = counter;
+        }
+
+        @Override
+        public void run() {
+            final Pixmap pixmap = toPixmap(image);
+            image = null;
+            writePNG(pixmap, counter);
+        }
     }
 }
