@@ -4,7 +4,7 @@ A tool to load and export Spine animations
 **Java 21** required  
 Pixel Buffers support required  
 Exporting MOV requires FFmpeg  
-Current version: 2.1.0
+Current version: 2.0.5
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 

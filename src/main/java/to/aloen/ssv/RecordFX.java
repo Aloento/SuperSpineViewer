@@ -17,16 +17,14 @@ import java.util.zip.Deflater;
 
 public abstract class RecordFX {
     private static final LinkedBlockingQueue<Runnable> savePool = new LinkedBlockingQueue<>() {{
-        for (int i = 0; i < (Runtime.getRuntime().availableProcessors() + 1) / 2; i++) {
-            Thread.startVirtualThread(() -> {
-                while (true) {
-                    try {
-                        take().run();
-                    } catch (InterruptedException ignored) {
-                    }
+        new Thread(() -> {
+            while (true) {
+                try {
+                    take().run();
+                } catch (InterruptedException ignored) {
                 }
-            });
-        }
+            }
+        }).start();
     }};
 
     private static String fileName;
@@ -151,8 +149,11 @@ public abstract class RecordFX {
         } finally {
             pixmap.dispose();
 
-            var percent = (double) items++ / counter;
-            Platform.runLater(() -> Main.progressBar.setProgress(percent));
+            if (!Main.recording) {
+                var percent = (double) items++ / counter;
+                Platform.runLater(() -> Main.progressBar.setProgress(percent));
+            }
+
             // System.out.println(STR."保存：\{index}");
         }
     }
