@@ -3,7 +3,7 @@
 [**For English User**](https://github.com/Aloento/SuperSpineViewer/blob/master/README-Eng.md)
 
 一个拿来加载与导出Spine动画的工具  
-需要 Java 21  
+需要 **Java 21 21 21**  
 需要 像素缓冲区支持  
 导出 MOV 需要 FFmpeg  
 当前版本：2.0.0
@@ -13,8 +13,6 @@
 ## 获得SuperSpineViewer
 
 [**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases/latest)
-
-[**运行时**](https://github.com/Aloento/SuperSpineViewer/releases/tag/R1.0.0)
 
 ### 性能设置参考
 
@@ -55,18 +53,21 @@
 
 ### 支持的版本
 
-* Spine 2.x √
-* Spine 3.1 √
-* Spine 3.2 √
-* Spine 3.3 √
-* Spine 3.4 √
-* Spine 3.5 √
-* Spine 3.6 √
-* Spine 3.7 √
-* Spine 3.8 √
-* Spine 4.0 √
-* Spine 4.1 √
-* Spine 4.2 √
+| 版本        | 支持情况 |
+|-----------|------|
+| Spine 1.x | 不支持  |
+| Spine 2.x | 不完全  |
+| Spine 3.1 | 不完全  |
+| Spine 3.2 | 不完全  |
+| Spine 3.3 | 不完全  |
+| Spine 3.4 | √    |
+| Spine 3.5 | √    |
+| Spine 3.6 | √    |
+| Spine 3.7 | √    |
+| Spine 3.8 | √    |
+| Spine 4.0 | √    |
+| Spine 4.1 | √    |
+| Spine 4.2 | √    |
 
 ## 画廊
 

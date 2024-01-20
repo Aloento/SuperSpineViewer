@@ -1,7 +1,7 @@
 # SuperSpineViewer
 
 A tool to load and export Spine animations  
-Java 21 required  
+**Java 21** required  
 Pixel Buffers support required  
 Exporting MOV requires FFmpeg  
 Current version: 2.0.0
@@ -11,8 +11,6 @@ Current version: 2.0.0
 ## Get SuperSpineViewer
 
 [**Released Stable Version**](https://github.com/Aloento/SuperSpineViewer/releases/latest)
-
-[**Runtime**](https://github.com/Aloento/SuperSpineViewer/releases/tag/R1.0.0)
 
 ### Performance Settings Reference
 
@@ -53,18 +51,21 @@ At default 30FPS, the Time Scaling setting
 
 ### Supported Versions
 
-* Spine 2.x √
-* Spine 3.1 √
-* Spine 3.2 √
-* Spine 3.3 √
-* Spine 3.4 √
-* Spine 3.5 √
-* Spine 3.6 √
-* Spine 3.7 √
-* Spine 3.8 √
-* Spine 4.0 √
-* Spine 4.1 √
-* Spine 4.2 √
+| Version   | Support |
+|-----------|---------|
+| Spine 1.x | ×       |
+| Spine 2.x | ?       |
+| Spine 3.1 | ?       |
+| Spine 3.2 | ?       |
+| Spine 3.3 | ?       |
+| Spine 3.4 | √       |
+| Spine 3.5 | √       |
+| Spine 3.6 | √       |
+| Spine 3.7 | √       |
+| Spine 3.8 | √       |
+| Spine 4.0 | √       |
+| Spine 4.1 | √       |
+| Spine 4.2 | √       |
 
 ## Gallery
 
@@ -86,3 +87,7 @@ At default 30FPS, the Time Scaling setting
         </tr>
     </table>
 </html>
+
+## Build
+
+Rewrite `MANIFEST.MF` of `org.lwjgl.lwjgl:lwjgl` to make `Sealed: false`
