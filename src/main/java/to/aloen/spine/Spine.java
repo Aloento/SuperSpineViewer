@@ -41,16 +41,15 @@ public abstract class Spine {
 
     public static boolean isBinary = true;
 
-    void create() {
-    }
+    public static byte currentVersion = 0;
 
-    void render() {
-    }
+    public abstract void create();
 
-    void resize() {
-    }
+    public abstract void render();
 
-    void reload() {
+    public abstract void resize();
+
+    public void reload() {
         skin.set(null);
         animate.set(null);
         skinsList.clear();

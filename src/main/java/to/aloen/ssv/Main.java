@@ -24,9 +24,9 @@ public class Main {
 
     public static Label FPS;
 
-    public static Label Skel;
+    public static Label SkeletonName;
 
-    public static Label Atlas;
+    public static Label AtlasName;
 
     public static int width;
 

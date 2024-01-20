@@ -149,7 +149,7 @@ public class Spine40 extends Spine {
         speed.addListener(speedListener);
     }
 
-    void reload() {
+    public void reload() {
         super.reload();
         if (SpineAdapter.Range != 2) {
             batch = null;
@@ -178,7 +178,7 @@ public class Spine40 extends Spine {
         } else Gdx.app.postRunnable(this::loadSkel);
     }
 
-    void create() {
+    public void create() {
         batch = new TwoColorPolygonBatch(3100);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         renderer = new SkeletonRenderer();
@@ -188,7 +188,7 @@ public class Spine40 extends Spine {
             listeners();
     }
 
-    void render() {
+    public void render() {
         state.update(Gdx.graphics.getDeltaTime());
         state.apply(skeleton);
         skeleton.updateWorldTransform();
@@ -215,7 +215,7 @@ public class Spine40 extends Spine {
         }
     }
 
-    void resize() {
+    public void resize() {
         float x = camera.position.x, y = camera.position.y;
         camera.setToOrtho(false);
         camera.position.set(x, y, 0);

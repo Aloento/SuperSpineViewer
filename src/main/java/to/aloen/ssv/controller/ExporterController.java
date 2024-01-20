@@ -20,16 +20,27 @@ import java.util.ResourceBundle;
 import java.util.zip.Deflater;
 
 public class ExporterController implements Initializable {
+
     @FXML
+
     private Label L_Version;
+
     @FXML
-    private Label L_Skel;
+
+    private Label skeletonName;
+
     @FXML
-    private Label L_Atlas;
+
+    private Label atlasName;
+
     @FXML
+
     private Label L_FPS;
+
     @FXML
+
     private JFXTextField T_Path;
+
     @FXML
     private JFXProgressBar P_Export;
 
@@ -133,8 +144,8 @@ public class ExporterController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Main.FPS = L_FPS;
-        Main.Skel = L_Skel;
-        Main.Atlas = L_Atlas;
+        Main.SkeletonName = skeletonName;
+        Main.AtlasName = atlasName;
         Main.progressBar = P_Export;
         T_Path.setText(Main.outPath);
 

@@ -33,8 +33,8 @@
                 </Label>
 
                 <Label fx:id="L_Version" styleClass="side-label" text="Version : "/>
-                <Label fx:id="L_Skel" styleClass="side-label" text="Skel : "/>
-                <Label fx:id="L_Atlas" styleClass="side-label" text="Atlas : "/>
+                <Label fx:id="skeletonName" styleClass="side-label" text="Skel : "/>
+                <Label fx:id="atlasName" styleClass="side-label" text="Atlas : "/>
                 <Label fx:id="L_FPS" styleClass="side-label" text="FPS : "/>
             </VBox>
 

@@ -147,7 +147,7 @@ public class Legacy extends Spine {
         speed.addListener(speedListener);
     }
 
-    void reload() {
+    public void reload() {
         super.reload();
         if (SpineAdapter.Range != 0) {
             batch = null;
@@ -176,7 +176,7 @@ public class Legacy extends Spine {
         } else Gdx.app.postRunnable(this::loadSkel);
     }
 
-    void create() {
+    public void create() {
         batch = new PolygonSpriteBatch();
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         renderer = new SkeletonMeshRenderer();
@@ -186,7 +186,7 @@ public class Legacy extends Spine {
             listeners();
     }
 
-    void render() {
+    public void render() {
         state.update(Gdx.graphics.getDeltaTime());
         state.apply(skeleton);
         skeleton.updateWorldTransform();
@@ -213,7 +213,7 @@ public class Legacy extends Spine {
         }
     }
 
-    void resize() {
+    public void resize() {
         float x = camera.position.x, y = camera.position.y;
         camera.setToOrtho(false);
         camera.position.set(x, y, 0);

@@ -17,13 +17,11 @@ public abstract class Loader {
 
     private static LwjglFXApplication gdxApp;
 
-    private static final String[] startSuffixes = {"", "-pro", "-ess"};
+    private static final String[] startSuffixes = {"", "-pma", "-pro", "-ess"};
 
     private static final String[] dataSuffixes = {".json", ".skel"};
 
     private static final String[] endSuffixes = {"", ".txt", ".bytes"};
-
-    private static final String[] atlasSuffixes = {".atlas", "-pma.atlas"};
 
     private static final SpineAdapter adapter = new SpineAdapter();
 
@@ -101,12 +99,10 @@ public abstract class Loader {
     private static FileHandle findAtlasFile(FileHandle skeletonFile, String baseName) {
         for (String startSuffix : startSuffixes) {
             for (String endSuffix : endSuffixes) {
-                for (String suffix : atlasSuffixes) {
-                    FileHandle file = skeletonFile.sibling(baseName + startSuffix + suffix + endSuffix);
+                FileHandle file = skeletonFile.sibling(STR."\{baseName}\{startSuffix}.atlas\{endSuffix}");
 
-                    if (file.exists())
-                        return file;
-                }
+                if (file.exists())
+                    return file;
             }
         }
         return null;
@@ -117,10 +113,10 @@ public abstract class Loader {
 
         File skel = new File(Main.openPath);
         FileHandle handle = Spine.skelFile = new FileHandle(skel);
-        Main.Skel.setText(STR."Skel : \{handle.name()}");
+        Main.SkeletonName.setText(STR."Skel : \{handle.name()}");
 
         FileHandle atlas = Spine.atlasFile = atlasFile(handle);
-        Main.Atlas.setText(STR."Atlas : \{atlas.name()}");
+        Main.AtlasName.setText(STR."Atlas : \{atlas.name()}");
 
         Spine.isBinary =
             !handle.extension().equalsIgnoreCase("json") &&
