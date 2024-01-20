@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.spine42.*;
 import com.esotericsoftware.spine42.AnimationState.TrackEntry;
+import com.esotericsoftware.spine42.Skeleton.Physics;
 import com.esotericsoftware.spine42.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -149,7 +150,7 @@ public class Spine42 extends Spine {
             }
 
             skeleton = new Skeleton(skeletonData);
-            skeleton.updateWorldTransform();
+            skeleton.updateWorldTransform(Physics.update);
             skeleton.setToSetupPose();
             skeleton.setPosition(X.get(), Y.get());
 
@@ -249,7 +250,7 @@ public class Spine42 extends Spine {
     public void render() {
         state.update(Gdx.graphics.getDeltaTime());
         state.apply(skeleton);
-        skeleton.updateWorldTransform();
+        skeleton.updateWorldTransform(Physics.update);
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle(STR."FPS : \{Gdx.graphics.getFramesPerSecond()}");
