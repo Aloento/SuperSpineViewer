@@ -17,8 +17,6 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Modules;
 public class Main {
     public static final Preferences Pref = Preferences.userRoot().node("/to/aloen/ssv");
 
-    public static RecordFX recordFX;
-
     public static SpineController spineController;
 
     public static JFXProgressBar progressBar;

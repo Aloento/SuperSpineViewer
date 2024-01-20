@@ -1,6 +1,7 @@
 package to.aloen.spine;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import to.aloen.ssv.Loader;
 
 public class SpineAdapter extends ApplicationAdapter {
     public static byte Range;
@@ -14,12 +15,8 @@ public class SpineAdapter extends ApplicationAdapter {
 
     @Override
     public void create() {
-        if (SpineAdapter.Range == 2)
-            Runtimes = new Spine40();
-        else if (SpineAdapter.Range == 0)
-            Runtimes = new Legacy();
-        else Runtimes = new Standard();
-
+        Loader.spineVersion = 38;
+        Runtimes = new Standard();
         Runtimes.create();
     }
 

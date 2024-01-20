@@ -19,7 +19,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.zip.Deflater;
 
-public class ExporterController extends Main implements Initializable {
+public class ExporterController implements Initializable {
     @FXML
     private Label L_Version;
     @FXML
@@ -35,15 +35,15 @@ public class ExporterController extends Main implements Initializable {
 
     @FXML
     void B_Export() {
-        if (outPath != null && Spine.animate.get() != null) {
+        if (Main.outPath != null && Spine.animate.get() != null) {
             Spine.isPlay.set(false);
             Spine.isLoop.set(false);
             Spine.percent = 2;
-            Spine.speed.set(quality);
+            Spine.speed.set(Main.quality);
             Spine.isPlay.set(true);
 
             System.out.println("请求：开始录制");
-            recordFX.Start(STR."\{Spine.projectName.get()}_\{Spine.animate.get()}");
+            RecordFX.Start(STR."\{Spine.projectName.get()}_\{Spine.animate.get()}");
         }
     }
 
@@ -51,7 +51,7 @@ public class ExporterController extends Main implements Initializable {
     void B_Open() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Skeleton");
-        File last = new File(Pref.get("lastOpen", System.getProperty("user.home")));
+        File last = new File(Main.Pref.get("lastOpen", System.getProperty("user.home")));
 
         if (!last.canRead())
             last = new File(System.getProperty("user.home"));
@@ -65,15 +65,15 @@ public class ExporterController extends Main implements Initializable {
         File file = fileChooser.showOpenDialog(new Stage());
 
         if (file != null) {
-            openPath = file.getAbsolutePath();
+            Main.openPath = file.getAbsolutePath();
             Loader.init();
 
-            if (isLoad)
+            if (Main.isLoad)
                 System.out.println("请求重载");
             else
                 System.out.println("请求初始化");
 
-            Pref.put("lastOpen", file.getParent());
+            Main.Pref.put("lastOpen", file.getParent());
         }
     }
 
@@ -81,7 +81,7 @@ public class ExporterController extends Main implements Initializable {
     void B_Path() {
         Platform.runLater(() -> {
             DirectoryChooser chooser = new DirectoryChooser();
-            File last = new File(outPath);
+            File last = new File(Main.outPath);
 
             if (!last.canRead())
                 last = new File(System.getProperty("user.home"));
@@ -89,50 +89,49 @@ public class ExporterController extends Main implements Initializable {
             chooser.setInitialDirectory(last.getParentFile());
             chooser.setTitle("Save Location");
 
-            outPath = chooser.showDialog(new Stage()).getAbsolutePath() + File.separator;
-            T_Path.setText(outPath);
-            Pref.put("lastSave", outPath);
+            Main.outPath = chooser.showDialog(new Stage()).getAbsolutePath() + File.separator;
+            T_Path.setText(Main.outPath);
+            Main.Pref.put("lastSave", Main.outPath);
         });
     }
 
     @FXML
     void RB_S() {
-        quality = 0.5f;
+        Main.quality = 0.5f;
     }
 
     @FXML
     void RB_E() {
-        quality = 0.25f;
+        Main.quality = 0.25f;
     }
 
     @FXML
     void RB_F() {
-        quality = 1f;
+        Main.quality = 1f;
     }
 
     @FXML
     void RB_MOV() {
-        sequence = Byte.MIN_VALUE;
+        Main.sequence = Byte.MIN_VALUE;
     }
 
     @FXML
     void RB_Sequence() {
-        sequence = Deflater.BEST_COMPRESSION;
+        Main.sequence = Deflater.BEST_COMPRESSION;
     }
 
     @FXML
     void PreA() {
-        preA = !preA;
+        Main.preA = !Main.preA;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FPS = L_FPS;
-        Skel = L_Skel;
-        Atlas = L_Atlas;
-        progressBar = P_Export;
-        T_Path.setText(outPath);
-        recordFX = new RecordFX();
+        Main.FPS = L_FPS;
+        Main.Skel = L_Skel;
+        Main.Atlas = L_Atlas;
+        Main.progressBar = P_Export;
+        T_Path.setText(Main.outPath);
 
         Spine.spineVersion.addListener(
             (_, _, newValue) -> Platform.runLater(
@@ -141,7 +140,7 @@ public class ExporterController extends Main implements Initializable {
 
         System.out.println("SuperSpineViewer已启动");
 
-        if (openPath != null) {
+        if (Main.openPath != null) {
             Platform.runLater(() -> {
                 Loader.init();
                 System.out.println("从命令行加载");

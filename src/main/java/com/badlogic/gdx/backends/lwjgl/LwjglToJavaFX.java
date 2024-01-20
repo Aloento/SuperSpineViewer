@@ -1,8 +1,8 @@
 package com.badlogic.gdx.backends.lwjgl;
 
-import to.aloen.ssv.Main;
 import javafx.application.Platform;
 import javafx.scene.image.WritableImage;
+import javafx.scene.image.WritablePixelFormat;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Pbuffer;
@@ -11,20 +11,30 @@ import org.lwjgl.util.stream.RenderStream;
 import org.lwjgl.util.stream.StreamHandler;
 import org.lwjgl.util.stream.StreamUtil;
 import org.lwjgl.util.stream.StreamUtil.RenderStreamFactory;
+import to.aloen.ssv.Main;
+import to.aloen.ssv.RecordFX;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 
-public class LwjglToJavaFX extends Main {
-    private final ConcurrentLinkedQueue<Runnable> pendingRunnables = new ConcurrentLinkedQueue<>();
+public class LwjglToJavaFX {
+    private static final WritablePixelFormat<ByteBuffer> format = javafx.scene.image.PixelFormat.getByteBgraPreInstance();
+
+    private final ConcurrentLinkedQueue<Runnable> pendingRunnable = new ConcurrentLinkedQueue<>();
+
     private final Pbuffer pbuffer;
+
     // private final AtomicLong snapshotRequest;
-    private RenderStreamFactory renderStreamFactory;
-    private RenderStream renderStream;
-    private WritableImage renderImage;
+
     private final int transfersToBuffer = 3;
+
+    private RenderStreamFactory renderStreamFactory;
+
+    private RenderStream renderStream;
+
+    private WritableImage renderImage;
 
     LwjglToJavaFX() {
         if ((Pbuffer.getCapabilities() & Pbuffer.PBUFFER_SUPPORTED) == 0)
@@ -43,19 +53,15 @@ public class LwjglToJavaFX extends Main {
     }
 
     public void setRenderStreamFactory(final RenderStreamFactory renderStreamFactory) {
-        pendingRunnables.offer(() -> {
+        pendingRunnable.offer(() -> {
             if (renderStream != null)
                 renderStream.destroy();
 
-            LwjglToJavaFX.this.renderStreamFactory = renderStreamFactory;
+            this.renderStreamFactory = renderStreamFactory;
 
-            renderStream = renderStreamFactory.create(Objects.requireNonNull(renderStream).getHandler(), 1, transfersToBuffer);
+            renderStream = renderStreamFactory.create(
+                Objects.requireNonNull(renderStream).getHandler(), 1, transfersToBuffer);
         });
-    }
-
-    void dispose() {
-        renderStream.destroy();
-        pbuffer.destroy();
     }
 
     // public void updateSnapshot() {
@@ -82,9 +88,15 @@ public class LwjglToJavaFX extends Main {
     //     });
     // }
 
+    void dispose() {
+        renderStream.destroy();
+        pbuffer.destroy();
+    }
+
     private void drainPendingActionsQueue() {
         Runnable runnable;
-        while ((runnable = pendingRunnables.poll()) != null)
+
+        while ((runnable = pendingRunnable.poll()) != null)
             runnable.run();
     }
 
@@ -101,34 +113,40 @@ public class LwjglToJavaFX extends Main {
         return new StreamHandler() {
 
             public int getWidth() {
-                return Math.max(width, 0);
+                return Math.max(Main.width, 0);
             }
 
             public int getHeight() {
-                return Math.max(height, 0);
+                return Math.max(Main.height, 0);
             }
 
             public void process(final int width, final int height, final ByteBuffer data, final int stride, final Semaphore signal) {
+                // If we're quitting, discard update
+                if (!Main.spineRender.isVisible())
+                    return;
+
                 // This method runs in the background rendering thread
                 Platform.runLater(() -> {
                     try {
-                        // If we're quitting, discard update
-                        if (!spineRender.isVisible())
-                            return;
-                        // Detect resize and recreate the image
-                        if (renderImage == null || (int) renderImage.getWidth() != width || (int) renderImage.getHeight() != height) {
-                            renderImage = new WritableImage(width, height);
-                            spineRender.setImage(renderImage);
-                        }
+                        if (Main.recording) {
+                            renderImage = new WritableImage(width, height) {{
+                                getPixelWriter().setPixels(0, 0, width, height, format, data, stride);
+                            }};
 
-                        // Upload the image to JavaFX
-                        renderImage.getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
-                        if (recording)
-                            recordFX.recorderFX(new WritableImage(width, height) {{
-                                getPixelWriter().setPixels(0, 0, width, height, javafx.scene.image.PixelFormat.getByteBgraPreInstance(), data, stride);
-                            }});
+                            RecordFX.Record(renderImage.getPixelReader());
+                            Main.spineRender.setImage(renderImage);
+                        } else {
+                            // Detect resize and recreate the image
+                            if (renderImage == null || (int) renderImage.getWidth() != width || (int) renderImage.getHeight() != height) {
+                                renderImage = new WritableImage(width, height);
+                                Main.spineRender.setImage(renderImage);
+                            }
+
+                            // Upload the image to JavaFX
+                            renderImage.getPixelWriter().setPixels(0, 0, width, height, format, data, stride);
+                        }
                     } catch (OutOfMemoryError ignored) {
-                        recordFX.Exit();
+                        RecordFX.Exit();
                         System.out.println("内存不足，导出终止");
                     } finally {
                         // Notify the render thread that we're done processing

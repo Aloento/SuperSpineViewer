@@ -18,7 +18,9 @@ import java.nio.ByteBuffer;
 
 public class LwjglFXGraphics extends LwjglGraphics {
     static Array<String> extensions;
+
     final ImageView target;
+
     LwjglToJavaFX toFX;
 
     LwjglFXGraphics(LwjglApplicationConfiguration config, ImageView target) {
