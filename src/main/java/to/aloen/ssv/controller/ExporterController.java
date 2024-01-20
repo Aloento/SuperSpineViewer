@@ -121,8 +121,13 @@ public class ExporterController implements Initializable {
     }
 
     @FXML
-    void PreA() {
-        Main.preA = !Main.preA;
+    void RenderA() {
+        Main.renderA = !Main.renderA;
+    }
+
+    @FXML
+    void BatchA() {
+        Main.batchA = !Main.batchA;
     }
 
     @Override

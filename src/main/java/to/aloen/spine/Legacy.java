@@ -193,7 +193,7 @@ public class Legacy extends Spine {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle("FPS : " + Gdx.graphics.getFramesPerSecond());
-        renderer.setPremultipliedAlpha(Main.preA);
+        renderer.setPremultipliedAlpha(Main.renderA);
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);

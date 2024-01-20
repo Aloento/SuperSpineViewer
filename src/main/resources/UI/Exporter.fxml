@@ -13,52 +13,62 @@
             <padding>
                 <Insets bottom="20.0" left="16.0" right="10.0" top="20.0"/>
             </padding>
+
             <JFXButton onAction="#B_Open" text="Open Skeleton" textFill="#5264ae">
                 <font>
                     <Font name="System Bold" size="14.0"/>
                 </font>
             </JFXButton>
+
             <VBox spacing="12.0">
                 <padding>
                     <Insets left="8.0"/>
                 </padding>
+
                 <Label text="Project Information">
                     <styleClass>
                         <String fx:value="side-label"/>
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
+
                 <Label fx:id="L_Version" styleClass="side-label" text="Version : "/>
                 <Label fx:id="L_Skel" styleClass="side-label" text="Skel : "/>
                 <Label fx:id="L_Atlas" styleClass="side-label" text="Atlas : "/>
                 <Label fx:id="L_FPS" styleClass="side-label" text="FPS : "/>
             </VBox>
+
             <VBox spacing="16.0">
                 <padding>
                     <Insets left="8.0"/>
                 </padding>
+
                 <Label text="Quality : ">
                     <styleClass>
                         <String fx:value="side-label"/>
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
+
                 <HBox spacing="16.0">
                     <JFXRadioButton onAction="#RB_S" selected="true" text="Standard">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
                             <String fx:value="custom-jfx-radio-button-blue"/>
                         </styleClass>
+
                         <toggleGroup>
                             <ToggleGroup fx:id="Quality"/>
                         </toggleGroup>
                     </JFXRadioButton>
+
                     <JFXRadioButton onAction="#RB_E" text="Extreme" toggleGroup="$Quality">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
                             <String fx:value="custom-jfx-radio-button-red"/>
                         </styleClass>
                     </JFXRadioButton>
+
                     <JFXRadioButton layoutX="105.0" layoutY="10.0" onAction="#RB_F" text="Fast" toggleGroup="$Quality">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
@@ -67,26 +77,31 @@
                     </JFXRadioButton>
                 </HBox>
             </VBox>
+
             <VBox spacing="16.0">
                 <padding>
                     <Insets left="8.0"/>
                 </padding>
+
                 <Label text="Format : ">
                     <styleClass>
                         <String fx:value="side-label"/>
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
+
                 <HBox spacing="38.0">
                     <JFXRadioButton onAction="#RB_MOV" text="MOV">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
                             <String fx:value="custom-jfx-radio-button-blue"/>
                         </styleClass>
+
                         <toggleGroup>
                             <ToggleGroup fx:id="Format"/>
                         </toggleGroup>
                     </JFXRadioButton>
+
                     <JFXRadioButton onAction="#RB_Sequence" selected="true" text="Sequence" toggleGroup="$Format">
                         <styleClass>
                             <String fx:value="custom-jfx-radio-button"/>
@@ -94,43 +109,58 @@
                         </styleClass>
                     </JFXRadioButton>
                 </HBox>
+
+                <VBox spacing="16.0">
+                    <Label text="Premultiplied Alpha : ">
+                        <styleClass>
+                            <String fx:value="side-label"/>
+                            <String fx:value="BOLD"/>
+                        </styleClass>
+                    </Label>
+
+                    <HBox spacing="38.0">
+                        <JFXCheckBox onAction="#RenderA" selected="true" styleClass="custom-jfx-check-box" text="Render"/>
+
+                        <JFXCheckBox onAction="#BatchA" selected="true" styleClass="custom-jfx-check-box" text="Batch"/>
+                    </HBox>
+                </VBox>
+
             </VBox>
+
             <VBox spacing="16.0">
                 <padding>
                     <Insets left="8.0"/>
                 </padding>
+
                 <Label text="Exporter Setting">
                     <styleClass>
                         <String fx:value="side-label"/>
                         <String fx:value="BOLD"/>
                     </styleClass>
                 </Label>
+
                 <HBox maxWidth="250.0">
                     <padding>
                         <Insets right="10.0"/>
                     </padding>
+
                     <JFXButton minWidth="53.0" onAction="#B_Path" text="Path" textFill="#5264ae">
                         <font>
                             <Font name="System Bold" size="14.0"/>
                         </font>
                     </JFXButton>
+
                     <JFXTextField fx:id="T_Path"/>
                 </HBox>
-                <HBox maxWidth="250.0">
-                    <padding>
-                        <Insets right="10.0"/>
-                    </padding>
-                    <FlowPane hgap="10.0">
-                        <JFXButton onAction="#B_Export" text="Export" textFill="#5264ae">
-                            <font>
-                                <Font name="System Bold" size="14.0"/>
-                            </font>
-                        </JFXButton>
-                        <JFXCheckBox onAction="#PreA" selected="true" styleClass="custom-jfx-check-box"
-                                     text="Pre-Alpha"/>
-                    </FlowPane>
-                </HBox>
+
+                <JFXButton onAction="#B_Export" text="Click to Start Export" textFill="#5264ae">
+                    <font>
+                        <Font name="System Bold" size="14.0"/>
+                    </font>
+                </JFXButton>
+
                 <JFXProgressBar fx:id="P_Export" maxWidth="250.0"/>
+
             </VBox>
         </VBox>
     </ScrollPane>

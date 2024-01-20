@@ -4,7 +4,6 @@ import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Application;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import to.aloen.spine.Spine;
 import to.aloen.ssv.controller.LauncherController;
 import to.aloen.ssv.controller.SpineController;
 
@@ -39,7 +38,9 @@ public class Main {
 
     public static boolean isLoad = false;
 
-    public static boolean preA = true;
+    public static boolean renderA = true;
+
+    public static boolean batchA = true;
 
     public static boolean recording = false;
 

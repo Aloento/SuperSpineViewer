@@ -183,9 +183,12 @@ public class Standard extends Spine {
 
     void create() {
         batch = new TwoColorPolygonBatch(3100);
+        batch.setPremultipliedAlpha(Main.batchA);
+
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
         renderer = new SkeletonRenderer();
-        renderer.setPremultipliedAlpha(true);
+        renderer.setPremultipliedAlpha(Main.renderA);
 
         if (loadSkel())
             listeners();
@@ -199,8 +202,8 @@ public class Standard extends Spine {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle("FPS : " + Gdx.graphics.getFramesPerSecond());
 
-        renderer.setPremultipliedAlpha(Main.preA);
-        batch.setPremultipliedAlpha(Main.preA);
+        renderer.setPremultipliedAlpha(Main.renderA);
+        batch.setPremultipliedAlpha(Main.batchA);
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);
