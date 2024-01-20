@@ -10,20 +10,27 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
-import com.archive.SpineLegacy.*;
-import com.archive.SpineLegacy.AnimationState.TrackEntry;
+import com.esotericsoftware.spine21.*;
+import com.esotericsoftware.spine21.AnimationState.TrackEntry;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 
 public class Spine21 extends Spine {
+
     private PolygonSpriteBatch batch;
+
     private OrthographicCamera camera;
+
     private SkeletonMeshRenderer renderer;
+
     private Skeleton skeleton;
+
     private AnimationState state;
+
     private float trackTime;
+
     private ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
         if (newValue == null)
             skeleton.setSkin((Skin) null);

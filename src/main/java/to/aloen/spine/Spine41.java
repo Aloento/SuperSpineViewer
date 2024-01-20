@@ -1,5 +1,8 @@
 package to.aloen.spine;
 
+import com.esotericsoftware.spine41.*;
+import com.esotericsoftware.spine41.AnimationState.TrackEntry;
+import com.esotericsoftware.spine41.utils.TwoColorPolygonBatch;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,15 +12,12 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.spine40.*;
-import com.esotericsoftware.spine40.AnimationState.TrackEntry;
-import com.esotericsoftware.spine40.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 
-public class Spine40 extends Spine {
+public class Spine41 extends Spine {
     private TwoColorPolygonBatch batch;
     private OrthographicCamera camera;
     private SkeletonRenderer renderer;

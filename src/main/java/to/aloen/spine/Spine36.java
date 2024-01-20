@@ -9,28 +9,38 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.spine40.*;
-import com.esotericsoftware.spine40.AnimationState.TrackEntry;
-import com.esotericsoftware.spine40.utils.TwoColorPolygonBatch;
+import com.esotericsoftware.spine36.*;
+import com.esotericsoftware.spine36.AnimationState.TrackEntry;
+import com.esotericsoftware.spine36.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 
-public class Spine40 extends Spine {
+public class Spine36 extends Spine {
+
     private TwoColorPolygonBatch batch;
+
     private OrthographicCamera camera;
+
     private SkeletonRenderer renderer;
+
     private Skeleton skeleton;
+
     private AnimationState state;
+
     private float trackTime;
-    private ChangeListener<String> skinListener = (observable, oldValue, newValue) -> {
+
+    private ChangeListener<String> skinListener = (_, _, newValue) -> {
         if (newValue == null)
             skeleton.setSkin((Skin) null);
-        else skeleton.setSkin(newValue);
+        else
+            skeleton.setSkin(newValue);
+
         skeleton.setSlotsToSetupPose();
     };
-    private ChangeListener<String> animateListener = (observable, oldValue, newValue) -> {
+
+    private ChangeListener<String> animateListener = (_, _, newValue) -> {
         if (newValue != null) {
             state.setAnimation(0, newValue, isLoop.get());
             isPlay.set(true);
@@ -39,20 +49,24 @@ public class Spine40 extends Spine {
             isPlay.set(false);
         }
     };
-    private ChangeListener<Boolean> isLoopListener = (observable, oldValue, newValue) -> {
+
+    private ChangeListener<Boolean> isLoopListener = (_, _, _) -> {
         if (isPlay.get()) {
             isPlay.set(false);
             isPlay.set(true);
         }
     };
-    private ChangeListener<Boolean> isPlayListener = (observable, oldValue, newValue) -> {
+
+    private ChangeListener<Boolean> isPlayListener = (_, oldValue, newValue) -> {
         if (!newValue.equals(oldValue)) {
             if (newValue) {
                 if (animate.get() == null)
-                    state.setAnimation(0, animatesList.get(0), isLoop.get());
+                    state.setAnimation(0, animatesList.getFirst(), isLoop.get());
                 else
                     state.setAnimation(0, animate.get(), isLoop.get());
+
                 state.setTimeScale(speed.get());
+
                 if (percent < 1)
                     state.getCurrent(0).setTrackTime(trackTime);
             } else {
@@ -61,28 +75,35 @@ public class Spine40 extends Spine {
             }
         }
     };
-    private ChangeListener<Number> scaleListener = (observable, oldValue, newValue) -> {
-        Gdx.app.postRunnable(this::loadSkel);
+
+    private ChangeListener<Number> scaleListener = (_, _, _) -> {
+        Gdx.app.postRunnable(this::loadSkeleton);
+
         if (animate.get() != null) {
             state.setAnimation(0, animate.get(), isLoop.get());
             isPlay.set(true);
         }
     };
-    private ChangeListener<Number> XListener = (observable, oldValue, newValue) -> {
-        Gdx.app.postRunnable(this::loadSkel);
+
+    private ChangeListener<Number> XListener = (_, _, _) -> {
+        Gdx.app.postRunnable(this::loadSkeleton);
+
         if (animate.get() != null) {
             state.setAnimation(0, animate.get(), isLoop.get());
             isPlay.set(true);
         }
     };
-    private ChangeListener<Number> YListener = (observable, oldValue, newValue) -> {
-        Gdx.app.postRunnable(this::loadSkel);
+
+    private ChangeListener<Number> YListener = (_, _, _) -> {
+        Gdx.app.postRunnable(this::loadSkeleton);
+
         if (animate.get() != null) {
             state.setAnimation(0, animate.get(), isLoop.get());
             isPlay.set(true);
         }
     };
-    private ChangeListener<Number> speedListener = (observable, oldValue, newValue) -> state.setTimeScale(speed.get());
+
+    private ChangeListener<Number> speedListener = (_, _, _) -> state.setTimeScale(speed.get());
 
     private void lists(Array<Skin> skins, Array<Animation> animations) {
         for (Skin skin : skins)
@@ -92,62 +113,82 @@ public class Spine40 extends Spine {
             animatesList.add(animation.getName());
     }
 
-    private boolean loadSkel() {
-        TextureAtlas atlas = new TextureAtlas(new TextureAtlasData(atlasFile, atlasFile.parent(), false)) {
+    private boolean loadSkeleton() {
+        try {
+            TextureAtlasData atlasData = new TextureAtlasData(atlasFile, atlasFile.parent(), false);
+
+            boolean linear = true;
+            for (int i = 0, n = atlasData.getPages().size; i < n; i++) {
+                TextureAtlasData.Page page = atlasData.getPages().get(i);
+                if (page.minFilter != TextureFilter.Linear || page.magFilter != TextureFilter.Linear) {
+                    linear = false;
+                    break;
+                }
+            }
+
+            TextureAtlas atlas = getAtlas(linear, atlasData);
+
+            SkeletonData skeletonData;
+
+            if (isBinary) {
+                SkeletonBinary binary = new SkeletonBinary(atlas);
+                binary.setScale(scale.get());
+                skeletonData = binary.readSkeletonData(skelFile);
+            } else {
+                SkeletonJson json = new SkeletonJson(atlas);
+                json.setScale(scale.get());
+                skeletonData = json.readSkeletonData(skelFile);
+            }
+
+            if (skeletonData.getBones().size == 0) {
+                System.out.println("骨骼为空");
+                return false;
+            }
+
+            skeleton = new Skeleton(skeletonData);
+            skeleton.updateWorldTransform();
+            skeleton.setToSetupPose();
+            skeleton.setPosition(X.get(), Y.get());
+
+            state = new AnimationState(new AnimationStateData(skeletonData));
+            if (animate.get() == null)
+                state.setEmptyAnimation(0, 0);
+
+            spineVersion.set(skeletonData.getVersion());
+            projectName.set(skeletonData.getName());
+
+            if (skinsList.isEmpty())
+                lists(skeletonData.getSkins(), skeletonData.getAnimations());
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            projectName.set("Failed to Load");
+            return false;
+        }
+    }
+
+    private TextureAtlas getAtlas(boolean linear, TextureAtlasData atlasData) {
+        TextureFilter filter = linear ? TextureFilter.Linear : TextureFilter.Nearest;
+
+        return new TextureAtlas(atlasData) {
             public AtlasRegion findRegion(String name) {
                 AtlasRegion region = super.findRegion(name);
+
                 if (region == null) {
-                    FileHandle file = skelFile.sibling(name + ".png");
+                    FileHandle file = skelFile.sibling(STR."\{name}.png");
+
                     if (file.exists()) {
                         Texture texture = new Texture(file);
-                        texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+                        texture.setFilter(filter, filter);
                         region = new AtlasRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
                         region.name = name;
                     }
                 }
+
                 return region;
             }
         };
-
-        SkeletonLoader loader;
-        if (isBinary)
-            loader = new SkeletonBinary(atlas);
-        else loader = new SkeletonJson(atlas);
-
-        loader.setScale(scale.get());
-        SkeletonData skeletonData = loader.readSkeletonData(skelFile);
-        if (skeletonData.getBones().size == 0) {
-            System.out.println("骨骼为空");
-            return false;
-        }
-
-        skeleton = new Skeleton(skeletonData);
-        skeleton.updateWorldTransform();
-        skeleton.setToSetupPose();
-        skeleton.setPosition(X.get(), Y.get());
-
-        state = new AnimationState(new AnimationStateData(skeletonData));
-        if (animate.get() == null)
-            state.setEmptyAnimation(0, 0);
-
-        spineVersion.set(skeletonData.getVersion());
-        projectName.set(skeletonData.getName());
-
-        if (skinsList.isEmpty())
-            lists(skeletonData.getSkins(), skeletonData.getAnimations());
-
-        return true;
-    }
-
-    private void listeners() {
-        skin.addListener(skinListener);
-        animate.addListener(animateListener);
-        isLoop.addListener(isLoopListener);
-        isPlay.addListener(isPlayListener);
-        scale.addListener(scaleListener);
-        X.addListener(XListener);
-        Y.addListener(YListener);
-        speed.addListener(speedListener);
     }
 
     public void reload() {
@@ -178,17 +219,28 @@ public class Spine40 extends Spine {
             YListener = null;
             speedListener = null;
         } else
-            Gdx.app.postRunnable(this::loadSkel);
+            Gdx.app.postRunnable(this::loadSkeleton);
     }
 
     public void create() {
         batch = new TwoColorPolygonBatch(3100);
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        renderer = new SkeletonRenderer();
-        renderer.setPremultipliedAlpha(true);
+        batch.setPremultipliedAlpha(Main.batchA);
 
-        if (loadSkel())
-            listeners();
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        renderer = new SkeletonRenderer();
+        renderer.setPremultipliedAlpha(Main.renderA);
+
+        if (loadSkeleton()) {
+            skin.addListener(skinListener);
+            animate.addListener(animateListener);
+            isLoop.addListener(isLoopListener);
+            isPlay.addListener(isPlayListener);
+            scale.addListener(scaleListener);
+            X.addListener(XListener);
+            Y.addListener(YListener);
+            speed.addListener(speedListener);
+        }
     }
 
     public void render() {
@@ -197,10 +249,10 @@ public class Spine40 extends Spine {
         skeleton.updateWorldTransform();
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.graphics.setTitle("FPS : " + Gdx.graphics.getFramesPerSecond());
+        Gdx.graphics.setTitle(STR."FPS : \{Gdx.graphics.getFramesPerSecond()}");
 
         renderer.setPremultipliedAlpha(Main.renderA);
-        batch.setPremultipliedAlpha(Main.renderA);
+        batch.setPremultipliedAlpha(Main.batchA);
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);
@@ -209,10 +261,13 @@ public class Spine40 extends Spine {
         batch.end();
 
         TrackEntry entry = state.getCurrent(0);
+
         if (entry != null) {
             percent = entry.getAnimationTime() / entry.getAnimationEnd();
+
             if (isPlay.get())
                 Platform.runLater(() -> Main.progressBar.setProgress(percent));
+
             if (percent >= 1 && !isLoop.get())
                 isPlay.set(false);
         }

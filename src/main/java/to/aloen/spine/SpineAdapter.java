@@ -4,15 +4,42 @@ import com.badlogic.gdx.ApplicationAdapter;
 import to.aloen.ssv.Loader;
 
 public class SpineAdapter extends ApplicationAdapter {
-    @Deprecated
-    public static byte Range;
-
     private static Spine Runtimes;
 
     @Override
     public void create() {
-        Loader.spineVersion = 38;
-        Runtimes = new Spine38();
+        switch (Loader.spineVersion) {
+            case 31:
+            case 32:
+                Runtimes = new Spine31();
+                break;
+            case 33:
+            case 34:
+                Runtimes = new Spine34();
+                break;
+            case 35:
+                Runtimes = new Spine35();
+                break;
+            case 36:
+                Runtimes = new Spine36();
+                break;
+            case 37:
+                Runtimes = new Spine37();
+                break;
+            case 38:
+                Runtimes = new Spine38();
+                break;
+            case 40:
+                Runtimes = new Spine40();
+                break;
+            case 41:
+            case 42:
+                Runtimes = new Spine41();
+                break;
+            default:
+                Runtimes = new Spine21();
+        }
+
         Runtimes.create();
     }
 
