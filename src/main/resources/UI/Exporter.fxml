@@ -119,9 +119,9 @@
                     </Label>
 
                     <HBox spacing="38.0">
-                        <JFXCheckBox onAction="#RenderA" selected="true" styleClass="custom-jfx-check-box" text="Render"/>
+                        <JFXCheckBox fx:id="L_RenderA" onAction="#RenderA" selected="true" styleClass="custom-jfx-check-box" text="Render"/>
 
-                        <JFXCheckBox onAction="#BatchA" selected="true" styleClass="custom-jfx-check-box" text="Batch"/>
+                        <JFXCheckBox fx:id="L_BatchA" onAction="#BatchA" selected="true" styleClass="custom-jfx-check-box" text="Batch"/>
                     </HBox>
                 </VBox>
 

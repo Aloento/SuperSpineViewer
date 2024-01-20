@@ -120,6 +120,11 @@ public class Spine36 extends Spine {
             boolean linear = true;
             for (int i = 0, n = atlasData.getPages().size; i < n; i++) {
                 TextureAtlasData.Page page = atlasData.getPages().get(i);
+                if (page.pma) {
+                    renderA.set(true);
+                    batchA.set(true);
+                }
+
                 if (page.minFilter != TextureFilter.Linear || page.magFilter != TextureFilter.Linear) {
                     linear = false;
                     break;
@@ -224,12 +229,12 @@ public class Spine36 extends Spine {
 
     public void create() {
         batch = new TwoColorPolygonBatch(3100);
-        batch.setPremultipliedAlpha(Main.batchA);
+        batch.setPremultipliedAlpha(batchA.get());
 
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         renderer = new SkeletonRenderer();
-        renderer.setPremultipliedAlpha(Main.renderA);
+        renderer.setPremultipliedAlpha(renderA.get());
 
         if (loadSkeleton()) {
             skin.addListener(skinListener);
@@ -251,8 +256,8 @@ public class Spine36 extends Spine {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle(STR."FPS : \{Gdx.graphics.getFramesPerSecond()}");
 
-        renderer.setPremultipliedAlpha(Main.renderA);
-        batch.setPremultipliedAlpha(Main.batchA);
+        renderer.setPremultipliedAlpha(renderA.get());
+        batch.setPremultipliedAlpha(batchA.get());
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);

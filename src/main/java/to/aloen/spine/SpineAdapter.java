@@ -33,8 +33,10 @@ public class SpineAdapter extends ApplicationAdapter {
                 Runtimes = new Spine40();
                 break;
             case 41:
-            case 42:
                 Runtimes = new Spine41();
+                break;
+            case 42:
+                Runtimes = new Spine42();
                 break;
             default:
                 Runtimes = new Spine21();

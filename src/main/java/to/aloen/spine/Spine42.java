@@ -6,24 +6,24 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.spine35.*;
-import com.esotericsoftware.spine35.AnimationState.TrackEntry;
+import com.esotericsoftware.spine42.*;
+import com.esotericsoftware.spine42.AnimationState.TrackEntry;
+import com.esotericsoftware.spine42.utils.TwoColorPolygonBatch;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import to.aloen.ssv.Loader;
 import to.aloen.ssv.Main;
 
-public class Spine35 extends Spine {
+public class Spine42 extends Spine {
 
-    private PolygonSpriteBatch batch;
+    private TwoColorPolygonBatch batch;
 
     private OrthographicCamera camera;
 
-    private SkeletonMeshRenderer renderer;
+    private SkeletonRenderer renderer;
 
     private Skeleton skeleton;
 
@@ -133,17 +133,15 @@ public class Spine35 extends Spine {
 
             TextureAtlas atlas = getAtlas(linear, atlasData);
 
-            SkeletonData skeletonData;
+            SkeletonLoader loader;
 
-            if (isBinary) {
-                SkeletonBinary binary = new SkeletonBinary(atlas);
-                binary.setScale(scale.get());
-                skeletonData = binary.readSkeletonData(skelFile);
-            } else {
-                SkeletonJson json = new SkeletonJson(atlas);
-                json.setScale(scale.get());
-                skeletonData = json.readSkeletonData(skelFile);
-            }
+            if (isBinary)
+                loader = new SkeletonBinary(atlas);
+            else
+                loader = new SkeletonJson(atlas);
+
+            loader.setScale(scale.get());
+            SkeletonData skeletonData = loader.readSkeletonData(skelFile);
 
             if (skeletonData.getBones().size == 0) {
                 System.out.println("骨骼为空");
@@ -228,10 +226,12 @@ public class Spine35 extends Spine {
     }
 
     public void create() {
-        batch = new PolygonSpriteBatch();
+        batch = new TwoColorPolygonBatch(3100);
+        batch.setPremultipliedAlpha(batchA.get());
+
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        renderer = new SkeletonMeshRenderer();
+        renderer = new SkeletonRenderer();
         renderer.setPremultipliedAlpha(renderA.get());
 
         if (loadSkeleton()) {
@@ -255,6 +255,7 @@ public class Spine35 extends Spine {
         Gdx.graphics.setTitle(STR."FPS : \{Gdx.graphics.getFramesPerSecond()}");
 
         renderer.setPremultipliedAlpha(renderA.get());
+        batch.setPremultipliedAlpha(batchA.get());
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);

@@ -118,6 +118,11 @@ public class Spine31 extends Spine {
             boolean linear = true;
             for (int i = 0, n = atlasData.getPages().size; i < n; i++) {
                 TextureAtlasData.Page page = atlasData.getPages().get(i);
+                if (page.pma) {
+                    renderA.set(true);
+                    batchA.set(true);
+                }
+
                 if (page.minFilter != TextureFilter.Linear || page.magFilter != TextureFilter.Linear) {
                     linear = false;
                     break;
@@ -222,7 +227,7 @@ public class Spine31 extends Spine {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         renderer = new SkeletonMeshRenderer();
-        renderer.setPremultipliedAlpha(Main.renderA);
+        renderer.setPremultipliedAlpha(renderA.get());
 
         if (loadSkeleton()) {
             skin.addListener(skinListener);
@@ -244,7 +249,7 @@ public class Spine31 extends Spine {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setTitle(STR."FPS : \{Gdx.graphics.getFramesPerSecond()}");
 
-        renderer.setPremultipliedAlpha(Main.renderA);
+        renderer.setPremultipliedAlpha(renderA.get());
 
         camera.update();
         batch.getProjectionMatrix().set(camera.combined);

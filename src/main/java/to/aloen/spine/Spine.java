@@ -21,6 +21,10 @@ public abstract class Spine {
 
     public static final SimpleBooleanProperty isPlay = new SimpleBooleanProperty(false);
 
+    public static final SimpleBooleanProperty renderA = new SimpleBooleanProperty(true);
+
+    public static final SimpleBooleanProperty batchA = new SimpleBooleanProperty(true);
+
     public static final SimpleFloatProperty scale = new SimpleFloatProperty(1.0f);
 
     public static final SimpleFloatProperty X = new SimpleFloatProperty(0.0f);

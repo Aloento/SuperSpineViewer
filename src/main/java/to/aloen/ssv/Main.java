@@ -38,10 +38,6 @@ public class Main {
 
     public static boolean isLoad = false;
 
-    public static boolean renderA = true;
-
-    public static boolean batchA = true;
-
     public static boolean recording = false;
 
     public static String openPath;

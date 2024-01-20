@@ -1,5 +1,6 @@
 package to.aloen.ssv.controller;
 
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
@@ -20,6 +21,11 @@ import java.util.ResourceBundle;
 import java.util.zip.Deflater;
 
 public class ExporterController implements Initializable {
+    @FXML
+    private JFXCheckBox L_RenderA;
+
+    @FXML
+    private JFXCheckBox L_BatchA;
 
     @FXML
 
@@ -133,12 +139,12 @@ public class ExporterController implements Initializable {
 
     @FXML
     void RenderA() {
-        Main.renderA = !Main.renderA;
+        Spine.renderA.set(!Spine.renderA.get());
     }
 
     @FXML
     void BatchA() {
-        Main.batchA = !Main.batchA;
+        Spine.batchA.set(!Spine.batchA.get());
     }
 
     @Override
@@ -152,6 +158,16 @@ public class ExporterController implements Initializable {
         Spine.spineVersion.addListener(
             (_, _, newValue) -> Platform.runLater(
                 () -> L_Version.setText(STR."Version : \{newValue}")
+            ));
+
+        Spine.renderA.addListener(
+            (_, _, newValue) -> Platform.runLater(
+                () -> L_RenderA.setSelected(newValue)
+            ));
+
+        Spine.batchA.addListener(
+            (_, _, newValue) -> Platform.runLater(
+                () -> L_BatchA.setSelected(newValue)
             ));
 
         System.out.println("SuperSpineViewer已启动");
