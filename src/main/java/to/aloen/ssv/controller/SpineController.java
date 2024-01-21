@@ -317,13 +317,13 @@ public class SpineController extends Main implements Initializable {
             fitWidthProperty().addListener((_, _, newValue) -> {
                 T_Width.setPromptText(String.valueOf(newValue.intValue()));
                 width = newValue.intValue();
-                Pref.putDouble("stageWidth", newValue.doubleValue() + 368);
+                Pref.putDouble("stageWidth", newValue.doubleValue() + 350);
             });
 
             fitHeightProperty().addListener((_, _, newValue) -> {
                 T_Height.setPromptText(String.valueOf(newValue.intValue()));
                 height = newValue.intValue();
-                Pref.putDouble("stageHeight", newValue.doubleValue() + 103);
+                Pref.putDouble("stageHeight", newValue.doubleValue() + 50);
             });
         }};
 
@@ -367,8 +367,8 @@ public class SpineController extends Main implements Initializable {
                 Viewer.getChildren().remove(loadPane);
                 Viewer.setCenter(spineRender);
 
-                spineRender.fitHeightProperty().bind(spineRender.getScene().heightProperty().add(-103));
-                spineRender.fitWidthProperty().bind(spineRender.getScene().widthProperty().add(-368));
+                spineRender.fitHeightProperty().bind(spineRender.getScene().heightProperty().add(-50));
+                spineRender.fitWidthProperty().bind(spineRender.getScene().widthProperty().add(-350));
 
                 Viewer = null;
                 loadPane = null;

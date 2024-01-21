@@ -58,8 +58,10 @@ public class ExporterController implements Initializable {
             Spine.speed.set(Main.quality);
             Spine.isPlay.set(true);
 
-            System.out.println("请求：开始录制");
-            RecordFX.Start(STR."\{Spine.projectName.get()}_\{Spine.animate.get()}");
+            Thread.startVirtualThread(() -> {
+                RecordFX.Start(STR."\{Spine.projectName.get()}_\{Spine.animate.get()}");
+                System.out.println("请求：开始录制");
+            });
         }
     }
 

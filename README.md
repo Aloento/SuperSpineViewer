@@ -6,13 +6,17 @@
 需要 **Java 21 21 21**  
 需要 像素缓冲区支持  
 导出 MOV 需要 FFmpeg  
-当前版本：2.0.5
+当前版本：2.1.0
 
 ![霜叶](https://i0.hdslb.com/bfs/album/98b4fd8a12bc6dbf691b967bed625db67713dff0.png@518w.png "明日方舟 - 霜叶")
 
 ## 获得SuperSpineViewer
 
 [**发布的稳定版本**](https://github.com/Aloento/SuperSpineViewer/releases/latest)
+
+```bash
+java -XX:MaxRAMPercentage=75.0 --enable-preview -jar SuperSpineViewer.jar
+```
 
 ### 性能设置参考
 

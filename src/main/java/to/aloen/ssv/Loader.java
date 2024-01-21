@@ -131,12 +131,14 @@ public abstract class Loader {
                 gdxApp = new LwjglFXApplication(adapter, Main.spineRender);
             }
         } else {
-            new Thread(() -> {
+            Thread load = new Thread(() -> {
                 if (Main.spineController.isLoaded()) {
                     gdxApp = new LwjglFXApplication(adapter, Main.spineRender);
                     Main.spineController = null;
                 }
-            }, "Loading").start();
+            }, "Loading");
+            load.setDaemon(true);
+            load.start();
         }
     }
 }

@@ -1,30 +1,34 @@
 package to.aloen.ssv;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.PixmapIO;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import to.aloen.spine.Spine;
 
+import javax.imageio.ImageIO;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.zip.Deflater;
 
 public abstract class RecordFX {
     private static final LinkedBlockingQueue<Runnable> savePool = new LinkedBlockingQueue<>() {{
-        new Thread(() -> {
+        Thread saving = new Thread(() -> {
             while (true) {
                 try {
                     take().run();
                 } catch (InterruptedException ignored) {
                 }
             }
-        }).start();
+        }, "Long Saving");
+        saving.setDaemon(true);
+        saving.start();
     }};
 
     private static String fileName;
@@ -49,7 +53,7 @@ public abstract class RecordFX {
                 Thread.onSpinWait();
 
             RecordFX.fileName = fileName;
-            Main.recording = true;
+            Platform.runLater(() -> Main.recording = true);
         }
     }
 
@@ -127,28 +131,30 @@ public abstract class RecordFX {
         });
     }
 
-    private static Pixmap toPixmap(final PixelReader image) {
-        final Pixmap pixmap = new Pixmap(Main.width, Main.height, Pixmap.Format.RGBA8888);
+    private static WritableImage flipY(final PixelReader image) {
+        final WritableImage flippedImage = new WritableImage(Main.width, Main.height);
+        final PixelWriter pixelWriter = flippedImage.getPixelWriter();
 
-        for (int h = 0; h < Main.height; h++) {
-            for (int w = 0; w < Main.width; w++) {
-                int argb = image.getArgb(w, h);
-                pixmap.drawPixel(w, h, (argb << 8) | (argb >>> 24));
+        for (int y = 0; y < Main.height; y++) {
+            for (int x = 0; x < Main.width; x++) {
+                Color color = image.getColor(x, y);
+                pixelWriter.setColor(x, Main.height - 1 - y, color);
             }
         }
 
-        return pixmap;
+        return flippedImage;
     }
 
-    private static void writePNG(final Pixmap pixmap, final short index) {
+    private static void writePNG(final WritableImage image, final short index) {
         try {
-            PixmapIO.writePNG(Gdx.files.absolute(
-                    STR."\{Main.outPath}\{fileName}_Sequence\{File.separator}\{fileName}_\{index}.png"),
-                pixmap, Deflater.NO_COMPRESSION, true
-            );
-        } finally {
-            pixmap.dispose();
+            File outputFile = new File(STR."\{Main.outPath}\{fileName}_Sequence\{File.separator}\{fileName}_\{index}.png");
+            outputFile.getParentFile().mkdirs();
+            outputFile.createNewFile();
 
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
             if (!Main.recording) {
                 var percent = (double) items++ / counter;
                 Platform.runLater(() -> Main.progressBar.setProgress(percent));
@@ -170,9 +176,9 @@ public abstract class RecordFX {
 
         @Override
         public void run() {
-            final Pixmap pixmap = toPixmap(image);
+            final WritableImage flipY = flipY(image);
             image = null;
-            writePNG(pixmap, counter);
+            writePNG(flipY, counter);
         }
     }
 }
