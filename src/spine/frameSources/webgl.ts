@@ -26,6 +26,7 @@ export class WebglFrameSource implements FrameSource {
   private readonly skeleton: any;
   private readonly state: any;
   private readonly updateWorld: () => void;
+  private readonly atlas: any;
   private readonly pixels: Uint8Array<ArrayBuffer>;
   private readonly flipped: Uint8ClampedArray<ArrayBuffer>;
   private readonly size: FrameSize;
@@ -40,6 +41,7 @@ export class WebglFrameSource implements FrameSource {
     skeleton: any;
     state: any;
     updateWorld: () => void;
+    atlas: any;
     size: FrameSize;
     summary: SkeletonSummary;
     animations: string[];
@@ -49,6 +51,7 @@ export class WebglFrameSource implements FrameSource {
     this.skeleton = args.skeleton;
     this.state = args.state;
     this.updateWorld = args.updateWorld;
+    this.atlas = args.atlas;
     this.size = args.size;
     this.summaryInfo = args.summary;
     this.animationNames = args.animations;
@@ -131,7 +134,7 @@ export class WebglFrameSource implements FrameSource {
 
     const renderer = new webgl.SceneRenderer(canvas, gl);
 
-    return new WebglFrameSource({ gl, renderer, skeleton, state, updateWorld, size, summary, animations });
+    return new WebglFrameSource({ gl, renderer, skeleton, state, updateWorld, atlas, size, summary, animations });
   }
 
   summary(): SkeletonSummary {
@@ -178,10 +181,13 @@ export class WebglFrameSource implements FrameSource {
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
-    try {
-      this.renderer.dispose?.();
-    } catch {
-      // 忽略释放失败
+    // 各运行时的 dispose 支持程度不一（3.x 的 TextureAtlas 有、AnimationState 没有），逐个可选调用
+    for (const target of [this.state, this.skeleton, this.atlas, this.renderer]) {
+      try {
+        target?.dispose?.();
+      } catch {
+        // 忽略释放失败
+      }
     }
     this.gl.getExtension('WEBGL_lose_context')?.loseContext();
   }

@@ -14,22 +14,6 @@ export interface RuntimeVersionSpec {
   packId: string;
 }
 
-/** UI 提示可引用的版本清单 */
-export const SUPPORTED_SPINE_VERSIONS = [
-  '2.1.27',
-  '3.0.0',
-  '3.2.0',
-  '3.4.0',
-  '3.5.0',
-  '3.6.0',
-  '3.7.0',
-  '3.8.0',
-  '4.0.0',
-  '4.1.0',
-  '4.2.0',
-  '4.3.0',
-] as const;
-
 export const RUNTIME_VERSIONS: readonly RuntimeVersionSpec[] = [
   { raw: '4.3.0', packId: '4.3' },
   { raw: '4.2.0', packId: '4.2' },
@@ -133,6 +117,3 @@ export function resolveRuntimeCandidates(version: SpineVersionInfo | null): Runt
   };
 }
 
-export function isSupportedRuntimeVersion(version: SpineVersionInfo | null): boolean {
-  return !!(version && !unavailableRuntimeCode(version));
-}

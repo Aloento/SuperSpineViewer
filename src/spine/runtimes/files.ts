@@ -18,12 +18,21 @@ export function findFile(files: FileMap, name: string): string | null {
 
 const IMAGE_EXT = /\.(png|jpe?g|webp)$/i;
 
-/** atlas 里的 page 行就是图片文件名；4.2/4.3 的 atlas 没有缩进，只能按扩展名识别。 */
+// page 属性（size/format/filter/repeat/pma/scale）与 region 属性（rotate/xy/offset/index/bounds）不重叠，
+// 4.0 起 page 属性带缩进，2.x 的 page 第二段是 format 而不是 size
+const PAGE_PROPERTY = /^[\t ]*(size|format|filter|repeat|pma|scale)\s*:/i;
+
+/**
+ * 图集 page 名 = 顶格的图片文件名行，且下一行是 page 属性。
+ * 不能按「任何以 .png 结尾的行」判定：region 名也可以 .png 结尾，会被误认成 page。
+ */
 export function atlasPageNames(atlasText: string): string[] {
+  const lines = atlasText.split('\n');
   const names: string[] = [];
-  for (const line of atlasText.split('\n')) {
-    const trimmed = line.trim();
-    if (IMAGE_EXT.test(trimmed)) names.push(trimmed);
+  for (let i = 0; i + 1 < lines.length; i++) {
+    const line = lines[i].trimEnd();
+    if (/^\s/.test(line) || !IMAGE_EXT.test(line)) continue;
+    if (PAGE_PROPERTY.test(lines[i + 1])) names.push(line.trim());
   }
   return names;
 }

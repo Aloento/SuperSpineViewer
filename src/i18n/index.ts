@@ -36,15 +36,15 @@ void i18n.use(initReactI18next).init({
 });
 
 export function changeLanguage(language: SupportedLanguage): void {
+  localStorage.setItem(storageKey, language);
   void i18n.changeLanguage(language);
 }
 
 document.documentElement.lang = i18n.resolvedLanguage ?? i18n.language;
 
+// init 时也会触发 languageChanged，因此这里不写 localStorage，否则首次访问就把系统语言固化
 i18n.on('languageChanged', (language) => {
-  const matched = normalize(language) ?? 'en';
-  document.documentElement.lang = matched;
-  localStorage.setItem(storageKey, matched);
+  document.documentElement.lang = normalize(language) ?? 'en';
 });
 
 export default i18n;

@@ -35,6 +35,7 @@ export class CanvaskitFrameSource implements FrameSource {
   private readonly surface: Surface;
   private readonly renderer: { render(canvas: any, skeleton: any): void };
   private readonly drawable: any;
+  private readonly atlas: any;
   private readonly imageInfo: ImageInfo;
   private readonly pixels: MallocObj;
   private readonly pixelView: Uint8ClampedArray<ArrayBuffer>;
@@ -49,6 +50,7 @@ export class CanvaskitFrameSource implements FrameSource {
     surface: Surface;
     renderer: { render(canvas: any, skeleton: any): void };
     drawable: any;
+    atlas: any;
     size: FrameSize;
     summary: SkeletonSummary;
     animations: string[];
@@ -57,6 +59,7 @@ export class CanvaskitFrameSource implements FrameSource {
     this.surface = args.surface;
     this.renderer = args.renderer;
     this.drawable = args.drawable;
+    this.atlas = args.atlas;
     this.size = args.size;
     this.summaryInfo = args.summary;
     this.animationNames = args.animations;
@@ -90,11 +93,13 @@ export class CanvaskitFrameSource implements FrameSource {
     const readFile = createFileReader(context.files);
     let data: any;
     let summary: SkeletonSummary;
+    let atlas: any;
     try {
-      const atlas = await helpers.loadTextureAtlas(ck, context.atlasFile, readFile);
+      atlas = await helpers.loadTextureAtlas(ck, context.atlasFile, readFile);
       data = await helpers.loadSkeletonData(context.skeletonFile, atlas, readFile);
       summary = validateSkeletonData(data, context.version);
     } catch (error) {
+      atlas?.dispose?.();
       surface.delete();
       if (error instanceof RuntimeError) throw error;
       throw new RuntimeError('parseInvalid', error instanceof Error ? error.message : String(error));
@@ -102,6 +107,7 @@ export class CanvaskitFrameSource implements FrameSource {
 
     const animations: string[] = (data.animations ?? []).map((item: any) => String(item.name));
     if (animations.length === 0) {
+      atlas.dispose?.();
       surface.delete();
       throw new RuntimeError('noAnimation');
     }
@@ -115,6 +121,7 @@ export class CanvaskitFrameSource implements FrameSource {
       surface,
       renderer: new helpers.SkeletonRenderer(ck),
       drawable,
+      atlas,
       size,
       summary,
       animations,
@@ -152,6 +159,13 @@ export class CanvaskitFrameSource implements FrameSource {
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
+    // 4.2/4.3 的 TextureAtlas.dispose 释放 page 纹理；SkeletonDrawable 没有 dispose，动画状态单独释放
+    try {
+      this.drawable?.animationState?.dispose?.();
+      this.atlas?.dispose?.();
+    } catch {
+      // 忽略释放失败
+    }
     this.ck.Free(this.pixels);
     this.surface.delete();
   }

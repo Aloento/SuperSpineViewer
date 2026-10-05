@@ -21,7 +21,6 @@ interface PackDefinition {
 }
 
 const WEBGL_CAPABILITY_BASE: SpineRuntimeCapabilities = {
-  requiresPhysicsUpdate: false,
   setupPoseMethod: 'setToSetupPose',
   yDown: false,
   synchronousAtlasLoader: false,
@@ -29,7 +28,6 @@ const WEBGL_CAPABILITY_BASE: SpineRuntimeCapabilities = {
 };
 
 const CANVASKIT_CAPABILITY_BASE: SpineRuntimeCapabilities = {
-  requiresPhysicsUpdate: true,
   setupPoseMethod: 'setToSetupPose',
   yDown: true,
   synchronousAtlasLoader: false,
@@ -172,10 +170,6 @@ export async function loadRuntimePack(id: string): Promise<SpineRuntimePack> {
   const pack = buildPack(definition, mod);
   cache.set(id, pack);
   return pack;
-}
-
-export function loadedPackIds(): string[] {
-  return [...cache.keys()];
 }
 
 /** 该 pack 的官方 core 是否自带 SkeletonBinary（3.4–3.7 没有，等 M2d 自研读取器） */

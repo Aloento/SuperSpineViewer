@@ -83,14 +83,3 @@ export type EncodeResponse =
   | { id: number; type: 'done'; payload: { blob: Blob } }
   | { id: number; type: 'error'; payload: { message: string } };
 
-export function pickRenderRequest(request: WorkerRequest): RenderRequest | null {
-  return request.type === 'init' || request.type === 'load' || request.type === 'render' || request.type === 'dispose'
-    ? request
-    : null;
-}
-
-export function pickEncodeRequest(request: WorkerRequest): EncodeRequest | null {
-  return request.type === 'configure' || request.type === 'frame' || request.type === 'finalize' || request.type === 'cancel'
-    ? request
-    : null;
-}

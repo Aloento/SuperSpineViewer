@@ -36,10 +36,24 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,json,svg,png,ico,woff2,wasm}'],
+        // 运行时 pack、渲染 Worker 与 canvaskit wasm（约 8 MB）只按需拉取，不进预缓存
+        globIgnores: ['assets/spine-*.js', 'assets/dist-*.js', 'assets/render.worker-*.js', '**/*.wasm'],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,
         navigateFallback: '/index.html',
+        runtimeCaching: [
+          {
+            // RegExp 匹配完整 URL，天然限定同源
+            urlPattern: /\/assets\/(spine-|dist-|render\.worker-|canvaskit-)[^/]+\.(js|wasm)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'spine-runtimes',
+              expiration: { maxEntries: 32, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+        ],
       },
       devOptions: {
         enabled: true,

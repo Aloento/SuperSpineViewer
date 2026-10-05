@@ -76,8 +76,6 @@ export class RuntimeError extends Error {
 
 /** 运行时能力位：替代散落的 if/switch，frameSource 按能力选路径 */
 export interface SpineRuntimeCapabilities {
-  /** 4.x 的 updateWorldTransform 需要传 Physics.update */
-  requiresPhysicsUpdate: boolean;
   setupPoseMethod: 'setToSetupPose' | 'setupPose';
   /** canvaskit 后端 +y 朝屏幕上方 */
   yDown: boolean;

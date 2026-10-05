@@ -89,8 +89,9 @@ function scannedVersion(view: DataView): SpineVersionInfo | null {
 
 export function detectSpineVersion(data: ArrayBuffer): SpineVersionInfo | null {
   if (data.byteLength < 9) return null;
-  const head = new Uint8Array(data, 0, 3);
-  return head[0] === 0x7b || (head[0] === 0xef && head[1] === 0xbb && head[2] === 0xbf)
+  // 解包资源常见 BOM / 前导换行，只看首个非空白字符是不是 JSON 起始符
+  const prefix = new TextDecoder().decode(new Uint8Array(data, 0, Math.min(16, data.byteLength)));
+  return /^\s*\{/.test(prefix)
     ? detectFromJson(data)
     : detectFromBinary(new DataView(data));
 }
