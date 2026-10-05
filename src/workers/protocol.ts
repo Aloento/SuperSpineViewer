@@ -6,6 +6,8 @@ export interface InitPayload {
 
 export interface SkeletonPayload {
   files: Record<string, ArrayBuffer>;
+  skeletonFile: string;
+  atlasFile: string;
   version: string;
 }
 
@@ -39,6 +41,7 @@ export type WorkerRequest = RenderRequest | EncodeRequest;
 
 export type RenderResponse =
   | { id: number; type: 'ready' }
+  | { id: number; type: 'loaded'; payload: { animation: string } }
   | { id: number; type: 'frame'; payload: { index: number; frame: ImageBitmap } }
   | { id: number; type: 'error'; payload: { message: string } };
 
