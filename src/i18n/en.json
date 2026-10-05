@@ -9,7 +9,30 @@
     "en": "English"
   },
   "status": {
-    "scaffolding": "M0 scaffold complete: UI / i18n / PWA skeleton ready"
+    "version": "Spine version",
+    "animation": "Animation",
+    "canvas": "Canvas",
+    "playing": "Playing"
+  },
+  "dropzone": {
+    "title": "Drop Spine assets here",
+    "hint": "Needs a .skel / .json skeleton, an .atlas file and its texture PNGs; a whole folder is fine",
+    "busy": "Loading assets…"
+  },
+  "preview": {
+    "empty": "No skeleton loaded yet — drop some files first",
+    "checkerboardHint": "Checkerboard shows transparent areas"
+  },
+  "errors": {
+    "missingSkeleton": "No skeleton file found (.skel or .json)",
+    "missingAtlas": "No atlas file found (.atlas)",
+    "unknownVersion": "Could not detect the Spine version of the skeleton file",
+    "unsupportedVersion": "Spine {{version}} is not supported yet",
+    "loadFailed": "Failed to load: {{detail}}",
+    "renderFailed": "Failed to render: {{detail}}"
+  },
+  "warnings": {
+    "skeletonFallback": "{{from}} could not be parsed, falling back to {{to}}"
   },
   "footer": {
     "authorPrefix": "Author",
