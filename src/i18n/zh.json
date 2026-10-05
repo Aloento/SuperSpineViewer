@@ -11,7 +11,6 @@
   "status": {
     "version": "Spine 版本",
     "runtime": "运行时",
-    "backend": "渲染后端",
     "bones": "骨骼",
     "animations": "动画数",
     "animation": "动画",
@@ -47,8 +46,7 @@
   "footer": {
     "authorPrefix": "作者",
     "starPrefix": "喜欢本项目？",
-    "starAction": "去 GitHub 给个 Star",
-    "github": "GitHub 仓库"
+    "starAction": "去 GitHub 给个 Star"
   },
   "export": {
     "canvas": {

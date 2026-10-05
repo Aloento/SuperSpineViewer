@@ -7,6 +7,6 @@
 - 纯浏览器运行，无需 JVM / JavaFX / FFmpeg
 - 透明视频导出（WebM VP9-alpha，带 alpha 通道）
 - 固定画布尺寸，与窗口/屏幕大小无关
-- 多 Spine 版本加载（3.5–4.3），.skel 与 .json 双格式
+- 多 Spine 版本加载（当前 3.8–4.3，目标 3.0–4.3），.skel 与 .json 双格式
 
 技术栈：pnpm + Vite + TypeScript + Fluent UI + Tailwind CSS
