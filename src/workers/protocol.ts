@@ -1,19 +1,46 @@
+import type { FileMap, LoadAttempt, SpineVersionInfo } from '../spine/types';
+
 export interface InitPayload {
-  canvas: OffscreenCanvas;
   width: number;
   height: number;
 }
 
-export interface SkeletonPayload {
-  files: Record<string, ArrayBuffer>;
+export interface LoadPayload {
+  files: FileMap;
   skeletonFile: string;
   atlasFile: string;
-  version: string;
+  /** 文件头嗅探出的版本，Worker 据此展开候选运行时链 */
+  version: SpineVersionInfo;
 }
 
 export interface FramePayload {
-  index: number;
   timeMs: number;
+}
+
+/** 加载成功后的实际结果：用了哪个 pack、骨骼与动画规模，供 UI 展示与排错 */
+export interface LoadResponsePayload {
+  packId: string;
+  backend: 'canvaskit' | 'webgl';
+  /** 生效的候选运行时版本 */
+  runtimeVersion: string;
+  /** 骨架文件内声明的版本 */
+  declaredVersion: string;
+  bones: number;
+  animationCount: number;
+  /** 当前播放的动画 */
+  animation: string;
+  animations: string[];
+  /** 回退到非首个候选时，前面候选的失败原因 */
+  attempts: LoadAttempt[];
+}
+
+export type LoadErrorCode = 'unknownVersion' | 'runtimeUnavailable' | 'allCandidatesFailed' | 'loadCrashed';
+
+export interface ErrorPayload {
+  code: LoadErrorCode | 'renderFailed';
+  /** runtimeUnavailable 时是原因码，其余是可直接展示的拼接详情 */
+  message: string;
+  attempts: LoadAttempt[];
 }
 
 export interface EncodeConfigPayload {
@@ -27,7 +54,7 @@ export interface EncodeConfigPayload {
 
 export type RenderRequest =
   | { id: number; type: 'init'; payload: InitPayload }
-  | { id: number; type: 'load'; payload: SkeletonPayload }
+  | { id: number; type: 'load'; payload: LoadPayload }
   | { id: number; type: 'render'; payload: FramePayload }
   | { id: number; type: 'dispose' };
 
@@ -41,9 +68,9 @@ export type WorkerRequest = RenderRequest | EncodeRequest;
 
 export type RenderResponse =
   | { id: number; type: 'ready' }
-  | { id: number; type: 'loaded'; payload: { animation: string } }
-  | { id: number; type: 'frame'; payload: { index: number; frame: ImageBitmap } }
-  | { id: number; type: 'error'; payload: { message: string } };
+  | { id: number; type: 'loaded'; payload: LoadResponsePayload }
+  | { id: number; type: 'frame'; payload: { timeMs: number; frame: ImageBitmap } }
+  | { id: number; type: 'error'; payload: ErrorPayload };
 
 export type EncodeResponse =
   | { id: number; type: 'progress'; payload: { encoded: number; total: number } }

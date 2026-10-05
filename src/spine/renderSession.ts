@@ -1,4 +1,16 @@
-import type { RenderRequest, RenderResponse, SkeletonPayload } from '../workers/protocol';
+import type { ErrorPayload, LoadPayload, LoadResponsePayload, RenderRequest, RenderResponse } from '../workers/protocol';
+
+export class RenderWorkerError extends Error {
+  code: string;
+  attempts: LoadResponsePayload['attempts'];
+
+  constructor(payload: ErrorPayload) {
+    super(payload.message);
+    this.name = 'RenderWorkerError';
+    this.code = payload.code;
+    this.attempts = payload.attempts;
+  }
+}
 
 interface Pending {
   resolve: (response: RenderResponse) => void;
@@ -23,7 +35,7 @@ export class RenderSession {
       return;
     }
     this.pending.delete(response.id);
-    if (response.type === 'error') entry.reject(new Error(response.payload.message));
+    if (response.type === 'error') entry.reject(new RenderWorkerError(response.payload));
     else entry.resolve(response);
   }
 
@@ -35,35 +47,34 @@ export class RenderSession {
   private send(request: RenderRequest): Promise<RenderResponse> {
     return new Promise((resolve, reject) => {
       this.pending.set(request.id, { resolve, reject });
-      if (request.type === 'init') this.worker.postMessage(request, [request.payload.canvas]);
-      else this.worker.postMessage(request);
+      this.worker.postMessage(request);
     });
   }
 
-  async init(canvas: OffscreenCanvas, width: number, height: number): Promise<void> {
-    await this.send({ id: this.nextId++, type: 'init', payload: { canvas, width, height } });
+  async init(width: number, height: number): Promise<void> {
+    await this.send({ id: this.nextId++, type: 'init', payload: { width, height } });
   }
 
-  async load(payload: SkeletonPayload): Promise<string> {
+  async load(payload: LoadPayload): Promise<LoadResponsePayload> {
     const response = await this.send({ id: this.nextId++, type: 'load', payload });
     if (response.type !== 'loaded') throw new Error('unexpected-response');
-    return response.payload.animation;
+    return response.payload;
   }
 
-  private async render(index: number, timeMs: number): Promise<ImageBitmap> {
-    const response = await this.send({ id: this.nextId++, type: 'render', payload: { index, timeMs } });
+  private async render(timeMs: number): Promise<ImageBitmap> {
+    const response = await this.send({ id: this.nextId++, type: 'render', payload: { timeMs } });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
 
+  /** 从 0 时刻起按 rAF 推进时间轴；返回停止函数 */
   play(onFrame: (frame: ImageBitmap) => void, onError: (error: Error) => void): () => void {
     let stopped = false;
-    let index = 0;
     const startedAt = performance.now();
 
     const loop = async () => {
       while (!stopped) {
-        const frame = await this.render(index++, performance.now() - startedAt);
+        const frame = await this.render(performance.now() - startedAt);
         if (stopped) {
           frame.close();
           return;

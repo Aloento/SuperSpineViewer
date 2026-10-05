@@ -11,11 +11,20 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "fetch:runtimes": "node scripts/fetch-runtimes.mjs",
+    "verify:runtimes": "node scripts/verify-runtimes.mjs",
+    "check:render": "node scripts/browser-check.mjs",
+    "check:app": "node scripts/app-check.mjs"
   },
   "dependencies": {
     "@esotericsoftware/spine-canvaskit": "4.2.120",
+    "@esotericsoftware/spine-canvaskit-43": "npm:@esotericsoftware/spine-canvaskit@4.3.13",
     "@esotericsoftware/spine-core": "4.2.120",
+    "@esotericsoftware/spine-core-40": "npm:@esotericsoftware/spine-core@4.0.31",
+    "@esotericsoftware/spine-core-41": "npm:@esotericsoftware/spine-core@4.1.56",
+    "@esotericsoftware/spine-webgl-40": "npm:@esotericsoftware/spine-webgl@4.0.31",
+    "@esotericsoftware/spine-webgl-41": "npm:@esotericsoftware/spine-webgl@4.1.56",
     "@fluentui/react-components": "^9.74.9",
     "@fluentui/react-icons": "^2.0.343",
     "canvaskit-wasm": "0.39.1",

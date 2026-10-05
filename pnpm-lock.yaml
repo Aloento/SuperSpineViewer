@@ -169,9 +169,24 @@ importers:
       '@esotericsoftware/spine-canvaskit':
         specifier: 4.2.120
         version: 4.2.120
+      '@esotericsoftware/spine-canvaskit-43':
+        specifier: npm:@esotericsoftware/spine-canvaskit@4.3.13
+        version: '@esotericsoftware/spine-canvaskit@4.3.13'
       '@esotericsoftware/spine-core':
         specifier: 4.2.120
         version: 4.2.120
+      '@esotericsoftware/spine-core-40':
+        specifier: npm:@esotericsoftware/spine-core@4.0.31
+        version: '@esotericsoftware/spine-core@4.0.31'
+      '@esotericsoftware/spine-core-41':
+        specifier: npm:@esotericsoftware/spine-core@4.1.56
+        version: '@esotericsoftware/spine-core@4.1.56'
+      '@esotericsoftware/spine-webgl-40':
+        specifier: npm:@esotericsoftware/spine-webgl@4.0.31
+        version: '@esotericsoftware/spine-webgl@4.0.31'
+      '@esotericsoftware/spine-webgl-41':
+        specifier: npm:@esotericsoftware/spine-webgl@4.1.56
+        version: '@esotericsoftware/spine-webgl@4.1.56'
       '@fluentui/react-components':
         specifier: ^9.74.9
         version: 9.74.9(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(scheduler@0.28.0)
@@ -741,8 +756,26 @@ packages:
   '@esotericsoftware/spine-canvaskit@4.2.120':
     resolution: {integrity: sha512-5tVjMH4pzHLKy4RM5/bmDIScEcjNBquh0nGRDyN8CPj4qObtZOCmjXAjkXXA0+NUg0SRNnRpTXW+L26hPrwXGg==}
 
+  '@esotericsoftware/spine-canvaskit@4.3.13':
+    resolution: {integrity: sha512-1/Fal70N8LM2v1snxAUUSqVxB3ywdYGg3GSFyRbWMr9SXq28hxRv0HlTJYZFLJirayXS1Tkz1tLRrAxXu3M4bQ==}
+
+  '@esotericsoftware/spine-core@4.0.31':
+    resolution: {integrity: sha512-SiP87Xudw8qfg6t1Gv4NVoqP+Tw0eaCj1ApS+GXLdCvb/i5FNQevqEt4RgEvD8j1vJy+WVriPLMJYQSdaSehgA==}
+
+  '@esotericsoftware/spine-core@4.1.56':
+    resolution: {integrity: sha512-sJbqIof+yE7LbkImbJt2cHfYcGBqadABttx8RY3ggu4JCa0sZLGdh+tWwe0+aRoN/91VI0rGSgG16fmkZ7Hc8Q==}
+
   '@esotericsoftware/spine-core@4.2.120':
     resolution: {integrity: sha512-X62MPnfiZTWok4Wk5Q5DqaAUBUFypKpb94IVd1W/j4eLHhg0HH3tve4HvIlkgxDpls2NokHaAtzjxX12rJknOA==}
+
+  '@esotericsoftware/spine-core@4.3.13':
+    resolution: {integrity: sha512-iGs/40qOWSQYicABebDzFSwFOS1Nsm0dCCS8sGqbpVuThRKdLYeI1cVJpmATSpEmtcetEABTmh97NoBnt7XLDw==}
+
+  '@esotericsoftware/spine-webgl@4.0.31':
+    resolution: {integrity: sha512-G6j31+caQJck/4UN8TVaTKnU0RPysI7ECMkCxcXBGsTmv98m0O5Wx18YgeIf//Bg8KAO+mZ/DmwzeScwGG9HPA==}
+
+  '@esotericsoftware/spine-webgl@4.1.56':
+    resolution: {integrity: sha512-LNr/X4B81/rC96mzFV+L5LPnqaIj1v3RBCKTagmFlAd/2MtXcxwEatIQVPq487NigFwlrkvmxQuMpl1TRf3xxw==}
 
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
@@ -3790,7 +3823,26 @@ snapshots:
       '@esotericsoftware/spine-core': 4.2.120
       canvaskit-wasm: 0.39.1
 
+  '@esotericsoftware/spine-canvaskit@4.3.13':
+    dependencies:
+      '@esotericsoftware/spine-core': 4.3.13
+      canvaskit-wasm: 0.39.1
+
+  '@esotericsoftware/spine-core@4.0.31': {}
+
+  '@esotericsoftware/spine-core@4.1.56': {}
+
   '@esotericsoftware/spine-core@4.2.120': {}
+
+  '@esotericsoftware/spine-core@4.3.13': {}
+
+  '@esotericsoftware/spine-webgl@4.0.31':
+    dependencies:
+      '@esotericsoftware/spine-core': 4.0.31
+
+  '@esotericsoftware/spine-webgl@4.1.56':
+    dependencies:
+      '@esotericsoftware/spine-core': 4.1.56
 
   '@floating-ui/core@1.8.0':
     dependencies:

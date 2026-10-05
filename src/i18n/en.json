@@ -10,6 +10,10 @@
   },
   "status": {
     "version": "Spine version",
+    "runtime": "Runtime",
+    "backend": "Backend",
+    "bones": "Bones",
+    "animations": "Animations",
     "animation": "Animation",
     "canvas": "Canvas",
     "playing": "Playing"
@@ -27,12 +31,18 @@
     "missingSkeleton": "No skeleton file found (.skel or .json)",
     "missingAtlas": "No atlas file found (.atlas)",
     "unknownVersion": "Could not detect the Spine version of the skeleton file",
-    "unsupportedVersion": "Spine {{version}} is not supported yet",
+    "runtime2d": "Assets exported from Spine 2.x are not supported — the 2D runtime is not wired up",
+    "runtimeLegacy": "The Spine 3.0–3.7 runtime is not wired up yet and will land in a later milestone",
+    "runtimeFuture": "Assets from newer Spine versions are not supported yet (closest available runtime: {{version}})",
+    "runtimeLegacyWithNearest": "The Spine 3.0–3.7 runtime is not wired up yet (closest available runtime: {{version}})",
+    "allCandidatesFailed": "Every candidate runtime failed to parse this skeleton: {{detail}}",
     "loadFailed": "Failed to load: {{detail}}",
-    "renderFailed": "Failed to render: {{detail}}"
+    "renderFailed": "Failed to render"
   },
   "warnings": {
-    "skeletonFallback": "{{from}} could not be parsed, falling back to {{to}}"
+    "skeletonFallback": "{{from}} could not be parsed, falling back to {{to}}",
+    "runtimeFallback": "Rendered with the Spine {{to}} runtime ({{pack}}) instead of {{from}}",
+    "runtimeRetry": "Fell back to the {{pack}} runtime: {{detail}}"
   },
   "footer": {
     "authorPrefix": "Author",

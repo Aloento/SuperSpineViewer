@@ -58,12 +58,12 @@ export default function App() {
         <FileDropZone onFiles={(files) => void renderer.loadFiles(files)} busy={renderer.status === 'loading'} />
 
         {renderer.error && (
-          <MessageBar intent="error">
+          <MessageBar intent="error" data-ssv="error">
             <MessageBarBody>{t(renderer.error.key, renderer.error.values)}</MessageBarBody>
           </MessageBar>
         )}
         {!renderer.error && renderer.warning && (
-          <MessageBar intent="warning">
+          <MessageBar intent="warning" data-ssv="warning">
             <MessageBarBody>{t(renderer.warning.key, renderer.warning.values)}</MessageBarBody>
           </MessageBar>
         )}
@@ -88,6 +88,16 @@ export default function App() {
           {renderer.animation && (
             <Text size={200}>
               {t('status.animation')}: {renderer.animation}
+            </Text>
+          )}
+          {renderer.packId && (
+            <Text size={200} className={styles.muted}>
+              {t('status.runtime')}: {renderer.runtime} / {renderer.packId} ({renderer.backend})
+            </Text>
+          )}
+          {renderer.bones !== null && (
+            <Text size={200} className={styles.muted}>
+              {t('status.bones')}: {renderer.bones} · {t('status.animations')}: {renderer.animationCount}
             </Text>
           )}
           <Text size={200}>

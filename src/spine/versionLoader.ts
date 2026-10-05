@@ -1,20 +1,14 @@
 import type { SpineVersionInfo } from './types';
+import { parseSpineVersion } from './runtimeMap';
 
-const versionPattern = /^(\d+)\.(\d+)\.(\d+)/;
+export { parseSpineVersion };
+
 const versionScanPattern = /(\d{1,3})\.(\d{1,3})\.(\d{1,3})/;
 const scanWindowBytes = 64;
 const modernHashBytes = 8;
 
-export function parseSpineVersion(raw: string): SpineVersionInfo | null {
-  const matched = versionPattern.exec(raw.trim());
-  if (!matched) return null;
-  return { major: Number(matched[1]), minor: Number(matched[2]), patch: Number(matched[3]), raw };
-}
-
-// M1 只接入 4.2 运行时，M2 再按版本映射多套 runtime
-export function isSupportedVersion(info: SpineVersionInfo): boolean {
-  return info.major === 4 && info.minor === 2;
-}
+// 2.x 导出的 json 没有 skeleton.spine 字段，也读不到二进制版本，只能按结构判定为 2.1
+const spine2xVersion: SpineVersionInfo = { raw: '2.1', major: 2, minor: 1, patch: 0 };
 
 interface Cursor {
   offset: number;
@@ -46,8 +40,10 @@ function detectFromJson(data: ArrayBuffer): SpineVersionInfo | null {
   try {
     const text = new TextDecoder().decode(data);
     const parsed: unknown = JSON.parse(text);
-    const spine = (parsed as { skeleton?: { spine?: unknown } }).skeleton?.spine;
-    return typeof spine === 'string' ? parseSpineVersion(spine) : null;
+    const skeleton = (parsed as { skeleton?: { spine?: unknown } }).skeleton;
+    if (typeof skeleton?.spine === 'string') return parseSpineVersion(skeleton.spine);
+    const bones = (parsed as { bones?: unknown }).bones;
+    return skeleton === undefined && Array.isArray(bones) ? spine2xVersion : null;
   } catch {
     return null;
   }
