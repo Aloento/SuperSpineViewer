@@ -1,0 +1,27 @@
+{
+  "app": {
+    "name": "Super Spine Viewer",
+    "tagline": "Load and export Spine animations in the browser, with transparent video"
+  },
+  "language": {
+    "label": "Language",
+    "zh": "中文",
+    "en": "English"
+  },
+  "status": {
+    "scaffolding": "M0 scaffold complete: UI / i18n / PWA skeleton ready"
+  },
+  "footer": {
+    "authorPrefix": "Author",
+    "starPrefix": "Enjoying this project?",
+    "starAction": "Star it on GitHub",
+    "github": "GitHub repository"
+  },
+  "export": {
+    "canvas": {
+      "sd": "SD 640×640",
+      "hd": "HD 1024×1024",
+      "uhd": "UHD 2048×2048"
+    }
+  }
+}

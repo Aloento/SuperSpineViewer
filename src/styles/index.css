@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    'Segoe UI', system-ui, -apple-system, 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+@layer base {
+  /* Tailwind 的 preflight 会把 button/input 的字体重置掉，FluentUI 需要继承自身令牌 */
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}

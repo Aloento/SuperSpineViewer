@@ -1,0 +1,27 @@
+{
+  "app": {
+    "name": "Super Spine Viewer",
+    "tagline": "在浏览器中加载并导出 Spine 动画，支持透明视频"
+  },
+  "language": {
+    "label": "语言",
+    "zh": "中文",
+    "en": "English"
+  },
+  "status": {
+    "scaffolding": "M0 脚手架已完成：UI / i18n / PWA 骨架就绪"
+  },
+  "footer": {
+    "authorPrefix": "作者",
+    "starPrefix": "喜欢本项目？",
+    "starAction": "去 GitHub 给个 Star",
+    "github": "GitHub 仓库"
+  },
+  "export": {
+    "canvas": {
+      "sd": "标清 640×640",
+      "hd": "高清 1024×1024",
+      "uhd": "超清 2048×2048"
+    }
+  }
+}

@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 dist-ssr/
+dev-dist/
 release/
 
 # Logs
@@ -12,6 +13,9 @@ npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Vite / TS build cache
+node_modules/.tmp/
 
 # Editor / IDE
 .vscode/*
