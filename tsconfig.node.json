@@ -16,5 +16,5 @@
     "noUncheckedSideEffectImports": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["vite.config.ts", "postcss.config.ts"]
+  "include": ["vite.config.ts"]
 }

@@ -1,9 +1,4 @@
-@import 'tailwindcss';
-
-@theme {
-  --font-sans:
-    'Segoe UI', system-ui, -apple-system, 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
-}
+@import "tailwindcss";
 
 html,
 body,
