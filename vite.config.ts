@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  // 渲染 Worker 里按版本动态 import spine 运行时，iife 不支持代码分割
+  worker: { format: 'es' },
   plugins: [
     react(),
     VitePWA({

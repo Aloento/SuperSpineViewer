@@ -14,8 +14,11 @@
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
+    "@esotericsoftware/spine-canvaskit": "4.2.120",
+    "@esotericsoftware/spine-core": "4.2.120",
     "@fluentui/react-components": "^9.74.9",
     "@fluentui/react-icons": "^2.0.343",
+    "canvaskit-wasm": "0.39.1",
     "i18next": "^26.4.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

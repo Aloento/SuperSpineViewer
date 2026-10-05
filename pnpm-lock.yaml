@@ -166,12 +166,21 @@ importers:
 
   .:
     dependencies:
+      '@esotericsoftware/spine-canvaskit':
+        specifier: 4.2.120
+        version: 4.2.120
+      '@esotericsoftware/spine-core':
+        specifier: 4.2.120
+        version: 4.2.120
       '@fluentui/react-components':
         specifier: ^9.74.9
         version: 9.74.9(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(scheduler@0.28.0)
       '@fluentui/react-icons':
         specifier: ^2.0.343
         version: 2.0.343(react@19.3.0)
+      canvaskit-wasm:
+        specifier: 0.39.1
+        version: 0.39.1
       i18next:
         specifier: ^26.4.2
         version: 26.4.2(typescript@7.0.2)
@@ -728,6 +737,12 @@ packages:
 
   '@emotion/hash@0.9.2':
     resolution: {integrity: sha512-MyqliTZGuOm3+5ZRSaaBGP3USLw6+EGykkwZns2EPC5g8jJ4z9OrdZY9apkl3+UP9+sdz76YYkwCKP5gh8iY3g==}
+
+  '@esotericsoftware/spine-canvaskit@4.2.120':
+    resolution: {integrity: sha512-5tVjMH4pzHLKy4RM5/bmDIScEcjNBquh0nGRDyN8CPj4qObtZOCmjXAjkXXA0+NUg0SRNnRpTXW+L26hPrwXGg==}
+
+  '@esotericsoftware/spine-core@4.2.120':
+    resolution: {integrity: sha512-X62MPnfiZTWok4Wk5Q5DqaAUBUFypKpb94IVd1W/j4eLHhg0HH3tve4HvIlkgxDpls2NokHaAtzjxX12rJknOA==}
 
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
@@ -1918,6 +1933,9 @@ packages:
       oxc-transform-react:
         optional: true
 
+  '@webgpu/types@0.1.21':
+    resolution: {integrity: sha512-pUrWq3V5PiSGFLeLxoGqReTZmiiXwY3jRkIG5sLLKjyqNxrwm/04b4nw7LSmGWJcKk59XOM/YRTUwOzo4MMlow==}
+
   acorn@8.18.0:
     resolution: {integrity: sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==}
     engines: {node: '>=0.4.0'}
@@ -2005,6 +2023,9 @@ packages:
 
   caniuse-lite@1.0.30001814:
     resolution: {integrity: sha512-/Uaf1lAzr59XcMpW0o96WoEfr+VXK2OX4U9AgFoiSHsVJ4HppnIFUjtYzsyDH2+tgANaQb2/oxYGwCPapN1FpA==}
+
+  canvaskit-wasm@0.39.1:
+    resolution: {integrity: sha512-Gy3lCmhUdKq+8bvDrs9t8+qf7RvcjuQn+we7vTVVyqgOVO1UVfHpsnBxkTZw+R4ApEJ3D5fKySl9TU11hmjl/A==}
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
@@ -3764,6 +3785,13 @@ snapshots:
 
   '@emotion/hash@0.9.2': {}
 
+  '@esotericsoftware/spine-canvaskit@4.2.120':
+    dependencies:
+      '@esotericsoftware/spine-core': 4.2.120
+      canvaskit-wasm: 0.39.1
+
+  '@esotericsoftware/spine-core@4.2.120': {}
+
   '@floating-ui/core@1.8.0':
     dependencies:
       '@floating-ui/utils': 0.2.12
@@ -5273,6 +5301,8 @@ snapshots:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.3.2(@types/node@26.6.4)(jiti@2.7.0)(terser@5.51.2)
 
+  '@webgpu/types@0.1.21': {}
+
   acorn@8.18.0: {}
 
   ajv@8.20.0:
@@ -5373,6 +5403,10 @@ snapshots:
       get-intrinsic: 1.3.0
 
   caniuse-lite@1.0.30001814: {}
+
+  canvaskit-wasm@0.39.1:
+    dependencies:
+      '@webgpu/types': 0.1.21
 
   commander@2.20.3: {}
 
