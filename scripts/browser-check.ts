@@ -1,7 +1,12 @@
 import { RenderSession, RenderWorkerError } from '../src/spine/renderSession';
 import { detectSpineVersion } from '../src/spine/versionLoader';
 
+// exts 缺省为 ['json','skel']；3.4–3.7 的官方 core 没有 SkeletonBinary，只跑 .json
 const CASES = [
+  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', files: ['spineboy', 'spineboy-mesh'], exts: ['json'] },
+  { dir: 'spineboy35', atlas: 'spineboy-pma.atlas', files: ['spineboy', 'spineboy-hover'], exts: ['json'] },
+  { dir: 'spineboy36', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'], exts: ['json'] },
+  { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'], exts: ['json'] },
   { dir: 'spineboy38', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'] },
   { dir: 'spineboy40', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'] },
   { dir: 'spineboy41', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'] },
@@ -10,9 +15,11 @@ const CASES = [
 ];
 
 const ERROR_CASES = [
-  { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', file: 'spineboy-pro.json', expect: 'allCandidatesFailed' },
-  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', file: 'spineboy.json', expect: 'runtimeUnavailable:legacy' },
+  // 3.4–3.7 的 .skel：自身 pack 已接入但官方 core 无 SkeletonBinary，回退到 3.8 会被 §12.6 校验挡住
+  { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', file: 'spineboy-pro.skel', expect: 'binaryUnsupported' },
+  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', file: 'spineboy.skel', expect: 'binaryUnsupported' },
   { dir: 'spineboy21', atlas: 'spineboy.atlas', file: 'spineboy.json', expect: 'runtimeUnavailable:2d' },
+  { dir: 'spineboy32', atlas: 'spineboy.atlas', file: 'spineboy.json', expect: 'runtimeUnavailable:legacy' },
 ];
 
 const out = document.getElementById('out')!;
@@ -80,7 +87,7 @@ async function main() {
   for (const spec of CASES) {
     const files = await gather(spec.dir, spec.atlas, spec.files);
     for (const name of spec.files) {
-      for (const ext of ['.json', '.skel']) {
+      for (const ext of (spec.exts ?? ['json', 'skel']).map((item) => `.${item}`)) {
         const skeletonFile = `${name}${ext}`;
         const label = `${spec.dir}/${skeletonFile}`;
         const session = new RenderSession();

@@ -11,11 +11,11 @@ const cacheDir = join(root, 'node_modules/.cache/fetch-runtimes');
 const raw = (ref, path) => `https://raw.githubusercontent.com/EsotericSoftware/spine-runtimes/${ref}/${path}`;
 
 const targets = [
-  // 3.4–3.7 属于 M2b：先固定来源与生成方式，需要时加 --enable-legacy 再生成
-  { id: '3.4', enabled: false, kind: 'global-script', ref: '3.4' },
-  { id: '3.5', enabled: false, kind: 'global-script', ref: '3.5' },
-  { id: '3.6', enabled: false, kind: 'global-script', ref: '3.6' },
-  { id: '3.7', enabled: false, kind: 'global-script', ref: '3.7' },
+  // 官方没有 3.4 分支，只有 tag 3.4.02
+  { id: '3.4', enabled: true, kind: 'global-script', ref: '3.4.02' },
+  { id: '3.5', enabled: true, kind: 'global-script', ref: '3.5' },
+  { id: '3.6', enabled: true, kind: 'global-script', ref: '3.6' },
+  { id: '3.7', enabled: true, kind: 'global-script', ref: '3.7' },
   { id: '3.8', enabled: true, kind: 'global-script', ref: '3.8' },
   {
     // 4.0 的 npm 包没有 "type": "module"，只能用 dist/iife 产物

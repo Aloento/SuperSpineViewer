@@ -12,7 +12,8 @@ const ASSETS = path.join(ROOT, 'spine-testfiles');
 
 // expect 为 [骨骼数, 动画数] 表示必须解析成功；
 // null 表示候选链必须为空（运行时未接入），code 为期望原因码；
-// 'info' 表示运行时未接入但存在相邻候选，解析结果只作信息输出，不计通过/失败。
+// 'info' 表示运行时未接入但存在相邻候选，解析结果只作信息输出，不计通过/失败；
+// 'no-binary' 表示候选链可用但官方 core 没有 SkeletonBinary（3.4–3.7，等 M2d 的自研读取器）。
 const CASES = {
   '3.8': { dir: 'spineboy38', atlas: 'spineboy-pma.atlas', files: { 'spineboy-pro': [64, 11], 'spineboy-ess': [18, 7] } },
   '4.0': { dir: 'spineboy40', atlas: 'spineboy-pma.atlas', files: { 'spineboy-pro': [67, 11], 'spineboy-ess': [18, 8] } },
@@ -20,11 +21,16 @@ const CASES = {
   '4.2': { dir: 'spineboy42', atlas: 'spineboy-pro.atlas', files: { 'spineboy-pro': [67, 11] } },
   '4.3': { dir: 'spineboy43', atlas: 'spineboy-pro.atlas', files: { 'spineboy-pro': [67, 11] } },
 
-  // M2b/M2c 待接入：只断言嗅探与候选链，回退解析结果作为信息输出
-  '3.7': { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', declared: 'legacy', files: { 'spineboy-pro': 'info', 'spineboy-ess': 'info' } },
-  '3.6': { dir: 'spineboy36', atlas: 'spineboy-pma.atlas', code: 'legacy', files: { 'spineboy-pro': null, 'spineboy-ess': null } },
-  '3.4': { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', code: 'legacy', files: { spineboy: null, 'spineboy-hover': null, 'spineboy-mesh': null } },
+  // M2b：3.4–3.7 只有官方 core（无 SkeletonBinary），.json 必须解析成功，.skel 断言「无二进制读取器」
+  '3.7': { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', files: { 'spineboy-pro': { json: [64, 11], skel: 'no-binary' }, 'spineboy-ess': { json: [18, 7], skel: 'no-binary' } } },
+  '3.6': { dir: 'spineboy36', atlas: 'spineboy-pma.atlas', files: { 'spineboy-pro': { json: [65, 11], skel: 'no-binary' }, 'spineboy-ess': { json: [19, 7], skel: 'no-binary' } } },
+  '3.5': { dir: 'spineboy35', atlas: 'spineboy-pma.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' }, 'spineboy-hover': { json: [37, 1], skel: 'no-binary' }, 'spineboy-mesh': { json: [28, 1], skel: 'no-binary' } } },
+  '3.4': { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' }, 'spineboy-hover': { json: [37, 1], skel: 'no-binary' }, 'spineboy-mesh': { json: [28, 1], skel: 'no-binary' } } },
+  // 3.3 没有独立运行时，按 §1.1 由 3.4 承接
+  '3.3': { dir: 'spineboy33', atlas: 'spineboy.atlas', declared: 'legacy', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
+  // M2c/M2d 待接入：只断言嗅探与候选链为空
   '3.2': { dir: 'spineboy32', atlas: 'spineboy.atlas', code: 'legacy', files: { spineboy: null } },
+  '3.1': { dir: 'spineboy31', atlas: 'spineboy.atlas', code: 'legacy', files: { spineboy: null } },
   '3.0': { dir: 'spineboy30', atlas: 'spineboy.atlas', code: 'legacy', files: { spineboy: null } },
   // 2.x 二进制没有版本字段，.skel 只能嗅探失败；json 按结构判定为 2.1
   '2.1': {
@@ -67,6 +73,7 @@ function describe(error) {
   return error.message ? error.message : String(error);
 }
 
+// DOM 全局兜底在 src/spine/runtimes/index.ts 入口，这里不再重复
 const server = await createServer({ root: ROOT, configFile: false, logLevel: 'error', server: { middlewareMode: true } });
 
 let failed = 0;
@@ -115,6 +122,16 @@ try {
             continue;
           }
 
+          if (expected === 'no-binary') {
+            if (sniffed === null) throw new Error('版本嗅探失败');
+            if (resolution.candidates.length === 0) throw new Error('候选链不应为空');
+            const binaryPack = await registry.loadRuntimePack(resolution.candidates[0].packId);
+            if (typeof binaryPack.core.SkeletonBinary === 'function') throw new Error('该版本已带 SkeletonBinary，期望值应改为解析结果');
+            passed++;
+            console.log('PASS ' + label.padEnd(26) + ' 官方无 SkeletonBinary，待 M2d 自研读取器 pack=' + binaryPack.id);
+            continue;
+          }
+
           if (sniffed === null) throw new Error('版本嗅探失败');
           if (spec.declared && resolution.declaredUnavailable !== spec.declared) {
             throw new Error('声明未接入码 ' + String(resolution.declaredUnavailable) + ' != ' + spec.declared);
@@ -131,7 +148,7 @@ try {
             for (const page of atlas.pages) page.setTexture(fakeTexture());
           }
 
-          const loader = new spine.AtlasAttachmentLoader(atlas);
+          const loader = new spine[pack.capabilities.attachmentLoader](atlas);
           const data =
             ext === '.skel'
               ? new spine.SkeletonBinary(loader).readSkeletonData(bytes)

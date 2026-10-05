@@ -34,7 +34,13 @@ export interface LoadResponsePayload {
   attempts: LoadAttempt[];
 }
 
-export type LoadErrorCode = 'unknownVersion' | 'runtimeUnavailable' | 'allCandidatesFailed' | 'loadCrashed';
+export type LoadErrorCode =
+  | 'unknownVersion'
+  | 'runtimeUnavailable'
+  | 'allCandidatesFailed'
+  /** 声明版本的官方 core 没有 SkeletonBinary（3.4–3.7），.skel 要等自研读取器 */
+  | 'binaryUnsupported'
+  | 'loadCrashed';
 
 export interface ErrorPayload {
   code: LoadErrorCode | 'renderFailed';

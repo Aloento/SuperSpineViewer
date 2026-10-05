@@ -1,3 +1,4 @@
+import './domShims';
 import { RuntimeError } from '../types';
 import type { FrameSource, FrameSourceContext, SpineRuntimeCapabilities, SpineRuntimePack } from '../types';
 import { CanvaskitFrameSource } from '../frameSources/canvaskit';
@@ -9,6 +10,8 @@ type Loader = () => Promise<Record<string, any>>;
 interface PackDefinition {
   id: string;
   backend: 'canvaskit' | 'webgl';
+  /** 官方 core 是否自带 SkeletonBinary；false 表示该 pack 只能读 .json（M2d 前） */
+  binary?: boolean;
   capabilities: SpineRuntimeCapabilities;
   load: Loader;
   /** 从模块导出中取出解析层命名空间 */
@@ -22,6 +25,7 @@ const WEBGL_CAPABILITY_BASE: SpineRuntimeCapabilities = {
   setupPoseMethod: 'setToSetupPose',
   yDown: false,
   synchronousAtlasLoader: false,
+  attachmentLoader: 'AtlasAttachmentLoader',
 };
 
 const CANVASKIT_CAPABILITY_BASE: SpineRuntimeCapabilities = {
@@ -29,15 +33,57 @@ const CANVASKIT_CAPABILITY_BASE: SpineRuntimeCapabilities = {
   setupPoseMethod: 'setToSetupPose',
   yDown: true,
   synchronousAtlasLoader: false,
+  attachmentLoader: 'AtlasAttachmentLoader',
 };
 
 const DEFINITIONS: PackDefinition[] = [
   {
-    // 3.8 由 scripts/fetch-runtimes.mjs 从官方分支 vendor 成 ESM，core 与 webgl 分成两个命名空间
+    // 3.4–3.8 由 scripts/fetch-runtimes.mjs 从官方分支 vendor 成 ESM，core 与 webgl 分成两个命名空间
     id: '3.8',
     backend: 'webgl',
     capabilities: { ...WEBGL_CAPABILITY_BASE, synchronousAtlasLoader: true },
     load: () => import('./generated/spine-3.8.js'),
+    core: (mod) => mod.default.spine,
+    renderer: (mod) => mod.default.webgl ?? mod.default.spine,
+  },
+  {
+    id: '3.7',
+    backend: 'webgl',
+    binary: false,
+    capabilities: { ...WEBGL_CAPABILITY_BASE, synchronousAtlasLoader: true },
+    load: () => import('./generated/spine-3.7.js'),
+    core: (mod) => mod.default.spine,
+    renderer: (mod) => mod.default.webgl ?? mod.default.spine,
+  },
+  {
+    id: '3.6',
+    backend: 'webgl',
+    binary: false,
+    capabilities: { ...WEBGL_CAPABILITY_BASE, synchronousAtlasLoader: true },
+    load: () => import('./generated/spine-3.6.js'),
+    core: (mod) => mod.default.spine,
+    renderer: (mod) => mod.default.webgl ?? mod.default.spine,
+  },
+  {
+    id: '3.5',
+    backend: 'webgl',
+    binary: false,
+    capabilities: { ...WEBGL_CAPABILITY_BASE, synchronousAtlasLoader: true },
+    load: () => import('./generated/spine-3.5.js'),
+    core: (mod) => mod.default.spine,
+    renderer: (mod) => mod.default.webgl ?? mod.default.spine,
+  },
+  {
+    // 3.4 的图集 attachment 加载器类名与 3.5+ 不同
+    id: '3.4',
+    backend: 'webgl',
+    binary: false,
+    capabilities: {
+      ...WEBGL_CAPABILITY_BASE,
+      synchronousAtlasLoader: true,
+      attachmentLoader: 'TextureAtlasAttachmentLoader',
+    },
+    load: () => import('./generated/spine-3.4.js'),
     core: (mod) => mod.default.spine,
     renderer: (mod) => mod.default.webgl ?? mod.default.spine,
   },
@@ -72,15 +118,20 @@ const DEFINITIONS: PackDefinition[] = [
   },
 ];
 
-const WEBGL_API = ['SceneRenderer', 'GLTexture', 'ManagedWebGLRenderingContext', 'OrthoCamera'];
+// 3.4 的 spine-webgl 还没有 ManagedWebGLRenderingContext，裸 gl 直接可用
+const WEBGL_API = ['SceneRenderer', 'GLTexture', 'OrthoCamera'];
 
 const cache = new Map<string, SpineRuntimePack>();
 
 function buildPack(definition: PackDefinition, mod: Record<string, any>): SpineRuntimePack {
   const core = definition.core(mod);
   const webgl = definition.renderer ? definition.renderer(mod) : undefined;
-  if (typeof core?.SkeletonJson !== 'function' || typeof core?.SkeletonBinary !== 'function') {
-    throw new RuntimeError('packLoadFailed', definition.id);
+  if (typeof core?.SkeletonJson !== 'function') throw new RuntimeError('packLoadFailed', definition.id);
+  if (definition.binary !== false && typeof core?.SkeletonBinary !== 'function') {
+    throw new RuntimeError('packLoadFailed', `${definition.id}:SkeletonBinary`);
+  }
+  if (typeof core?.[definition.capabilities.attachmentLoader] !== 'function') {
+    throw new RuntimeError('packLoadFailed', `${definition.id}:${definition.capabilities.attachmentLoader}`);
   }
   if (definition.backend === 'webgl') {
     const target = webgl ?? core;
@@ -127,6 +178,12 @@ export function loadedPackIds(): string[] {
   return [...cache.keys()];
 }
 
+/** 该 pack 的官方 core 是否自带 SkeletonBinary（3.4–3.7 没有，等 M2d 自研读取器） */
+export function packHasBinaryReader(id: string): boolean {
+  const definition = DEFINITIONS.find((item) => item.id === id);
+  return !!definition && definition.binary !== false;
+}
+
 export interface LoadOutcome {
   frameSource: FrameSource;
   /** 实际生效的候选版本与 pack id */
@@ -146,8 +203,15 @@ export async function loadFrameFromCandidates(
   context: FrameSourceContext,
 ): Promise<{ ok: true; outcome: LoadOutcome } | { ok: false; attempts: { candidate: RuntimeCandidate; error: RuntimeError }[] }> {
   const attempts: { candidate: RuntimeCandidate; error: RuntimeError }[] = [];
+  const wantsBinary = !context.skeletonFile.toLowerCase().endsWith('.json');
 
   for (const candidate of candidates) {
+    // 二进制骨架 + 无读取器的 pack 直接跳过，省掉必然失败的 chunk 下载
+    if (wantsBinary && !packHasBinaryReader(candidate.packId)) {
+      attempts.push({ candidate, error: new RuntimeError('binaryUnsupported', candidate.packId) });
+      continue;
+    }
+
     let pack: SpineRuntimePack;
     try {
       pack = await loadRuntimePack(candidate.packId);

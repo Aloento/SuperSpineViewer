@@ -1,4 +1,4 @@
-﻿// 端到端验证：加载首页，断言首屏不请求任何 spine 运行时 chunk，
+// 端到端验证：加载首页，断言首屏不请求任何 spine 运行时 chunk，
 // 再用真实 File 触发拖拽，按用例断言 UI 进入播放态（并确认画布真的画出了像素）或给出预期错误文案。
 // 用法: node scripts/app-check.mjs <baseUrl> <dir> <skeletonFile> <atlasFile> <playing|error> [预期文案]
 // 例: node scripts/app-check.mjs http://localhost:5173/ spineboy38 spineboy-pro.skel spineboy-pma.atlas playing
@@ -23,7 +23,7 @@ const language = process.env.SSV_LANG ?? '';
 const port = Number(process.env.SSV_PORT ?? 9334);
 const timeoutMs = Number(process.env.SSV_TIMEOUT ?? 180000);
 // 生产构建下才有独立 pack chunk，dev 下按需加载体现为动态模块请求
-const PACK_PATTERN = /spine-3\.8|spine-4\.0|spine-webgl-41|spine-canvaskit|dist-[A-Za-z0-9_-]+\.js|canvaskit|\.wasm/i;
+const PACK_PATTERN = /spine-3\.[4-8]|spine-4\.0|spine-webgl-41|spine-canvaskit|dist-[A-Za-z0-9_-]+\.js|canvaskit|\.wasm/i;
 
 const DROP_SCRIPT = [
   '(async () => {',

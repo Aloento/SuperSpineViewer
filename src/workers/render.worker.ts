@@ -33,6 +33,11 @@ async function loadSkeleton(id: number, payload: LoadPayload) {
 
   if (!outcome.ok) {
     const attempts = toAttempts(outcome.attempts);
+    // 声明版本自身的 pack 没有二进制读取器时，链式回退的细节只会淹没结论，直接报「该版本 .skel 未支持」
+    if (attempts[0]?.message.startsWith('binaryUnsupported')) {
+      post({ id, type: 'error', payload: { code: 'binaryUnsupported', message: payload.version.raw, attempts } });
+      return;
+    }
     post({ id, type: 'error', payload: { code: 'allCandidatesFailed', message: joinAttempts(attempts), attempts } });
     return;
   }

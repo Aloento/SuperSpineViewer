@@ -11,9 +11,10 @@ export function validateSkeletonData(data: any, expected: SpineVersionInfo): Ske
   if (bones <= 0) throw new RuntimeError('parseInvalid', 'bones=0');
   if (animations <= 0) throw new RuntimeError('parseInvalid', 'animations=0');
 
+  // 官方 spineboy-mesh 一类骨架的 skeleton width/height 就是 0，只能要求是有限数
   const width: number = data?.width ?? 0;
   const height: number = data?.height ?? 0;
-  if (!(width > 0) || !(height > 0)) throw new RuntimeError('parseInvalid', 'bounds=0');
+  if (!Number.isFinite(width) || !Number.isFinite(height)) throw new RuntimeError('parseInvalid', 'bounds=NaN');
 
   const declared = String(data?.version ?? '');
   if (declared) {

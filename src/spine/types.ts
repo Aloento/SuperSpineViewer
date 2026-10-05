@@ -53,6 +53,8 @@ export interface FrameSource {
 /** 运行时错误码：UI 按 code 决定文案 */
 export type RuntimeErrorCode =
   | 'parseInvalid'
+  /** 该版本的官方 JS 运行时没有 SkeletonBinary，.skel 要等自研读取器（§12.7） */
+  | 'binaryUnsupported'
   | 'missingFile'
   | 'backendUnavailable'
   | 'packLoadFailed'
@@ -79,8 +81,10 @@ export interface SpineRuntimeCapabilities {
   setupPoseMethod: 'setToSetupPose' | 'setupPose';
   /** canvaskit 后端 +y 朝屏幕上方 */
   yDown: boolean;
-  /** 3.8 的 TextureAtlas 在构造期同步回调 textureLoader */
+  /** 3.4–3.8 的 TextureAtlas 在构造期同步回调 textureLoader */
   synchronousAtlasLoader: boolean;
+  /** 3.4 的图集 attachment 加载器叫 TextureAtlasAttachmentLoader */
+  attachmentLoader: 'AtlasAttachmentLoader' | 'TextureAtlasAttachmentLoader';
 }
 
 /** 一个版本的运行时入口：core 为解析层命名空间，webgl 为渲染层（两者可能同名） */

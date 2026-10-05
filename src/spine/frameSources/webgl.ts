@@ -91,9 +91,13 @@ export class WebglFrameSource implements FrameSource {
         }
       }
 
-      const loader = new spine.AtlasAttachmentLoader(atlas);
+      const loader = new spine[pack.capabilities.attachmentLoader](atlas);
       const bytes = context.files[context.skeletonFile];
       const isBinary = !context.skeletonFile.toLowerCase().endsWith('.json');
+      if (isBinary && typeof spine.SkeletonBinary !== 'function') {
+        // 官方 JS 的 SkeletonBinary 从 3.8 才有，3.4–3.7 要等 M2d 的自研读取器
+        throw new RuntimeError('binaryUnsupported', pack.id);
+      }
       data = isBinary
         ? new spine.SkeletonBinary(loader).readSkeletonData(new Uint8Array(bytes))
         : new spine.SkeletonJson(loader).readSkeletonData(new TextDecoder().decode(bytes));
@@ -115,8 +119,9 @@ export class WebglFrameSource implements FrameSource {
       const scale = Math.min(size.width / data.width, size.height / data.height) * 0.9;
       skeleton.scaleX = scale;
       skeleton.scaleY = scale;
-      skeleton.x = -(data.x + data.width / 2) * scale;
-      skeleton.y = -(data.y + data.height / 2) * scale;
+      // 3.8 之前的 SkeletonData 没有 x/y（3.1–3.7 头部就没有这两个字段）
+      skeleton.x = -((data.x ?? 0) + data.width / 2) * scale;
+      skeleton.y = -((data.y ?? 0) + data.height / 2) * scale;
     }
 
     const state = new spine.AnimationState(new spine.AnimationStateData(data));

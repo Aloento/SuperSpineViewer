@@ -246,6 +246,9 @@ function fallbackWarning(
 function loadFailure(error: unknown): RendererMessage {
   if (error instanceof RenderWorkerError) {
     if (error.code === 'unknownVersion') return { key: 'errors.unknownVersion' };
+    if (error.code === 'binaryUnsupported') {
+      return { key: 'errors.binaryUnsupported', values: { version: error.message } };
+    }
     if (error.code === 'runtimeUnavailable') return unavailableMessage(error.message);
     if (error.code === 'allCandidatesFailed') {
       return { key: 'errors.allCandidatesFailed', values: { detail: error.message } };
