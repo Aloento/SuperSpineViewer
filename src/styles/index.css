@@ -18,6 +18,12 @@ body,
   background-position: 0 0, 0 10px, 10px -10px, -10px 0;
 }
 
+/* FluentProvider 的 className 会被复制到 body 下的浮层挂载节点（position:absolute; z-index:1000000），
+   任何高度类都会把它变成盖住整页的白幕，这里锁死为内容高度 */
+body > div[data-portal-node='true'] {
+  height: auto !important;
+}
+
 @layer base {
   /* Tailwind 的 preflight 会把 button/input 的字体重置掉，FluentUI 需要继承自身令牌 */
   button,

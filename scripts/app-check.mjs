@@ -168,7 +168,6 @@ await send('Network.enable');
 await send('Page.navigate', { url: base });
 
 // 素材从 Node 磁盘读取（dev/preview 都不必发布 spine-testfiles），与用户本地文件等价
-const fs = await import('node:fs');
 const dirFiles = () =>
   fs.readdirSync(path.join('spine-testfiles', args.dir)).filter((name) =>
     fs.statSync(path.join('spine-testfiles', args.dir, name)).isFile(),
