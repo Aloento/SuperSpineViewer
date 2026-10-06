@@ -61,7 +61,8 @@ export class RenderSession {
     return response.payload;
   }
 
-  private async render(timeMs: number): Promise<ImageBitmap> {
+  /** 渲染指定时刻的单帧；导出的逐帧编码与像素回归比对都走这条确定性路径 */
+  async frame(timeMs: number): Promise<ImageBitmap> {
     const response = await this.send({ id: this.nextId++, type: 'render', payload: { timeMs } });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
@@ -74,7 +75,7 @@ export class RenderSession {
 
     const loop = async () => {
       while (!stopped) {
-        const frame = await this.render(performance.now() - startedAt);
+        const frame = await this.frame(performance.now() - startedAt);
         if (stopped) {
           frame.close();
           return;

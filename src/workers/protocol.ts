@@ -20,7 +20,7 @@ export interface FramePayload {
 /** 加载成功后的实际结果：用了哪个 pack、骨骼与动画规模，供 UI 展示与排错 */
 export interface LoadResponsePayload {
   packId: string;
-  backend: 'canvaskit' | 'webgl';
+  backend: 'canvaskit' | 'webgl' | 'legacy';
   /** 生效的候选运行时版本 */
   runtimeVersion: string;
   /** 骨架文件内声明的版本 */

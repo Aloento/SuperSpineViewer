@@ -27,11 +27,11 @@ const CASES = {
   '3.5': { dir: 'spineboy35', atlas: 'spineboy-pma.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' }, 'spineboy-hover': { json: [37, 1], skel: 'no-binary' }, 'spineboy-mesh': { json: [28, 1], skel: 'no-binary' } } },
   '3.4': { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' }, 'spineboy-hover': { json: [37, 1], skel: 'no-binary' }, 'spineboy-mesh': { json: [28, 1], skel: 'no-binary' } } },
   // 3.3 没有独立运行时，按 §1.1 由 3.4 承接
-  '3.3': { dir: 'spineboy33', atlas: 'spineboy.atlas', declared: 'legacy', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
-  // M2c/M2d 待接入：只断言嗅探与候选链为空
-  '3.2': { dir: 'spineboy32', atlas: 'spineboy.atlas', code: 'legacy', files: { spineboy: null } },
-  '3.1': { dir: 'spineboy31', atlas: 'spineboy.atlas', code: 'legacy', files: { spineboy: null } },
-  '3.0': { dir: 'spineboy30', atlas: 'spineboy.atlas', code: 'legacy', files: { spineboy: null } },
+  '3.3': { dir: 'spineboy33', atlas: 'spineboy.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
+  // M2c：3.0–3.2 由自 vendor 的 3.1 pack 承接，官方 3.1 core 没有 SkeletonBinary
+  '3.2': { dir: 'spineboy32', atlas: 'spineboy.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
+  '3.1': { dir: 'spineboy31', atlas: 'spineboy.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
+  '3.0': { dir: 'spineboy30', atlas: 'spineboy.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
   // 2.x 二进制没有版本字段，.skel 只能嗅探失败；json 按结构判定为 2.1
   '2.1': {
     dir: 'spineboy21',
@@ -141,18 +141,28 @@ try {
           const pack = await registry.loadRuntimePack(resolution.candidates[0].packId);
           const spine = pack.core;
           const atlasText = fs.readFileSync(path.join(dir, spec.atlas), 'utf8').replace(/\r\n/g, '\n');
-          const atlas = pack.capabilities.synchronousAtlasLoader
-            ? new spine.TextureAtlas(atlasText, () => fakeTexture())
-            : new spine.TextureAtlas(atlasText);
-          if (!pack.capabilities.synchronousAtlasLoader) {
-            for (const page of atlas.pages) page.setTexture(fakeTexture());
+          let atlas;
+          let attachmentLoader;
+          let data;
+          if (pack.backend === 'legacy') {
+            // 3.1：Atlas 构造期同步回调 load(page, path)，贴图挂到 page.rendererObject
+            atlas = new spine.Atlas(atlasText, { load: (page) => { page.rendererObject = fakeTexture(); }, unload: () => {} });
+            attachmentLoader = new spine.AtlasAttachmentLoader(atlas);
+            const json = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'));
+            data = new spine.SkeletonJson(attachmentLoader).readSkeletonData(json);
+          } else {
+            atlas = pack.capabilities.synchronousAtlasLoader
+              ? new spine.TextureAtlas(atlasText, () => fakeTexture())
+              : new spine.TextureAtlas(atlasText);
+            if (!pack.capabilities.synchronousAtlasLoader) {
+              for (const page of atlas.pages) page.setTexture(fakeTexture());
+            }
+            attachmentLoader = new spine[pack.capabilities.attachmentLoader](atlas);
+            data =
+              ext === '.skel'
+                ? new spine.SkeletonBinary(attachmentLoader).readSkeletonData(bytes)
+                : new spine.SkeletonJson(attachmentLoader).readSkeletonData(fs.readFileSync(path.join(dir, file), 'utf8'));
           }
-
-          const loader = new spine[pack.capabilities.attachmentLoader](atlas);
-          const data =
-            ext === '.skel'
-              ? new spine.SkeletonBinary(loader).readSkeletonData(bytes)
-              : new spine.SkeletonJson(loader).readSkeletonData(fs.readFileSync(path.join(dir, file), 'utf8'));
 
           const summary = validateSkeletonData(data, sniffed);
 

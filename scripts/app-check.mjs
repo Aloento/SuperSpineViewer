@@ -23,7 +23,7 @@ const language = process.env.SSV_LANG ?? '';
 const port = Number(process.env.SSV_PORT ?? 9334);
 const timeoutMs = Number(process.env.SSV_TIMEOUT ?? 180000);
 // 生产构建下才有独立 pack chunk，dev 下按需加载体现为动态模块请求
-const PACK_PATTERN = /spine-3\.[4-8]|spine-4\.0|spine-webgl-41|spine-canvaskit|dist-[A-Za-z0-9_-]+\.js|canvaskit|\.wasm/i;
+const PACK_PATTERN = /spine-3\.(1|[4-8])|spine-4\.0|spine-webgl-41|spine-canvaskit|dist-[A-Za-z0-9_-]+\.js|canvaskit|\.wasm/i;
 
 const DROP_SCRIPT = [
   '(async () => {',

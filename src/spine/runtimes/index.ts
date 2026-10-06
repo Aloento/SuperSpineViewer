@@ -3,13 +3,14 @@ import { RuntimeError } from '../types';
 import type { FrameSource, FrameSourceContext, SpineRuntimeCapabilities, SpineRuntimePack } from '../types';
 import { CanvaskitFrameSource } from '../frameSources/canvaskit';
 import { WebglFrameSource } from '../frameSources/webgl';
+import { LegacyFrameSource } from '../frameSources/legacy';
 import type { RuntimeCandidate } from '../runtimeMap';
 
 type Loader = () => Promise<Record<string, any>>;
 
 interface PackDefinition {
   id: string;
-  backend: 'canvaskit' | 'webgl';
+  backend: 'canvaskit' | 'webgl' | 'legacy';
   /** 官方 core 是否自带 SkeletonBinary；false 表示该 pack 只能读 .json（M2d 前） */
   binary?: boolean;
   capabilities: SpineRuntimeCapabilities;
@@ -34,7 +35,23 @@ const CANVASKIT_CAPABILITY_BASE: SpineRuntimeCapabilities = {
   attachmentLoader: 'AtlasAttachmentLoader',
 };
 
+const LEGACY_CAPABILITY_BASE: SpineRuntimeCapabilities = {
+  setupPoseMethod: 'setToSetupPose',
+  yDown: true,
+  synchronousAtlasLoader: true,
+  attachmentLoader: 'AtlasAttachmentLoader',
+};
+
 const DEFINITIONS: PackDefinition[] = [
+  {
+    // 3.0–3.2 共用 3.1.07 的 spine-js（无渲染层），绘制走自研 CanvasKit frameSource
+    id: '3.1',
+    backend: 'legacy',
+    binary: false,
+    capabilities: LEGACY_CAPABILITY_BASE,
+    load: () => import('./generated/spine-3.1.js'),
+    core: (mod) => mod.default.spine,
+  },
   {
     // 3.4–3.8 由 scripts/fetch-runtimes.mjs 从官方分支 vendor 成 ESM，core 与 webgl 分成两个命名空间
     id: '3.8',
@@ -145,9 +162,9 @@ function buildPack(definition: PackDefinition, mod: Record<string, any>): SpineR
     core,
     webgl,
     async createFrameSource(context: FrameSourceContext): Promise<FrameSource> {
-      return definition.backend === 'canvaskit'
-        ? CanvaskitFrameSource.create(this, context)
-        : WebglFrameSource.create(this, context);
+      if (definition.backend === 'canvaskit') return CanvaskitFrameSource.create(this, context);
+      if (definition.backend === 'legacy') return LegacyFrameSource.create(this, context);
+      return WebglFrameSource.create(this, context);
     },
   };
 }
@@ -183,7 +200,7 @@ export interface LoadOutcome {
   /** 实际生效的候选版本与 pack id */
   version: string;
   packId: string;
-  backend: 'canvaskit' | 'webgl';
+  backend: 'canvaskit' | 'webgl' | 'legacy';
   /** 生效前失败的候选，用于 UI 说明回退过程 */
   attempts: { candidate: RuntimeCandidate; error: RuntimeError }[];
 }

@@ -169,14 +169,6 @@ export function useSpineRenderer(width: number, height: number) {
           status: 'error',
           error: nearest ? { key: 'errors.runtimeFuture', values: { version: nearest } } : { key: 'errors.runtimeFuture' },
         });
-      } else if (unavailable === 'legacy') {
-        setState({
-          ...initialState,
-          status: 'error',
-          error: nearest
-            ? { key: 'errors.runtimeLegacyWithNearest', values: { version: nearest } }
-            : { key: 'errors.runtimeLegacy' },
-        });
       } else if (failure) {
         setState({ ...initialState, status: 'error', error: failure });
       } else if (unknownVersion) {
@@ -258,9 +250,10 @@ function loadFailure(error: unknown): RendererMessage {
 }
 
 function unavailableMessage(code: string): RendererMessage {
-  if (code === '2d') return { key: 'errors.runtime2d' };
   if (code === 'future') return { key: 'errors.runtimeFuture', values: {} };
-  return { key: 'errors.runtimeLegacy' };
+  if (code === '2d') return { key: 'errors.runtime2d' };
+  // 3.0–4.3 都有候选运行时，走到这里说明原因码不认识，保留原始码便于排查
+  return { key: 'errors.loadFailed', values: { detail: code } };
 }
 
 function detail(error: unknown): string {

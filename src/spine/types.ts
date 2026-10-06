@@ -35,10 +35,10 @@ export interface SkeletonSummary {
 
 /**
  * 统一取帧后端：解析成功的骨架 + 渲染管线，调用方按时间轴取 RGBA 帧。
- * canvaskit 与 webgl 两条实现，接口一致；解析在 create 阶段完成，失败抛 RuntimeError。
+ * canvaskit / webgl / legacy（3.1 自研）三条实现，接口一致；解析在 create 阶段完成，失败抛 RuntimeError。
  */
 export interface FrameSource {
-  readonly backend: 'canvaskit' | 'webgl';
+  readonly backend: 'canvaskit' | 'webgl' | 'legacy';
   /** 解析摘要 */
   summary(): SkeletonSummary;
   /** 动画名，顺序与运行时一致；首项为默认播放动画 */
@@ -88,7 +88,7 @@ export interface SpineRuntimeCapabilities {
 /** 一个版本的运行时入口：core 为解析层命名空间，webgl 为渲染层（两者可能同名） */
 export interface SpineRuntimePack {
   id: string;
-  backend: 'canvaskit' | 'webgl';
+  backend: 'canvaskit' | 'webgl' | 'legacy';
   capabilities: SpineRuntimeCapabilities;
   core: any;
   webgl?: any;

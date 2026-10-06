@@ -1,5 +1,5 @@
 /* 由 scripts/fetch-runtimes.mjs 生成，请勿手工修改。 */
-/* 来源：cache:spine-webgl-3.8.js */
+/* 来源：https://raw.githubusercontent.com/EsotericSoftware/spine-runtimes/3.8/spine-ts/build/spine-webgl.js */
 /**
  * Spine Runtimes License Agreement
  * Last updated May 1, 2019. Replaces all prior versions.

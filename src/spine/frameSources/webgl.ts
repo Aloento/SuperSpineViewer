@@ -6,15 +6,51 @@ import { validateSkeletonData } from '../runtimes/validate';
 async function decodeImage(files: Record<string, ArrayBuffer>, name: string) {
   const key = findFile(files, name);
   if (!key) throw new RuntimeError('missingFile', name);
-  return createImageBitmap(new Blob([files[key]], { type: 'image/png' }));
+  const bitmap = await createImageBitmap(new Blob([files[key]], { type: 'image/png' }));
+  // Chrome 把 ImageBitmap 上传到纹理时无条件预乘 alpha（UNPACK_PREMULTIPLY_ALPHA_WEBGL 无效），
+  // 而渲染器按直通 alpha 走 SRC_ALPHA 混合，等于乘两次导致半透明区域偏暗；
+  // 画布源配合 UNPACK_PREMULTIPLY_ALPHA_WEBGL=false 才能保持直通 alpha
+  const decoded = new OffscreenCanvas(bitmap.width, bitmap.height);
+  const context = decoded.getContext('2d', { alpha: true })!;
+  context.drawImage(bitmap, 0, 0);
+  bitmap.close();
+  return decoded;
+}
+
+/**
+ * 3.4–3.8 的 PolygonBatcher 用单一 blendFunc，alpha 通道也跟着乘 SRC_ALPHA，
+ * 透明背景上第一帧的 alpha 会退化成 α²，透明导出整幅偏淡。
+ * 官方 4.0 改为 blendFuncSeparate 并按混合模式给 alpha 源函数，这里给旧版本补齐同一规则。
+ */
+function fixupAlphaBlending(renderer: any, gl: WebGLRenderingContext) {
+  const batcher = renderer.batcher;
+  if (!batcher || typeof batcher.begin !== 'function' || typeof batcher.srcBlend !== 'number') return;
+  const begin = batcher.begin.bind(batcher);
+  const setBlendMode = batcher.setBlendMode.bind(batcher);
+  const apply = () => {
+    const srcAlpha =
+      batcher.srcBlend === gl.DST_COLOR ? gl.ONE_MINUS_SRC_ALPHA
+      : batcher.srcBlend === gl.ONE ? gl.ONE_MINUS_SRC_COLOR
+      : gl.ONE;
+    gl.blendFuncSeparate(batcher.srcBlend, batcher.dstBlend, srcAlpha, batcher.dstBlend);
+  };
+  batcher.begin = (shader: any) => {
+    begin(shader);
+    apply();
+  };
+  batcher.setBlendMode = (src: number, dst: number) => {
+    const drawing = batcher.isDrawing;
+    setBlendMode(src, dst);
+    if (drawing) apply();
+  };
 }
 
 /** 3.8 的 TextureAtlas 在构造期同步回调 textureLoader，所以要先解码好所有 page 图片。 */
-function syncTextureLoader(webgl: any, gl: WebGLRenderingContext, bitmaps: Map<string, ImageBitmap>) {
+function syncTextureLoader(webgl: any, gl: WebGLRenderingContext, images: Map<string, OffscreenCanvas>) {
   return (pageName: string) => {
-    const bitmap = bitmaps.get(pageName.toLowerCase());
-    if (!bitmap) throw new RuntimeError('missingFile', pageName);
-    return new webgl.GLTexture(gl, bitmap);
+    const image = images.get(pageName.toLowerCase());
+    if (!image) throw new RuntimeError('missingFile', pageName);
+    return new webgl.GLTexture(gl, image);
   };
 }
 
@@ -82,11 +118,11 @@ export class WebglFrameSource implements FrameSource {
     let data: any;
     try {
       if (pack.capabilities.synchronousAtlasLoader) {
-        const bitmaps = new Map<string, ImageBitmap>();
+        const images = new Map<string, OffscreenCanvas>();
         for (const name of atlasPageNames(atlasText)) {
-          bitmaps.set(name.toLowerCase(), await decodeImage(context.files, name));
+          images.set(name.toLowerCase(), await decodeImage(context.files, name));
         }
-        atlas = new spine.TextureAtlas(atlasText, syncTextureLoader(webgl, gl, bitmaps));
+        atlas = new spine.TextureAtlas(atlasText, syncTextureLoader(webgl, gl, images));
       } else {
         atlas = new spine.TextureAtlas(atlasText);
         for (const page of atlas.pages) {
@@ -117,15 +153,6 @@ export class WebglFrameSource implements FrameSource {
     const physics = spine.Physics?.update;
     const updateWorld = () => skeleton.updateWorldTransform(physics);
     skeleton[pack.capabilities.setupPoseMethod]();
-    // 正交相机以世界原点为中心、+y 向上，因此把包围盒中心平移到原点即可居中
-    if (data.width > 0 && data.height > 0) {
-      const scale = Math.min(size.width / data.width, size.height / data.height) * 0.9;
-      skeleton.scaleX = scale;
-      skeleton.scaleY = scale;
-      // 3.8 之前的 SkeletonData 没有 x/y（3.1–3.7 头部就没有这两个字段）
-      skeleton.x = -((data.x ?? 0) + data.width / 2) * scale;
-      skeleton.y = -((data.y ?? 0) + data.height / 2) * scale;
-    }
 
     const state = new spine.AnimationState(new spine.AnimationStateData(data));
     state.setAnimation(0, animations[0], true);
@@ -133,6 +160,15 @@ export class WebglFrameSource implements FrameSource {
     updateWorld();
 
     const renderer = new webgl.SceneRenderer(canvas, gl);
+    fixupAlphaBlending(renderer, gl);
+    // 3.4–3.6 的 Bone 根变换不消费 skeleton.scaleX/scaleY（3.7 才并入根骨骼），
+    // 缩放平移统一走正交相机，各版本才能得到一致的取景结果
+    if (data.width > 0 && data.height > 0) {
+      const scale = Math.min(size.width / data.width, size.height / data.height) * 0.9;
+      renderer.camera.position.x = (data.x ?? 0) + data.width / 2;
+      renderer.camera.position.y = (data.y ?? 0) + data.height / 2;
+      renderer.camera.zoom = 1 / scale;
+    }
 
     return new WebglFrameSource({ gl, renderer, skeleton, state, updateWorld, atlas, size, summary, animations });
   }
@@ -165,11 +201,30 @@ export class WebglFrameSource implements FrameSource {
     this.renderer.end();
     this.gl.readPixels(0, 0, width, height, this.gl.RGBA, this.gl.UNSIGNED_BYTE, this.pixels);
 
-    // readPixels 自底向上，ImageData 自顶向下
+    // readPixels 自底向上，ImageData 自顶向下；且 GL 帧缓冲始终按预乘存储，
+    // 而 ImageData 约定直通 alpha，需要反预乘，否则半透明区域会比实际暗
     const row = width * 4;
     for (let y = 0; y < height; y++) {
       const src = (height - 1 - y) * row;
-      this.flipped.set(this.pixels.subarray(src, src + row), y * row);
+      const dst = y * row;
+      for (let x = 0; x < row; x += 4) {
+        const alpha = this.pixels[src + x + 3];
+        this.flipped[dst + x + 3] = alpha;
+        if (alpha >= 255) {
+          this.flipped[dst + x] = this.pixels[src + x];
+          this.flipped[dst + x + 1] = this.pixels[src + x + 1];
+          this.flipped[dst + x + 2] = this.pixels[src + x + 2];
+        } else if (alpha === 0) {
+          this.flipped[dst + x] = 0;
+          this.flipped[dst + x + 1] = 0;
+          this.flipped[dst + x + 2] = 0;
+        } else {
+          const inv = 255 / alpha;
+          this.flipped[dst + x] = this.pixels[src + x] * inv;
+          this.flipped[dst + x + 1] = this.pixels[src + x + 1] * inv;
+          this.flipped[dst + x + 2] = this.pixels[src + x + 2] * inv;
+        }
+      }
     }
     return createImageBitmap(new ImageData(this.flipped, width, height));
   }

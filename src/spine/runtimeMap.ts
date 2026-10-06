@@ -5,8 +5,8 @@ export type { SpineVersionInfo };
 /** 运行时 pack 未接入的原因码：UI 文案按 code 分支，避免匹配硬编码字符串 */
 export type UnavailableRuntimeCode = 'legacy' | '2d' | 'future';
 
-/** 已接入运行时的版本区间（M2b：3.4–4.3；3.0–3.3 与 2.x 在 M2c/M2d 接入） */
-export const RUNTIME_RANGE = { min: { major: 3, minor: 4 }, max: { major: 4, minor: 3 } };
+/** 已接入运行时的版本区间（M2c：3.0–4.3，其中 3.0–3.2 由 3.1 pack 承接；2.x 不接） */
+export const RUNTIME_RANGE = { min: { major: 3, minor: 0 }, max: { major: 4, minor: 3 } };
 
 export interface RuntimeVersionSpec {
   raw: string;
@@ -24,6 +24,7 @@ export const RUNTIME_VERSIONS: readonly RuntimeVersionSpec[] = [
   { raw: '3.6.0', packId: '3.6' },
   { raw: '3.5.0', packId: '3.5' },
   { raw: '3.4.0', packId: '3.4' },
+  { raw: '3.1.0', packId: '3.1' },
 ];
 
 export function parseSpineVersion(raw: string): SpineVersionInfo | null {
