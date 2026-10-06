@@ -19,19 +19,24 @@ export interface FramePayload {
   timeMs: number;
   /** 播放循环每帧带最新的用户变换，避免与 setTransform 消息并发渲染 */
   transform?: TransformPayload;
+  /** true 走预览快路径（GPU 直传，可能是预乘 alpha）；导出与像素回归不带此位，保持直通 alpha */
+  preview?: boolean;
 }
 
 export interface SeekPayload {
   timeMs: number;
+  preview?: boolean;
 }
 
 export interface SetAnimationPayload {
   animation: string;
   loop: boolean;
+  preview?: boolean;
 }
 
 export interface SetSkinPayload {
   skin: string;
+  preview?: boolean;
 }
 
 export interface TransformPayload {
@@ -97,7 +102,7 @@ export type RenderRequest =
   | { id: number; type: 'seek'; payload: SeekPayload }
   | { id: number; type: 'setAnimation'; payload: SetAnimationPayload }
   | { id: number; type: 'setSkin'; payload: SetSkinPayload }
-  | { id: number; type: 'setTransform'; payload: TransformPayload }
+  | { id: number; type: 'setTransform'; payload: TransformPayload & { preview?: boolean } }
   | { id: number; type: 'dispose' };
 
 export type EncodeRequest =

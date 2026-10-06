@@ -106,6 +106,9 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
   const durationsRef = useRef<Record<string, number>>({});
   const transformRef = useRef<TransformPayload>({ ...DEFAULT_TRANSFORM });
   const transformSeqRef = useRef(0);
+  /** 拖动进度条的合并状态：在途 seek 只保留最新目标 */
+  const seekBusyRef = useRef(false);
+  const seekPendingRef = useRef(0);
 
   const teardown = useCallback(() => {
     runRef.current += 1;
@@ -316,7 +319,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
       playingRef.current = true;
       setState((current) => ({ ...current, playing: true }));
       const run = runRef.current;
-      const frame = await session.seek(target);
+      const frame = await session.seek(target, true);
       if (run !== runRef.current) {
         frame.close();
         return;
@@ -345,7 +348,9 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     await playFrom(target);
   }, [playFrom, stopPlayback]);
 
-  /** 拖动进度条：总是先暂停再跳转，暂停态也立刻出画 */
+  /** 拖动进度条：总是先暂停再跳转，暂停态也立刻出画。
+   *  在途 seek 期间只记住最新目标，完成后直接跳过去，中间的滑杆值丢弃——
+   *  worker 单线程顺序渲染，逐值排队会让拖动明显滞后 */
   const seekTo = useCallback(
     async (timeMs: number) => {
       const session = sessionRef.current;
@@ -354,16 +359,28 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
       stopPlayback();
       setState((current) => ({ ...current, playing: false }));
       const run = runRef.current;
-      const frame = await session.seek(timeMs);
-      if (run !== runRef.current) {
-        frame.close();
-        return;
+      seekPendingRef.current = timeMs;
+      if (seekBusyRef.current) return;
+      seekBusyRef.current = true;
+      try {
+        let target = timeMs;
+        for (;;) {
+          const frame = await session.seek(target, true);
+          if (run !== runRef.current) {
+            frame.close();
+            break;
+          }
+          elapsedRef.current = target;
+          setState((current) => {
+            current.frame?.close();
+            return { ...current, frame, elapsedMs: target };
+          });
+          if (seekPendingRef.current === target) break;
+          target = seekPendingRef.current;
+        }
+      } finally {
+        seekBusyRef.current = false;
       }
-      elapsedRef.current = timeMs;
-      setState((current) => {
-        current.frame?.close();
-        return { ...current, frame, elapsedMs: timeMs };
-      });
     },
     [stopPlayback],
   );
@@ -374,7 +391,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     if (!session) return;
     stopPlayback();
     const run = runRef.current;
-    const frame = await session.setAnimation(animationRef.current, loopRef.current);
+    const frame = await session.setAnimation(animationRef.current, loopRef.current, true);
     if (run !== runRef.current) {
       frame.close();
       return;
@@ -423,7 +440,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     if (!session) return;
     setState((current) => ({ ...current, skin: name }));
     const run = runRef.current;
-    const frame = await session.setSkin(name);
+    const frame = await session.setSkin(name, true);
     if (run !== runRef.current) {
       frame.close();
       return;
@@ -449,7 +466,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     if (playingRef.current) return;
     const seq = ++transformSeqRef.current;
     const run = runRef.current;
-    const frame = await session.setTransform(next.offsetX, next.offsetY, next.scale);
+    const frame = await session.setTransform(next.offsetX, next.offsetY, next.scale, true);
     if (run !== runRef.current || seq !== transformSeqRef.current) {
       frame.close();
       return;

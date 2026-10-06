@@ -57,8 +57,11 @@ export interface FrameSource {
   seek(timeMs: number): void;
   /** 基础变换：画布像素偏移（+x 右、+y 上）与相对自动取景的额外缩放 */
   setTransform(offsetX: number, offsetY: number, scale: number): void;
-  /** 渲染 timeMs 时刻并读回 RGBA 像素（straight alpha）；帧所有权交给调用方，用完须 close */
+  /** 渲染 timeMs 时刻并读回 RGBA 像素（straight alpha）；帧所有权交给调用方，用完须 close。
+   *  导出与像素回归比对走这条确定性路径 */
   render(timeMs: number): Promise<ImageBitmap>;
+  /** 预览取帧：能走 GPU 就不过 CPU 读回，返回的位图可能是预乘 alpha；仅用于上屏显示 */
+  renderPreview(timeMs: number): Promise<ImageBitmap>;
   getSize(): FrameSize;
   /** 释放骨架、纹理、surface、GL context 等内部资源 */
   dispose(): void;

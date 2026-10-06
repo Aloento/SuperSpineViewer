@@ -2,6 +2,7 @@ import type { FrameSize, FrameSource, LoadAttempt } from '../spine/types';
 import { RuntimeError } from '../spine/types';
 import { loadFrameFromCandidates } from '../spine/runtimes';
 import { resolveRuntimeCandidates } from '../spine/runtimeMap';
+import { pickDefaultAnimation } from '../spine/frameSources/track';
 import type { LoadPayload, LoadResponsePayload, RenderRequest, RenderResponse, TransformPayload } from './protocol';
 
 let size: FrameSize = { width: 0, height: 0 };
@@ -47,8 +48,11 @@ async function loadSkeleton(id: number, payload: LoadPayload) {
   frameSource?.dispose();
   frameSource = outcome.outcome.frameSource;
   const summary = frameSource.summary();
-  const animation = frameSource.animations()[0] ?? '';
+  const animations = frameSource.animations();
   const animationDurations = frameSource.animationDurations();
+  // 时长为 0 的动画（如 spineboy 的 aim）当默认会让进度条失去量程，取首个非零时长动画
+  const animation = pickDefaultAnimation(animations, animationDurations);
+  if (animation && animation !== animations[0]) frameSource.setAnimation(animation, true);
   // summary.duration 只有 legacy 会填，其它后端按当前动画查时长表
   const animationDuration = animationDurations[animation] ?? summary.duration ?? 0;
   const response: LoadResponsePayload = {
@@ -59,7 +63,7 @@ async function loadSkeleton(id: number, payload: LoadPayload) {
     bones: summary.bones,
     animationCount: summary.animationCount,
     animation,
-    animations: frameSource.animations(),
+    animations,
     skin: '',
     skins: frameSource.skins(),
     animationDurations,
@@ -83,20 +87,25 @@ function joinAttempts(attempts: LoadAttempt[]): string {
   return attempts.map((attempt) => `${attempt.version}/${attempt.packId} ${attempt.message}`).join(' | ');
 }
 
-async function renderFrame(id: number, timeMs: number, transform?: TransformPayload) {
+async function renderFrame(id: number, timeMs: number, transform?: TransformPayload, preview?: boolean) {
   if (!frameSource) throw new RuntimeError('notLoaded');
   if (transform) frameSource.setTransform(transform.offsetX, transform.offsetY, transform.scale);
   lastTimeMs = timeMs;
-  const frame = await frameSource.render(timeMs);
+  const frame = preview ? await frameSource.renderPreview(timeMs) : await frameSource.render(timeMs);
   post({ id, type: 'frame', payload: { timeMs, frame } }, [frame]);
 }
 
 /** 控件改动（跳转/换动画/换皮肤/变换）统一回一帧新渲染的 frame，暂停态也能立刻反映 */
-async function controlFrame(id: number, apply: (source: FrameSource) => void, timeMs: number) {
+async function controlFrame(
+  id: number,
+  apply: (source: FrameSource) => void,
+  timeMs: number,
+  preview?: boolean,
+) {
   if (!frameSource) throw new RuntimeError('notLoaded');
   apply(frameSource);
   lastTimeMs = timeMs;
-  const frame = await frameSource.render(timeMs);
+  const frame = preview ? await frameSource.renderPreview(timeMs) : await frameSource.render(timeMs);
   post({ id, type: 'frame', payload: { timeMs, frame } }, [frame]);
 }
 
@@ -115,28 +124,33 @@ async function handle(request: RenderRequest) {
       break;
     case 'render':
       try {
-        await renderFrame(request.id, request.payload.timeMs, request.payload.transform);
+        await renderFrame(request.id, request.payload.timeMs, request.payload.transform, request.payload.preview);
       } catch (error) {
         post({ id: request.id, type: 'error', payload: { code: 'renderFailed', message: text(error), attempts: [] } });
       }
       break;
     case 'seek':
       try {
-        await controlFrame(request.id, (source) => source.seek(request.payload.timeMs), request.payload.timeMs);
+        await controlFrame(request.id, (source) => source.seek(request.payload.timeMs), request.payload.timeMs, request.payload.preview);
       } catch (error) {
         post({ id: request.id, type: 'error', payload: { code: 'renderFailed', message: text(error), attempts: [] } });
       }
       break;
     case 'setAnimation':
       try {
-        await controlFrame(request.id, (source) => source.setAnimation(request.payload.animation, request.payload.loop), 0);
+        await controlFrame(
+          request.id,
+          (source) => source.setAnimation(request.payload.animation, request.payload.loop),
+          0,
+          request.payload.preview,
+        );
       } catch (error) {
         post({ id: request.id, type: 'error', payload: { code: 'renderFailed', message: text(error), attempts: [] } });
       }
       break;
     case 'setSkin':
       try {
-        await controlFrame(request.id, (source) => source.setSkin(request.payload.skin), lastTimeMs);
+        await controlFrame(request.id, (source) => source.setSkin(request.payload.skin), lastTimeMs, request.payload.preview);
       } catch (error) {
         post({ id: request.id, type: 'error', payload: { code: 'renderFailed', message: text(error), attempts: [] } });
       }
@@ -147,6 +161,7 @@ async function handle(request: RenderRequest) {
           request.id,
           (source) => source.setTransform(request.payload.offsetX, request.payload.offsetY, request.payload.scale),
           lastTimeMs,
+          request.payload.preview,
         );
       } catch (error) {
         post({ id: request.id, type: 'error', payload: { code: 'renderFailed', message: text(error), attempts: [] } });

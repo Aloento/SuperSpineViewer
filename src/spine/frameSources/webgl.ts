@@ -1,7 +1,7 @@
 import { RuntimeError } from '../types';
 import type { FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, SpineRuntimePack } from '../types';
 import { readLegacySkeletonData } from '../binary/legacyBinary';
-import { writeTrackTime } from './track';
+import { track0, writeTrackTime } from './track';
 import { nonDefaultSkinNames } from './skins';
 import { atlasPageNames, findFile } from '../runtimes/files';
 import { validateSkeletonData } from '../runtimes/validate';
@@ -67,6 +67,7 @@ export class WebglFrameSource implements FrameSource {
   readonly backend = 'webgl' as const;
 
   private readonly gl: WebGLRenderingContext;
+  private readonly canvas: OffscreenCanvas;
   private readonly renderer: any;
   private readonly skeleton: any;
   private readonly state: any;
@@ -85,6 +86,7 @@ export class WebglFrameSource implements FrameSource {
 
   private constructor(args: {
     gl: WebGLRenderingContext;
+    canvas: OffscreenCanvas;
     renderer: any;
     skeleton: any;
     state: any;
@@ -98,6 +100,7 @@ export class WebglFrameSource implements FrameSource {
     cam: CamParams;
   }) {
     this.gl = args.gl;
+    this.canvas = args.canvas;
     this.renderer = args.renderer;
     this.skeleton = args.skeleton;
     this.state = args.state;
@@ -203,7 +206,7 @@ export class WebglFrameSource implements FrameSource {
       cam = { pos: { x: 0, y: 0 }, zoom: 1 };
     }
 
-    return new WebglFrameSource({ gl, renderer, skeleton, state, updateWorld, atlas, size, summary, animations, skins, durations, cam });
+    return new WebglFrameSource({ gl, canvas, renderer, skeleton, state, updateWorld, atlas, size, summary, animations, skins, durations, cam });
   }
 
   private applyCamera(offsetX: number, offsetY: number, userScale: number) {
@@ -244,12 +247,12 @@ export class WebglFrameSource implements FrameSource {
 
   setAnimation(name: string, loop: boolean): void {
     this.state.setAnimation(0, name, loop);
-    writeTrackTime(this.state.getCurrent(0), 0);
+    writeTrackTime(track0(this.state), 0);
     this.lastMs = -1;
   }
 
   seek(timeMs: number): void {
-    writeTrackTime(this.state.getCurrent(0), timeMs / 1000);
+    writeTrackTime(track0(this.state), timeMs / 1000);
     this.lastMs = timeMs;
   }
 
@@ -257,8 +260,7 @@ export class WebglFrameSource implements FrameSource {
     this.applyCamera(offsetX, offsetY, scale);
   }
 
-  async render(timeMs: number): Promise<ImageBitmap> {
-    if (this.disposed) throw new RuntimeError('notLoaded');
+  private advanceAndDraw(timeMs: number) {
     const delta = this.lastMs < 0 ? 0 : Math.max(0, (timeMs - this.lastMs) / 1000);
     this.lastMs = timeMs;
 
@@ -275,6 +277,12 @@ export class WebglFrameSource implements FrameSource {
     this.renderer.begin();
     this.renderer.drawSkeleton(this.skeleton, false);
     this.renderer.end();
+  }
+
+  async render(timeMs: number): Promise<ImageBitmap> {
+    if (this.disposed) throw new RuntimeError('notLoaded');
+    this.advanceAndDraw(timeMs);
+    const { width, height } = this.size;
     this.gl.readPixels(0, 0, width, height, this.gl.RGBA, this.gl.UNSIGNED_BYTE, this.pixels);
 
     // readPixels 自底向上，ImageData 自顶向下；且 GL 帧缓冲始终按预乘存储，
@@ -303,6 +311,13 @@ export class WebglFrameSource implements FrameSource {
       }
     }
     return createImageBitmap(new ImageData(this.flipped, width, height));
+  }
+
+  // 预览不过 CPU：GL 绘制缓冲直接转位图（预乘 alpha），省掉 readPixels + 反预乘全幅拷贝
+  async renderPreview(timeMs: number): Promise<ImageBitmap> {
+    if (this.disposed) throw new RuntimeError('notLoaded');
+    this.advanceAndDraw(timeMs);
+    return this.canvas.transferToImageBitmap();
   }
 
   getSize(): FrameSize {

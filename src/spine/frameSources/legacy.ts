@@ -5,7 +5,7 @@ import { findFile } from '../runtimes/files';
 import { readLegacy31SkeletonData } from '../binary/legacyBinary31';
 import { validateSkeletonData } from '../runtimes/validate';
 import { loadCanvasKit } from './canvaskit';
-import { writeTrackTime } from './track';
+import { track0, writeTrackTime } from './track';
 import { nonDefaultSkinNames } from './skins';
 
 const REGION_TRIANGLES = [0, 1, 2, 2, 3, 0];
@@ -34,6 +34,8 @@ export class LegacyFrameSource implements FrameSource {
   private readonly spine: any;
   private readonly ck: CanvasKit;
   private readonly surface: Surface;
+  private readonly canvas: OffscreenCanvas;
+  private readonly glSurface: boolean;
   private skeleton: any = null;
   private state: any = null;
   private summaryInfo: SkeletonSummary = { declaredVersion: '', bones: 0, animationCount: 0, width: 0, height: 0, duration: 0 };
@@ -60,10 +62,19 @@ export class LegacyFrameSource implements FrameSource {
   private lastMs = -1;
   private disposed = false;
 
-  private constructor(spine: any, ck: CanvasKit, surface: Surface, size: FrameSize) {
+  private constructor(
+    spine: any,
+    ck: CanvasKit,
+    surface: Surface,
+    size: FrameSize,
+    canvas: OffscreenCanvas,
+    glSurface: boolean,
+  ) {
     this.spine = spine;
     this.ck = ck;
     this.surface = surface;
+    this.canvas = canvas;
+    this.glSurface = glSurface;
     this.size = size;
     this.imageInfo = {
       width: size.width,
@@ -81,17 +92,19 @@ export class LegacyFrameSource implements FrameSource {
     const ck = await loadCanvasKit();
     const size = { width: context.width, height: context.height };
 
+    const canvas = new OffscreenCanvas(size.width, size.height);
     let surface: Surface | null = null;
     try {
-      surface = ck.MakeWebGLCanvasSurface(new OffscreenCanvas(size.width, size.height) as unknown as HTMLCanvasElement);
+      surface = ck.MakeWebGLCanvasSurface(canvas as unknown as HTMLCanvasElement) ?? null;
     } catch {
       surface = null;
     }
     // worker 拿不到 WebGL 时退回 CPU 光栅 surface，与 canvaskit 后端同策略
+    const glSurface = surface !== null;
     surface ??= ck.MakeSurface(size.width, size.height);
     if (!surface) throw new RuntimeError('backendUnavailable');
 
-    const source = new LegacyFrameSource(spine, ck, surface, size);
+    const source = new LegacyFrameSource(spine, ck, surface, size, canvas, glSurface);
     // 3.1 的骨骼世界变换在 flipY != yDown 时翻转 y；导出数据的 y 朝上，canvas 语义取朝下
     spine.Bone.yDown = true;
 
@@ -276,12 +289,12 @@ export class LegacyFrameSource implements FrameSource {
   setAnimation(name: string, loop: boolean): void {
     // 3.1 的 setAnimation 收 Animation 对象，按名字要用 setAnimationByName
     this.state.setAnimationByName(0, name, loop);
-    writeTrackTime(this.state.getCurrent(0), 0);
+    writeTrackTime(track0(this.state), 0);
     this.lastMs = -1;
   }
 
   seek(timeMs: number): void {
-    writeTrackTime(this.state.getCurrent(0), timeMs / 1000);
+    writeTrackTime(track0(this.state), timeMs / 1000);
     this.lastMs = timeMs;
   }
 
@@ -294,8 +307,7 @@ export class LegacyFrameSource implements FrameSource {
     this.translateY = height / 2 + (this.baseTY - height / 2) * scale - offsetY;
   }
 
-  async render(timeMs: number): Promise<ImageBitmap> {
-    if (this.disposed) throw new RuntimeError('notLoaded');
+  private advanceAndDraw(timeMs: number) {
     const delta = this.lastMs < 0 ? 0 : Math.max(0, (timeMs - this.lastMs) / 1000);
     this.lastMs = timeMs;
 
@@ -307,10 +319,23 @@ export class LegacyFrameSource implements FrameSource {
     canvas.clear(this.ck.TRANSPARENT);
     this.drawSkeleton(canvas);
     this.surface.flush();
-    canvas.readPixels(0, 0, this.imageInfo, this.pixels);
+  }
+
+  async render(timeMs: number): Promise<ImageBitmap> {
+    if (this.disposed) throw new RuntimeError('notLoaded');
+    this.advanceAndDraw(timeMs);
+    this.surface.getCanvas().readPixels(0, 0, this.imageInfo, this.pixels);
 
     this.pixelView.set(pixelsView(this.pixels));
     return createImageBitmap(new ImageData(this.pixelView, this.imageInfo.width, this.imageInfo.height));
+  }
+
+  // 预览快路径同 canvaskit：CPU surface 时退回直通 alpha 的 render()
+  async renderPreview(timeMs: number): Promise<ImageBitmap> {
+    if (this.disposed) throw new RuntimeError('notLoaded');
+    if (!this.glSurface) return this.render(timeMs);
+    this.advanceAndDraw(timeMs);
+    return this.canvas.transferToImageBitmap();
   }
 
   private drawSkeleton(canvas: any) {

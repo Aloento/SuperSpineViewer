@@ -70,40 +70,60 @@ export class RenderSession {
 
   /** 渲染指定时刻的单帧；导出的逐帧编码与像素回归比对都走这条确定性路径。
    *  transform 只在预览播放中传入，导出会话不传，保证导出像素不受预览偏移/缩放影响 */
-  async frame(timeMs: number, transform?: TransformPayload | null): Promise<ImageBitmap> {
+  async frame(
+    timeMs: number,
+    transform?: TransformPayload | null,
+    preview?: boolean,
+  ): Promise<ImageBitmap> {
     const response = await this.send({
       id: this.nextId++,
       type: 'render',
-      payload: transform ? { timeMs, transform } : { timeMs },
+      payload: { timeMs, ...(transform ? { transform } : {}), ...(preview ? { preview: true } : {}) },
     });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
 
   /** 跳到 timeMs 并渲染该时刻帧；预览暂停态拖动进度条走这里 */
-  async seek(timeMs: number): Promise<ImageBitmap> {
-    const response = await this.send({ id: this.nextId++, type: 'seek', payload: { timeMs } });
+  async seek(timeMs: number, preview?: boolean): Promise<ImageBitmap> {
+    const response = await this.send({
+      id: this.nextId++,
+      type: 'seek',
+      payload: preview ? { timeMs, preview: true } : { timeMs },
+    });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
 
   /** 切换动画（重置到 0）并渲染首帧 */
-  async setAnimation(animation: string, loop: boolean): Promise<ImageBitmap> {
-    const response = await this.send({ id: this.nextId++, type: 'setAnimation', payload: { animation, loop } });
+  async setAnimation(animation: string, loop: boolean, preview?: boolean): Promise<ImageBitmap> {
+    const response = await this.send({
+      id: this.nextId++,
+      type: 'setAnimation',
+      payload: preview ? { animation, loop, preview: true } : { animation, loop },
+    });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
 
   /** 切换皮肤并在当前时刻原地重绘 */
-  async setSkin(skin: string): Promise<ImageBitmap> {
-    const response = await this.send({ id: this.nextId++, type: 'setSkin', payload: { skin } });
+  async setSkin(skin: string, preview?: boolean): Promise<ImageBitmap> {
+    const response = await this.send({
+      id: this.nextId++,
+      type: 'setSkin',
+      payload: preview ? { skin, preview: true } : { skin },
+    });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
 
   /** 更新基础偏移/缩放并在当前时刻原地重绘 */
-  async setTransform(offsetX: number, offsetY: number, scale: number): Promise<ImageBitmap> {
-    const response = await this.send({ id: this.nextId++, type: 'setTransform', payload: { offsetX, offsetY, scale } });
+  async setTransform(offsetX: number, offsetY: number, scale: number, preview?: boolean): Promise<ImageBitmap> {
+    const response = await this.send({
+      id: this.nextId++,
+      type: 'setTransform',
+      payload: { offsetX, offsetY, scale, ...(preview ? { preview: true } : {}) },
+    });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
@@ -122,28 +142,43 @@ export class RenderSession {
     let stopped = false;
     const startedAt = performance.now();
     const offset = options?.startOffsetMs ?? 0;
+    /** 在途的帧请求；停止时负责把它 close 掉，防止位图泄漏 */
+    let pending: Promise<ImageBitmap> | null = null;
+    let rafId = 0;
 
-    const loop = async () => {
+    // 流水线：请求先发进 worker，再等 vsync，渲染耗时与显示等待重叠，
+    // 循环周期从「渲染+vsync 之和」变成两者的最大值；同时最多一个在途请求
+    const tick = async () => {
       while (!stopped) {
         const elapsed = performance.now() - startedAt + offset;
         options?.onElapsed?.(elapsed);
-        const frame = await this.frame(elapsed, options?.getTransform?.() ?? null);
+        const request = this.frame(elapsed, options?.getTransform?.() ?? null, true);
+        pending = request;
+        await new Promise<void>((resolve) => {
+          rafId = requestAnimationFrame(() => resolve());
+        });
+        if (stopped) {
+          void request.then((frame) => frame.close());
+          return;
+        }
+        const frame = await request;
+        pending = null;
         if (stopped) {
           frame.close();
           return;
         }
         onFrame(frame);
-        // 等一次 vsync，避免预览帧率超过显示刷新率
-        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
       }
     };
 
-    loop().catch((error: unknown) => {
+    void tick().catch((error: unknown) => {
       if (!stopped) onError(error instanceof Error ? error : new Error(String(error)));
     });
 
     return () => {
       stopped = true;
+      cancelAnimationFrame(rafId);
+      void pending?.then((frame) => frame.close()).catch(() => undefined);
     };
   }
 

@@ -6,6 +6,7 @@ import type { FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, Spine
 import { createFileReader } from '../runtimes/files';
 import { validateSkeletonData } from '../runtimes/validate';
 import { nonDefaultSkinNames } from './skins';
+import { track0, writeTrackTime } from './track';
 
 let ckPromise: Promise<CanvasKit> | null = null;
 
@@ -48,7 +49,9 @@ export class CanvaskitFrameSource implements FrameSource {
   readonly backend = 'canvaskit' as const;
 
   private readonly ck: CanvasKit;
+  private readonly canvas: OffscreenCanvas;
   private readonly surface: Surface;
+  private readonly glSurface: boolean;
   private readonly renderer: { render(canvas: any, skeleton: any): void };
   private readonly drawable: any;
   private readonly atlas: any;
@@ -66,7 +69,9 @@ export class CanvaskitFrameSource implements FrameSource {
 
   private constructor(args: {
     ck: CanvasKit;
+    canvas: OffscreenCanvas;
     surface: Surface;
+    glSurface: boolean;
     renderer: { render(canvas: any, skeleton: any): void };
     drawable: any;
     atlas: any;
@@ -78,7 +83,9 @@ export class CanvaskitFrameSource implements FrameSource {
     fit: FitParams;
   }) {
     this.ck = args.ck;
+    this.canvas = args.canvas;
     this.surface = args.surface;
+    this.glSurface = args.glSurface;
     this.renderer = args.renderer;
     this.drawable = args.drawable;
     this.atlas = args.atlas;
@@ -107,10 +114,12 @@ export class CanvaskitFrameSource implements FrameSource {
 
     let surface: Surface | null = null;
     try {
-      surface = ck.MakeWebGLCanvasSurface(canvas as unknown as HTMLCanvasElement);
+      surface = ck.MakeWebGLCanvasSurface(canvas as unknown as HTMLCanvasElement) ?? null;
     } catch {
       surface = null;
     }
+    // 预览快路径只有 GPU surface 能 transferToImageBitmap；CPU 光栅 surface 仍走 readPixels
+    const glSurface = surface !== null;
     surface ??= ck.MakeSurface(size.width, size.height);
     if (!surface) throw new RuntimeError('backendUnavailable');
 
@@ -145,7 +154,7 @@ export class CanvaskitFrameSource implements FrameSource {
     drawable.animationState.setAnimation(0, animations[0], true);
 
     return new CanvaskitFrameSource({
-      ck, surface, renderer: new helpers.SkeletonRenderer(ck),
+      ck, canvas, surface, glSurface, renderer: new helpers.SkeletonRenderer(ck),
       drawable, atlas, size, summary, animations, skins, durations, fit,
     });
   }
@@ -193,21 +202,13 @@ export class CanvaskitFrameSource implements FrameSource {
   setAnimation(name: string, loop: boolean): void {
     const state = this.drawable.animationState;
     state.setAnimation(0, name, loop);
-    const entry = state.getCurrent(0);
-    if (entry) {
-      entry.trackTime = 0;
-      entry.animationLast = -1;
-    }
+    writeTrackTime(track0(state), 0);
     this.lastMs = -1;
   }
 
   seek(timeMs: number): void {
     const state = this.drawable.animationState;
-    const entry = state.getCurrent(0);
-    if (entry) {
-      entry.trackTime = timeMs / 1000;
-      entry.animationLast = -1;
-    }
+    writeTrackTime(track0(state), timeMs / 1000);
     this.lastMs = timeMs;
   }
 
@@ -215,8 +216,7 @@ export class CanvaskitFrameSource implements FrameSource {
     this.applyTransform(offsetX, offsetY, scale);
   }
 
-  async render(timeMs: number): Promise<ImageBitmap> {
-    if (this.disposed) throw new RuntimeError('notLoaded');
+  private advance(timeMs: number) {
     const delta = this.lastMs < 0 ? 0 : Math.max(0, (timeMs - this.lastMs) / 1000);
     this.lastMs = timeMs;
     this.drawable.update(delta);
@@ -225,10 +225,22 @@ export class CanvaskitFrameSource implements FrameSource {
     canvas.clear(this.ck.TRANSPARENT);
     this.renderer.render(canvas, this.drawable);
     this.surface.flush();
-    canvas.readPixels(0, 0, this.imageInfo, this.pixels);
+  }
 
+  async render(timeMs: number): Promise<ImageBitmap> {
+    if (this.disposed) throw new RuntimeError('notLoaded');
+    this.advance(timeMs);
+    this.surface.getCanvas().readPixels(0, 0, this.imageInfo, this.pixels);
     this.pixelView.set(pixelsView(this.pixels));
     return createImageBitmap(new ImageData(this.pixelView, this.imageInfo.width, this.imageInfo.height));
+  }
+
+  // 预览不过 CPU：transferToImageBitmap 留在 GPU 上，省掉 4MB readPixels + 两次全幅拷贝
+  async renderPreview(timeMs: number): Promise<ImageBitmap> {
+    if (this.disposed) throw new RuntimeError('notLoaded');
+    if (!this.glSurface) return this.render(timeMs);
+    this.advance(timeMs);
+    return this.canvas.transferToImageBitmap();
   }
 
   getSize(): FrameSize {

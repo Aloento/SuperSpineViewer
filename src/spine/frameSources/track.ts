@@ -13,3 +13,16 @@ export function writeTrackTime(entry: any, seconds: number): void {
     entry.lastTime = -1;
   }
 }
+
+/** 4.2/4.3 canvaskit 的 AnimationState 删掉了 getCurrent，只剩 tracks 数组；其余版本走方法 */
+export function track0(state: any): any {
+  return state.getCurrent ? state.getCurrent(0) : state.tracks?.[0] ?? null;
+}
+
+/** 默认动画优先 idle；否则首个非零时长动画。
+ *  spineboy 的 [0] 是零时长的 aim，直接取会让进度条失去量程、播放一步到点 */
+export function pickDefaultAnimation(animations: string[], durations: Record<string, number>): string {
+  const idle = animations.find((name) => name.toLowerCase() === 'idle');
+  if (idle !== undefined) return idle;
+  return animations.find((name) => (durations[name] ?? 0) > 0) ?? animations[0] ?? '';
+}
