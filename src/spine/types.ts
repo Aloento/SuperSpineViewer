@@ -45,6 +45,18 @@ export interface FrameSource {
   summary(): SkeletonSummary;
   /** 动画名，顺序与运行时一致；首项为默认播放动画 */
   animations(): string[];
+  /** 皮肤名，顺序与运行时一致；首项为默认皮肤（无皮肤时为 ['']） */
+  skins(): string[];
+  /** 各动画时长（秒），key 为动画名；进度条切换动画时据此更新最大值 */
+  animationDurations(): Record<string, number>;
+  /** 切换皮肤（'' 表示默认皮肤）；立即生效，下一帧渲染体现 */
+  setSkin(name: string): void;
+  /** 切换动画并重置播放时间到 0；loop 控制是否循环 */
+  setAnimation(name: string, loop: boolean): void;
+  /** 跳转到 timeMs（动画时间，毫秒）；重置动画状态到该时刻 */
+  seek(timeMs: number): void;
+  /** 基础变换：画布像素偏移（+x 右、+y 上）与相对自动取景的额外缩放 */
+  setTransform(offsetX: number, offsetY: number, scale: number): void;
   /** 渲染 timeMs 时刻并读回 RGBA 像素（straight alpha）；帧所有权交给调用方，用完须 close */
   render(timeMs: number): Promise<ImageBitmap>;
   getSize(): FrameSize;

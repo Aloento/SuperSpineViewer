@@ -1,6 +1,8 @@
 import { RuntimeError } from '../types';
 import type { FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, SpineRuntimePack } from '../types';
 import { readLegacySkeletonData } from '../binary/legacyBinary';
+import { writeTrackTime } from './track';
+import { nonDefaultSkinNames } from './skins';
 import { atlasPageNames, findFile } from '../runtimes/files';
 import { validateSkeletonData } from '../runtimes/validate';
 
@@ -18,8 +20,7 @@ async function decodeImage(files: Record<string, ArrayBuffer>, name: string) {
   return decoded;
 }
 
-/**
- * 3.4–3.8 的 PolygonBatcher 用单一 blendFunc，alpha 通道也跟着乘 SRC_ALPHA，
+/** 3.4–3.8 的 PolygonBatcher 用单一 blendFunc，alpha 通道也跟着乘 SRC_ALPHA，
  * 透明背景上第一帧的 alpha 会退化成 α²，透明导出整幅偏淡。
  * 官方 4.0 改为 blendFuncSeparate 并按混合模式给 alpha 源函数，这里给旧版本补齐同一规则。
  */
@@ -55,6 +56,13 @@ function syncTextureLoader(webgl: any, gl: WebGLRenderingContext, images: Map<st
   };
 }
 
+/** 自动取景的基准相机参数；OrthoCamera 投影为 screen_px = viewport/2 + (world − pos)/zoom（GL y 朝上） */
+interface CamParams {
+  pos: { x: number; y: number };
+  /** 自动取景时的 zoom（= 1/baseScale） */
+  zoom: number;
+}
+
 export class WebglFrameSource implements FrameSource {
   readonly backend = 'webgl' as const;
 
@@ -69,6 +77,9 @@ export class WebglFrameSource implements FrameSource {
   private readonly size: FrameSize;
   private readonly summaryInfo: SkeletonSummary;
   private readonly animationNames: string[];
+  private readonly skinNames: string[];
+  private readonly durations: Record<string, number>;
+  private readonly cam: CamParams;
   private lastMs = -1;
   private disposed = false;
 
@@ -82,6 +93,9 @@ export class WebglFrameSource implements FrameSource {
     size: FrameSize;
     summary: SkeletonSummary;
     animations: string[];
+    skins: string[];
+    durations: Record<string, number>;
+    cam: CamParams;
   }) {
     this.gl = args.gl;
     this.renderer = args.renderer;
@@ -92,6 +106,9 @@ export class WebglFrameSource implements FrameSource {
     this.size = args.size;
     this.summaryInfo = args.summary;
     this.animationNames = args.animations;
+    this.skinNames = args.skins;
+    this.durations = args.durations;
+    this.cam = args.cam;
     this.pixels = new Uint8Array(args.size.width * args.size.height * 4);
     this.flipped = new Uint8ClampedArray(args.size.width * args.size.height * 4);
   }
@@ -152,6 +169,9 @@ export class WebglFrameSource implements FrameSource {
     const summary = validateSkeletonData(data, context.version);
     const animations: string[] = (data.animations ?? []).map((item: any) => String(item.name));
     if (animations.length === 0) throw new RuntimeError('noAnimation');
+    const skins = nonDefaultSkinNames(data);
+    const durations: Record<string, number> = {};
+    for (const item of data.animations ?? []) durations[String(item.name)] = Number(item.duration) || 0;
 
     const skeleton = new spine.Skeleton(data);
     const physics = spine.Physics?.update;
@@ -165,16 +185,37 @@ export class WebglFrameSource implements FrameSource {
 
     const renderer = new webgl.SceneRenderer(canvas, gl);
     fixupAlphaBlending(renderer, gl);
+
     // 3.4–3.6 的 Bone 根变换不消费 skeleton.scaleX/scaleY（3.7 才并入根骨骼），
     // 缩放平移统一走正交相机，各版本才能得到一致的取景结果
+    let cam: CamParams;
     if (data.width > 0 && data.height > 0) {
-      const scale = Math.min(size.width / data.width, size.height / data.height) * 0.9;
-      renderer.camera.position.x = (data.x ?? 0) + data.width / 2;
-      renderer.camera.position.y = (data.y ?? 0) + data.height / 2;
-      renderer.camera.zoom = 1 / scale;
+      const baseScale = Math.min(size.width / data.width, size.height / data.height) * 0.9;
+      const pos = { x: (data.x ?? 0) + data.width / 2, y: (data.y ?? 0) + data.height / 2 };
+      renderer.camera.position.x = pos.x;
+      renderer.camera.position.y = pos.y;
+      renderer.camera.zoom = 1 / baseScale;
+      cam = { pos, zoom: 1 / baseScale };
+    } else {
+      renderer.camera.position.x = 0;
+      renderer.camera.position.y = 0;
+      renderer.camera.zoom = 1;
+      cam = { pos: { x: 0, y: 0 }, zoom: 1 };
     }
 
-    return new WebglFrameSource({ gl, renderer, skeleton, state, updateWorld, atlas, size, summary, animations });
+    return new WebglFrameSource({ gl, renderer, skeleton, state, updateWorld, atlas, size, summary, animations, skins, durations, cam });
+  }
+
+  private applyCamera(offsetX: number, offsetY: number, userScale: number) {
+    const { cam, renderer } = this;
+    const c = renderer.camera.position;
+    // 屏幕 px = viewport/2 + (world − pos)/zoom，GL 世界 +y 与屏幕“上”同向；
+    // 内容放大 userScale 倍 → 每世界像素 ×userScale → zoom ÷userScale（围绕画布中心缩放）；
+    // 内容向屏幕 (offsetX, offsetY↑) 平移 → 相机中心反向移动 zoom′×偏移
+    const zoom = cam.zoom / userScale;
+    c.x = cam.pos.x - offsetX * zoom;
+    c.y = cam.pos.y - offsetY * zoom;
+    renderer.camera.zoom = zoom;
   }
 
   summary(): SkeletonSummary {
@@ -183,6 +224,37 @@ export class WebglFrameSource implements FrameSource {
 
   animations(): string[] {
     return this.animationNames;
+  }
+
+  skins(): string[] {
+    return this.skinNames.length > 0 ? this.skinNames : [''];
+  }
+
+  animationDurations(): Record<string, number> {
+    return this.durations;
+  }
+
+  setSkin(name: string): void {
+    if (!name) {
+      this.skeleton.setSkin(this.skeleton.data?.defaultSkin ?? null);
+      return;
+    }
+    this.skeleton.setSkinByName(name);
+  }
+
+  setAnimation(name: string, loop: boolean): void {
+    this.state.setAnimation(0, name, loop);
+    writeTrackTime(this.state.getCurrent(0), 0);
+    this.lastMs = -1;
+  }
+
+  seek(timeMs: number): void {
+    writeTrackTime(this.state.getCurrent(0), timeMs / 1000);
+    this.lastMs = timeMs;
+  }
+
+  setTransform(offsetX: number, offsetY: number, scale: number): void {
+    this.applyCamera(offsetX, offsetY, scale);
   }
 
   async render(timeMs: number): Promise<ImageBitmap> {

@@ -30,6 +30,22 @@
     "empty": "尚未加载骨架，请先拖入文件",
     "checkerboardHint": "棋盘格表示透明区域"
   },
+  "control": {
+    "play": "播放",
+    "pause": "暂停",
+    "progress": "播放进度",
+    "loop": "循环播放",
+    "animation": "动画",
+    "skin": "皮肤",
+    "skinDefault": "默认皮肤",
+    "transform": "骨架变换",
+    "offsetX": "偏移 X",
+    "offsetY": "偏移 Y",
+    "scale": "缩放",
+    "resetTransform": "复位变换",
+    "reset": "卸载",
+    "disabledHint": "加载骨架后即可使用播放与变换控制"
+  },
   "errors": {
     "missingSkeleton": "未找到骨架文件（.skel 或 .json）",
     "missingAtlas": "未找到图集文件（.atlas）",

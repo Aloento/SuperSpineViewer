@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { RenderSession } from '../spine/renderSession';
 import type { LoadInfo } from '../spine/useSpineRenderer';
 import { ExportClient } from './exportClient';
@@ -22,13 +22,24 @@ export interface ExportControls {
 
 const idleState: ExportState = { phase: 'idle', encoded: 0, total: 0, errorDetail: '' };
 
-/** 预览画布尺寸与导出尺寸无关，导出用独立渲染会话按导出分辨率逐帧渲染 */
+/** 预览画布尺寸与导出尺寸无关，导出用独立渲染会话按导出分辨率逐帧渲染。
+ *  编码 worker 跨导出复用（M3 遗留项）；渲染会话每轮新建——帧源动画状态是有累积的，
+ *  跨轮复用会带上上一轮的时序/物理速度，破坏确定性 */
 export function useExport(controls: ExportControls) {
   const [options, setOptions] = useState<ExportOptions>(() => ({ ...DEFAULTS }));
   const [state, setState] = useState<ExportState>(idleState);
   const cancelRef = useRef(false);
+  const clientRef = useRef<ExportClient | null>(null);
 
   const running = isRunning(state.phase);
+
+  useEffect(
+    () => () => {
+      clientRef.current?.dispose();
+      clientRef.current = null;
+    },
+    [],
+  );
 
   const start = useCallback(async () => {
     const info = controls.getLoadInfo();
@@ -49,8 +60,8 @@ export function useExport(controls: ExportControls) {
     controls.pausePlayback();
 
     // 导出会话与预览会话隔离：独立画布尺寸 + 时间轴从 0 确定性推进，锁定同一 pack
+    const client = (clientRef.current ??= new ExportClient());
     const session = new RenderSession();
-    const client = new ExportClient();
     let resumed = false;
     const resumePreview = () => {
       if (!resumed) {
@@ -62,7 +73,7 @@ export function useExport(controls: ExportControls) {
       client.onEvents({ onProgress });
       await session.init(width, height);
       if (cancelRef.current) throw CANCELLED;
-      await session.load({
+      const loaded = await session.load({
         files: info.files,
         skeletonFile: info.skeletonFile,
         atlasFile: info.atlasFile,
@@ -70,6 +81,11 @@ export function useExport(controls: ExportControls) {
         packOverride: info.packId,
       });
       if (cancelRef.current) throw CANCELLED;
+      // 导出会话默认播第一个动画；预览里换了动画的话按选中的来（重置到 0，仍确定性）
+      if (info.animation && info.animation !== loaded.animation) {
+        (await session.setAnimation(info.animation, true)).close();
+        if (cancelRef.current) throw CANCELLED;
+      }
       await client.configure({
         format: options.format,
         width,
@@ -109,7 +125,6 @@ export function useExport(controls: ExportControls) {
       setState(cancelled ? idleState : { ...idleState, phase: 'failed', errorDetail: detail(error) });
     } finally {
       session.dispose();
-      client.dispose();
     }
   }, [controls, options, state.phase]);
 

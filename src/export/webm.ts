@@ -1,4 +1,4 @@
-﻿// 透明 WebM 封装：视频轨 V_VP9 + AlphaMode=1，每帧 BlockGroup 内以
+// 透明 WebM 封装：视频轨 V_VP9 + AlphaMode=1，每帧 BlockGroup 内以
 // BlockAdditions/BlockMore/BlockAddID=1 携带 alpha 平面的独立 VP9 帧（I420，Y=alpha）。
 // 与 Chromium vpx_video_decoder / ffmpeg libvpx-vp9 yuva420p 的容器约定一致。
 
@@ -158,9 +158,13 @@ function blockGroup(relTimeMs: number, color: Uint8Array, alpha: Uint8Array, isK
 }
 
 export class WebmWriter {
-  private clusters: Uint8Array[] = [];
+  // 闭簇即转 Blob 存档（'bytes' 类型在支持的实现里零拷贝移交缓冲），
+  // finalize 只拼尾部结构，避免全片字节反复 concat 的双份内存峰值
+  private readonly parts: BlobPart[] = [];
   private clusterParts: Uint8Array[] = [];
   private cueTimes: number[] = [];
+  private clusterLens: number[] = [];
+  private clustersTotal = 0;
   private clusterOpen = false;
   private clusterTimeMs = 0;
   private lastTimeMs = 0;
@@ -188,26 +192,25 @@ export class WebmWriter {
 
   private closeCluster(): void {
     if (!this.clusterOpen) return;
-    this.clusters.push(elem(ID.cluster, concat([
+    const cluster = elem(ID.cluster, concat([
       fixedUint(ID.timecode, this.clusterTimeMs, 3),
       ...this.clusterParts,
-    ])));
+    ]));
+    this.parts.push(new Blob([cluster], { type: 'bytes' }));
+    this.clusterLens.push(cluster.length);
+    this.clustersTotal += cluster.length;
     this.clusterParts = [];
     this.clusterOpen = false;
   }
 
-  finalize(): Blob {
-    this.closeCluster();
+  /** SeekHead 的 Position 字段宽度固定，info/tracks 字节数与内容取值无关 → 头部布局一次算定 */
+  private layout() {
     const ebml = ebmlHeader();
     const info = elem(ID.info, concat([
       uint(ID.timecodeScale, 1_000_000),
       float(ID.duration, this.lastTimeMs + 1000 / this.fps),
     ]));
-    const tracks = elem(ID.tracks, trackEntry(this.width, this.height, this.fps));
-    const clustersTotal = this.clusters.reduce((n, c) => n + c.length, 0);
-
-    // Segment 用不定长（0x01ffffffffffffff），SeekHead 的 Position 依赖 SeekHead
-    // 自身尺寸 → 先以 0 占位构建取实际字节数，再回填，尺寸不随值变化
+    const tracks = this.tracksBlob();
     const buildSeekHead = (infoAt: number, tracksAt: number, cuesAt: number) =>
       elem(ID.seekHead, concat([
         ...([ID.info, ID.tracks, ID.cues] as const).map((target, i) =>
@@ -221,13 +224,25 @@ export class WebmWriter {
     // SeekHead/Cue 的 Position 均相对 Segment 数据起始（不含 Segment 头）
     const infoPos = seekHeadSize;
     const tracksPos = infoPos + info.length;
-    const cuesPos = tracksPos + tracks.length + clustersTotal;
+    const cuesPos = tracksPos + tracks.length + this.clustersTotal;
     const seekHead = buildSeekHead(infoPos, tracksPos, cuesPos);
     if (seekHead.length !== seekHeadSize) throw new Error('webm: SeekHead 尺寸不稳定');
+    return { ebml, info, tracks, seekHead };
+  }
 
+  private tracksBlob(): Uint8Array<ArrayBuffer> {
+    return elem(ID.tracks, trackEntry(this.width, this.height, this.fps));
+  }
+
+  finalize(): Blob {
+    this.closeCluster();
+    const { ebml, info, tracks, seekHead } = this.layout();
+
+    // Cue 位置相对 Segment 数据起始：seekHead + info + tracks + 之前各簇长度
+    let clustersAt = seekHead.length + info.length + tracks.length;
     const cueBody = this.cueTimes.map((t, i) => {
-      let position = tracksPos + tracks.length;
-      for (let j = 0; j < i; j++) position += this.clusters[j].length;
+      const position = clustersAt;
+      clustersAt += this.clusterLens[i];
       return elem(ID.cuePoint, concat([
         fixedUint(ID.cueTime, t, 3),
         elem(ID.cuePositions, concat([
@@ -238,14 +253,18 @@ export class WebmWriter {
     });
     const cues = elem(ID.cues, concat(cueBody));
 
-    const segmentBody = concat([
-      seekHead, info, tracks, ...this.clusters, cues,
-    ]);
-    const segment = concat([
-      fromNumbers(idBytes(ID.segment)),
-      fromNumbers([0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]),
-      segmentBody,
-    ]);
-    return new Blob([ebml, segment], { type: 'video/webm' });
+    return new Blob(
+      [
+        ebml,
+        fromNumbers(idBytes(ID.segment)),
+        fromNumbers([0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]),
+        seekHead,
+        info,
+        tracks,
+        ...this.parts,
+        cues,
+      ],
+      { type: 'video/webm' },
+    );
   }
 }

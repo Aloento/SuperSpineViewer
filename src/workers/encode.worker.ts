@@ -10,6 +10,8 @@ interface Chunk {
 let config: EncodeConfigPayload | null = null;
 let replyId = 0;
 let cancelled = false;
+// 代际号：configure/cancel 各自递增，旧一轮的编码器回调按代际丢弃，防止跨导出串帧
+let generation = 0;
 
 let colorEncoder: VideoEncoder | null = null;
 let alphaEncoder: VideoEncoder | null = null;
@@ -34,11 +36,12 @@ function fail(error: unknown) {
 }
 
 function reset() {
+  generation++;
   for (const encoder of [colorEncoder, alphaEncoder]) {
     try {
       if (encoder && encoder.state !== 'closed') encoder.close();
     } catch {
-      // 状态异常的编码器已无法关闭，忽略
+      // 队列非空或状态异常的编码器无法关闭，回调已由代际号隔离，忽略
     }
   }
   colorEncoder = null;
@@ -51,14 +54,16 @@ function reset() {
   config = null;
 }
 
-function onColorChunk(chunk: EncodedVideoChunk) {
-  colorQueue.push({ key: chunk.type === 'key', data: copy(chunk) });
+function onChunk(gen: number, queue: Chunk[], chunk: EncodedVideoChunk) {
+  // 取消后旧编码器的迟到回调不得写进新一轮导出的队列
+  if (gen !== generation) return;
+  queue.push({ key: chunk.type === 'key', data: copy(chunk) });
   pumpPairs();
 }
 
-function onAlphaChunk(chunk: EncodedVideoChunk) {
-  alphaQueue.push({ key: chunk.type === 'key', data: copy(chunk) });
-  pumpPairs();
+function onEncodeError(gen: number, error: unknown) {
+  if (gen !== generation) return;
+  fail(error);
 }
 
 function copy(chunk: EncodedVideoChunk): Uint8Array {
@@ -84,13 +89,22 @@ function encoderConfig(payload: EncodeConfigPayload, bitrate: number): VideoEnco
 }
 
 function configure(payload: EncodeConfigPayload) {
+  reset();
   config = payload;
   cancelled = false;
   keyframeEvery = Math.max(1, Math.round(payload.fps * 2));
 
   if (payload.format !== 'vp9') return;
-  colorEncoder = new VideoEncoder({ output: onColorChunk, error: fail });
-  alphaEncoder = new VideoEncoder({ output: onAlphaChunk, error: fail });
+  // reset 已推进代际，编码器回调绑定本轮代际：取消关闭旧编码器后，其迟到回调即被丢弃
+  const gen = generation;
+  colorEncoder = new VideoEncoder({
+    output: (chunk) => onChunk(gen, colorQueue, chunk),
+    error: (error) => onEncodeError(gen, error),
+  });
+  alphaEncoder = new VideoEncoder({
+    output: (chunk) => onChunk(gen, alphaQueue, chunk),
+    error: (error) => onEncodeError(gen, error),
+  });
   // alpha 是单通道灰度平面，信息量远低于色彩流，一半码率足够
   colorEncoder.configure(encoderConfig(payload, payload.bitrate));
   alphaEncoder.configure(encoderConfig(payload, Math.round(payload.bitrate / 2)));
@@ -109,16 +123,19 @@ function pixelsOf(frame: ImageBitmap): Uint8ClampedArray {
   return ctx.getImageData(0, 0, width, height).data;
 }
 
-/** 直通 RGBA 字节 + alpha 平面（I420：Y=alpha，U/V 置 128 中性灰） */
-function planesOf(data: Uint8ClampedArray): { rgba: Uint8Array; alpha: Uint8Array } {
+/** alpha 平面（I420：Y=alpha，U/V 置 128 中性灰）；缓冲按尺寸复用。
+ *  RGBA 侧直接用 getImageData 的输出（VideoFrame 构造时自行拷贝），不再多复制一份 */
+let alphaPlane: Uint8Array | null = null;
+
+function alphaPlaneOf(data: Uint8ClampedArray): Uint8Array {
   const { width, height } = config!;
-  const rgba = new Uint8Array(data.length);
-  rgba.set(data);
   const count = width * height;
-  const alpha = new Uint8Array(count + (width >> 1) * (height >> 1) * 2);
+  const alphaLen = count + (width >> 1) * (height >> 1) * 2;
+  if (!alphaPlane || alphaPlane.length !== alphaLen) alphaPlane = new Uint8Array(alphaLen);
+  const alpha = alphaPlane;
   for (let i = 0; i < count; i++) alpha[i] = data[i * 4 + 3];
   alpha.fill(128, count);
-  return { rgba, alpha };
+  return alpha;
 }
 
 function backpressure(): Promise<void> {
@@ -141,11 +158,11 @@ async function encodeFrame(index: number, frame: ImageBitmap) {
   const keyFrame = index % keyframeEvery === 0;
   const pixels = pixelsOf(frame);
   frame.close();
-  const { rgba, alpha } = planesOf(pixels);
+  const alpha = alphaPlaneOf(pixels);
 
   if (payload.format === 'vp9') {
     // getImageData 已是直通 alpha，色彩流按直通编码；alpha 通道本身走独立的灰度流
-    const colorFrame = new VideoFrame(rgba, {
+    const colorFrame = new VideoFrame(pixels, {
       format: 'RGBA',
       codedWidth: payload.width,
       codedHeight: payload.height,
@@ -171,7 +188,7 @@ async function encodeFrame(index: number, frame: ImageBitmap) {
 
   zipStore.push({
     name: `frame_${String(index + 1).padStart(5, '0')}.png`,
-    data: new Uint8Array(encodePng(rgba.buffer as ArrayBuffer, payload.width, payload.height)),
+    data: new Uint8Array(encodePng(pixels.buffer as ArrayBuffer, payload.width, payload.height)),
   });
   post({ id: replyId, type: 'progress', payload: { encoded: index + 1, total: payload.frameCount } });
 }
@@ -202,7 +219,6 @@ async function handle(request: EncodeRequest) {
   replyId = request.id;
   switch (request.type) {
     case 'configure':
-      cancelled = false;
       configure(request.payload);
       break;
     case 'frame':

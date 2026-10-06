@@ -7,6 +7,9 @@
 const { spawn } = await import('node:child_process');
 const path = await import('node:path');
 const os = await import('node:os');
+const fs = await import('node:fs');
+// 复用 profile 会带进上次构建的旧 Service Worker，每次跑前清掉
+fs.rmSync(path.join(os.tmpdir(), 'ssv-edge-profile-' + (process.env.SSV_PORT ?? 9334)), { recursive: true, force: true });
 
 const edgePath =
   process.env.SSV_EDGE ?? 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
@@ -28,25 +31,11 @@ const PACK_PATTERN = /spine-3\.(1|[4-8])|spine-4\.0|spine-webgl-41|spine-canvask
 
 const DROP_SCRIPT = [
   '(async () => {',
-  '  const { dir, skeletonFile, atlasFile, fileList, expect, contains, waitMs } = window.__SSV_ARGS;',
-  "  const base = '/spine-testfiles/' + dir + '/';",
-  '  let names = [];',
-  "  if (skeletonFile === '*') {",
-  '    names = fileList;',
-  '  } else {',
-  '    names = [skeletonFile, atlasFile];',
-  "    const atlasText = await (await fetch(base + atlasFile)).text();",
-  '    for (const line of atlasText.split(String.fromCharCode(10))) {',
-  '      const name = line.trim();',
-  '      if (/\\.(png|jpe?g|webp)$/i.test(name)) names.push(name);',
-  '    }',
-  '  }',
-  '  const files = [];',
-  '  for (const name of names) {',
-  "    const response = await fetch('/spine-testfiles/' + dir + '/' + name);",
-  "    if (!response.ok) throw new Error('missing ' + name);",
-  '    files.push(new File([await response.arrayBuffer()], name));',
-  '  }',
+  '  const { files: fileData, expect, contains, waitMs } = window.__SSV_ARGS;',
+  '  const files = fileData.map((f) => {',
+  '    const bytes = Uint8Array.from(atob(f.b64), (c) => c.charCodeAt(0));',
+  '    return new File([bytes], f.name);',
+  '  });',
   "  const dropzone = document.querySelector('[role=button]');",
   '  const dataTransfer = new DataTransfer();',
   '  for (const file of files) dataTransfer.items.add(file);',
@@ -178,13 +167,26 @@ await send('Runtime.enable');
 await send('Network.enable');
 await send('Page.navigate', { url: base });
 
-// 整目录模式（skeletonFile='*'）：Node 侧列目录，页面只负责 fetch + 构造 File
-if (args.skeletonFile === '*') {
-  const fs = await import('node:fs');
-  args.fileList = fs.readdirSync(path.join('spine-testfiles', args.dir)).filter((name) =>
+// 素材从 Node 磁盘读取（dev/preview 都不必发布 spine-testfiles），与用户本地文件等价
+const fs = await import('node:fs');
+const dirFiles = () =>
+  fs.readdirSync(path.join('spine-testfiles', args.dir)).filter((name) =>
     fs.statSync(path.join('spine-testfiles', args.dir, name)).isFile(),
   );
-}
+const names =
+  args.skeletonFile === '*'
+    ? dirFiles()
+    : [args.skeletonFile, args.atlasFile].concat(
+        fs
+          .readFileSync(path.join('spine-testfiles', args.dir, args.atlasFile), 'utf8')
+          .split('\n')
+          .map((line) => line.trim())
+          .filter((line) => /\.(png|jpe?g|webp)$/i.test(line)),
+      );
+args.files = names.map((name) => ({
+  name,
+  b64: fs.readFileSync(path.join('spine-testfiles', args.dir, name)).toString('base64'),
+}));
 
 const started = Date.now();
 while (Date.now() - started < timeoutMs) {

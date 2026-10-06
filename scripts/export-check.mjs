@@ -11,6 +11,8 @@ const port = Number(process.env.SSV_PORT ?? 9337);
 const dlDir = path.join(os.tmpdir(), 'ssv-export-dl-' + port);
 fs.rmSync(dlDir, { recursive: true, force: true });
 fs.mkdirSync(dlDir, { recursive: true });
+// 复用 profile 会带进上次构建的旧 Service Worker，每次跑前清掉
+fs.rmSync(path.join(os.tmpdir(), 'ssv-edge-profile-' + port), { recursive: true, force: true });
 
 const child = spawn(
   edgePath,

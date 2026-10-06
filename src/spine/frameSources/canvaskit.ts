@@ -5,6 +5,7 @@ import { RuntimeError } from '../types';
 import type { FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, SpineRuntimePack } from '../types';
 import { createFileReader } from '../runtimes/files';
 import { validateSkeletonData } from '../runtimes/validate';
+import { nonDefaultSkinNames } from './skins';
 
 let ckPromise: Promise<CanvasKit> | null = null;
 
@@ -13,19 +14,34 @@ export function loadCanvasKit(): Promise<CanvasKit> {
   return ckPromise;
 }
 
-/** 官方 spine-canvaskit 把 Skeleton.yDown 置为 true，world 的 +y 对应屏幕向上。 */
-function fitSkeleton(skeleton: any, data: any, width: number, height: number, yDown: boolean) {
-  if (!(data.width > 0) || !(data.height > 0)) {
-    skeleton.x = width / 2;
-    skeleton.y = height / 2;
-    return;
+/**
+ * 自动取景基准参数。sy = yDown ? -1 : 1，用于在 setTransform 中推导世界坐标偏移。
+ * baseX/baseY 是自动取景时 skeleton.x/y 的值（无用户缩放/偏移）。
+ */
+interface FitParams {
+  hasBounds: boolean;
+  dataCenterX: number;
+  dataCenterY: number;
+  scale: number;
+  /** yDown ? -1 : 1 */
+  sy: number;
+  baseX: number;
+  baseY: number;
+}
+
+function computeFit(data: any, width: number, height: number, yDown: boolean): FitParams {
+  const sy = yDown ? -1 : 1;
+  const hasBounds = data.width > 0 && data.height > 0;
+  if (!hasBounds) {
+    return { hasBounds: false, dataCenterX: 0, dataCenterY: 0, scale: 1, sy, baseX: width / 2, baseY: height / 2 };
   }
   const scale = Math.min(width / data.width, height / data.height) * 0.9;
-  skeleton.scaleX = scale;
-  skeleton.scaleY = scale;
-  const offsetY = yDown ? 1 : -1;
-  skeleton.x = width / 2 - (data.x + data.width / 2) * scale;
-  skeleton.y = height / 2 + offsetY * (data.y + data.height / 2) * scale;
+  const dataCenterX = data.x + data.width / 2;
+  const dataCenterY = data.y + data.height / 2;
+  // 原始 fitSkeleton: skeleton.x = w/2 - dcX*scale; skeleton.y = h/2 + (yDown?1:-1)*dcY*scale
+  const baseX = width / 2 - dataCenterX * scale;
+  const baseY = height / 2 + (yDown ? 1 : -1) * dataCenterY * scale;
+  return { hasBounds, dataCenterX, dataCenterY, scale, sy, baseX, baseY };
 }
 
 export class CanvaskitFrameSource implements FrameSource {
@@ -42,6 +58,9 @@ export class CanvaskitFrameSource implements FrameSource {
   private readonly size: FrameSize;
   private readonly summaryInfo: SkeletonSummary;
   private readonly animationNames: string[];
+  private readonly skinNames: string[];
+  private readonly durations: Record<string, number>;
+  private readonly fit: FitParams;
   private lastMs = -1;
   private disposed = false;
 
@@ -54,6 +73,9 @@ export class CanvaskitFrameSource implements FrameSource {
     size: FrameSize;
     summary: SkeletonSummary;
     animations: string[];
+    skins: string[];
+    durations: Record<string, number>;
+    fit: FitParams;
   }) {
     this.ck = args.ck;
     this.surface = args.surface;
@@ -63,6 +85,9 @@ export class CanvaskitFrameSource implements FrameSource {
     this.size = args.size;
     this.summaryInfo = args.summary;
     this.animationNames = args.animations;
+    this.skinNames = args.skins;
+    this.durations = args.durations;
+    this.fit = args.fit;
     this.imageInfo = {
       width: args.size.width,
       height: args.size.height,
@@ -86,7 +111,6 @@ export class CanvaskitFrameSource implements FrameSource {
     } catch {
       surface = null;
     }
-    // worker 中拿不到 WebGL 时退回 CPU 光栅 surface，两条路径都用 canvas.readPixels 取像素
     surface ??= ck.MakeSurface(size.width, size.height);
     if (!surface) throw new RuntimeError('backendUnavailable');
 
@@ -111,21 +135,34 @@ export class CanvaskitFrameSource implements FrameSource {
       surface.delete();
       throw new RuntimeError('noAnimation');
     }
+    const skins = nonDefaultSkinNames(data);
+    const durations: Record<string, number> = {};
+    for (const item of data.animations ?? []) durations[String(item.name)] = Number(item.duration) || 0;
 
     const drawable = new helpers.SkeletonDrawable(data);
-    fitSkeleton(drawable.skeleton, data, size.width, size.height, pack.capabilities.yDown);
+    const fit = computeFit(data, size.width, size.height, pack.capabilities.yDown);
+    applyFit(drawable.skeleton, fit);
     drawable.animationState.setAnimation(0, animations[0], true);
 
     return new CanvaskitFrameSource({
-      ck,
-      surface,
-      renderer: new helpers.SkeletonRenderer(ck),
-      drawable,
-      atlas,
-      size,
-      summary,
-      animations,
+      ck, surface, renderer: new helpers.SkeletonRenderer(ck),
+      drawable, atlas, size, summary, animations, skins, durations, fit,
     });
+  }
+
+  private applyTransform(offsetX: number, offsetY: number, userScale: number) {
+    const { fit } = this;
+    const sk = this.drawable.skeleton;
+    // 偏移按屏幕坐标（+x 右、+y 上）；画布 y 朝下，故画布偏移 = (offsetX, -offsetY)
+    if (fit.hasBounds) {
+      sk.scaleX = fit.scale * userScale;
+      sk.scaleY = fit.scale * userScale;
+      sk.x = fit.baseX + offsetX + fit.dataCenterX * fit.scale * (1 - userScale);
+      sk.y = fit.baseY - offsetY + fit.sy * fit.dataCenterY * fit.scale * (1 - userScale);
+    } else {
+      sk.x = fit.baseX + offsetX;
+      sk.y = fit.baseY - offsetY;
+    }
   }
 
   summary(): SkeletonSummary {
@@ -134,6 +171,48 @@ export class CanvaskitFrameSource implements FrameSource {
 
   animations(): string[] {
     return this.animationNames;
+  }
+
+  skins(): string[] {
+    return this.skinNames.length > 0 ? this.skinNames : [''];
+  }
+
+  animationDurations(): Record<string, number> {
+    return this.durations;
+  }
+
+  setSkin(name: string): void {
+    const sk = this.drawable.skeleton;
+    if (!name) {
+      sk.setSkin(sk.data?.defaultSkin ?? null);
+      return;
+    }
+    sk.setSkinByName(name);
+  }
+
+  setAnimation(name: string, loop: boolean): void {
+    const state = this.drawable.animationState;
+    state.setAnimation(0, name, loop);
+    const entry = state.getCurrent(0);
+    if (entry) {
+      entry.trackTime = 0;
+      entry.animationLast = -1;
+    }
+    this.lastMs = -1;
+  }
+
+  seek(timeMs: number): void {
+    const state = this.drawable.animationState;
+    const entry = state.getCurrent(0);
+    if (entry) {
+      entry.trackTime = timeMs / 1000;
+      entry.animationLast = -1;
+    }
+    this.lastMs = timeMs;
+  }
+
+  setTransform(offsetX: number, offsetY: number, scale: number): void {
+    this.applyTransform(offsetX, offsetY, scale);
   }
 
   async render(timeMs: number): Promise<ImageBitmap> {
@@ -159,7 +238,6 @@ export class CanvaskitFrameSource implements FrameSource {
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
-    // 4.2/4.3 的 TextureAtlas.dispose 释放 page 纹理；SkeletonDrawable 没有 dispose，动画状态单独释放
     try {
       this.drawable?.animationState?.dispose?.();
       this.atlas?.dispose?.();
@@ -168,6 +246,18 @@ export class CanvaskitFrameSource implements FrameSource {
     }
     this.ck.Free(this.pixels);
     this.surface.delete();
+  }
+}
+
+function applyFit(skeleton: any, fit: FitParams) {
+  if (fit.hasBounds) {
+    skeleton.scaleX = fit.scale;
+    skeleton.scaleY = fit.scale;
+    skeleton.x = fit.baseX;
+    skeleton.y = fit.baseY;
+  } else {
+    skeleton.x = fit.baseX;
+    skeleton.y = fit.baseY;
   }
 }
 

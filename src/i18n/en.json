@@ -30,6 +30,22 @@
     "empty": "No skeleton loaded yet — drop some files first",
     "checkerboardHint": "Checkerboard shows transparent areas"
   },
+  "control": {
+    "play": "Play",
+    "pause": "Pause",
+    "progress": "Playback progress",
+    "loop": "Loop playback",
+    "animation": "Animation",
+    "skin": "Skin",
+    "skinDefault": "Default skin",
+    "transform": "Skeleton transform",
+    "offsetX": "Offset X",
+    "offsetY": "Offset Y",
+    "scale": "Scale",
+    "resetTransform": "Reset transform",
+    "reset": "Unload",
+    "disabledHint": "Playback and transform controls unlock once a skeleton is loaded"
+  },
   "errors": {
     "missingSkeleton": "No skeleton file found (.skel or .json)",
     "missingAtlas": "No atlas file found (.atlas)",

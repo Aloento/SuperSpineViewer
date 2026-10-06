@@ -172,15 +172,6 @@ importers:
       '@esotericsoftware/spine-canvaskit-43':
         specifier: npm:@esotericsoftware/spine-canvaskit@4.3.13
         version: '@esotericsoftware/spine-canvaskit@4.3.13'
-      '@esotericsoftware/spine-core':
-        specifier: 4.2.120
-        version: 4.2.120
-      '@esotericsoftware/spine-core-40':
-        specifier: npm:@esotericsoftware/spine-core@4.0.31
-        version: '@esotericsoftware/spine-core@4.0.31'
-      '@esotericsoftware/spine-core-41':
-        specifier: npm:@esotericsoftware/spine-core@4.1.56
-        version: '@esotericsoftware/spine-core@4.1.56'
       '@esotericsoftware/spine-webgl-40':
         specifier: npm:@esotericsoftware/spine-webgl@4.0.31
         version: '@esotericsoftware/spine-webgl@4.0.31'

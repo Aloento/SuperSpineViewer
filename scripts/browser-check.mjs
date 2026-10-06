@@ -4,6 +4,9 @@
 const { spawn } = await import('node:child_process');
 const path = await import('node:path');
 const os = await import('node:os');
+const fs = await import('node:fs');
+// 复用 profile 会带进上次构建的旧 Service Worker，每次跑前清掉
+fs.rmSync(path.join(os.tmpdir(), 'ssv-edge-profile'), { recursive: true, force: true });
 
 const edgePath =
   process.env.SSV_EDGE ?? 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';

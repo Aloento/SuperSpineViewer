@@ -17,6 +17,29 @@ export interface LoadPayload {
 
 export interface FramePayload {
   timeMs: number;
+  /** 播放循环每帧带最新的用户变换，避免与 setTransform 消息并发渲染 */
+  transform?: TransformPayload;
+}
+
+export interface SeekPayload {
+  timeMs: number;
+}
+
+export interface SetAnimationPayload {
+  animation: string;
+  loop: boolean;
+}
+
+export interface SetSkinPayload {
+  skin: string;
+}
+
+export interface TransformPayload {
+  /** 画布像素偏移（屏幕坐标：+x 右、+y 上） */
+  offsetX: number;
+  offsetY: number;
+  /** 相对自动取景的额外缩放 */
+  scale: number;
 }
 
 /** 加载成功后的实际结果：用了哪个 pack、骨骼与动画规模，供 UI 展示与排错 */
@@ -32,6 +55,11 @@ export interface LoadResponsePayload {
   /** 当前播放的动画 */
   animation: string;
   animations: string[];
+  /** 当前皮肤（'' = 默认皮肤） */
+  skin: string;
+  skins: string[];
+  /** 各动画时长（秒），key 为动画名 */
+  animationDurations: Record<string, number>;
   /** 当前动画时长（秒），导出总帧数据此计算 */
   animationDuration: number;
   /** 回退到非首个候选时，前面候选的失败原因 */
@@ -66,6 +94,10 @@ export type RenderRequest =
   | { id: number; type: 'init'; payload: InitPayload }
   | { id: number; type: 'load'; payload: LoadPayload }
   | { id: number; type: 'render'; payload: FramePayload }
+  | { id: number; type: 'seek'; payload: SeekPayload }
+  | { id: number; type: 'setAnimation'; payload: SetAnimationPayload }
+  | { id: number; type: 'setSkin'; payload: SetSkinPayload }
+  | { id: number; type: 'setTransform'; payload: TransformPayload }
   | { id: number; type: 'dispose' };
 
 export type EncodeRequest =

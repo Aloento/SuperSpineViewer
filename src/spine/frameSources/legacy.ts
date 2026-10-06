@@ -5,6 +5,8 @@ import { findFile } from '../runtimes/files';
 import { readLegacy31SkeletonData } from '../binary/legacyBinary31';
 import { validateSkeletonData } from '../runtimes/validate';
 import { loadCanvasKit } from './canvaskit';
+import { writeTrackTime } from './track';
+import { nonDefaultSkinNames } from './skins';
 
 const REGION_TRIANGLES = [0, 1, 2, 2, 3, 0];
 
@@ -36,6 +38,8 @@ export class LegacyFrameSource implements FrameSource {
   private state: any = null;
   private summaryInfo: SkeletonSummary = { declaredVersion: '', bones: 0, animationCount: 0, width: 0, height: 0, duration: 0 };
   private animationNames: string[] = [];
+  private skinNames: string[] = [];
+  private durations: Record<string, number> = {};
   private readonly pageTextures = new Map<unknown, PageTexture>();
   private readonly regionVertices = new Float32Array(8);
   private quadPositions = new Float32Array(8);
@@ -49,6 +53,10 @@ export class LegacyFrameSource implements FrameSource {
   private scale = 1;
   private translateX = 0;
   private translateY = 0;
+  // 自动取景基准，用户缩放/偏移在基准上叠加（围绕画布中心）
+  private baseScale = 1;
+  private baseTX = 0;
+  private baseTY = 0;
   private lastMs = -1;
   private disposed = false;
 
@@ -106,6 +114,9 @@ export class LegacyFrameSource implements FrameSource {
 
       const animations: string[] = data.animations.map((item: any) => String(item.name));
       if (animations.length === 0) throw new RuntimeError('noAnimation');
+      const durations: Record<string, number> = {};
+      for (const item of data.animations) durations[String(item.name)] = Number(item.duration) || 0;
+      const skins = nonDefaultSkinNames(data);
 
       const skeleton = new spine.Skeleton(data);
       // 3.1 的 AnimationState 不会自动落到 defaultSkin，必须显式 setSkin
@@ -120,8 +131,14 @@ export class LegacyFrameSource implements FrameSource {
       source.skeleton = skeleton;
       source.state = state;
       source.fit(data);
+      // fit 只写自动取景基准；用户偏移/缩放通过 setTransform 叠加
+      source.baseScale = source.scale;
+      source.baseTX = source.translateX;
+      source.baseTY = source.translateY;
       source.summaryInfo = summary;
       source.animationNames = animations;
+      source.skinNames = skins;
+      source.durations = durations;
       return source;
     } catch (error) {
       source.disposeResources();
@@ -237,6 +254,44 @@ export class LegacyFrameSource implements FrameSource {
 
   animations(): string[] {
     return this.animationNames;
+  }
+
+  skins(): string[] {
+    return this.skinNames.length > 0 ? this.skinNames : [''];
+  }
+
+  animationDurations(): Record<string, number> {
+    return this.durations;
+  }
+
+  setSkin(name: string): void {
+    // 3.1 的 setSkinByName('') 会抛异常，默认皮肤直接 setSkin(defaultSkin)
+    if (!name) {
+      this.skeleton.setSkin(this.skeleton.data.defaultSkin ?? null);
+      return;
+    }
+    this.skeleton.setSkinByName(name);
+  }
+
+  setAnimation(name: string, loop: boolean): void {
+    // 3.1 的 setAnimation 收 Animation 对象，按名字要用 setAnimationByName
+    this.state.setAnimationByName(0, name, loop);
+    writeTrackTime(this.state.getCurrent(0), 0);
+    this.lastMs = -1;
+  }
+
+  seek(timeMs: number): void {
+    writeTrackTime(this.state.getCurrent(0), timeMs / 1000);
+    this.lastMs = timeMs;
+  }
+
+  setTransform(offsetX: number, offsetY: number, scale: number): void {
+    // 围绕画布中心把自动取景结果放大 scale 倍：p' = C + (p − C)·k，
+    // 而 p = world·s + t ⟹ s′ = s·k, t′ = C + (t − C)·k；再叠加屏幕偏移（+y 上，画布 y 朝下取负）
+    const { width, height } = this.size;
+    this.scale = this.baseScale * scale;
+    this.translateX = width / 2 + (this.baseTX - width / 2) * scale + offsetX;
+    this.translateY = height / 2 + (this.baseTY - height / 2) * scale - offsetY;
   }
 
   async render(timeMs: number): Promise<ImageBitmap> {
