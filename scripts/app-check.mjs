@@ -1,7 +1,8 @@
 // 端到端验证：加载首页，断言首屏不请求任何 spine 运行时 chunk，
 // 再用真实 File 触发拖拽，按用例断言 UI 进入播放态（并确认画布真的画出了像素）或给出预期错误文案。
-// 用法: node scripts/app-check.mjs <baseUrl> <dir> <skeletonFile> <atlasFile> <playing|error> [预期文案]
+// 用法: node scripts/app-check.mjs <baseUrl> <dir> <skeletonFile|*> <atlasFile|*> <playing|error> [预期文案]
 // 例: node scripts/app-check.mjs http://localhost:5173/ spineboy38 spineboy-pro.skel spineboy-pma.atlas playing
+// skeletonFile 传 * 表示把目录里的全部文件一起拖入（§3.3 自动配对，atlasFile 同时传 *）
 
 const { spawn } = await import('node:child_process');
 const path = await import('node:path');
@@ -27,12 +28,18 @@ const PACK_PATTERN = /spine-3\.(1|[4-8])|spine-4\.0|spine-webgl-41|spine-canvask
 
 const DROP_SCRIPT = [
   '(async () => {',
-  '  const { dir, skeletonFile, atlasFile, expect, contains, waitMs } = window.__SSV_ARGS;',
-  '  const names = [skeletonFile, atlasFile];',
-  "  const atlasText = await (await fetch('/spine-testfiles/' + dir + '/' + atlasFile)).text();",
-  '  for (const line of atlasText.split(String.fromCharCode(10))) {',
-  '    const name = line.trim();',
-  '    if (/\\.(png|jpe?g|webp)$/i.test(name)) names.push(name);',
+  '  const { dir, skeletonFile, atlasFile, fileList, expect, contains, waitMs } = window.__SSV_ARGS;',
+  "  const base = '/spine-testfiles/' + dir + '/';",
+  '  let names = [];',
+  "  if (skeletonFile === '*') {",
+  '    names = fileList;',
+  '  } else {',
+  '    names = [skeletonFile, atlasFile];',
+  "    const atlasText = await (await fetch(base + atlasFile)).text();",
+  '    for (const line of atlasText.split(String.fromCharCode(10))) {',
+  '      const name = line.trim();',
+  '      if (/\\.(png|jpe?g|webp)$/i.test(name)) names.push(name);',
+  '    }',
   '  }',
   '  const files = [];',
   '  for (const name of names) {',
@@ -170,6 +177,14 @@ await send('Page.enable');
 await send('Runtime.enable');
 await send('Network.enable');
 await send('Page.navigate', { url: base });
+
+// 整目录模式（skeletonFile='*'）：Node 侧列目录，页面只负责 fetch + 构造 File
+if (args.skeletonFile === '*') {
+  const fs = await import('node:fs');
+  args.fileList = fs.readdirSync(path.join('spine-testfiles', args.dir)).filter((name) =>
+    fs.statSync(path.join('spine-testfiles', args.dir, name)).isFile(),
+  );
+}
 
 const started = Date.now();
 while (Date.now() - started < timeoutMs) {

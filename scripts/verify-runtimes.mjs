@@ -198,6 +198,108 @@ try {
   const { validateSkeletonData } = await server.ssrLoadModule('/src/spine/runtimes/validate.ts');
   const { readLegacySkeletonData } = await server.ssrLoadModule('/src/spine/binary/legacyBinary.ts');
   const { readLegacy31SkeletonData } = await server.ssrLoadModule('/src/spine/binary/legacyBinary31.ts');
+  const { pairAssets, missingAtlasPages } = await server.ssrLoadModule('/src/spine/pairing.ts');
+
+  // §3.3 文件配对：真实资产目录 + 合成用例（解包目录的 -pma/-pro/-ess 与 .atlas.txt/.bytes 后缀）
+  const atlasSample = 'page.png' + String.fromCharCode(10) + 'size:2,2' + String.fromCharCode(10) +
+    'filter:Nearest' + String.fromCharCode(10) + String.fromCharCode(9) + 'x' + String.fromCharCode(10) +
+    String.fromCharCode(9) + 'bounds:0,0,1,1' + String.fromCharCode(10);
+  const ab = (text) => new TextEncoder().encode(text).buffer;
+
+  const pairingChecks = [];
+  const checkPairing = (label, fn) => {
+    try {
+      fn();
+      passed++;
+      console.log('PASS ' + ('配对 ' + label).padEnd(26) + ' 通过');
+    } catch (error) {
+      failed++;
+      console.log('FAIL ' + ('配对 ' + label).padEnd(26) + ' ' + describe(error).slice(0, 90));
+    }
+  };
+
+  const loadDir = (dir) => {
+    const files = {};
+    for (const name of fs.readdirSync(path.join(ASSETS, dir))) {
+      const stat = fs.statSync(path.join(ASSETS, dir, name));
+      if (stat.isFile()) files[name] = toArrayBuffer(readFresh(path.join(ASSETS, dir, name)));
+    }
+    return files;
+  };
+
+  for (const dir of fs.readdirSync(ASSETS)) {
+    if (!fs.statSync(path.join(ASSETS, dir)).isDirectory()) continue;
+    const files = loadDir(dir);
+    checkPairing(dir, () => {
+      const inventory = pairAssets(files);
+      if (inventory.pairs.length === 0) throw new Error('目录内无可配对组合');
+      const first = inventory.pairs[0];
+      // 只有首选组合必须精确/前缀命中；同目录多骨架共用图集时其余允许落到任意图集
+      if (first.match === 2) throw new Error('首选 ' + first.skeletonFile + ' 只配到任意图集 ' + first.atlasFile);
+      for (const pair of inventory.pairs) {
+        for (const missing of missingAtlasPages(files, pair.atlasFile)) {
+          throw new Error(pair.atlasFile + ' 引用缺失贴图 ' + missing);
+        }
+      }
+      if (dir === 'spineboy30' && !(inventory.pairs[0].atlasFile === 'spineboy.atlas' && inventory.pairs[0].match === 0)) {
+        throw new Error('期望 spineboy.atlas 精确命中');
+      }
+      if (dir === 'spineboy34' && !(first.atlasFile === 'spineboy-pma.atlas' && first.match === 1)) {
+        throw new Error('期望 spineboy-pma.atlas 前缀命中，实际 ' + first.atlasFile);
+      }
+      if (dir === 'spineboy41' && first.atlasFile !== 'spineboy-pma.atlas') {
+        throw new Error('双图集目录应优先 pma 图集，实际 ' + first.atlasFile);
+      }
+    });
+  }
+
+  checkPairing('后缀推导', () => {
+    const files = {
+      'hero.json': ab('{}'),
+      'hero.atlas.txt': ab(atlasSample),
+      'page.png': ab('x'),
+      // .bytes 也是骨架候选（解包常见），配不到图集时落到任意图集
+      'other.bytes': ab('x'),
+    };
+    const inventory = pairAssets(files);
+    if (inventory.pairs.length !== 2) throw new Error('组合数 ' + inventory.pairs.length);
+    if (inventory.pairs[0].skeletonFile !== 'hero.json') throw new Error('首选 ' + inventory.pairs[0].skeletonFile);
+    if (inventory.pairs[0].atlasFile !== 'hero.atlas.txt') throw new Error('图集 ' + inventory.pairs[0].atlasFile);
+    if (inventory.pairs[0].match !== 0) throw new Error('match ' + inventory.pairs[0].match);
+    if (inventory.pairs[1].match !== 2) throw new Error('other.bytes match ' + inventory.pairs[1].match);
+  });
+
+  checkPairing('bytes 骨架 + skel 优先', () => {
+    const files = {
+      'hero.json': ab('{}'),
+      'hero.skel': ab('{}'),
+      'hero.atlas.bytes': ab(atlasSample),
+      'page.png': ab('x'),
+    };
+    const inventory = pairAssets(files);
+    if (inventory.pairs[0].skeletonFile !== 'hero.skel') throw new Error('首选骨架 ' + inventory.pairs[0].skeletonFile);
+    if (inventory.pairs[0].atlasFile !== 'hero.atlas.bytes') throw new Error('图集 ' + inventory.pairs[0].atlasFile);
+  });
+
+  checkPairing('缺贴图时报文件名', () => {
+    const files = { 'hero.json': ab('{}'), 'hero.atlas': ab(atlasSample) };
+    const inventory = pairAssets(files);
+    if (inventory.pairs.length !== 1) throw new Error('应仍可配对');
+    const missing = missingAtlasPages(files, inventory.pairs[0].atlasFile);
+    if (missing.length !== 1 || missing[0] !== 'page.png') throw new Error('缺失列表 ' + JSON.stringify(missing));
+  });
+
+  checkPairing('只有图集/只有骨架', () => {
+    const onlyAtlas = pairAssets({ 'hero.atlas': ab(atlasSample) });
+    if (onlyAtlas.pairs.length !== 0 || !onlyAtlas.hasAtlas || onlyAtlas.hasSkeleton) {
+      throw new Error('只有图集时状态错误');
+    }
+    const onlySkeleton = pairAssets({ 'hero.json': ab('{}') });
+    if (onlySkeleton.pairs.length !== 0 || onlySkeleton.hasAtlas || !onlySkeleton.hasSkeleton) {
+      throw new Error('只有骨架时状态错误');
+    }
+  });
+
   const readLegacyBinary = (spine, bytes, loader) => readLegacySkeletonData(spine, bytes, loader);
 
   for (const [version, spec] of Object.entries(CASES)) {

@@ -3,6 +3,7 @@ import { detectSpineVersion } from './versionLoader';
 import { parseSpineVersion, resolveRuntimeCandidates } from './runtimeMap';
 import type { SpineVersionInfo, UnavailableRuntimeCode } from './runtimeMap';
 import { RenderSession, RenderWorkerError } from './renderSession';
+import { missingAtlasPages, pairAssets } from './pairing';
 import type { LoadResponsePayload } from '../workers/protocol';
 
 export interface RendererMessage {
@@ -42,13 +43,7 @@ const initialState: SpineRendererState = {
   animation: null,
 };
 
-const skeletonPattern = /\.(skel|json)$/i;
-const atlasPattern = /\.atlas$/i;
 
-// .skel 优先：体积小、字段完整；解析失败时再退回 .json
-function skeletonRank(name: string): number {
-  return name.toLowerCase().endsWith('.skel') ? 0 : 1;
-}
 
 export function useSpineRenderer(width: number, height: number, manualPackId: string | null) {
   const [state, setState] = useState<SpineRendererState>(initialState);
@@ -79,17 +74,12 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
       for (const file of files) buffers[file.name] = await file.arrayBuffer();
       if (stale()) return;
 
-      const names = Object.keys(buffers);
-      const skeletons = names
-        .filter((name) => skeletonPattern.test(name))
-        .sort((a, b) => skeletonRank(a) - skeletonRank(b));
-      const atlasFile = names.find((name) => atlasPattern.test(name));
-
-      if (skeletons.length === 0) {
+      const inventory = pairAssets(buffers);
+      if (!inventory.hasSkeleton) {
         setState({ ...initialState, status: 'error', error: { key: 'errors.missingSkeleton' } });
         return;
       }
-      if (!atlasFile) {
+      if (!inventory.hasAtlas) {
         setState({ ...initialState, status: 'error', error: { key: 'errors.missingAtlas' } });
         return;
       }
@@ -117,9 +107,17 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
       let nearest: string | null = null;
       let fallbackUsed = false;
       let failure: RendererMessage | null = null;
+      let missingTextures: RendererMessage | null = null;
       let previous: string | null = null;
 
-      for (const skeletonFile of skeletons) {
+      for (const { skeletonFile, atlasFile } of inventory.pairs) {
+        // 贴图没拖全时先把名字亮出来，比 worker 里的 allCandidatesFailed 详情可读
+        const missing = missingAtlasPages(buffers, atlasFile);
+        if (missing.length > 0) {
+          missingTextures = { key: 'errors.missingTextures', values: { names: missing.join(', ') } };
+          previous = skeletonFile;
+          continue;
+        }
         const sniffed = detectSpineVersion(buffers[skeletonFile]);
         // 手动指定 pack：候选链交给 Worker 的 packOverride，版本读不出来时用 pack 版本兜底
         const version = manualPackId ? sniffed ?? parseSpineVersion(manualPackId + '.0') : sniffed;
@@ -185,6 +183,8 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
         });
       } else if (failure) {
         setState({ ...initialState, status: 'error', error: failure });
+      } else if (missingTextures) {
+        setState({ ...initialState, status: 'error', error: missingTextures });
       } else if (unknownVersion) {
         setState({ ...initialState, status: 'error', error: { key: 'errors.unknownVersion' } });
       } else {

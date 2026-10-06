@@ -33,6 +33,7 @@
   "errors": {
     "missingSkeleton": "No skeleton file found (.skel or .json)",
     "missingAtlas": "No atlas file found (.atlas)",
+    "missingTextures": "Texture pages referenced by the atlas are missing: {{names}}",
     "unknownVersion": "Could not detect the Spine version of the skeleton file",
     "runtime2d": "Assets exported from Spine 2.x are not supported — the 2D runtime is not wired up",
     "runtimeFuture": "Assets from newer Spine versions are not supported yet (closest available runtime: {{version}})",
