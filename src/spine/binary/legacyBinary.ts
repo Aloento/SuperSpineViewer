@@ -4,7 +4,7 @@ import type { SpineVersionInfo } from '../types';
 /**
  * 自研 .skel 读取器（§12.7）：官方 JS 生态的 SkeletonBinary 从 3.8 才有，3.3–3.7 走这里。
  * 底稿是 vendored 3.8 的官方 SkeletonBinary，按 Java 参考实现的逐版本 diff 做分支
- * （agent/reference/spine/SkeletonBinary-3.4.02.java / -3.5.java / -3.7.java，3.5 与 3.6 逐字节相同）。
+ * （参考官方同版本 SkeletonBinary.java，3.5 与 3.6 逐字节相同）。
  * 产出对象全部由各版本官方 core 的类构造，官方渲染器可直接消费。
  * §12.11：3.3↔3.4 同格式、3.5↔3.6 同格式，分支按文件内声明的 major.minor 决定。
  */

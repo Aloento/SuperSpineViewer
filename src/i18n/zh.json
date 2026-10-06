@@ -51,19 +51,19 @@
     "missingSkeleton": "未找到骨架文件（.skel 或 .json）",
     "missingAtlas": "未找到图集文件（.atlas）",
     "missingTextures": "图集引用的贴图缺失：{{names}}",
-    "unknownVersion": "无法识别骨架文件的 Spine 版本",
-    "runtime2d": "不支持 Spine 2.x 导出的资源，2D 运行时未接入",
+    "unknownVersion": "认不出这个文件的 Spine 版本，请确认拖进来的是 Spine 导出的动画资源",
+    "runtime2d": "不支持 Spine 2.x 导出的资源（这类老版本资源暂时打不开）",
     "runtimeFuture": "暂不支持更高版本的 Spine 资源，最接近的可用运行时为 {{version}}",
-    "allCandidatesFailed": "所有候选运行时都无法解析该骨架：{{detail}}",
-    "binaryUnsupported": "当前运行时不解析 Spine {{version}} 的 .skel 二进制（多为手动指定了不匹配的运行时），请改回自动检测",
+    "allCandidatesFailed": "这些文件打不开：{{detail}}",
+    "binaryUnsupported": "这个资源请保持「Spine 运行时」选成「自动识别」后再试",
     "loadFailed": "加载失败：{{detail}}",
     "renderFailed": "渲染失败"
   },
   "warnings": {
-    "skeletonFallback": "{{from}} 无法解析，已改用 {{to}}",
-    "runtimeFallback": "该资源由 Spine {{to}} 运行时（{{pack}}）渲染，而非 {{from}}",
-    "manualRuntime": "已按所选运行时 {{pack}} 加载",
-    "runtimeRetry": "已回退到 {{pack}} 运行时渲染：{{detail}}"
+    "skeletonFallback": "{{from}} 打不开，已改用 {{to}}",
+    "runtimeFallback": "这份资源用 Spine {{to}} 打开（而不是 {{from}}）",
+    "manualRuntime": "已按你选的 {{pack}} 打开",
+    "runtimeRetry": "已自动换用 {{pack}} 打开：{{detail}}"
   },
   "footer": {
     "starPrefix": "喜欢本项目？",

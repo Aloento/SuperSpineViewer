@@ -51,19 +51,19 @@
     "missingSkeleton": "No skeleton file found (.skel or .json)",
     "missingAtlas": "No atlas file found (.atlas)",
     "missingTextures": "Texture pages referenced by the atlas are missing: {{names}}",
-    "unknownVersion": "Could not detect the Spine version of the skeleton file",
-    "runtime2d": "Assets exported from Spine 2.x are not supported — the 2D runtime is not wired up",
+    "unknownVersion": "Could not tell which Spine version this file came from — make sure these are files exported from Spine",
+    "runtime2d": "Resources exported by Spine 2.x cannot be opened (this older format is not supported yet)",
     "runtimeFuture": "Assets from newer Spine versions are not supported yet (closest available runtime: {{version}})",
-    "allCandidatesFailed": "Every candidate runtime failed to parse this skeleton: {{detail}}",
-    "binaryUnsupported": "The current runtime cannot parse .skel for Spine {{version}} (usually a manually selected runtime mismatch); switch back to auto-detect",
-    "loadFailed": "Failed to load: {{detail}}",
+    "allCandidatesFailed": "These files could not be opened: {{detail}}",
+    "binaryUnsupported": "Set \"Spine runtime\" back to \"Auto-detect\" and try again",
+    "loadFailed": "Could not load: {{detail}}",
     "renderFailed": "Failed to render"
   },
   "warnings": {
-    "skeletonFallback": "{{from}} could not be parsed, falling back to {{to}}",
-    "runtimeFallback": "Rendered with the Spine {{to}} runtime ({{pack}}) instead of {{from}}",
-    "manualRuntime": "Loaded with the manually selected runtime {{pack}}",
-    "runtimeRetry": "Fell back to the {{pack}} runtime: {{detail}}"
+    "skeletonFallback": "{{from}} could not be opened, switched to {{to}}",
+    "runtimeFallback": "Opened with the Spine {{to}} runtime instead of {{from}}",
+    "manualRuntime": "Opened with the {{pack}} runtime you selected",
+    "runtimeRetry": "Automatically switched to the {{pack}} runtime: {{detail}}"
   },
   "footer": {
     "starPrefix": "Enjoying this project?",

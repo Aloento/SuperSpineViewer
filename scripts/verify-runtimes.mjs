@@ -1,6 +1,6 @@
 // 解析级验证：版本嗅探 -> 候选运行时链 -> pack 解析 -> §12.6 结果校验
 // 全程复用应用代码（runtimeMap / runtimes registry / validate），经 vite SSR 转译后在 Node 里跑。
-// 渲染（canvaskit surface / WebGL readPixels）需要浏览器，见 REFACTORING_PLAN §5 M2a 的人工验证清单。
+// 渲染（canvaskit surface / WebGL readPixels）需要浏览器，见 docs/DEVELOPMENT.md。
 // 用法: node scripts/verify-runtimes.mjs [版本 ...]
 
 import fs from 'node:fs';

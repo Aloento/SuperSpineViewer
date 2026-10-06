@@ -3,8 +3,8 @@ import { RuntimeError } from '../types';
 /**
  * 3.0–3.2 的 .skel 读取器：这一代二进制布局与 3.3+ 完全不同，且三个 minor 版本之间也有出入，
  * 按声明版本的 minor 分支：
- * - 3.0：骨骼 parent 是 1-based（0=null），无 shear（agent/reference/spine/SkeletonBinary-3.0-late.cs）
- * - 3.1：parent 直接索引（i==0 不读），x,y,sx,sy,rot,len（agent/reference/spine/SkeletonBinary-3.1.07.java）
+ * - 3.0：骨骼 parent 是 1-based（0=null），无 shear（参考官方 spine-java/csharp 同版本 SkeletonBinary）
+ * - 3.1：parent 直接索引（i==0 不读），x,y,sx,sy,rot,len（参考官方 spine-libgdx 3.1.07 SkeletonBinary.java）
  * - 3.2：rot 在 x,y 前且带 shearX/shearY，时间线编号整体重排（SkeletonBinary-3.2.cs，spine-csharp 3.2 分支）
  * 产出的对象全部来自 vendored spine-js 3.1.07 的类。
  */

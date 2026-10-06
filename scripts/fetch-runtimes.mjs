@@ -35,7 +35,7 @@ function legacyStrictFixes(text) {
 }
 
 const targets = [
-  // 3.0–3.2 没有独立分支/tag，统一由 3.1.07 的 spine-js 承接（见 REFACTORING_PLAN §1.1）；
+  // 3.0–3.2 没有独立分支/tag，统一由 3.1.07 的 spine-js 承接（见 docs/DEVELOPMENT.md §4）；
   // 该产物只有核心层，没有 spine.webgl，渲染走自研 CanvasKit frameSource
   { id: '3.1', enabled: true, kind: 'global-script', ref: '3.1.07', entry: 'spine-js/spine.js', noRenderer: true,
     // 上游 FfdTimeline.apply 引用了不存在的 sourceAttachment，联动网格 FFD 一播放就 ReferenceError；

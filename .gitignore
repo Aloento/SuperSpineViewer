@@ -35,6 +35,3 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
-
-# Agent workspace (do not commit)
-agent/
