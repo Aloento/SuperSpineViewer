@@ -34,7 +34,7 @@ export class LegacyFrameSource implements FrameSource {
   private readonly surface: Surface;
   private skeleton: any = null;
   private state: any = null;
-  private summaryInfo: SkeletonSummary = { declaredVersion: '', bones: 0, animationCount: 0, width: 0, height: 0 };
+  private summaryInfo: SkeletonSummary = { declaredVersion: '', bones: 0, animationCount: 0, width: 0, height: 0, duration: 0 };
   private animationNames: string[] = [];
   private readonly pageTextures = new Map<unknown, PageTexture>();
   private readonly regionVertices = new Float32Array(8);

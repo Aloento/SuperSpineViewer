@@ -31,6 +31,8 @@ export interface SkeletonSummary {
   animationCount: number;
   width: number;
   height: number;
+  /** 默认动画（animations[0]）时长，秒；导出总帧数据此计算 */
+  duration: number;
 }
 
 /**

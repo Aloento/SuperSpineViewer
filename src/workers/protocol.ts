@@ -32,6 +32,8 @@ export interface LoadResponsePayload {
   /** 当前播放的动画 */
   animation: string;
   animations: string[];
+  /** 当前动画时长（秒），导出总帧数据此计算 */
+  animationDuration: number;
   /** 回退到非首个候选时，前面候选的失败原因 */
   attempts: LoadAttempt[];
 }
@@ -68,7 +70,7 @@ export type RenderRequest =
 
 export type EncodeRequest =
   | { id: number; type: 'configure'; payload: EncodeConfigPayload }
-  | { id: number; type: 'frame'; payload: { index: number; frame: VideoFrame | ImageBitmap } }
+  | { id: number; type: 'frame'; payload: { index: number; frame: ImageBitmap } }
   | { id: number; type: 'finalize' }
   | { id: number; type: 'cancel' };
 

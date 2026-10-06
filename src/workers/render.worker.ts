@@ -54,6 +54,7 @@ async function loadSkeleton(id: number, payload: LoadPayload) {
     animationCount: summary.animationCount,
     animation: frameSource.animations()[0] ?? '',
     animations: frameSource.animations(),
+    animationDuration: summary.duration,
     attempts: toAttempts(outcome.outcome.attempts),
   };
   post({ id, type: 'loaded', payload: response });

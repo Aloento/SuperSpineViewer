@@ -27,6 +27,8 @@ export interface SpineRendererState {
   bones: number | null;
   animationCount: number | null;
   animation: string | null;
+  /** 当前动画时长（秒），导出总帧数据此计算 */
+  duration: number;
 }
 
 const initialState: SpineRendererState = {
@@ -41,7 +43,20 @@ const initialState: SpineRendererState = {
   bones: null,
   animationCount: null,
   animation: null,
+  duration: 0,
 };
+
+/** 导出会话重建渲染流水线所需的全部信息 */
+export interface LoadInfo {
+  files: Record<string, ArrayBuffer>;
+  skeletonFile: string;
+  atlasFile: string;
+  version: SpineVersionInfo;
+  /** 锁定当前生效的 pack，导出与预览必须用同一运行时 */
+  packId: string;
+  /** 当前动画时长（秒） */
+  duration: number;
+}
 
 
 
@@ -49,14 +64,17 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
   const [state, setState] = useState<SpineRendererState>(initialState);
   const sessionRef = useRef<RenderSession | null>(null);
   const stopRef = useRef<(() => void) | null>(null);
+  const elapsedRef = useRef(0);
   const runRef = useRef(0);
   const lastFilesRef = useRef<File[] | null>(null);
   const loadRef = useRef<(files: File[]) => Promise<void>>(async () => {});
+  const loadInfoRef = useRef<LoadInfo | null>(null);
 
   const teardown = useCallback(() => {
     runRef.current += 1;
     stopRef.current?.();
     stopRef.current = null;
+    loadInfoRef.current = null;
     sessionRef.current?.dispose();
     sessionRef.current = null;
   }, []);
@@ -149,6 +167,15 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
         try {
           const loaded = await session.load({ files: buffers, skeletonFile, atlasFile, version, packOverride: manualPackId ?? undefined });
           if (stale()) return;
+          loadInfoRef.current = {
+            files: buffers,
+            skeletonFile,
+            atlasFile,
+            version,
+            // 导出会话必须复用同一个 pack，否则像素与预览对不上
+            packId: loaded.packId,
+            duration: loaded.animationDuration,
+          };
           setState({
             ...initialState,
             status: 'playing',
@@ -162,8 +189,9 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
             bones: loaded.bones,
             animationCount: loaded.animationCount,
             animation: loaded.animation,
+            duration: loaded.animationDuration,
           });
-          stopRef.current = startPlayback(session, stale, teardown, setState);
+          stopRef.current = startPlayback(session, stale, teardown, setState, elapsedRef, 0);
           return;
         } catch (error) {
           previous = skeletonFile;
@@ -202,13 +230,42 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     if (files) void loadRef.current(files);
   }, [manualPackId]);
 
+  const beginPlayback = useCallback(
+    (session: RenderSession, startOffsetMs = 0) => {
+      const run = runRef.current;
+      stopRef.current = startPlayback(session, () => run !== runRef.current, teardown, setState, elapsedRef, startOffsetMs);
+    },
+    [teardown],
+  );
+
   const reset = useCallback(() => {
     teardown();
     lastFilesRef.current = null;
     setState(initialState);
   }, [teardown]);
 
-  return { ...state, loadFiles, reset };
+  // 导出期间预览交给导出帧驱动：暂停正常播放、随时恢复、允许直接塞入导出流水线的帧
+  const pausePlayback = useCallback(() => {
+    stopRef.current?.();
+    stopRef.current = null;
+  }, []);
+
+  const resumePlayback = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session || stopRef.current) return;
+    beginPlayback(session, elapsedRef.current);
+  }, [beginPlayback]);
+
+  const showFrame = useCallback((frame: ImageBitmap) => {
+    setState((current) => {
+      current.frame?.close();
+      return { ...current, frame };
+    });
+  }, []);
+
+  const getLoadInfo = useCallback(() => loadInfoRef.current, []);
+
+  return { ...state, loadFiles, reset, pausePlayback, resumePlayback, showFrame, getLoadInfo };
 }
 
 function startPlayback(
@@ -216,6 +273,8 @@ function startPlayback(
   stale: () => boolean,
   teardown: () => void,
   setState: (update: (current: SpineRendererState) => SpineRendererState) => void,
+  elapsedRef: { current: number },
+  startOffsetMs: number,
 ): () => void {
   return session.play(
     (frame) => {
@@ -232,6 +291,12 @@ function startPlayback(
       if (stale()) return;
       teardown();
       setState((current) => ({ ...current, status: 'error', frame: null, error: { key: 'errors.renderFailed' } }));
+    },
+    {
+      startOffsetMs,
+      onElapsed: (elapsed) => {
+        elapsedRef.current = elapsed;
+      },
     },
   );
 }

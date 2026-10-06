@@ -24,5 +24,12 @@ export function validateSkeletonData(data: any, expected: SpineVersionInfo): Ske
     }
   }
 
-  return { declaredVersion: declared, bones, animationCount: animations, width, height };
+  return {
+    declaredVersion: declared,
+    bones,
+    animationCount: animations,
+    width,
+    height,
+    duration: Number(data?.animations?.[0]?.duration) || 0,
+  };
 }

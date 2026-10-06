@@ -68,14 +68,21 @@ export class RenderSession {
     return response.payload.frame;
   }
 
-  /** 从 0 时刻起按 rAF 推进时间轴；返回停止函数 */
-  play(onFrame: (frame: ImageBitmap) => void, onError: (error: Error) => void): () => void {
+  /** 从 0 时刻起按 rAF 推进时间轴；返回停止函数。导出期间可暂停后从原时刻恢复 */
+  play(
+    onFrame: (frame: ImageBitmap) => void,
+    onError: (error: Error) => void,
+    options?: { startOffsetMs?: number; onElapsed?: (elapsedMs: number) => void },
+  ): () => void {
     let stopped = false;
     const startedAt = performance.now();
+    const offset = options?.startOffsetMs ?? 0;
 
     const loop = async () => {
       while (!stopped) {
-        const frame = await this.frame(performance.now() - startedAt);
+        const elapsed = performance.now() - startedAt + offset;
+        options?.onElapsed?.(elapsed);
+        const frame = await this.frame(elapsed);
         if (stopped) {
           frame.close();
           return;
