@@ -74,8 +74,6 @@ export type EncodeRequest =
   | { id: number; type: 'finalize' }
   | { id: number; type: 'cancel' };
 
-export type WorkerRequest = RenderRequest | EncodeRequest;
-
 export type RenderResponse =
   | { id: number; type: 'ready' }
   | { id: number; type: 'loaded'; payload: LoadResponsePayload }

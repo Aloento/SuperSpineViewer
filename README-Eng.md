@@ -1,9 +1,11 @@
 # SuperSpineViewer
 
+[中文说明](https://github.com/Aloento/SuperSpineViewer/blob/master/README.md)
+
 A browser PWA to load and export Spine animations (rewriting in progress)
 
 - Runs purely in the browser, no JVM / JavaFX / FFmpeg required
-- Transparent video export (WebM VP9-alpha with alpha channel)
+- Transparent video export: WebM (VP9-alpha with alpha channel) or APNG frame sequence (ZIP)
 - Fixed canvas size, independent of window/screen size
 - Multi Spine version loading: both .skel and .json across 3.0-4.3 (2.1 not supported)
 

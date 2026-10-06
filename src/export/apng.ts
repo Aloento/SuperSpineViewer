@@ -1,12 +1,7 @@
 // UPNG 为 CommonJS：Vite 下 default 导出可能被包一层
 import UPNGmod from '@pdf-lib/upng';
-import type { ExportOptions } from './presets';
 
 const UPNG: any = (UPNGmod as any).default || UPNGmod;
-
-export interface ApngExportHandle {
-  cancel: () => void;
-}
 
 export function encodePng(rgba: ArrayBuffer, width: number, height: number): ArrayBuffer {
   // cnum=0：不做调色板量化，保留 8bit RGBA
@@ -91,19 +86,4 @@ export function zipEntries(entries: ZipEntry[]): Blob {
     ]),
   );
   return new Blob(parts as BlobPart[], { type: 'application/zip' });
-}
-
-// 导出走 encode.worker（逐帧流式），这里保留主线程侧的一次性实现供像素回归
-export async function exportApngZip(frames: ImageBitmap[], _options: ExportOptions): Promise<Blob> {
-  const entries: ZipEntry[] = [];
-  const canvas = new OffscreenCanvas(frames[0]?.width ?? 0, frames[0]?.height ?? 0);
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-  for (let i = 0; i < frames.length; i++) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(frames[i], 0, 0);
-    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    const png = encodePng(data.buffer as ArrayBuffer, canvas.width, canvas.height);
-    entries.push({ name: `frame_${String(i + 1).padStart(5, '0')}.png`, data: new Uint8Array(png) });
-  }
-  return zipEntries(entries);
 }
