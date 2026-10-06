@@ -37,7 +37,7 @@
     "runtime2d": "不支持 Spine 2.x 导出的资源，2D 运行时未接入",
     "runtimeFuture": "暂不支持更高版本的 Spine 资源，最接近的可用运行时为 {{version}}",
     "allCandidatesFailed": "所有候选运行时都无法解析该骨架：{{detail}}",
-    "binaryUnsupported": "Spine {{version}} 的 .skel 二进制解析尚未支持（官方运行时不带二进制读取器），将在后续版本接入",
+    "binaryUnsupported": "当前运行时不解析 Spine {{version}} 的 .skel 二进制（多为手动指定了不匹配的运行时），请改回自动检测",
     "loadFailed": "加载失败：{{detail}}",
     "renderFailed": "渲染失败"
   },

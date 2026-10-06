@@ -1,6 +1,14 @@
 import './domShims';
 import { RuntimeError } from '../types';
-import type { FrameSource, FrameSourceContext, SpineRuntimeCapabilities, SpineRuntimePack } from '../types';
+import { legacyBinarySupports } from '../binary/legacyBinary';
+import type { BinaryVersionRange } from '../binary/legacyBinary';
+import type {
+  FrameSource,
+  FrameSourceContext,
+  SpineRuntimeCapabilities,
+  SpineRuntimePack,
+  SpineVersionInfo,
+} from '../types';
 import { CanvaskitFrameSource } from '../frameSources/canvaskit';
 import { WebglFrameSource } from '../frameSources/webgl';
 import { LegacyFrameSource } from '../frameSources/legacy';
@@ -11,8 +19,10 @@ type Loader = () => Promise<Record<string, any>>;
 interface PackDefinition {
   id: string;
   backend: 'canvaskit' | 'webgl' | 'legacy';
-  /** 官方 core 是否自带 SkeletonBinary；false 表示该 pack 只能读 .json（M2d 前） */
+  /** 官方 core 是否自带 SkeletonBinary；false 表示只能走自研读取器或 .json */
   binary?: boolean;
+  /** 官方 core 无 SkeletonBinary 时，自研读取器可接管的 .skel 版本区间（§12.7） */
+  legacyBinary?: BinaryVersionRange;
   capabilities: SpineRuntimeCapabilities;
   load: Loader;
   /** 从模块导出中取出解析层命名空间 */
@@ -48,6 +58,8 @@ const DEFINITIONS: PackDefinition[] = [
     id: '3.1',
     backend: 'legacy',
     binary: false,
+    // 3.0–3.2 的 .skel 走自研读取器 binary/legacyBinary31（§12.7）
+    legacyBinary: { min: { major: 3, minor: 0 }, max: { major: 3, minor: 2 } },
     capabilities: LEGACY_CAPABILITY_BASE,
     load: () => import('./generated/spine-3.1.js'),
     core: (mod) => mod.default.spine,
@@ -65,6 +77,7 @@ const DEFINITIONS: PackDefinition[] = [
     id: '3.7',
     backend: 'webgl',
     binary: false,
+    legacyBinary: { min: { major: 3, minor: 7 }, max: { major: 3, minor: 7 } },
     capabilities: { ...WEBGL_CAPABILITY_BASE, synchronousAtlasLoader: true },
     load: () => import('./generated/spine-3.7.js'),
     core: (mod) => mod.default.spine,
@@ -74,6 +87,7 @@ const DEFINITIONS: PackDefinition[] = [
     id: '3.6',
     backend: 'webgl',
     binary: false,
+    legacyBinary: { min: { major: 3, minor: 6 }, max: { major: 3, minor: 6 } },
     capabilities: { ...WEBGL_CAPABILITY_BASE, synchronousAtlasLoader: true },
     load: () => import('./generated/spine-3.6.js'),
     core: (mod) => mod.default.spine,
@@ -83,6 +97,7 @@ const DEFINITIONS: PackDefinition[] = [
     id: '3.5',
     backend: 'webgl',
     binary: false,
+    legacyBinary: { min: { major: 3, minor: 5 }, max: { major: 3, minor: 5 } },
     capabilities: { ...WEBGL_CAPABILITY_BASE, synchronousAtlasLoader: true },
     load: () => import('./generated/spine-3.5.js'),
     core: (mod) => mod.default.spine,
@@ -93,6 +108,8 @@ const DEFINITIONS: PackDefinition[] = [
     id: '3.4',
     backend: 'webgl',
     binary: false,
+    // 3.3 没有独立运行时，自研读取器的 3.4 分支同时覆盖 3.3（§1.1）
+    legacyBinary: { min: { major: 3, minor: 3 }, max: { major: 3, minor: 4 } },
     capabilities: {
       ...WEBGL_CAPABILITY_BASE,
       synchronousAtlasLoader: true,
@@ -189,10 +206,12 @@ export async function loadRuntimePack(id: string): Promise<SpineRuntimePack> {
   return pack;
 }
 
-/** 该 pack 的官方 core 是否自带 SkeletonBinary（3.4–3.7 没有，等 M2d 自研读取器） */
-export function packHasBinaryReader(id: string): boolean {
+/** 该 pack 能否解析指定版本的 .skel：官方 SkeletonBinary，或自研读取器覆盖的版本区间（§12.7） */
+export function packHasBinaryReader(id: string, version: SpineVersionInfo): boolean {
   const definition = DEFINITIONS.find((item) => item.id === id);
-  return !!definition && definition.binary !== false;
+  if (!definition) return false;
+  if (definition.binary !== false) return true;
+  return !!definition.legacyBinary && legacyBinarySupports(definition.legacyBinary, version);
 }
 
 export interface LoadOutcome {
@@ -218,7 +237,7 @@ export async function loadFrameFromCandidates(
 
   for (const candidate of candidates) {
     // 二进制骨架 + 无读取器的 pack 直接跳过，省掉必然失败的 chunk 下载
-    if (wantsBinary && !packHasBinaryReader(candidate.packId)) {
+    if (wantsBinary && !packHasBinaryReader(candidate.packId, context.version)) {
       attempts.push({ candidate, error: new RuntimeError('binaryUnsupported', candidate.packId) });
       continue;
     }

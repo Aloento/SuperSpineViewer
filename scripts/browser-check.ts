@@ -1,17 +1,17 @@
 import { RenderSession, RenderWorkerError } from '../src/spine/renderSession';
 import { detectSpineVersion } from '../src/spine/versionLoader';
 
-// exts 缺省为 ['json','skel']；3.4–3.7 的官方 core 没有 SkeletonBinary，只跑 .json
+// exts 缺省为 ['json','skel']；goblins31 没有 .skel 语料，只跑 .json
 const CASES = [
-  { dir: 'spineboy30', atlas: 'spineboy.atlas', files: ['spineboy'], exts: ['json'] },
-  { dir: 'spineboy31', atlas: 'spineboy.atlas', files: ['spineboy'], exts: ['json'] },
-  { dir: 'spineboy32', atlas: 'spineboy.atlas', files: ['spineboy'], exts: ['json'] },
+  { dir: 'spineboy30', atlas: 'spineboy.atlas', files: ['spineboy'] },
+  { dir: 'spineboy31', atlas: 'spineboy.atlas', files: ['spineboy'] },
+  { dir: 'spineboy32', atlas: 'spineboy.atlas', files: ['spineboy'] },
   // 官方 3.1.07 tag 的 goblins-mesh：legacy 渲染器 mesh / skinnedmesh 路径的唯一覆盖
   { dir: 'goblins31', atlas: 'goblins-mesh.atlas', files: ['goblins-mesh'], exts: ['json'] },
-  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', files: ['spineboy', 'spineboy-mesh'], exts: ['json'] },
-  { dir: 'spineboy35', atlas: 'spineboy-pma.atlas', files: ['spineboy', 'spineboy-hover'], exts: ['json'] },
-  { dir: 'spineboy36', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'], exts: ['json'] },
-  { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'], exts: ['json'] },
+  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', files: ['spineboy', 'spineboy-mesh'] },
+  { dir: 'spineboy35', atlas: 'spineboy-pma.atlas', files: ['spineboy', 'spineboy-hover'] },
+  { dir: 'spineboy36', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'] },
+  { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'] },
   { dir: 'spineboy38', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'] },
   { dir: 'spineboy40', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'] },
   { dir: 'spineboy41', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'] },
@@ -20,19 +20,16 @@ const CASES = [
 ];
 
 const ERROR_CASES = [
-  // 3.4–3.7 的 .skel：自身 pack 已接入但官方 core 无 SkeletonBinary，回退到 3.8 会被 §12.6 校验挡住
-  { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', file: 'spineboy-pro.skel', expect: 'binaryUnsupported' },
-  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', file: 'spineboy.skel', expect: 'binaryUnsupported' },
   { dir: 'spineboy21', atlas: 'spineboy.atlas', file: 'spineboy.json', expect: 'runtimeUnavailable:2d' },
-  // 3.0–3.2 由 3.1 pack 承接，官方 3.1 core 同样没有 SkeletonBinary
-  { dir: 'spineboy32', atlas: 'spineboy.atlas', file: 'spineboy.skel', expect: 'binaryUnsupported' },
 ];
 
 // 手动指定运行时 pack（packOverride）：跳过候选链，只用所选 pack；错配时必须失败而不是静默渲染
 const OVERRIDE_CASES: { dir: string; atlas: string; file: string; pack: string; expectOk: boolean }[] = [
   { dir: 'goblins31', atlas: 'goblins-mesh.atlas', file: 'goblins-mesh.json', pack: '3.1', expectOk: true },
-  // 指定到没有二进制读取器的 pack：.skel 必须报 binaryUnsupported，而不是回退或空白渲染
+  // 3.4 的 .skel 指定到 3.1 pack：legacyBinary 版本区间不含 3.4，必须报 binaryUnsupported
   { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', file: 'spineboy.skel', pack: '3.1', expectOk: false },
+  // 指定到正确的 pack：.skel 经自研读取器渲染成功
+  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', file: 'spineboy.skel', pack: '3.4', expectOk: true },
 ];
 
 // 3.2 与 3.3 的 spineboy：贴图逐字节相同、可绘制数据一致（3.3 只多了 boundingbox 的 vertexCount），
@@ -40,6 +37,18 @@ const OVERRIDE_CASES: { dir: string; atlas: string; file: string; pack: string; 
 // 两侧都是 straight-alpha 输出（webgl context premultipliedAlpha:false，canvaskit Unpremul）。
 const COMPARE_CASES = [
   { leftDir: 'spineboy32', rightDir: 'spineboy33', atlas: 'spineboy.atlas', file: 'spineboy.json', times: [0, 1000] },
+];
+
+// 同一目录的 .json（官方 SkeletonJson）与 .skel（自研读取器）逐帧像素回归：
+// 同一 pack、同一渲染路径，差异只可能来自解析层；JSON 十进制文本与 float32 的
+// 微小数值差（截断 2 位）允许 AA 级抖动，阈值与后端对比一致
+const COMPARE_FORMAT_CASES = [
+  { dir: 'spineboy30', atlas: 'spineboy.atlas', name: 'spineboy', times: [0, 1000] },
+  { dir: 'spineboy32', atlas: 'spineboy.atlas', name: 'spineboy', times: [0, 1000] },
+  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', name: 'spineboy', times: [0, 1000] },
+  { dir: 'spineboy35', atlas: 'spineboy-pma.atlas', name: 'spineboy', times: [0, 1000] },
+  { dir: 'spineboy36', atlas: 'spineboy-pma.atlas', name: 'spineboy-pro', times: [0, 1000] },
+  { dir: 'spineboy37', atlas: 'spineboy-pma.atlas', name: 'spineboy-pro', times: [0, 1000] },
 ];
 
 const out = document.getElementById('out')!;
@@ -311,6 +320,81 @@ async function main() {
       status: compareError ? 'FAIL' : 'PASS',
       case: label,
       ...(compareError ? { error: compareError } : {}),
+      opaque: [...shots.values()].map((frames) => [...frames.values()].map((f) => f.opaque).join(',')).join(' vs '),
+    });
+  }
+
+  for (const spec of COMPARE_FORMAT_CASES) {
+    type Shot2 = { opaque: number; data: Uint8ClampedArray; width: number; height: number };
+    const label = `${spec.dir} .json vs .skel ${spec.name}`;
+    const shots = new Map<string, Map<number, Shot2>>();
+    let formatError: string | null = null;
+    try {
+      for (const suffix of ['.json', '.skel']) {
+        const skeletonFile = `${spec.name}${suffix}`;
+        const files = await gather(spec.dir, spec.atlas, [spec.name]);
+        const session = new RenderSession();
+        try {
+          await session.init(320, 320);
+          await session.load({
+            files,
+            skeletonFile,
+            atlasFile: spec.atlas,
+            version: detectSpineVersion(files[skeletonFile])!,
+          });
+          const frames = new Map<number, Shot2>();
+          for (const timeMs of spec.times) {
+            const bitmap = await session.frame(timeMs);
+            const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+            const context = canvas.getContext('2d', { willReadFrequently: true })!;
+            context.drawImage(bitmap, 0, 0);
+            bitmap.close();
+            const image = context.getImageData(0, 0, canvas.width, canvas.height);
+            let opaque = 0;
+            for (let i = 3; i < image.data.length; i += 4) if (image.data[i] > 8) opaque++;
+            frames.set(timeMs, { opaque, data: image.data, width: canvas.width, height: canvas.height });
+          }
+          shots.set(suffix, frames);
+        } finally {
+          session.dispose();
+        }
+      }
+      const a = shots.get('.json')!;
+      const b = shots.get('.skel')!;
+      for (const timeMs of spec.times) {
+        const shotA = a.get(timeMs)!;
+        const shotB = b.get(timeMs)!;
+        if (shotA.width !== shotB.width || shotA.height !== shotB.height) {
+          formatError = `${timeMs}ms 尺寸 ${shotA.width}x${shotA.height} != ${shotB.width}x${shotB.height}`;
+          break;
+        }
+        let diff = 0;
+        for (let y = 0; y < shotA.height; y++) {
+          for (let x = 0; x < shotA.width; x++) {
+            const i = (y * shotA.width + x) * 4;
+            const alphaA = shotA.data[i + 3];
+            const alphaB = shotB.data[i + 3];
+            for (let k = 0; k < 3; k++) {
+              if (Math.abs(((shotA.data[i + k] * alphaA) >> 8) - ((shotB.data[i + k] * alphaB) >> 8)) > 16) {
+                diff++;
+                break;
+              }
+            }
+          }
+        }
+        const ratio = diff / (shotA.width * shotA.height);
+        if (ratio > 0.005) {
+          formatError = `${timeMs}ms 预乘差异像素 ${(ratio * 100).toFixed(2)}%`;
+          break;
+        }
+      }
+    } catch (error) {
+      formatError = error instanceof Error ? error.message : String(error);
+    }
+    results.push({
+      status: formatError ? 'FAIL' : 'PASS',
+      case: label,
+      ...(formatError ? { error: formatError } : {}),
       opaque: [...shots.values()].map((frames) => [...frames.values()].map((f) => f.opaque).join(',')).join(' vs '),
     });
   }

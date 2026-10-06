@@ -1,5 +1,6 @@
 import { RuntimeError } from '../types';
 import type { FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, SpineRuntimePack } from '../types';
+import { readLegacySkeletonData } from '../binary/legacyBinary';
 import { atlasPageNames, findFile } from '../runtimes/files';
 import { validateSkeletonData } from '../runtimes/validate';
 
@@ -133,13 +134,16 @@ export class WebglFrameSource implements FrameSource {
       const loader = new spine[pack.capabilities.attachmentLoader](atlas);
       const bytes = context.files[context.skeletonFile];
       const isBinary = !context.skeletonFile.toLowerCase().endsWith('.json');
-      if (isBinary && typeof spine.SkeletonBinary !== 'function') {
-        // 官方 JS 的 SkeletonBinary 从 3.8 才有，3.4–3.7 要等 M2d 的自研读取器
-        throw new RuntimeError('binaryUnsupported', pack.id);
+      if (isBinary) {
+        const view = new Uint8Array(bytes);
+        // 官方 JS 的 SkeletonBinary 从 3.8 才有，3.3–3.7 走自研读取器（§12.7）
+        data =
+          typeof spine.SkeletonBinary === 'function'
+            ? new spine.SkeletonBinary(loader).readSkeletonData(view)
+            : readLegacySkeletonData(spine, view, loader);
+      } else {
+        data = new spine.SkeletonJson(loader).readSkeletonData(new TextDecoder().decode(bytes));
       }
-      data = isBinary
-        ? new spine.SkeletonBinary(loader).readSkeletonData(new Uint8Array(bytes))
-        : new spine.SkeletonJson(loader).readSkeletonData(new TextDecoder().decode(bytes));
     } catch (error) {
       if (error instanceof RuntimeError) throw error;
       throw new RuntimeError('parseInvalid', error instanceof Error ? error.message : String(error));

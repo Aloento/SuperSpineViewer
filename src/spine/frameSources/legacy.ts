@@ -2,6 +2,7 @@ import type { CanvasKit, Image as CKImage, MallocObj, Surface } from 'canvaskit-
 import { RuntimeError } from '../types';
 import type { FileMap, FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, SpineRuntimePack } from '../types';
 import { findFile } from '../runtimes/files';
+import { readLegacy31SkeletonData } from '../binary/legacyBinary31';
 import { validateSkeletonData } from '../runtimes/validate';
 import { loadCanvasKit } from './canvaskit';
 
@@ -93,9 +94,14 @@ export class LegacyFrameSource implements FrameSource {
         if (!page.rendererObject) throw new RuntimeError('missingFile', String(page.name));
       }
 
-      const data = new spine.SkeletonJson(new spine.AtlasAttachmentLoader(atlas)).readSkeletonData(
-        JSON.parse(decodeFile(context.files, context.skeletonFile)),
-      );
+      const loader = new spine.AtlasAttachmentLoader(atlas);
+      const skeletonKey = findFile(context.files, context.skeletonFile);
+      if (!skeletonKey) throw new RuntimeError('missingFile', context.skeletonFile);
+      const bytes = context.files[skeletonKey];
+      // 3.1 的官方 core 没有 SkeletonBinary，.skel 走自研读取器（§12.7）
+      const data = context.skeletonFile.toLowerCase().endsWith('.json')
+        ? new spine.SkeletonJson(loader).readSkeletonData(JSON.parse(decodeFile(context.files, context.skeletonFile)))
+        : readLegacy31SkeletonData(spine, new Uint8Array(bytes), loader);
       const summary = validateSkeletonData(data, context.version);
 
       const animations: string[] = data.animations.map((item: any) => String(item.name));
