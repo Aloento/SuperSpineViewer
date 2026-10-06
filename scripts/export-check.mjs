@@ -1,92 +1,28 @@
-// M3 导出 UI 端到端：加载 goblins → 点开始导出 → 中途取消（回到空闲、无下载）→ 再次导出到完成并校验下载文件。
+// 导出 UI 端到端：加载 goblins → 点开始导出 → 中途取消（回到空闲、无下载）→ 再次导出到完成并校验下载文件。
 // 用法: node scripts/export-check.mjs <baseUrl>
-const { spawn } = await import('node:child_process');
-const path = await import('node:path');
-const os = await import('node:os');
-const fs = await import('node:fs');
+// 浏览器路径可用 --browser=<路径> 或环境变量 SSV_BROWSER 覆盖。
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
+import { openBrowser, sleep } from './lib/browser.mjs';
 
-const edgePath = process.env.SSV_EDGE ?? 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const base = process.argv[2] ?? 'http://localhost:5173/';
 const port = Number(process.env.SSV_PORT ?? 9337);
 const dlDir = path.join(os.tmpdir(), 'ssv-export-dl-' + port);
 fs.rmSync(dlDir, { recursive: true, force: true });
 fs.mkdirSync(dlDir, { recursive: true });
-// 复用 profile 会带进上次构建的旧 Service Worker，每次跑前清掉
-fs.rmSync(path.join(os.tmpdir(), 'ssv-edge-profile-' + port), { recursive: true, force: true });
 
-const child = spawn(
-  edgePath,
-  [
-    '--headless=new',
-    '--disable-gpu',
-    '--no-sandbox',
-    '--disable-extensions',
-    '--remote-debugging-port=' + port,
-    '--user-data-dir=' + path.join(os.tmpdir(), 'ssv-edge-profile-' + port),
-    'about:blank',
-  ],
-  { stdio: 'ignore' },
-);
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-let targets = [];
-for (let i = 0; i < 90; i++) {
-  try {
-    const response = await fetch('http://127.0.0.1:' + port + '/json/list');
-    if (response.ok) {
-      targets = await response.json();
-      if (targets.some((t) => t.type === 'page')) break;
-    }
-  } catch {}
-  await sleep(500);
-}
-const page = targets.find((t) => t.type === 'page');
-if (!page) {
-  console.log('ERROR: 找不到 page target');
-  child.kill();
-  process.exit(2);
-}
-
-const ws = new WebSocket(page.webSocketDebuggerUrl);
-await new Promise((resolve, reject) => {
-  ws.onopen = resolve;
-  ws.onerror = () => reject(new Error('CDP 连接失败'));
-});
-let nextId = 1;
-const waiting = new Map();
 const problems = [];
-ws.onmessage = (event) => {
-  const message = JSON.parse(event.data);
-  if (message.id && waiting.has(message.id)) {
-    const entry = waiting.get(message.id);
-    waiting.delete(message.id);
-    if (message.error) entry.reject(new Error(JSON.stringify(message.error)));
-    else entry.resolve(message.result);
-    return;
-  }
-  if (message.method === 'Runtime.exceptionThrown') {
-    problems.push(message.params?.exceptionDetails?.exception?.description ?? 'exception');
-  }
-};
-const send = (method, params = {}) =>
-  new Promise((resolve, reject) => {
-    const id = nextId++;
-    waiting.set(id, { resolve, reject });
-    ws.send(JSON.stringify({ id, method, params }));
-  });
-const evaluate = async (expression) => {
-  const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
-  if (result?.exceptionDetails) {
-    throw new Error(
-      result.exceptionDetails.exception?.description ?? JSON.stringify(result.exceptionDetails).slice(0, 400),
-    );
-  }
-  return result?.result?.value;
-};
+const { send, evaluate, close } = await openBrowser({
+  port,
+  profile: 'export-' + port,
+  onMessage: (message) => {
+    if (message.method === 'Runtime.exceptionThrown') {
+      problems.push(message.params?.exceptionDetails?.exception?.description ?? 'exception');
+    }
+  },
+});
 
-await send('Page.enable');
-await send('Runtime.enable');
 await send('Browser.setDownloadBehavior', { behavior: 'allow', downloadPath: dlDir });
 await send('Page.navigate', { url: base });
 
@@ -100,8 +36,7 @@ while (Date.now() < paintDeadline) {
 }
 if (painted !== 'ready') {
   console.log(JSON.stringify({ status: 'FAIL:first-paint' }));
-  ws.close();
-  child.kill();
+  close();
   process.exit(1);
 }
 
@@ -136,8 +71,7 @@ async function step(name, value, ok) {
   if (!ok) {
     outcome.status = 'FAIL:' + name;
     console.log(JSON.stringify(outcome, null, 2));
-    ws.close();
-    child.kill();
+    close();
     process.exit(1);
   }
 }
@@ -274,6 +208,5 @@ outcome.zip = { name: zipDownloads[0], size: fs.statSync(path.join(dlDir, zipDow
 outcome.status = 'PASS';
 if (problems.length) outcome.problems = problems.slice(0, 5);
 console.log(JSON.stringify(outcome, null, 2));
-ws.close();
-child.kill();
+close();
 process.exit(0);

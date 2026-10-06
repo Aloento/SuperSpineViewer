@@ -2,17 +2,13 @@
 // 再用真实 File 触发拖拽，按用例断言 UI 进入播放态（并确认画布真的画出了像素）或给出预期错误文案。
 // 用法: node scripts/app-check.mjs <baseUrl> <dir> <skeletonFile|*> <atlasFile|*> <playing|error> [预期文案]
 // 例: node scripts/app-check.mjs http://localhost:5173/ spineboy38 spineboy-pro.skel spineboy-pma.atlas playing
-// skeletonFile 传 * 表示把目录里的全部文件一起拖入（§3.3 自动配对，atlasFile 同时传 *）
+// skeletonFile 传 * 表示把目录里的全部文件一起拖入（自动配对，atlasFile 同时传 *）
+// 浏览器路径可用 --browser=<路径> 或环境变量 SSV_BROWSER 覆盖。
 
-const { spawn } = await import('node:child_process');
-const path = await import('node:path');
-const os = await import('node:os');
-const fs = await import('node:fs');
-// 复用 profile 会带进上次构建的旧 Service Worker，每次跑前清掉
-fs.rmSync(path.join(os.tmpdir(), 'ssv-edge-profile-' + (process.env.SSV_PORT ?? 9334)), { recursive: true, force: true });
+import fs from 'node:fs';
+import path from 'node:path';
+import { openBrowser, sleep } from './lib/browser.mjs';
 
-const edgePath =
-  process.env.SSV_EDGE ?? 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const base = process.argv[2] ?? 'http://localhost:5173/';
 const args = {
   dir: process.argv[3] ?? 'spineboy38',
@@ -24,7 +20,6 @@ const args = {
 };
 // SSV_LANG=en 时切到英文文案，验证 UI 没有硬编码字符串
 const language = process.env.SSV_LANG ?? '';
-const port = Number(process.env.SSV_PORT ?? 9334);
 const timeoutMs = Number(process.env.SSV_TIMEOUT ?? 180000);
 // 生产构建下才有独立 pack chunk，dev 下按需加载体现为动态模块请求
 const PACK_PATTERN = /spine-3\.(1|[4-8])|spine-4\.0|spine-webgl-41|spine-canvaskit|dist-[A-Za-z0-9_-]+\.js|canvaskit|\.wasm/i;
@@ -49,7 +44,7 @@ const DROP_SCRIPT = [
   "    const context = canvas.getContext('2d', { willReadFrequently: true });",
   '    const data = context.getImageData(0, 0, canvas.width, canvas.height).data;',
   '    let count = 0;',
-  '    for (let i = 3; i < data.length; i += 4) if (data[i] > 8) count++;',
+  "    for (let i = 3; i < data.length; i += 4) if (data[i] > 8) count++;",
   '    return count;',
   '  };',
   '',
@@ -81,89 +76,24 @@ const DROP_SCRIPT = [
   '})()',
 ].join('\n');
 
-const child = spawn(
-  edgePath,
-  [
-    '--headless=new',
-    '--disable-gpu',
-    '--no-sandbox',
-    '--disable-extensions',
-    '--remote-debugging-port=' + port,
-    '--user-data-dir=' + path.join(os.tmpdir(), 'ssv-edge-profile-' + port),
-    'about:blank',
-  ],
-  { stdio: 'ignore' },
-);
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-let targets = [];
-for (let i = 0; i < 90; i++) {
-  try {
-    const response = await fetch('http://127.0.0.1:' + port + '/json/list');
-    if (response.ok) {
-      targets = await response.json();
-      if (targets.some((t) => t.type === 'page')) break;
-    }
-  } catch {}
-  await sleep(500);
-}
-
-const page = targets.find((t) => t.type === 'page');
-if (!page) {
-  console.log('ERROR: 找不到 page target');
-  child.kill();
-  process.exit(2);
-}
-
-const ws = new WebSocket(page.webSocketDebuggerUrl);
-await new Promise((resolve, reject) => {
-  ws.onopen = resolve;
-  ws.onerror = () => reject(new Error('CDP 连接失败'));
-});
-
-let nextId = 1;
-const waiting = new Map();
 const requests = [];
 const problems = [];
-
-ws.onmessage = (event) => {
-  const message = JSON.parse(event.data);
-  if (message.id && waiting.has(message.id)) {
-    const entry = waiting.get(message.id);
-    waiting.delete(message.id);
-    if (message.error) entry.reject(new Error(JSON.stringify(message.error)));
-    else entry.resolve(message.result);
-    return;
-  }
-  if (message.method === 'Network.requestWillBeSent') requests.push(message.params.request.url);
-  if (message.method === 'Runtime.exceptionThrown') {
-    problems.push(message.params?.exceptionDetails?.exception?.description ?? 'exception');
-  }
-};
-
-function send(method, params = {}) {
-  const id = nextId++;
-  return new Promise((resolve, reject) => {
-    waiting.set(id, { resolve, reject });
-    ws.send(JSON.stringify({ id, method, params }));
-  });
-}
-
-async function evaluate(expression) {
-  const result = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true });
-  if (result?.exceptionDetails) return { error: result.exceptionDetails.exception?.description ?? result.exceptionDetails.text };
-  return result?.result?.value;
-}
+const { send, evaluate, close } = await openBrowser({
+  port: Number(process.env.SSV_PORT ?? 9334),
+  profile: 'app-' + (process.env.SSV_PORT ?? 9334),
+  onMessage: (message) => {
+    if (message.method === 'Network.requestWillBeSent') requests.push(message.params.request.url);
+    if (message.method === 'Runtime.exceptionThrown') {
+      problems.push(message.params?.exceptionDetails?.exception?.description ?? 'exception');
+    }
+  },
+});
 
 if (language) {
-  await send('Page.enable');
   await send('Page.addScriptToEvaluateOnNewDocument', {
     source: 'localStorage.setItem("ssv.language", ' + JSON.stringify(language) + ');',
   });
 }
-await send('Page.enable');
-await send('Runtime.enable');
 await send('Network.enable');
 await send('Page.navigate', { url: base });
 
@@ -230,6 +160,5 @@ console.log(
 );
 if (problems.length) console.log('页面异常:\n' + problems.slice(0, 5).join('\n'));
 
-ws.close();
-child.kill();
+close();
 process.exit(verdict && lazyOk ? 0 : 1);
