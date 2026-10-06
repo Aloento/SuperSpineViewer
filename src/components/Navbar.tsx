@@ -18,19 +18,6 @@ const useStyles = makeStyles({
     gap: tokens.spacingHorizontalM,
     minWidth: 0,
   },
-  logo: {
-    width: '32px',
-    height: '32px',
-    borderRadius: tokens.borderRadiusMedium,
-    background: `linear-gradient(135deg, ${tokens.colorBrandBackground}, ${tokens.colorBrandBackground2})`,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: tokens.colorBrandForeground1,
-    fontWeight: 700,
-    fontSize: '14px',
-    flexShrink: 0,
-  },
   title: {
     fontSize: '1.25rem',
     fontWeight: 600,
@@ -58,7 +45,6 @@ export default function Navbar() {
   return (
     <nav className={styles.bar}>
       <div className={styles.brand}>
-        <div className={styles.logo}>SS</div>
         <div style={{ minWidth: 0 }}>
           <div className={styles.title}>{t('app.name')}</div>
           <div className={styles.tagline}>{t('app.tagline')}</div>

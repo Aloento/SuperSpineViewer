@@ -35,6 +35,7 @@
     "pause": "暂停",
     "progress": "播放进度",
     "loop": "循环播放",
+    "premultiplied": "预乘alpha",
     "animation": "动画",
     "skin": "皮肤",
     "skinDefault": "默认皮肤",
@@ -65,7 +66,6 @@
     "runtimeRetry": "已回退到 {{pack}} 运行时渲染：{{detail}}"
   },
   "footer": {
-    "authorPrefix": "作者",
     "starPrefix": "喜欢本项目？",
     "starAction": "去 GitHub 给个 Star"
   },

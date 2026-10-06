@@ -45,6 +45,12 @@ const useStyles = makeStyles({
   full: {
     gridColumn: '1 / -1',
   },
+  switches: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacingHorizontalL,
+    flexWrap: 'wrap',
+  },
   section: {
     display: 'flex',
     flexDirection: 'column',
@@ -88,6 +94,7 @@ interface ControlPanelProps {
   offsetX: number;
   offsetY: number;
   scale: number;
+  premultiplied: boolean;
   onTogglePlay: () => void;
   onSeek: (timeMs: number) => void;
   onLoopChange: (loop: boolean) => void;
@@ -97,6 +104,7 @@ interface ControlPanelProps {
   onOffsetYChange: (value: number) => void;
   onScaleChange: (value: number) => void;
   onResetTransform: () => void;
+  onPremultipliedChange: (value: boolean) => void;
 }
 
 /** 秒数文本：0:03.4 / 1:02.0 */
@@ -183,13 +191,20 @@ export default function ControlPanel(props: ControlPanelProps) {
           </Dropdown>
         </Field>
 
-        <div className={styles.full}>
+        <div className={`${styles.full} ${styles.switches}`}>
           <Switch
             data-ssv="loop-toggle"
             disabled={!props.enabled}
             checked={props.loop}
             onChange={(_, data) => props.onLoopChange(data.checked)}
             label={t('control.loop')}
+          />
+          <Switch
+            data-ssv="premultiplied-toggle"
+            disabled={!props.enabled}
+            checked={props.premultiplied}
+            onChange={(_, data) => props.onPremultipliedChange(data.checked)}
+            label={t('control.premultiplied')}
           />
         </div>
       </div>

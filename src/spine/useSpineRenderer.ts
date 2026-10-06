@@ -46,6 +46,8 @@ export interface SpineRendererState {
   offsetY: number;
   /** 相对自动取景的额外缩放 */
   scale: number;
+  /** 预览帧走 GPU 预乘直传（true）还是 CPU 直通 alpha 读回（false） */
+  premultiplied: boolean;
 }
 
 const DEFAULT_TRANSFORM: TransformPayload = { offsetX: 0, offsetY: 0, scale: 1 };
@@ -73,6 +75,7 @@ const initialState: SpineRendererState = {
   offsetX: 0,
   offsetY: 0,
   scale: 1,
+  premultiplied: true,
 };
 
 /** 导出会话重建渲染流水线所需的全部信息 */
@@ -109,6 +112,8 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
   /** 拖动进度条的合并状态：在途 seek 只保留最新目标 */
   const seekBusyRef = useRef(false);
   const seekPendingRef = useRef(0);
+  /** 预览是否走 GPU 预乘直传，播放循环每帧读取 */
+  const premultipliedRef = useRef(true);
 
   const teardown = useCallback(() => {
     runRef.current += 1;
@@ -248,6 +253,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
           stopRef.current = startPlayback(session, stale, teardown, setState, elapsedRef, 0, transformRef, {
             isLoop: () => loopRef.current,
             durationMs: () => durationRef.current * 1000,
+            preview: () => premultipliedRef.current,
             onEnded: () => {
               playingRef.current = false;
             },
@@ -298,6 +304,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
       stopRef.current = startPlayback(session, () => run !== runRef.current, teardown, setState, elapsedRef, startOffsetMs, transformRef, {
         isLoop: () => loopRef.current,
         durationMs: () => durationRef.current * 1000,
+        preview: () => premultipliedRef.current,
         onEnded: () => {
           playingRef.current = false;
         },
@@ -319,7 +326,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
       playingRef.current = true;
       setState((current) => ({ ...current, playing: true }));
       const run = runRef.current;
-      const frame = await session.seek(target, true);
+      const frame = await session.seek(target, premultipliedRef.current);
       if (run !== runRef.current) {
         frame.close();
         return;
@@ -365,7 +372,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
       try {
         let target = timeMs;
         for (;;) {
-          const frame = await session.seek(target, true);
+          const frame = await session.seek(target, premultipliedRef.current);
           if (run !== runRef.current) {
             frame.close();
             break;
@@ -391,7 +398,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     if (!session) return;
     stopPlayback();
     const run = runRef.current;
-    const frame = await session.setAnimation(animationRef.current, loopRef.current, true);
+    const frame = await session.setAnimation(animationRef.current, loopRef.current, premultipliedRef.current);
     if (run !== runRef.current) {
       frame.close();
       return;
@@ -440,7 +447,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     if (!session) return;
     setState((current) => ({ ...current, skin: name }));
     const run = runRef.current;
-    const frame = await session.setSkin(name, true);
+    const frame = await session.setSkin(name, premultipliedRef.current);
     if (run !== runRef.current) {
       frame.close();
       return;
@@ -466,7 +473,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     if (playingRef.current) return;
     const seq = ++transformSeqRef.current;
     const run = runRef.current;
-    const frame = await session.setTransform(next.offsetX, next.offsetY, next.scale, true);
+    const frame = await session.setTransform(next.offsetX, next.offsetY, next.scale, premultipliedRef.current);
     if (run !== runRef.current || seq !== transformSeqRef.current) {
       frame.close();
       return;
@@ -477,6 +484,28 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     });
   }, []);
 
+  /** 预乘 alpha 开关：播放循环下一帧起走新的取帧路径；暂停态原地重绘当前帧 */
+  const changePremultiplied = useCallback(
+    async (value: boolean) => {
+      const session = sessionRef.current;
+      if (!session) return;
+      premultipliedRef.current = value;
+      setState((current) => ({ ...current, premultiplied: value }));
+      if (playingRef.current) return;
+      const run = runRef.current;
+      const frame = await session.frame(elapsedRef.current, transformRef.current, value);
+      if (run !== runRef.current) {
+        frame.close();
+        return;
+      }
+      setState((current) => {
+        current.frame?.close();
+        return { ...current, frame };
+      });
+    },
+    [],
+  );
+
   const reset = useCallback(() => {
     teardown();
     lastFilesRef.current = null;
@@ -485,6 +514,7 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     durationRef.current = 0;
     elapsedRef.current = 0;
     transformRef.current = { ...DEFAULT_TRANSFORM };
+    premultipliedRef.current = initialState.premultiplied;
     setState(initialState);
   }, [teardown]);
 
@@ -523,12 +553,15 @@ export function useSpineRenderer(width: number, height: number, manualPackId: st
     changeLoop,
     changeSkin,
     changeTransform,
+    changePremultiplied,
   };
 }
 
 interface PlaybackGuards {
   isLoop: () => boolean;
   durationMs: () => number;
+  /** 预览帧是否走 GPU 预乘直传 */
+  preview: () => boolean;
   /** 非循环播到终点：时钟已停，通知调用方把 playing 置 false */
   onEnded: () => void;
 }
@@ -584,6 +617,7 @@ function startPlayback(
         }
       },
       getTransform: () => transformRef.current,
+      getPreview: () => guards.preview(),
     },
   );
 

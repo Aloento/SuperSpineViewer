@@ -166,6 +166,7 @@ export default function App() {
               offsetX={renderer.offsetX}
               offsetY={renderer.offsetY}
               scale={renderer.scale}
+              premultiplied={renderer.premultiplied}
               onTogglePlay={() => void renderer.togglePlay()}
               onSeek={(ms) => void renderer.seekTo(ms)}
               onLoopChange={(value) => void renderer.changeLoop(value)}
@@ -175,6 +176,7 @@ export default function App() {
               onOffsetYChange={(value) => void renderer.changeTransform({ offsetY: value })}
               onScaleChange={(value) => void renderer.changeTransform({ scale: value })}
               onResetTransform={() => void renderer.changeTransform({ offsetX: 0, offsetY: 0, scale: 1 })}
+              onPremultipliedChange={(value) => void renderer.changePremultiplied(value)}
             />
           </Card>
 

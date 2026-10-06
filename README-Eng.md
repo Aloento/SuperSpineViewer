@@ -5,10 +5,11 @@
 A browser PWA to load and export Spine animations
 
 - Runs purely in the browser, no JVM / JavaFX / FFmpeg required
-- Transparent video export: WebM (VP9-alpha with alpha channel) or APNG frame sequence (ZIP); format / frame rate / bitrate / canvas size (640 / 1024 / 2048 / custom) configurable
+- Transparent video export: WebM (VP9-alpha with alpha channel) or APNG frame sequence (ZIP); format / frame rate / bitrate / canvas size (640 / 1024 / 2048 / custom) configurable, always encoded from straight alpha regardless of the preview toggle
 - Fixed canvas size, independent of window/screen size
 - Multi Spine version loading: both .skel and .json across 3.0-4.3 (2.1 not supported)
-- Playback controls: pause/seek/switch animation/switch skin/loop toggle/offset & scale
+- Playback controls: pause/seek/switch animation/switch skin/loop toggle/premultiplied-alpha toggle/offset & scale
+- Preview defaults to GPU premultiplied-alpha transfer to hold full frame rate; switching to straight alpha goes back through the CPU readback path, matching export pixels exactly (frame rate then bounded by readback cost)
 - Works offline: core assets are precached, runtime packs are cached CacheFirst on first use
 
 Tech stack: pnpm + Vite + TypeScript + Fluent UI + Tailwind CSS

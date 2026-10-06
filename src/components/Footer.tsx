@@ -15,31 +15,22 @@ const useStyles = makeStyles({
     paddingBlock: tokens.spacingVerticalL,
     color: tokens.colorNeutralForeground3,
   },
-  copyright: {
-    width: '100%',
-    textAlign: 'center',
-  },
 });
 
 export default function Footer() {
   const styles = useStyles();
   const { t } = useTranslation();
-  const year = new Date().getFullYear();
 
   return (
     <footer className={styles.footer}>
-      <Text size={200}>{t('footer.authorPrefix')}</Text>
       <Link href={AUTHOR_URL} target="_blank" rel="noreferrer noopener">
-        Aloento
+        © 2026 Aloento
       </Link>
       <Text size={200}>·</Text>
       <Text size={200}>{t('footer.starPrefix')}</Text>
       <Link href={REPO_URL} target="_blank" rel="noreferrer noopener">
         {t('footer.starAction')}
       </Link>
-      <Text size={200} className={styles.copyright}>
-        © {year} Aloento
-      </Text>
     </footer>
   );
 }

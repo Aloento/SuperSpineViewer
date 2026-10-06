@@ -137,6 +137,8 @@ export class RenderSession {
       onElapsed?: (elapsedMs: number) => void;
       /** 每帧取最新的用户偏移/缩放，播放中拖动滑杆立即生效，无需单独发消息 */
       getTransform?: () => TransformPayload | null;
+      /** 每帧取最新的预览模式，切换开关无需重启循环 */
+      getPreview?: () => boolean;
     },
   ): () => void {
     let stopped = false;
@@ -152,7 +154,7 @@ export class RenderSession {
       while (!stopped) {
         const elapsed = performance.now() - startedAt + offset;
         options?.onElapsed?.(elapsed);
-        const request = this.frame(elapsed, options?.getTransform?.() ?? null, true);
+        const request = this.frame(elapsed, options?.getTransform?.() ?? null, options?.getPreview?.() ?? true);
         pending = request;
         await new Promise<void>((resolve) => {
           rafId = requestAnimationFrame(() => resolve());

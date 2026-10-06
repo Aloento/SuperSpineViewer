@@ -284,7 +284,22 @@ await sleep(800);
 const opaqueReset = await evaluate('window.__H.opaque()');
 check('reset-restores-pixels', Math.abs(opaqueReset - opaqueFull) <= opaqueFull * 0.15, 'opaque reset=' + opaqueReset + ' (full=' + opaqueFull + ')');
 
-// 11. 全程无错误条、无未捕获异常
+// 11. 预乘alpha开关：切换应生效，暂停态两种模式都要出画
+const premultSel = "[data-ssv=premultiplied-toggle] input, [data-ssv=premultiplied-toggle][role=switch]";
+const premultBefore = await evaluate("String(document.querySelector('" + premultSel + "')?.checked)");
+await evaluate("window.__H.click('[data-ssv=premultiplied-toggle]')");
+await sleep(800);
+const premultAfter = await evaluate("String(document.querySelector('" + premultSel + "')?.checked)");
+check('premultiplied-toggles', premultBefore === 'true' && premultAfter === 'false', 'checked ' + premultBefore + ' -> ' + premultAfter);
+const opaqueStraight = await evaluate('window.__H.opaque()');
+check('straight-alpha-frames', opaqueStraight > 500, 'opaque=' + opaqueStraight);
+// 切回预乘：GPU 直传路径同样出画
+await evaluate("window.__H.click('[data-ssv=premultiplied-toggle]')");
+await sleep(800);
+const opaquePremult = await evaluate('window.__H.opaque()');
+check('premultiplied-frames', opaquePremult > 500, 'opaque=' + opaquePremult);
+
+// 12. 全程无错误条、无未捕获异常
 const errBar = await evaluate("!!document.querySelector('[data-ssv=error]')");
 check('no-error-bar', !errBar, 'errorBar=' + errBar);
 
