@@ -1,4 +1,5 @@
-﻿import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Badge,
   Card,
@@ -13,6 +14,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import FileDropZone from './components/FileDropZone';
 import PreviewCanvas from './components/PreviewCanvas';
+import VersionSelector from './components/VersionSelector';
 import { useSpineRenderer } from './spine/useSpineRenderer';
 import { defaultExportOptions } from './export/presets';
 
@@ -33,6 +35,19 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     gap: tokens.spacingVerticalM,
   },
+  tools: {
+    display: 'flex',
+    alignItems: 'stretch',
+    gap: tokens.spacingHorizontalM,
+    flexWrap: 'wrap',
+  },
+  version: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    gap: tokens.spacingHorizontalXS,
+    flexShrink: 0,
+  },
   status: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -48,14 +63,23 @@ export default function App() {
   const styles = useStyles();
   const { t } = useTranslation();
   const { width, height } = defaultExportOptions;
-  const renderer = useSpineRenderer(width, height);
+  const [manualPackId, setManualPackId] = useState<string | null>(null);
+  const renderer = useSpineRenderer(width, height, manualPackId);
 
   return (
     <div className={styles.shell}>
       <Navbar />
 
       <div className={styles.panel}>
-        <FileDropZone onFiles={(files) => void renderer.loadFiles(files)} busy={renderer.status === 'loading'} />
+        <div className={styles.tools}>
+          <FileDropZone onFiles={(files) => void renderer.loadFiles(files)} busy={renderer.status === 'loading'} />
+          <div className={styles.version}>
+            <Text size={200} className={styles.muted}>
+              {t('version.label')}:
+            </Text>
+            <VersionSelector value={manualPackId} onChange={setManualPackId} />
+          </div>
+        </div>
 
         {renderer.error && (
           <MessageBar intent="error" data-ssv="error">

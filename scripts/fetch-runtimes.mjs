@@ -38,8 +38,23 @@ const targets = [
   // 3.0–3.2 没有独立分支/tag，统一由 3.1.07 的 spine-js 承接（见 REFACTORING_PLAN §1.1）；
   // 该产物只有核心层，没有 spine.webgl，渲染走自研 CanvasKit frameSource
   { id: '3.1', enabled: true, kind: 'global-script', ref: '3.1.07', entry: 'spine-js/spine.js', noRenderer: true,
-    // 上游 FfdTimeline.apply 引用了不存在的 sourceAttachment，联动网格 FFD 一播放就 ReferenceError
-    patch: (text) => legacyStrictFixes(text.replace('slotAttachment.parentMesh != sourceAttachment', 'slotAttachment.parentMesh != this.attachment')) },
+    // 上游 FfdTimeline.apply 引用了不存在的 sourceAttachment，联动网格 FFD 一播放就 ReferenceError；
+    // 且槽位 attachment 被 attachment timeline 置空时直接解引用 null（goblins walk 0.8s 起崩溃），
+    // 官方 3.8 的 DeformTimeline 用 instanceof 判空（null 同样短路），这里同步
+    patch: (text) => {
+      const fixed = text.replace('slotAttachment.parentMesh != sourceAttachment', 'slotAttachment.parentMesh != this.attachment');
+      if (fixed === text) throw new Error('3.1 sourceAttachment 补丁未命中');
+      const guard = 'var slotAttachment = slot.attachment;\n\t\tif (!slotAttachment) return;';
+      const guarded = fixed.replace('var slotAttachment = slot.attachment;', guard);
+      if (guarded === fixed) throw new Error('3.1 FFD 判空补丁未命中');
+      // skinnedmesh 权重解析用 arr[arr.length]=v 往定长 typed array 里 push（上游 bug）：
+      // 越界写被静默忽略，bones/weights 全零，加权网格顶点坍缩到原点；换普通数组才符合 push 语义
+      const weightsFixed = guarded.replace('var weights = new spine.Float32Array(uvs.length * 3 * 3);', 'var weights = [];');
+      if (weightsFixed === guarded) throw new Error('3.1 weights 数组补丁未命中');
+      const bonesFixed = weightsFixed.replace('var bones = new spine.Uint32Array(uvs.length * 3);', 'var bones = [];');
+      if (bonesFixed === weightsFixed) throw new Error('3.1 bones 数组补丁未命中');
+      return legacyStrictFixes(bonesFixed);
+    } },
   // 官方没有 3.4 分支，只有 tag 3.4.02
   { id: '3.4', enabled: true, kind: 'global-script', ref: '3.4.02' },
   { id: '3.5', enabled: true, kind: 'global-script', ref: '3.5' },

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { detectSpineVersion } from './versionLoader';
-import { resolveRuntimeCandidates } from './runtimeMap';
+import { parseSpineVersion, resolveRuntimeCandidates } from './runtimeMap';
 import type { SpineVersionInfo, UnavailableRuntimeCode } from './runtimeMap';
 import { RenderSession, RenderWorkerError } from './renderSession';
 import type { LoadResponsePayload } from '../workers/protocol';
@@ -50,11 +50,13 @@ function skeletonRank(name: string): number {
   return name.toLowerCase().endsWith('.skel') ? 0 : 1;
 }
 
-export function useSpineRenderer(width: number, height: number) {
+export function useSpineRenderer(width: number, height: number, manualPackId: string | null) {
   const [state, setState] = useState<SpineRendererState>(initialState);
   const sessionRef = useRef<RenderSession | null>(null);
   const stopRef = useRef<(() => void) | null>(null);
   const runRef = useRef(0);
+  const lastFilesRef = useRef<File[] | null>(null);
+  const loadRef = useRef<(files: File[]) => Promise<void>>(async () => {});
 
   const teardown = useCallback(() => {
     runRef.current += 1;
@@ -69,6 +71,7 @@ export function useSpineRenderer(width: number, height: number) {
   const loadFiles = useCallback(
     async (files: File[]) => {
       teardown();
+      lastFilesRef.current = files;
       const run = runRef.current;
       const stale = () => run !== runRef.current;
 
@@ -117,32 +120,43 @@ export function useSpineRenderer(width: number, height: number) {
       let previous: string | null = null;
 
       for (const skeletonFile of skeletons) {
-        const version = detectSpineVersion(buffers[skeletonFile]);
-        const resolution = version ? resolveRuntimeCandidates(version) : null;
-        if (!version || !resolution || resolution.unknown) {
+        const sniffed = detectSpineVersion(buffers[skeletonFile]);
+        // 手动指定 pack：候选链交给 Worker 的 packOverride，版本读不出来时用 pack 版本兜底
+        const version = manualPackId ? sniffed ?? parseSpineVersion(manualPackId + '.0') : sniffed;
+        if (!version) {
           unknownVersion = true;
           previous = skeletonFile;
           continue;
         }
-        if (resolution.candidates.length === 0) {
-          unavailable = resolution.reason;
-          nearest = resolution.nearest ?? nearest;
-          previous = skeletonFile;
-          continue;
-        }
-        if (resolution.declaredUnavailable) {
-          unavailable = resolution.declaredUnavailable;
-          nearest = resolution.nearest ?? nearest;
-          fallbackUsed = true;
+        if (!manualPackId) {
+          const resolution = resolveRuntimeCandidates(version);
+          if (resolution.unknown) {
+            unknownVersion = true;
+            previous = skeletonFile;
+            continue;
+          }
+          if (resolution.candidates.length === 0) {
+            unavailable = resolution.reason;
+            nearest = resolution.nearest ?? nearest;
+            previous = skeletonFile;
+            continue;
+          }
+          if (resolution.declaredUnavailable) {
+            unavailable = resolution.declaredUnavailable;
+            nearest = resolution.nearest ?? nearest;
+            fallbackUsed = true;
+          }
         }
 
         try {
-          const loaded = await session.load({ files: buffers, skeletonFile, atlasFile, version });
+          const loaded = await session.load({ files: buffers, skeletonFile, atlasFile, version, packOverride: manualPackId ?? undefined });
           if (stale()) return;
           setState({
             ...initialState,
             status: 'playing',
-            warning: fallbackWarning(previous, skeletonFile, version, loaded, fallbackUsed),
+            warning: manualPackId
+              ? { key: 'warnings.manualRuntime', values: { pack: loaded.packId } }
+              : fallbackWarning(previous, skeletonFile, version, loaded, fallbackUsed),
             version: version.raw,
             runtime: loaded.runtimeVersion,
             packId: loaded.packId,
@@ -177,11 +191,20 @@ export function useSpineRenderer(width: number, height: number) {
         setState({ ...initialState, status: 'error', error: { key: 'errors.loadFailed', values: { detail: '' } } });
       }
     },
-    [teardown, width, height],
+    [teardown, width, height, manualPackId],
   );
+
+  loadRef.current = loadFiles;
+
+  useEffect(() => {
+    // 换 pack 后用同一批文件重载，避免用户重新拖拽
+    const files = lastFilesRef.current;
+    if (files) void loadRef.current(files);
+  }, [manualPackId]);
 
   const reset = useCallback(() => {
     teardown();
+    lastFilesRef.current = null;
     setState(initialState);
   }, [teardown]);
 

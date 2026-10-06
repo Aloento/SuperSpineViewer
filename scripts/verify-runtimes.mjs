@@ -32,6 +32,9 @@ const CASES = {
   '3.2': { dir: 'spineboy32', atlas: 'spineboy.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
   '3.1': { dir: 'spineboy31', atlas: 'spineboy.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
   '3.0': { dir: 'spineboy30', atlas: 'spineboy.atlas', files: { spineboy: { json: [17, 8], skel: 'no-binary' } } },
+  // 官方 3.1.07 tag 的 goblins-mesh：无 skeleton 段的 3.1 导出，且带 mesh / skinnedmesh，
+  // 是 3.1 pack 里 mesh 路径的唯一覆盖（spineboy30–32 全是 region）
+  '3.1-mesh': { dir: 'goblins31', atlas: 'goblins-mesh.atlas', files: { 'goblins-mesh': { json: [21, 1] } } },
   // 2.x 二进制没有版本字段，.skel 只能嗅探失败；json 按结构判定为 2.1
   '2.1': {
     dir: 'spineboy21',

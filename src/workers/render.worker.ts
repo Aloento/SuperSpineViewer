@@ -12,17 +12,17 @@ function post(message: RenderResponse, transfer: Transferable[] = []) {
 }
 
 async function loadSkeleton(id: number, payload: LoadPayload) {
+  // 手动指定 pack 时候选链就是它本身；否则按声明版本展开回退链
   const resolution = resolveRuntimeCandidates(payload.version);
-  if (resolution.unknown) {
-    post({ id, type: 'error', payload: { code: 'unknownVersion', message: 'sniff-failed', attempts: [] } });
-    return;
-  }
-  if (resolution.candidates.length === 0) {
+  const candidates = payload.packOverride
+    ? [{ version: `${payload.packOverride}.0`, packId: payload.packOverride }]
+    : resolution.candidates;
+  if (candidates.length === 0) {
     post({ id, type: 'error', payload: { code: 'runtimeUnavailable', message: resolution.reason, attempts: [] } });
     return;
   }
 
-  const outcome = await loadFrameFromCandidates(resolution.candidates, {
+  const outcome = await loadFrameFromCandidates(candidates, {
     width: size.width,
     height: size.height,
     files: payload.files,

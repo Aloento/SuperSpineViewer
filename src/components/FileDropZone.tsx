@@ -17,6 +17,8 @@ const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground2,
     cursor: 'pointer',
     textAlign: 'center',
+    flex: '1 1 20rem',
+    minWidth: 0,
   },
   active: {
     border: `1px dashed ${tokens.colorBrandStroke1}`,

@@ -9,6 +9,13 @@ const modernHashBytes = 8;
 
 // 2.x 导出的 json 没有 skeleton.spine 字段，也读不到二进制版本，只能按结构判定为 2.1
 const spine2xVersion: SpineVersionInfo = { raw: '2.1', major: 2, minor: 1, patch: 0 };
+// 3.0–3.3 的部分导出同样没有 skeleton 段（官方 goblins-mesh 是 3.1 导出且无此段），
+// 只能靠 3.x 独有结构判定；3.1 pack 覆盖 3.0–3.3，故按 3.1 报
+const spine3xLegacyVersion: SpineVersionInfo = { raw: '3.1', major: 3, minor: 1, patch: 0 };
+
+// 3.x 独有的动画时间轴名：mesh 顶点动画（3.1 叫 ffd，3.4+ 叫 deform）与大写 O 的 drawOrder；
+// 2.x 的动画只有 slots/bones/events/draworder（实测 spineboy21）
+const spine3xMarkers = ['ffd', 'deform', 'drawOrder'];
 
 interface Cursor {
   offset: number;
@@ -43,10 +50,40 @@ function detectFromJson(data: ArrayBuffer): SpineVersionInfo | null {
     const skeleton = (parsed as { skeleton?: { spine?: unknown } }).skeleton;
     if (typeof skeleton?.spine === 'string') return parseSpineVersion(skeleton.spine);
     const bones = (parsed as { bones?: unknown }).bones;
-    return skeleton === undefined && Array.isArray(bones) ? spine2xVersion : null;
+    if (skeleton !== undefined || !Array.isArray(bones)) return null;
+    return hasSpine3xMarkers(parsed) ? spine3xLegacyVersion : spine2xVersion;
   } catch {
     return null;
   }
+}
+
+/** 无 skeleton 段时只能看内容：mesh 顶点动画与约束体系是 3.x 才有的东西 */
+function hasSpine3xMarkers(parsed: unknown): boolean {
+  const root = parsed as { animations?: unknown; skins?: unknown };
+  const animations = root.animations;
+  if (animations && typeof animations === 'object') {
+    for (const animation of Object.values(animations as Record<string, unknown>)) {
+      if (!animation || typeof animation !== 'object') continue;
+      if (Object.keys(animation as Record<string, unknown>).some((key) => spine3xMarkers.includes(key))) return true;
+    }
+  }
+  const skins = root.skins;
+  if (skins && typeof skins === 'object') {
+    const entries: unknown[] = Array.isArray(skins) ? skins : Object.values(skins as Record<string, unknown>);
+    for (const skin of entries) {
+      const slots = (skin as { attachments?: unknown })?.attachments;
+      if (!slots || typeof slots !== 'object') continue;
+      for (const slot of Object.values(slots as Record<string, unknown>)) {
+        if (!slot || typeof slot !== 'object') continue;
+        for (const attachment of Object.values(slot as Record<string, unknown>)) {
+          const type = (attachment as { type?: unknown })?.type;
+          // 2.x 也有 region/mesh/boundingbox；skinnedmesh 与 linkedmesh 系列是 3.0 起才有的
+          if (typeof type === 'string' && (type === 'skinnedmesh' || type === 'weightedmesh' || type.endsWith('linkedmesh'))) return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 
 function detectFromBinary(view: DataView): SpineVersionInfo | null {

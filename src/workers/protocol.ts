@@ -11,6 +11,8 @@ export interface LoadPayload {
   atlasFile: string;
   /** 文件头嗅探出的版本，Worker 据此展开候选运行时链 */
   version: SpineVersionInfo;
+  /** 用户手动指定的运行时 pack；存在时跳过候选链，只用该 pack 解析 */
+  packOverride?: string;
 }
 
 export interface FramePayload {

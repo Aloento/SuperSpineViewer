@@ -62,7 +62,7 @@ const DROP_SCRIPT = [
   '  while (Date.now() < deadline) {',
   '    await new Promise((resolve) => setTimeout(resolve, 250));',
   "    const text = document.body.innerText.replace(/\\s+/g, ' ');",
-  "    const bar = document.querySelector('[data-ssv]');",
+  "    const bar = document.querySelector('[data-ssv=error], [data-ssv=warning]');",
   "    const intent = bar ? bar.getAttribute('data-ssv') : null;",
   "    if (bar && intent === 'error') {",
   "      const message = bar.textContent.replace(/\\s+/g, ' ').trim();",

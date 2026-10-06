@@ -6,6 +6,8 @@ const CASES = [
   { dir: 'spineboy30', atlas: 'spineboy.atlas', files: ['spineboy'], exts: ['json'] },
   { dir: 'spineboy31', atlas: 'spineboy.atlas', files: ['spineboy'], exts: ['json'] },
   { dir: 'spineboy32', atlas: 'spineboy.atlas', files: ['spineboy'], exts: ['json'] },
+  // 官方 3.1.07 tag 的 goblins-mesh：legacy 渲染器 mesh / skinnedmesh 路径的唯一覆盖
+  { dir: 'goblins31', atlas: 'goblins-mesh.atlas', files: ['goblins-mesh'], exts: ['json'] },
   { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', files: ['spineboy', 'spineboy-mesh'], exts: ['json'] },
   { dir: 'spineboy35', atlas: 'spineboy-pma.atlas', files: ['spineboy', 'spineboy-hover'], exts: ['json'] },
   { dir: 'spineboy36', atlas: 'spineboy-pma.atlas', files: ['spineboy-pro', 'spineboy-ess'], exts: ['json'] },
@@ -24,6 +26,13 @@ const ERROR_CASES = [
   { dir: 'spineboy21', atlas: 'spineboy.atlas', file: 'spineboy.json', expect: 'runtimeUnavailable:2d' },
   // 3.0–3.2 由 3.1 pack 承接，官方 3.1 core 同样没有 SkeletonBinary
   { dir: 'spineboy32', atlas: 'spineboy.atlas', file: 'spineboy.skel', expect: 'binaryUnsupported' },
+];
+
+// 手动指定运行时 pack（packOverride）：跳过候选链，只用所选 pack；错配时必须失败而不是静默渲染
+const OVERRIDE_CASES: { dir: string; atlas: string; file: string; pack: string; expectOk: boolean }[] = [
+  { dir: 'goblins31', atlas: 'goblins-mesh.atlas', file: 'goblins-mesh.json', pack: '3.1', expectOk: true },
+  // 指定到没有二进制读取器的 pack：.skel 必须报 binaryUnsupported，而不是回退或空白渲染
+  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', file: 'spineboy.skel', pack: '3.1', expectOk: false },
 ];
 
 // 3.2 与 3.3 的 spineboy：贴图逐字节相同、可绘制数据一致（3.3 只多了 boundingbox 的 vertexCount），
@@ -157,6 +166,38 @@ async function main() {
         case: `${spec.dir}/${spec.file}`,
         expected: spec.expect,
         actual: code.slice(0, 160),
+      });
+    } finally {
+      session.dispose();
+    }
+  }
+
+  for (const spec of OVERRIDE_CASES) {
+    const files = await gather(spec.dir, spec.atlas, [spec.file.replace(/\.(json|skel)$/, '')]);
+    const session = new RenderSession();
+    try {
+      await session.init(320, 320);
+      const loaded = await session.load({
+        files,
+        skeletonFile: spec.file,
+        atlasFile: spec.atlas,
+        version: detectSpineVersion(files[spec.file]) ?? { raw: '3.1', major: 3, minor: 1, patch: 0 },
+        packOverride: spec.pack,
+      });
+      const { frames, opaque, error } = await play(session);
+      const ok = loaded.packId === spec.pack && opaque > 500 && frames > 3 && !error;
+      results.push({
+        status: spec.expectOk === ok ? 'PASS' : 'FAIL',
+        case: `${spec.dir}/${spec.file} packOverride=${spec.pack}`,
+        pack: loaded.packId,
+        opaque,
+        frames,
+      });
+    } catch (error) {
+      results.push({
+        status: spec.expectOk ? 'FAIL' : 'PASS',
+        case: `${spec.dir}/${spec.file} packOverride=${spec.pack}`,
+        actual: error instanceof RenderWorkerError ? `${error.code}:${error.message}` : String(error),
       });
     } finally {
       session.dispose();

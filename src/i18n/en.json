@@ -8,6 +8,10 @@
     "zh": "中文",
     "en": "English"
   },
+  "version": {
+    "label": "Spine runtime",
+    "auto": "Auto-detect (recommended)"
+  },
   "status": {
     "version": "Spine version",
     "runtime": "Runtime",
@@ -40,6 +44,7 @@
   "warnings": {
     "skeletonFallback": "{{from}} could not be parsed, falling back to {{to}}",
     "runtimeFallback": "Rendered with the Spine {{to}} runtime ({{pack}}) instead of {{from}}",
+    "manualRuntime": "Loaded with the manually selected runtime {{pack}}",
     "runtimeRetry": "Fell back to the {{pack}} runtime: {{detail}}"
   },
   "footer": {

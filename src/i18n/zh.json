@@ -8,6 +8,10 @@
     "zh": "中文",
     "en": "English"
   },
+  "version": {
+    "label": "Spine 运行时",
+    "auto": "自动识别（推荐）"
+  },
   "status": {
     "version": "Spine 版本",
     "runtime": "运行时",
@@ -40,6 +44,7 @@
   "warnings": {
     "skeletonFallback": "{{from}} 无法解析，已改用 {{to}}",
     "runtimeFallback": "该资源由 Spine {{to}} 运行时（{{pack}}）渲染，而非 {{from}}",
+    "manualRuntime": "已按所选运行时 {{pack}} 加载",
     "runtimeRetry": "已回退到 {{pack}} 运行时渲染：{{detail}}"
   },
   "footer": {

@@ -134,7 +134,12 @@ export class LegacyFrameSource implements FrameSource {
         const key = findFile(files, path) ?? findFile(files, String(path).split('/').pop() ?? path);
         if (!key) return;
         const image = this.ck.MakeImageFromEncoded(new Uint8Array(files[key]));
-        if (image) page.rendererObject = image;
+        if (!image) return;
+        // 旧 TexturePacker 导出的 atlas 没有 size 行，3.1 的 Atlas 只在有 size 行时写 page 尺寸；
+        // region UV 在构造期就按 page.width/height 计算，这里必须用贴图实际尺寸补齐
+        page.width = image.width();
+        page.height = image.height();
+        page.rendererObject = image;
       },
       unload: () => {},
     };
@@ -167,19 +172,57 @@ export class LegacyFrameSource implements FrameSource {
     return this.ck.BlendMode.SrcOver;
   }
 
+  /** 3.1 时代常能见到没有 skeleton 段的导出（官方 goblins-mesh 就是），这时只能实测当前帧的顶点包围盒 */
+  private measureBounds(): { centerX: number; centerY: number; width: number; height: number } | null {
+    const region = this.regionVertices;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    const consume = (positions: Float32Array, count: number) => {
+      for (let i = 0; i < count; i += 2) {
+        if (positions[i] < minX) minX = positions[i];
+        if (positions[i] > maxX) maxX = positions[i];
+        if (positions[i + 1] < minY) minY = positions[i + 1];
+        if (positions[i + 1] > maxY) maxY = positions[i + 1];
+      }
+    };
+    for (const slot of this.skeleton.drawOrder) {
+      const attachment = slot.attachment;
+      if (!attachment) continue;
+      if (attachment.type === this.spine.AttachmentType.region) {
+        attachment.computeVertices(0, 0, slot.bone, region);
+        consume(region, 8);
+      } else if (attachment.type === this.spine.AttachmentType.mesh || attachment.type === this.spine.AttachmentType.weightedmesh) {
+        const world = new Float32Array(attachment.uvs.length);
+        attachment.computeWorldVertices(0, 0, slot, world);
+        consume(world, world.length);
+      }
+    }
+    if (!Number.isFinite(minX) || maxX <= minX || maxY <= minY) return null;
+    return { centerX: (minX + maxX) / 2, centerY: (minY + maxY) / 2, width: maxX - minX, height: maxY - minY };
+  }
+
   private fit(data: any) {
     const size = this.size;
-    if (!(data.width > 0) || !(data.height > 0)) {
+    const scale = (width: number, height: number) => Math.min(size.width / width, size.height / height) * 0.9;
+    // yDown 世界下内容占据 y ∈ [-height, 0]（数据 y 朝上），世界中心在 (width/2, -height/2)
+    if (data.width > 0 && data.height > 0) {
+      this.scale = scale(data.width, data.height);
+      this.translateX = size.width / 2 - (data.width / 2) * this.scale;
+      this.translateY = size.height / 2 + (data.height / 2) * this.scale;
+      return;
+    }
+    const measured = this.measureBounds();
+    if (!measured) {
       this.scale = 1;
       this.translateX = size.width / 2;
       this.translateY = size.height / 2;
       return;
     }
-    // yDown 世界下内容占据 y ∈ [-height, 0]（数据 y 朝上），世界中心在 (width/2, -height/2)
-    const scale = Math.min(size.width / data.width, size.height / data.height) * 0.9;
-    this.scale = scale;
-    this.translateX = size.width / 2 - (data.width / 2) * scale;
-    this.translateY = size.height / 2 + (data.height / 2) * scale;
+    this.scale = scale(measured.width, measured.height);
+    this.translateX = size.width / 2 - measured.centerX * this.scale;
+    this.translateY = size.height / 2 - measured.centerY * this.scale;
   }
 
   summary(): SkeletonSummary {
@@ -222,6 +265,7 @@ export class LegacyFrameSource implements FrameSource {
         attachment.computeVertices(0, 0, slot.bone, regionVertices);
         this.drawVertices(canvas, slot, attachment, regionVertices, REGION_TRIANGLES);
       } else if (attachment.type === this.spine.AttachmentType.mesh || attachment.type === this.spine.AttachmentType.weightedmesh) {
+        // uvs 与顶点一一对应（3.1 无 3.8 那种三元组的 mesh），长度即 2×顶点数
         const world = new Float32Array(attachment.uvs.length);
         attachment.computeWorldVertices(0, 0, slot, world);
         this.drawVertices(canvas, slot, attachment, world, attachment.triangles);
