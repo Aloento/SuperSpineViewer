@@ -190,9 +190,6 @@ importers:
       '@fluentui/react-components':
         specifier: ^9.74.9
         version: 9.74.9(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(scheduler@0.28.0)
-      '@fluentui/react-icons':
-        specifier: ^2.0.343
-        version: 2.0.343(react@19.3.0)
       '@pdf-lib/upng':
         specifier: ^1.0.1
         version: 1.0.1

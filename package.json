@@ -27,7 +27,6 @@
     "@esotericsoftware/spine-webgl-40": "npm:@esotericsoftware/spine-webgl@4.0.31",
     "@esotericsoftware/spine-webgl-41": "npm:@esotericsoftware/spine-webgl@4.1.56",
     "@fluentui/react-components": "^9.74.9",
-    "@fluentui/react-icons": "^2.0.343",
     "@pdf-lib/upng": "^1.0.1",
     "canvaskit-wasm": "0.39.1",
     "i18next": "^26.4.2",
