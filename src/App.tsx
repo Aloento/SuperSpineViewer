@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Badge,
@@ -15,7 +15,9 @@ import Footer from './components/Footer';
 import FileDropZone from './components/FileDropZone';
 import PreviewCanvas from './components/PreviewCanvas';
 import VersionSelector from './components/VersionSelector';
+import ExportPanel from './components/ExportPanel';
 import { useSpineRenderer } from './spine/useSpineRenderer';
+import { useExport } from './export/useExport';
 import { defaultExportOptions } from './export/presets';
 
 const useStyles = makeStyles({
@@ -65,6 +67,16 @@ export default function App() {
   const { width, height } = defaultExportOptions;
   const [manualPackId, setManualPackId] = useState<string | null>(null);
   const renderer = useSpineRenderer(width, height, manualPackId);
+  const exportControls = useMemo(
+    () => ({
+      getLoadInfo: renderer.getLoadInfo,
+      pausePlayback: renderer.pausePlayback,
+      resumePlayback: renderer.resumePlayback,
+      showFrame: renderer.showFrame,
+    }),
+    [renderer.getLoadInfo, renderer.pausePlayback, renderer.resumePlayback, renderer.showFrame],
+  );
+  const exporter = useExport(exportControls);
 
   return (
     <div className={styles.shell}>
@@ -72,12 +84,15 @@ export default function App() {
 
       <div className={styles.panel}>
         <div className={styles.tools}>
-          <FileDropZone onFiles={(files) => void renderer.loadFiles(files)} busy={renderer.status === 'loading'} />
+          <FileDropZone
+            onFiles={(files) => void renderer.loadFiles(files)}
+            busy={renderer.status === 'loading' || exporter.running}
+          />
           <div className={styles.version}>
             <Text size={200} className={styles.muted}>
               {t('version.label')}:
             </Text>
-            <VersionSelector value={manualPackId} onChange={setManualPackId} />
+            <VersionSelector value={manualPackId} onChange={setManualPackId} disabled={exporter.running} />
           </div>
         </div>
 
@@ -94,6 +109,18 @@ export default function App() {
 
         <Card>
           <PreviewCanvas frame={renderer.frame} width={width} height={height} />
+        </Card>
+
+        <Card>
+          <ExportPanel
+            options={exporter.options}
+            onChange={exporter.setOptions}
+            state={exporter.state}
+            running={exporter.running}
+            enabled={renderer.status === 'playing'}
+            onStart={() => void exporter.start()}
+            onCancel={exporter.cancel}
+          />
         </Card>
 
         <div className={styles.status}>

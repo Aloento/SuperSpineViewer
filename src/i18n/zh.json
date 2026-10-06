@@ -54,10 +54,31 @@
     "starAction": "去 GitHub 给个 Star"
   },
   "export": {
+    "format": {
+      "label": "格式",
+      "vp9": "VP9 WebM（透明视频）",
+      "apng": "APNG 帧序列（ZIP）"
+    },
+    "fps": "帧率",
+    "bitrate": "码率",
     "canvas": {
+      "label": "画布尺寸",
       "sd": "标清 640×640",
       "hd": "高清 1024×1024",
-      "uhd": "超清 2048×2048"
+      "uhd": "超清 2048×2048",
+      "custom": "自定义",
+      "size": "宽 × 高"
+    },
+    "start": "开始导出",
+    "cancel": "取消导出",
+    "alphaHint": "MP4 容器不支持透明通道，透明背景请选择 VP9 WebM 或 APNG",
+    "failed": "导出失败：{{detail}}",
+    "phase": {
+      "preparing": "加载资源…",
+      "encoding": "渲染/编码中 {{percent}}%",
+      "packaging": "打包中…",
+      "done": "完成",
+      "failed": "失败"
     }
   }
 }

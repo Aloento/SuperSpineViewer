@@ -31,7 +31,8 @@ export default function PreviewCanvas({ frame, width, height }: PreviewCanvasPro
     const context = canvas.getContext('2d');
     if (!context) return;
     context.clearRect(0, 0, width, height);
-    context.drawImage(frame, 0, 0);
+    // 导出实时帧的尺寸是导出画布，与预览画布可能不同，统一拉伸铺满
+    context.drawImage(frame, 0, 0, width, height);
   }, [frame, width, height]);
 
   return (

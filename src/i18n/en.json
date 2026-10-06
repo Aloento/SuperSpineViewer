@@ -54,10 +54,31 @@
     "starAction": "Star it on GitHub"
   },
   "export": {
+    "format": {
+      "label": "Format",
+      "vp9": "VP9 WebM (transparent video)",
+      "apng": "APNG frame sequence (ZIP)"
+    },
+    "fps": "Frame rate",
+    "bitrate": "Bitrate",
     "canvas": {
+      "label": "Canvas size",
       "sd": "SD 640×640",
       "hd": "HD 1024×1024",
-      "uhd": "UHD 2048×2048"
+      "uhd": "UHD 2048×2048",
+      "custom": "Custom",
+      "size": "W × H"
+    },
+    "start": "Start export",
+    "cancel": "Cancel",
+    "alphaHint": "MP4 containers cannot carry an alpha channel — pick VP9 WebM or APNG for transparency",
+    "failed": "Export failed: {{detail}}",
+    "phase": {
+      "preparing": "Loading assets…",
+      "encoding": "Rendering/encoding {{percent}}%",
+      "packaging": "Packaging…",
+      "done": "Done",
+      "failed": "Failed"
     }
   }
 }

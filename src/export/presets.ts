@@ -30,3 +30,9 @@ export const defaultExportOptions: ExportOptions = {
   width: 1024,
   height: 1024,
 };
+
+/** VP9 的 I420 色度半采样要求偶数边长，自定义尺寸向下取整；上限 4096，最小 16 */
+export function sanitizeSize(value: number): number {
+  const clamped = Math.min(MAX_CANVAS_SIZE, Math.max(16, Math.floor(value) || 16));
+  return clamped % 2 === 0 ? clamped : clamped - 1;
+}

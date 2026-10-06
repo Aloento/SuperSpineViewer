@@ -15,7 +15,8 @@
     "fetch:runtimes": "node scripts/fetch-runtimes.mjs",
     "verify:runtimes": "node scripts/verify-runtimes.mjs",
     "check:render": "node scripts/browser-check.mjs",
-    "check:app": "node scripts/app-check.mjs"
+    "check:app": "node scripts/app-check.mjs",
+    "check:export": "node scripts/export-check.mjs"
   },
   "dependencies": {
     "@esotericsoftware/spine-canvaskit": "4.2.120",
@@ -27,6 +28,7 @@
     "@esotericsoftware/spine-webgl-41": "npm:@esotericsoftware/spine-webgl@4.1.56",
     "@fluentui/react-components": "^9.74.9",
     "@fluentui/react-icons": "^2.0.343",
+    "@pdf-lib/upng": "^1.0.1",
     "canvaskit-wasm": "0.39.1",
     "i18next": "^26.4.2",
     "react": "^19.3.0",
