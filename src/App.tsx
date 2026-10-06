@@ -99,7 +99,7 @@ export default function App() {
         <div className={styles.status}>
           {renderer.status === 'loading' && <Spinner size="tiny" />}
           {renderer.status === 'idle' && <Text className={styles.muted}>{t('preview.empty')}</Text>}
-          {renderer.status !== 'idle' && renderer.status !== 'error' && (
+          {renderer.status === 'playing' && (
             <Badge appearance="tint" color="brand">
               {t('status.playing')}
             </Badge>

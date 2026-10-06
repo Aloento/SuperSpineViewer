@@ -12,8 +12,7 @@ const ASSETS = path.join(ROOT, 'spine-testfiles');
 
 // expect 为 [骨骼数, 动画数] 表示必须解析成功；
 // null 表示候选链必须为空（运行时未接入），code 为期望原因码；
-// 'info' 表示运行时未接入但存在相邻候选，解析结果只作信息输出，不计通过/失败；
-// 'no-binary' 表示候选链可用但没有任何 .skel 读取路径（3.0–3.2，等 M2e 的自研读取器）。
+// 'no-version' 表示 2.x 二进制无版本字段，嗅探与候选链都必须为空。
 const CASES = {
   '3.8': { dir: 'spineboy38', atlas: 'spineboy-pma.atlas', files: { 'spineboy-pro': [64, 11], 'spineboy-ess': [18, 7] } },
   '4.0': { dir: 'spineboy40', atlas: 'spineboy-pma.atlas', files: { 'spineboy-pro': [67, 11], 'spineboy-ess': [18, 8] } },
@@ -29,7 +28,7 @@ const CASES = {
   '3.4': { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', files: { spineboy: [17, 8], 'spineboy-hover': [37, 1], 'spineboy-mesh': [28, 1] } },
   // 3.3 没有独立运行时，按 §1.1 由 3.4 承接
   '3.3': { dir: 'spineboy33', atlas: 'spineboy.atlas', files: { spineboy: [17, 8] } },
-  // M2c：3.0–3.2 由自 vendor 的 3.1 pack 承接，.skel 等 M2e 的 3.0–3.2 读取器
+  // 3.0–3.2 由自 vendor 的 3.1 pack 承接，.skel 走自研读取器 legacyBinary31（§12.7）
   '3.2': { dir: 'spineboy32', atlas: 'spineboy.atlas', files: { spineboy: [17, 8] } },
   '3.1': { dir: 'spineboy31', atlas: 'spineboy.atlas', files: { spineboy: [17, 8] } },
   '3.0': { dir: 'spineboy30', atlas: 'spineboy.atlas', files: { spineboy: [17, 8] } },
@@ -324,7 +323,7 @@ try {
             if (sniffed !== null || resolution.candidates.length > 0) {
               throw new Error('2.x 二进制应嗅探失败，实际 ' + (sniffed ? sniffed.raw : chain));
             }
-            console.log('INFO ' + label.padEnd(26) + ' 二进制无版本字段，待 M2d 自研读取器');
+            console.log('INFO ' + label.padEnd(26) + ' 2.x 二进制无版本字段，不支持（预期）');
             continue;
           }
 
@@ -334,16 +333,6 @@ try {
             if (resolution.reason !== spec.code) throw new Error('原因码 ' + resolution.reason + ' != ' + spec.code);
             passed++;
             console.log('PASS ' + label.padEnd(26) + ' 未接入 嗅探=' + sniffed.raw + ' 原因=' + resolution.reason);
-            continue;
-          }
-
-          if (expected === 'no-binary') {
-            if (sniffed === null) throw new Error('版本嗅探失败');
-            if (resolution.candidates.length === 0) throw new Error('候选链不应为空');
-            const binaryPack = await registry.loadRuntimePack(resolution.candidates[0].packId);
-            if (typeof binaryPack.core.SkeletonBinary === 'function') throw new Error('该版本已带 SkeletonBinary，期望值应改为解析结果');
-            passed++;
-            console.log('PASS ' + label.padEnd(26) + ' 官方无 SkeletonBinary，待 M2d 自研读取器 pack=' + binaryPack.id);
             continue;
           }
 
@@ -385,14 +374,6 @@ try {
 
           const summary = validateSkeletonData(data, sniffed);
 
-          if (expected === 'info') {
-            console.log(
-              'INFO ' + label.padEnd(26) + ' ' + pack.backend.padEnd(9) + ' 回退→' + chain +
-                ' 声明=' + summary.declaredVersion + ' 骨骼=' + summary.bones + ' 动画=' + summary.animationCount,
-            );
-            continue;
-          }
-
           if (summary.bones !== expected[0]) throw new Error('骨骼 ' + summary.bones + ' != ' + expected[0]);
           if (summary.animationCount !== expected[1]) throw new Error('动画 ' + summary.animationCount + ' != ' + expected[1]);
 
@@ -417,10 +398,6 @@ try {
               ' 声明=' + summary.declaredVersion + ' 骨骼=' + summary.bones + ' 动画=' + summary.animationCount,
           );
         } catch (error) {
-          if (expected === 'info') {
-            console.log('INFO ' + label.padEnd(26) + ' 回退解析被拒（预期） ' + describe(error).slice(0, 48));
-            continue;
-          }
           failed++;
           console.log('FAIL ' + label.padEnd(26) + ' ' + describe(error).slice(0, 90));
         }
