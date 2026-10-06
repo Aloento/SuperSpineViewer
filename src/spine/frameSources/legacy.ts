@@ -2,6 +2,7 @@ import type { CanvasKit, Image as CKImage, MallocObj, Surface } from 'canvaskit-
 import { RuntimeError } from '../types';
 import type { FileMap, FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, SpineRuntimePack } from '../types';
 import { findFile } from '../runtimes/files';
+import { decodeStraightPages, findStraightPage, type StraightPage } from '../alpha';
 import { readLegacy31SkeletonData } from '../binary/legacyBinary31';
 import { validateSkeletonData } from '../runtimes/validate';
 import { loadCanvasKit } from './canvaskit';
@@ -110,7 +111,8 @@ export class LegacyFrameSource implements FrameSource {
 
     try {
       const atlasText = decodeFile(context.files, context.atlasFile);
-      const atlas = new spine.Atlas(atlasText, source.syncTextureLoader(context.files));
+      const pages = await decodeStraightPages(context.files, atlasText);
+      const atlas = new spine.Atlas(atlasText, source.syncTextureLoader(pages));
       for (const page of atlas.pages) {
         if (!page.rendererObject) throw new RuntimeError('missingFile', String(page.name));
       }
@@ -161,20 +163,31 @@ export class LegacyFrameSource implements FrameSource {
   }
 
   /**
-   * spine.Atlas 构造期同步回调 load(page, path)。贴图都在内存里，
-   * 用同步的 MakeImageFromEncoded 直接挂到 page.rendererObject，避免渲染时纹理未就绪。
+   * spine.Atlas 构造期同步回调 load(page, path)，贴图已在解码期归一化成直通 alpha，
+   * 这里同步挂到 page.rendererObject，避免渲染时纹理未就绪。
+   * MakeImageFromEncoded 会把 PNG 的 RGB 当直通 alpha，物理预乘页会被再乘一次产生接缝暗边。
    */
-  private syncTextureLoader(files: FileMap) {
+  private syncTextureLoader(pages: Map<string, StraightPage>) {
     return {
       load: (page: any, path: string) => {
-        const key = findFile(files, path) ?? findFile(files, String(path).split('/').pop() ?? path);
-        if (!key) return;
-        const image = this.ck.MakeImageFromEncoded(new Uint8Array(files[key]));
+        const data = findStraightPage(pages, path);
+        if (!data) return;
+        const image = this.ck.MakeImage(
+          {
+            width: data.width,
+            height: data.height,
+            colorType: this.ck.ColorType.RGBA_8888,
+            alphaType: this.ck.AlphaType.Unpremul,
+            colorSpace: this.ck.ColorSpace.SRGB,
+          },
+          data.data,
+          data.width * 4,
+        );
         if (!image) return;
         // 旧 TexturePacker 导出的 atlas 没有 size 行，3.1 的 Atlas 只在有 size 行时写 page 尺寸；
         // region UV 在构造期就按 page.width/height 计算，这里必须用贴图实际尺寸补齐
-        page.width = image.width();
-        page.height = image.height();
+        page.width = data.width;
+        page.height = data.height;
         page.rendererObject = image;
       },
       unload: () => {},

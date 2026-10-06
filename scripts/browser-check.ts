@@ -19,6 +19,21 @@ const CASES = [
   { dir: 'spineboy43', atlas: 'spineboy-pro.atlas', files: ['spineboy-pro'] },
 ];
 
+// alpha 语义回归：同一骨架，把贴图页换成另一种 alpha 存储（预乘 ↔ 直通）后渲染，
+// 合成像素必须一致。只要有任何一处把预乘贴图当直通 alpha 用（接缝暗边），两种存储
+// 的结果就会差出暗边。未声明 pma 的图集（≤3.8）只换贴图字节，考验解码期判定；
+// 已声明的（4.0+）同时翻转声明，考验声明优先。
+const ALPHA_SWAP_CASES = [
+  { dir: 'spineboy30', atlas: 'spineboy.atlas', file: 'spineboy.json', page: 'spineboy.png', toPma: false },
+  { dir: 'goblins31', atlas: 'goblins-mesh.atlas', file: 'goblins-mesh.json', page: 'goblins-mesh.png', toPma: true },
+  { dir: 'spineboy34', atlas: 'spineboy-pma.atlas', file: 'spineboy.json', page: 'spineboy-pma.png', toPma: false },
+  { dir: 'spineboy36', atlas: 'spineboy-pma.atlas', file: 'spineboy-pro.json', page: 'spineboy-pma.png', toPma: false },
+  { dir: 'spineboy38', atlas: 'spineboy-pma.atlas', file: 'spineboy-pro.json', page: 'spineboy-pma.png', toPma: false },
+  { dir: 'spineboy40', atlas: 'spineboy-pma.atlas', file: 'spineboy-pro.json', page: 'spineboy-pma.png', toPma: false, flip: true },
+  { dir: 'spineboy41', atlas: 'spineboy-pma.atlas', file: 'spineboy-pro.json', page: 'spineboy-pma.png', toPma: false, flip: true },
+  { dir: 'spineboy43', atlas: 'spineboy-pro.atlas', file: 'spineboy-pro.json', page: 'spineboy-pro.png', toPma: false, flip: true },
+];
+
 const ERROR_CASES = [
   { dir: 'spineboy21', atlas: 'spineboy.atlas', file: 'spineboy.json', expect: 'runtimeUnavailable:2d' },
 ];
@@ -110,6 +125,76 @@ async function play(session: RenderSession): Promise<{ frames: number; opaque: n
   return { frames, opaque, error };
 }
 
+/** 把图集里某一页贴图的 alpha 存储翻转（预乘 ↔ 直通）；声明了 pma 的图集同时翻转声明 */
+async function swapPageAlpha(
+  files: Record<string, ArrayBuffer>,
+  spec: { atlas: string; page: string; toPma: boolean; flip?: boolean },
+): Promise<Record<string, ArrayBuffer>> {
+  const key = Object.keys(files).find((name) => name.toLowerCase().endsWith(spec.page.toLowerCase()));
+  if (!key) throw new Error('page not loaded: ' + spec.page);
+  const bitmap = await createImageBitmap(new Blob([files[key]], { type: 'image/png' }));
+  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+  const context = canvas.getContext('2d', { alpha: true })!;
+  context.drawImage(bitmap, 0, 0);
+  bitmap.close();
+  const image = context.getImageData(0, 0, canvas.width, canvas.height);
+  const data = image.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const alpha = data[i + 3];
+    if (alpha === 0 || alpha >= 255) continue;
+    if (spec.toPma) {
+      data[i] = Math.round((data[i] * alpha) / 255);
+      data[i + 1] = Math.round((data[i + 1] * alpha) / 255);
+      data[i + 2] = Math.round((data[i + 2] * alpha) / 255);
+    } else {
+      data[i] = Math.min(255, Math.round((data[i] * 255) / alpha));
+      data[i + 1] = Math.min(255, Math.round((data[i + 1] * 255) / alpha));
+      data[i + 2] = Math.min(255, Math.round((data[i + 2] * 255) / alpha));
+    }
+  }
+  context.putImageData(image, 0, 0);
+  const encoded = await canvas.convertToBlob({ type: 'image/png' });
+  const next: Record<string, ArrayBuffer> = { ...files, [key]: await encoded.arrayBuffer() };
+  if (spec.flip) {
+    const text = new TextDecoder().decode(files[spec.atlas]);
+    next[spec.atlas] = new TextEncoder().encode(
+      /pma:\s*true/i.test(text) ? text.replace(/pma:\s*true/gi, 'pma:false') : text.replace(/pma:\s*false/gi, 'pma:true'),
+    ).buffer;
+  }
+  return next;
+}
+
+/** 用给定文件集加载骨架，取若干时刻的直通 alpha 帧像素 */
+async function renderTimes(
+  files: Record<string, ArrayBuffer>,
+  atlasFile: string,
+  skeletonFile: string,
+  times: number[],
+): Promise<Map<number, Uint8ClampedArray>> {
+  const frames = new Map<number, Uint8ClampedArray>();
+  const session = new RenderSession();
+  try {
+    await session.init(320, 320);
+    await session.load({
+      files,
+      skeletonFile,
+      atlasFile,
+      version: detectSpineVersion(files[skeletonFile])!,
+    });
+    for (const timeMs of times) {
+      const bitmap = await session.frame(timeMs);
+      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+      const context = canvas.getContext('2d', { willReadFrequently: true })!;
+      context.drawImage(bitmap, 0, 0);
+      bitmap.close();
+      frames.set(timeMs, context.getImageData(0, 0, canvas.width, canvas.height).data);
+    }
+  } finally {
+    session.dispose();
+  }
+  return frames;
+}
+
 async function main() {
   const results: Record<string, unknown>[] = [];
 
@@ -153,6 +238,42 @@ async function main() {
           session.dispose();
         }
       }
+    }
+  }
+
+  for (const spec of ALPHA_SWAP_CASES) {
+    const label = `${spec.dir}/alpha-swap ${spec.page}`;
+    try {
+      const base = await gather(spec.dir, spec.atlas, [spec.file.replace(/\.(json|skel)$/, '')]);
+      const original = await renderTimes(base, spec.atlas, spec.file, [0, 1000]);
+      const swapped = await renderTimes(await swapPageAlpha(base, spec), spec.atlas, spec.file, [0, 1000]);
+      let worst = 0;
+      let changed = 0;
+      let total = 0;
+      for (const timeMs of [0, 1000]) {
+        const a = original.get(timeMs)!;
+        const b = swapped.get(timeMs)!;
+        for (let i = 0; i < a.length; i += 4) {
+          // 只看合成结果；反预乘的取整误差合成后最多 3，暗边差在 20 以上
+          const d = Math.max(
+            Math.abs(a[i] * a[i + 3] - b[i] * b[i + 3]),
+            Math.abs(a[i + 1] * a[i + 3] - b[i + 1] * b[i + 3]),
+            Math.abs(a[i + 2] * a[i + 3] - b[i + 2] * b[i + 3]),
+          ) / 255;
+          total += 1;
+          if (d > 4) changed += 1;
+          if (d > worst) worst = d;
+        }
+      }
+      const ratio = total > 0 ? changed / total : 0;
+      results.push({
+        status: ratio <= 0.005 ? 'PASS' : 'FAIL',
+        case: label,
+        ratio: Number(ratio.toFixed(5)),
+        worst: Number(worst.toFixed(1)),
+      });
+    } catch (error) {
+      results.push({ status: 'FAIL', case: label, error: error instanceof Error ? error.message : String(error) });
     }
   }
 

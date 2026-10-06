@@ -84,45 +84,45 @@ export class RenderSession {
     return response.payload.frame;
   }
 
-  /** 跳到 timeMs 并渲染该时刻帧；预览暂停态拖动进度条走这里 */
-  async seek(timeMs: number, preview?: boolean): Promise<ImageBitmap> {
+  /** 跳到 timeMs 并渲染该时刻帧；预览暂停态拖动进度条走这里，恒用 GPU 预览快路径 */
+  async seek(timeMs: number): Promise<ImageBitmap> {
     const response = await this.send({
       id: this.nextId++,
       type: 'seek',
-      payload: preview ? { timeMs, preview: true } : { timeMs },
+      payload: { timeMs, preview: true },
     });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
 
   /** 切换动画（重置到 0）并渲染首帧 */
-  async setAnimation(animation: string, loop: boolean, preview?: boolean): Promise<ImageBitmap> {
+  async setAnimation(animation: string, loop: boolean): Promise<ImageBitmap> {
     const response = await this.send({
       id: this.nextId++,
       type: 'setAnimation',
-      payload: preview ? { animation, loop, preview: true } : { animation, loop },
+      payload: { animation, loop, preview: true },
     });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
 
   /** 切换皮肤并在当前时刻原地重绘 */
-  async setSkin(skin: string, preview?: boolean): Promise<ImageBitmap> {
+  async setSkin(skin: string): Promise<ImageBitmap> {
     const response = await this.send({
       id: this.nextId++,
       type: 'setSkin',
-      payload: preview ? { skin, preview: true } : { skin },
+      payload: { skin, preview: true },
     });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
   }
 
   /** 更新基础偏移/缩放并在当前时刻原地重绘 */
-  async setTransform(offsetX: number, offsetY: number, scale: number, preview?: boolean): Promise<ImageBitmap> {
+  async setTransform(offsetX: number, offsetY: number, scale: number): Promise<ImageBitmap> {
     const response = await this.send({
       id: this.nextId++,
       type: 'setTransform',
-      payload: { offsetX, offsetY, scale, ...(preview ? { preview: true } : {}) },
+      payload: { offsetX, offsetY, scale, preview: true },
     });
     if (response.type !== 'frame') throw new Error('unexpected-response');
     return response.payload.frame;
@@ -137,8 +137,6 @@ export class RenderSession {
       onElapsed?: (elapsedMs: number) => void;
       /** 每帧取最新的用户偏移/缩放，播放中拖动滑杆立即生效，无需单独发消息 */
       getTransform?: () => TransformPayload | null;
-      /** 每帧取最新的预览模式，切换开关无需重启循环 */
-      getPreview?: () => boolean;
     },
   ): () => void {
     let stopped = false;
@@ -154,7 +152,7 @@ export class RenderSession {
       while (!stopped) {
         const elapsed = performance.now() - startedAt + offset;
         options?.onElapsed?.(elapsed);
-        const request = this.frame(elapsed, options?.getTransform?.() ?? null, options?.getPreview?.() ?? true);
+        const request = this.frame(elapsed, options?.getTransform?.() ?? null, true);
         pending = request;
         await new Promise<void>((resolve) => {
           rafId = requestAnimationFrame(() => resolve());

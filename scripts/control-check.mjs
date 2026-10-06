@@ -237,20 +237,19 @@ await sleep(800);
 const opaqueReset = await evaluate('window.__H.opaque()');
 check('reset-restores-pixels', Math.abs(opaqueReset - opaqueFull) <= opaqueFull * 0.15, 'opaque reset=' + opaqueReset + ' (full=' + opaqueFull + ')');
 
-// 11. 预乘alpha开关：切换应生效，暂停态两种模式都要出画
-const premultSel = "[data-ssv=premultiplied-toggle] input, [data-ssv=premultiplied-toggle][role=switch]";
-const premultBefore = await evaluate("String(document.querySelector('" + premultSel + "')?.checked)");
-await evaluate("window.__H.click('[data-ssv=premultiplied-toggle]')");
-await sleep(800);
-const premultAfter = await evaluate("String(document.querySelector('" + premultSel + "')?.checked)");
-check('premultiplied-toggles', premultBefore === 'true' && premultAfter === 'false', 'checked ' + premultBefore + ' -> ' + premultAfter);
-const opaqueStraight = await evaluate('window.__H.opaque()');
-check('straight-alpha-frames', opaqueStraight > 500, 'opaque=' + opaqueStraight);
-// 切回预乘：GPU 直传路径同样出画
-await evaluate("window.__H.click('[data-ssv=premultiplied-toggle]')");
-await sleep(800);
-const opaquePremult = await evaluate('window.__H.opaque()');
-check('premultiplied-frames', opaquePremult > 500, 'opaque=' + opaquePremult);
+// 11. alpha 归一化后不再有预乘开关，播放全程走 GPU 快路径：
+// 暂停态画布仍有像素，且播放一段时间内出帧稳定（快路径若退化掉帧会在这里暴露）
+const legacyToggle = await evaluate("!!document.querySelector('[data-ssv=premultiplied-toggle]')");
+check('no-premultiplied-switch', !legacyToggle, 'premultiplied-toggle 存在=' + legacyToggle);
+await evaluate("window.__H.click('[data-ssv=play-toggle]')"); // play
+await sleep(1200);
+const fastA = await evaluate('window.__H.time()');
+const fastPixelsA = await evaluate('window.__H.opaque()');
+await sleep(1200);
+const fastB = await evaluate('window.__H.time()');
+const fastPixelsB = await evaluate('window.__H.opaque()');
+check('playback-advances-after-fix', fastA && fastB && fastB.shown !== fastA.shown, (fastA && fastA.raw) + ' -> ' + (fastB && fastB.raw));
+check('playback-keeps-pixels', fastPixelsA > 500 && fastPixelsB > 500, 'opaque ' + fastPixelsA + ' / ' + fastPixelsB);
 
 // 12. 全程无错误条、无未捕获异常
 const errBar = await evaluate("!!document.querySelector('[data-ssv=error]')");

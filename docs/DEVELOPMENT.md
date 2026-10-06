@@ -19,7 +19,7 @@
 | `pnpm verify:runtimes` | 解析层验收：版本嗅探 + 候选链 + 骨架结构比对（Node 内跑，复用应用代码） |
 | `pnpm check:render` | 渲染层验收：无头浏览器逐像素回归（3.0–4.3，`.json` + `.skel`） |
 | `pnpm check:app` | UI 端到端：真实拖拽、错误文案、首屏不加载运行时包 |
-| `pnpm check:control` | 控制面板端到端：播放/进度/动画/皮肤/循环/预乘 alpha/偏移缩放 |
+| `pnpm check:control` | 控制面板端到端：播放/进度/动画/皮肤/循环/偏移缩放 |
 | `pnpm check:export` | 导出端到端：取消回滚、下载校验、参数切换 |
 | `pnpm check:offline` | 离线验收：build + preview 后断网，仅凭缓存加载并导出 |
 
@@ -59,8 +59,9 @@ UI 线程（主线程，React + FluentUI + Tailwind）
 UI：Blob URL → 下载 / 棋盘格预览
 ```
 
-预览默认走 GPU 预乘 alpha 直传（满帧）；切到直通 alpha 后改走 CPU 读回，
-像素与导出完全一致，帧率受读回开销限制。
+预览走 GPU 直传（`transferToImageBitmap`，满帧）；导出与像素回归走 CPU 读回
+（`readPixels` → straight-alpha RGBA）。贴图 alpha 在解码期就归一化成直通，
+两条路径只差读回方式，合成结果一致。
 
 ## 3. 目录结构
 
@@ -72,6 +73,7 @@ src/
 │   ├── versionLoader.ts   # 版本嗅探（4.x / 3.1–3.8 头部 + 扫描兜底 + 2.x 结构判据）
 │   ├── runtimeMap.ts      # 版本解析、支持区间、候选链与未接入原因码
 │   ├── pairing.ts         # 文件 / 图集自动配对（名称推导 → 同前缀 → 目录兜底）
+│   ├── alpha.ts           # 图集 page 解码归一化：pma 判定 + 反预乘成直通 alpha
 │   ├── runtimes/          # pack registry、结果校验、DOM 垫片、文件名不敏感查找
 │   │   └── generated/     # scripts/fetch-runtimes.mjs 产物 + 官方 LICENSE
 │   ├── binary/            # 自研 .skel 读取器：legacyBinary.ts（3.4–3.7）、legacyBinary31.ts（3.0–3.2）
@@ -128,12 +130,24 @@ spine-testfiles/           # 测试语料（不进 dev/preview 发布）
 CanvasKit `canvas.readPixels({alphaType:Unpremul})`、WebGL `gl.readPixels`
 （`premultipliedAlpha:false` + `drawSkeleton(skeleton, false)`）。
 
+**贴图 alpha 统一在解码期归一化成直通**（`src/spine/alpha.ts`）：`createImageBitmap
+({premultiplyAlpha:'none'})` 拿到文件字面值，物理预乘的页再手工反预乘。
+「这页是不是预乘」先看 atlas 的 `pma:` 声明（4.0+ 才有，4.2 起不带缩进），
+没有声明时用像素判据：`A ∈ [64,250]` 的像素里 `max(R,G,B) > A` 的占比 > 2% 即直通
+—— 低 alpha 段两种存储都有编码噪声（预乘页误判率可达 7%，A≥64 时为 0），必须避开。
+归一化后各后端一律按直通语义混合：CanvasKit 用 `MakeImage({alphaType:Unpremul})` +
+SrcOver（官方 `MakeImageFromEncoded` 会把预乘页当直通再乘一次），WebGL 用 canvas 源 +
+`UNPACK_PREMULTIPLY_ALPHA_WEBGL=false` + SRC_ALPHA。
+
 已修掉的真实坑（改动这块前务必先读）：
 
 - 4.0/4.1 之前的 `blendFunc` 把 SRC_ALPHA 同时用于 RGB 和 A，透明背景首帧 alpha 退化为 α²，
   导出整幅偏淡 → 用 `fixupAlphaBlending` 补齐官方 4.0 的 `blendFuncSeparate` 规则。
-- Chrome 上传 ImageBitmap 到 GL 纹理时无条件预乘 alpha（`UNPACK_PREMULTILY_ALPHA_WEBGL`
-  对 ImageBitmap 源无效）→ 纹理源改用 canvas，读回后反预乘还原成直通 alpha。
+- Chrome 上传 ImageBitmap 到 GL 纹理时无条件预乘 alpha（`UNPACK_PREMULTIPLY_ALPHA_WEBGL`
+  对 ImageBitmap 源无效）→ 纹理源改用 canvas。
+- `check:render` 的 alpha-swap 用例：把某一页贴图的存储方式翻转（预乘 ↔ 直通，声明了
+  `pma:` 的同时翻转声明）后重新渲染，合成像素必须不变。任何一处按错误的 alpha 语义
+  采样都会让这个用例亮。
 - 3.4–3.6 忽略 `skeleton.scaleX/scaleY` → 缩放平移统一走 `renderer.camera`。
 - 3.4 的 attachment loader 类名是 `TextureAtlasAttachmentLoader`（3.5+ 才叫 `AtlasAttachmentLoader`），
   且 vendored 产物直接引用主线程全局，需要 `runtimes/domShims.ts` 兜底。

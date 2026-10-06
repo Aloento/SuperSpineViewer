@@ -5,6 +5,7 @@ import { RuntimeError } from '../types';
 import type { FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, SpineRuntimePack } from '../types';
 import { createFileReader } from '../runtimes/files';
 import { validateSkeletonData } from '../runtimes/validate';
+import { decodeStraightPages, findStraightPage, type StraightPage } from '../alpha';
 import { nonDefaultSkinNames } from './skins';
 import { track0, writeTrackTime } from './track';
 
@@ -128,7 +129,14 @@ export class CanvaskitFrameSource implements FrameSource {
     let summary: SkeletonSummary;
     let atlas: any;
     try {
-      atlas = await helpers.loadTextureAtlas(ck, context.atlasFile, readFile);
+      const atlasText = new TextDecoder().decode(context.files[context.atlasFile]).replace(/\r\n/g, '\n');
+      const pages = await decodeStraightPages(context.files, atlasText);
+      atlas = new helpers.TextureAtlas(atlasText);
+      for (const page of atlas.pages) {
+        const pageData = findStraightPage(pages, page.name);
+        if (!pageData) throw new RuntimeError('missingFile', page.name);
+        page.setTexture(makePageTexture(ck, helpers, pageData));
+      }
       data = await helpers.loadSkeletonData(context.skeletonFile, atlas, readFile);
       summary = validateSkeletonData(data, context.version);
     } catch (error) {
@@ -271,6 +279,48 @@ function applyFit(skeleton: any, fit: FitParams) {
     skeleton.x = fit.baseX;
     skeleton.y = fit.baseY;
   }
+}
+
+/**
+ * 官方 loadTextureAtlas 用 MakeImageFromEncoded，Skia 把 PNG 里的 RGB 当直通 alpha，
+ * 物理预乘的贴图页会被再乘一次，接缝出现暗边；这里在解码期已归一化成直通像素，
+ * 用 MakeImage(Unpremul) 重建图像，paint 组合与官方 CanvasKitTexture 保持一致。
+ */
+function makePageTexture(ck: CanvasKit, helpers: any, page: StraightPage): any {
+  const image = ck.MakeImage(
+    {
+      width: page.width,
+      height: page.height,
+      colorType: ck.ColorType.RGBA_8888,
+      alphaType: ck.AlphaType.Unpremul,
+      colorSpace: ck.ColorSpace.SRGB,
+    },
+    page.data,
+    page.width * 4,
+  );
+  if (!image) throw new RuntimeError('parseInvalid', 'atlas page decode failed');
+  const paintPerBlendMode = new Map<number, any>();
+  const shaders: any[] = [];
+  // spine.BlendMode → Skia 混合模式，与官方 toCkBlendMode 相同（multiply 在顶点色路径下退化回 SrcOver）
+  const blendOf = (mode: number) =>
+    mode === 1 ? ck.BlendMode.Plus : mode === 3 ? ck.BlendMode.Screen : ck.BlendMode.SrcOver;
+  for (const mode of [0, 1, 2, 3]) {
+    const shader = image.makeShaderOptions(ck.TileMode.Clamp, ck.TileMode.Clamp, ck.FilterMode.Linear, ck.MipmapMode.Linear);
+    const paint = new ck.Paint();
+    paint.setShader(shader);
+    paint.setBlendMode(blendOf(mode));
+    paintPerBlendMode.set(mode, paint);
+    shaders.push(shader);
+  }
+  const texture = new helpers.Texture({ shaders, paintPerBlendMode, image });
+  texture.setFilters = () => {};
+  texture.setWraps = () => {};
+  texture.dispose = () => {
+    for (const paint of paintPerBlendMode.values()) paint.delete();
+    for (const shader of shaders) shader.delete();
+    image.delete();
+  };
+  return texture;
 }
 
 function pixelsView(pixels: MallocObj): Uint8ClampedArray<ArrayBuffer> {

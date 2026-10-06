@@ -3,22 +3,12 @@ import type { FrameSize, FrameSource, FrameSourceContext, SkeletonSummary, Spine
 import { readLegacySkeletonData } from '../binary/legacyBinary';
 import { track0, writeTrackTime } from './track';
 import { nonDefaultSkinNames } from './skins';
-import { atlasPageNames, findFile } from '../runtimes/files';
 import { validateSkeletonData } from '../runtimes/validate';
+import { decodeStraightPages, findStraightPage, straightPageCanvas, type StraightPage } from '../alpha';
 
-async function decodeImage(files: Record<string, ArrayBuffer>, name: string) {
-  const key = findFile(files, name);
-  if (!key) throw new RuntimeError('missingFile', name);
-  const bitmap = await createImageBitmap(new Blob([files[key]], { type: 'image/png' }));
-  // Chrome 把 ImageBitmap 上传到纹理时无条件预乘 alpha（UNPACK_PREMULTIPLY_ALPHA_WEBGL 无效），
-  // 而渲染器按直通 alpha 走 SRC_ALPHA 混合，等于乘两次导致半透明区域偏暗；
-  // 画布源配合 UNPACK_PREMULTIPLY_ALPHA_WEBGL=false 才能保持直通 alpha
-  const decoded = new OffscreenCanvas(bitmap.width, bitmap.height);
-  const context = decoded.getContext('2d', { alpha: true })!;
-  context.drawImage(bitmap, 0, 0);
-  bitmap.close();
-  return decoded;
-}
+// Chrome 把 ImageBitmap 上传到纹理时无条件预乘 alpha（UNPACK_PREMULTIPLY_ALPHA_WEBGL 无效），
+// 而渲染器按直通 alpha 走 SRC_ALPHA 混合，等于乘两次导致半透明像素与接缝偏暗；
+// page 在解码期已归一化成直通像素，画布源配合 UNPACK_PREMULTIPLY_ALPHA_WEBGL=false 保持直通
 
 /** 3.4–3.8 的 PolygonBatcher 用单一 blendFunc，alpha 通道也跟着乘 SRC_ALPHA，
  * 透明背景上第一帧的 alpha 会退化成 α²，透明导出整幅偏淡。
@@ -48,11 +38,11 @@ function fixupAlphaBlending(renderer: any, gl: WebGLRenderingContext) {
 }
 
 /** 3.8 的 TextureAtlas 在构造期同步回调 textureLoader，所以要先解码好所有 page 图片。 */
-function syncTextureLoader(webgl: any, gl: WebGLRenderingContext, images: Map<string, OffscreenCanvas>) {
+function syncTextureLoader(webgl: any, gl: WebGLRenderingContext, images: Map<string, StraightPage>) {
   return (pageName: string) => {
-    const image = images.get(pageName.toLowerCase());
+    const image = images.get(pageName.replace(/\\/g, '/').toLowerCase());
     if (!image) throw new RuntimeError('missingFile', pageName);
-    return new webgl.GLTexture(gl, image);
+    return new webgl.GLTexture(gl, straightPageCanvas(image));
   };
 }
 
@@ -138,16 +128,16 @@ export class WebglFrameSource implements FrameSource {
     let atlas: any;
     let data: any;
     try {
+      // 同步图集加载器在 TextureAtlas 构造期就要纹理，两条路径都先把 page 解码归一化
+      const pages = await decodeStraightPages(context.files, atlasText);
       if (pack.capabilities.synchronousAtlasLoader) {
-        const images = new Map<string, OffscreenCanvas>();
-        for (const name of atlasPageNames(atlasText)) {
-          images.set(name.toLowerCase(), await decodeImage(context.files, name));
-        }
-        atlas = new spine.TextureAtlas(atlasText, syncTextureLoader(webgl, gl, images));
+        atlas = new spine.TextureAtlas(atlasText, syncTextureLoader(webgl, gl, pages));
       } else {
         atlas = new spine.TextureAtlas(atlasText);
         for (const page of atlas.pages) {
-          page.setTexture(new webgl.GLTexture(gl, await decodeImage(context.files, page.name)));
+          const decoded = findStraightPage(pages, page.name);
+          if (!decoded) throw new RuntimeError('missingFile', String(page.name));
+          page.setTexture(new webgl.GLTexture(gl, straightPageCanvas(decoded)));
         }
       }
 

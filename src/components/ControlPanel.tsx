@@ -94,7 +94,6 @@ interface ControlPanelProps {
   offsetX: number;
   offsetY: number;
   scale: number;
-  premultiplied: boolean;
   onTogglePlay: () => void;
   onSeek: (timeMs: number) => void;
   onLoopChange: (loop: boolean) => void;
@@ -104,7 +103,6 @@ interface ControlPanelProps {
   onOffsetYChange: (value: number) => void;
   onScaleChange: (value: number) => void;
   onResetTransform: () => void;
-  onPremultipliedChange: (value: boolean) => void;
 }
 
 /** 秒数文本：0:03.4 / 1:02.0 */
@@ -198,13 +196,6 @@ export default function ControlPanel(props: ControlPanelProps) {
             checked={props.loop}
             onChange={(_, data) => props.onLoopChange(data.checked)}
             label={t('control.loop')}
-          />
-          <Switch
-            data-ssv="premultiplied-toggle"
-            disabled={!props.enabled}
-            checked={props.premultiplied}
-            onChange={(_, data) => props.onPremultipliedChange(data.checked)}
-            label={t('control.premultiplied')}
           />
         </div>
       </div>
