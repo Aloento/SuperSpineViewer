@@ -2,6 +2,7 @@
 node_modules/
 
 # Build output
+.wrangler/
 dist/
 dist-ssr/
 dev-dist/

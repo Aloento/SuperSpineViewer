@@ -165,7 +165,8 @@ SrcOver（官方 `MakeImageFromEncoded` 会把预乘页当直通再乘一次）�
   `render.worker-*`、`**/*.wasm`；这些资源走 `CacheFirst`（cacheName `spine-runtimes`）。
   曾把 `js/wasm` 全量预缓存导致「按需加载」被架空，改动 workbox 配置要重新确认这一点。
 - `worker.format = 'es'`：渲染 Worker 里要按版本动态 `import()`，iife 不支持代码分割。
-- `public/_redirects` 提供 Cloudflare Pages 的 SPA 回退；部署为纯静态 `dist/`。
+- 部署走 Workers 静态资产（`wrangler.jsonc`，`not_found_handling: 'single-page-application'` 提供 SPA 回退），
+  发纯静态 `dist/`。不要再加 `_redirects`：`/* → /index.html` 会被 Workers 判定为自引用死循环（err 100324）。
 
 ## 8. 已知边界
 
