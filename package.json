@@ -31,7 +31,7 @@
     "i18next": "^26.4.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "react-i18next": "^17.0.15"
+    "react-i18next": "^17.0.16"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
@@ -41,7 +41,7 @@
     "@vitejs/plugin-react": "^6.1.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^8.3.2",
+    "vite": "^8.3.3",
     "vite-plugin-pwa": "^2.0.0"
   }
 }
