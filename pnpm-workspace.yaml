@@ -1,2 +1,5 @@
+allowBuilds:
+  esbuild: true
+  workerd: true
 minimumReleaseAgeExclude:
   - '@vitejs/plugin-react@6.1.2'
