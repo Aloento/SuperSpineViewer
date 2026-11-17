@@ -215,7 +215,7 @@ async function main() {
       skeleton.updateWorldTransform(helpers.Physics.update);
       const bounds = skeleton.getBoundsRect();
       const withOrigin = (omit: string[]) => {
-        const skeleton = { ...json.skeleton, x: bounds.x, y: -bounds.y - bounds.height };
+        const skeleton = { ...json.skeleton, x: bounds.x, y: bounds.y };
         for (const key of omit) delete skeleton[key];
         return {
           ...files,
