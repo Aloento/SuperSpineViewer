@@ -198,6 +198,51 @@ async function renderTimes(
 async function main() {
   const results: Record<string, unknown>[] = [];
 
+  // 转换后的 JSON 可能省略边界原点，取景应与显式填写实际边界时一致。
+  for (const dir of ['spineboy42', 'spineboy43']) {
+    const label = `${dir}/omitted bounds origin`;
+    try {
+      const atlasFile = 'spineboy-pro.atlas';
+      const skeletonFile = 'spineboy-pro.json';
+      const files = await gather(dir, atlasFile, ['spineboy-pro']);
+      const json = JSON.parse(new TextDecoder().decode(files[skeletonFile]));
+      const helpers: any = dir === 'spineboy42'
+        ? await import('@esotericsoftware/spine-canvaskit')
+        : await import('@esotericsoftware/spine-canvaskit-43');
+      const atlas = new helpers.TextureAtlas(new TextDecoder().decode(files[atlasFile]));
+      const data = new helpers.SkeletonJson(new helpers.AtlasAttachmentLoader(atlas)).readSkeletonData(json);
+      const skeleton = new helpers.Skeleton(data);
+      skeleton.updateWorldTransform(helpers.Physics.update);
+      const bounds = skeleton.getBoundsRect();
+      const withOrigin = (omit: string[]) => {
+        const skeleton = { ...json.skeleton, x: bounds.x, y: bounds.y };
+        for (const key of omit) delete skeleton[key];
+        return {
+          ...files,
+          [skeletonFile]: new TextEncoder().encode(JSON.stringify({ ...json, skeleton })).buffer,
+        };
+      };
+      const times = [0, 500];
+      const expected = await renderTimes(withOrigin([]), atlasFile, skeletonFile, times);
+      let opaque = 0;
+      let matches = true;
+      for (const pixels of expected.values()) {
+        for (let i = 3; i < pixels.length; i += 4) if (pixels[i] > 8) opaque++;
+      }
+      for (const omitted of [['x'], ['y'], ['x', 'y']]) {
+        const actual = await renderTimes(withOrigin(omitted), atlasFile, skeletonFile, times);
+        for (const time of times) {
+          const pixels = actual.get(time)!;
+          const baseline = expected.get(time)!;
+          if (!pixels.every((value, index) => value === baseline[index])) matches = false;
+        }
+      }
+      results.push({ status: matches && opaque > 500 ? 'PASS' : 'FAIL', case: label, opaque, matches });
+    } catch (error) {
+      results.push({ status: 'FAIL', case: label, error: String(error) });
+    }
+  }
+
   for (const spec of CASES) {
     const files = await gather(spec.dir, spec.atlas, spec.files);
     for (const name of spec.files) {
