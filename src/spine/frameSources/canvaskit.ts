@@ -38,8 +38,8 @@ function computeFit(data: any, width: number, height: number, yDown: boolean): F
     return { hasBounds: false, dataCenterX: 0, dataCenterY: 0, scale: 1, sy, baseX: width / 2, baseY: height / 2 };
   }
   const scale = Math.min(width / data.width, height / data.height) * 0.9;
-  const dataCenterX = data.x + data.width / 2;
-  const dataCenterY = data.y + data.height / 2;
+  const dataCenterX = (data.x ?? 0) + data.width / 2;
+  const dataCenterY = (data.y ?? 0) + data.height / 2;
   // 原始 fitSkeleton: skeleton.x = w/2 - dcX*scale; skeleton.y = h/2 + (yDown?1:-1)*dcY*scale
   const baseX = width / 2 - dataCenterX * scale;
   const baseY = height / 2 + (yDown ? 1 : -1) * dataCenterY * scale;
@@ -157,7 +157,17 @@ export class CanvaskitFrameSource implements FrameSource {
     for (const item of data.animations ?? []) durations[String(item.name)] = Number(item.duration) || 0;
 
     const drawable = new helpers.SkeletonDrawable(data);
-    const fit = computeFit(data, size.width, size.height, pack.capabilities.yDown);
+    const fitData = { x: data.x, y: data.y, width: data.width, height: data.height };
+    if (fitData.x == null || fitData.y == null) {
+      drawable.skeleton.updateWorldTransform(helpers.Physics.update);
+      const bounds = drawable.skeleton.getBoundsRect();
+      if ([bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isFinite)) {
+        fitData.x ??= bounds.x;
+        // CanvasKit 的实测边界 y 向下，导出元数据的边界 y 向上。
+        fitData.y ??= pack.capabilities.yDown ? -bounds.y - bounds.height : bounds.y;
+      }
+    }
+    const fit = computeFit(fitData, size.width, size.height, pack.capabilities.yDown);
     applyFit(drawable.skeleton, fit);
     drawable.animationState.setAnimation(0, animations[0], true);
 
